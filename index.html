@@ -359,7 +359,7 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
   // ========== CONFIGURATION – REPLACE WITH YOUR APPS SCRIPT URL ==========
-  const API_BASE = 'https://script.google.com/macros/s/AKfycbxVPMq8PAaz2ejMGW-tFV0zcr7jlr2AFHx15MTKV0ylY4j4D_V0uMitp9huWEA9KiM/exec';  // e.g., https://script.google.com/macros/s/.../exec
+  const API_BASE = 'https://script.google.com/macros/s/AKfycbxVPMq8PAaz2ejMGW-tFV0zcr7jlr2AFHx15MTKV0ylY4j4D_V0uMitp9huWEA9KiM/exec';
 
   // ========== FLAWLESS MOBILE DETECTION & FONT SCALING ==========
   const mobileQuery = window.matchMedia('(max-device-width: 768px)');
@@ -414,6 +414,9 @@
 
     // Phone country selects
     populatePhoneSelects(allData.shippingLocations);
+
+    // Populate the country/region dropdown (shipping location)
+    populateLocationDropdown();
 
     // Detect user country
     await detectCountry();
@@ -849,14 +852,16 @@
   function populateLocationDropdown() {
     const sel = document.getElementById('countrySelect');
     sel.innerHTML = '<option value="">-- Select --</option>';
+    if (!allData || !allData.shippingLocations) return;
     allData.shippingLocations.forEach(loc => {
       const opt = document.createElement('option');
       opt.value = loc.name; opt.textContent = loc.name;
       sel.appendChild(opt);
     });
   }
-  populateLocationDropdown();
+  // Moved inside init() – no longer called here
   document.getElementById('countrySelect').addEventListener('change', function() {
+    if (!allData) return;
     const loc = allData.shippingLocations.find(l=>l.name===this.value);
     document.getElementById('shippingFlag').src = loc ? loc.flagUrl : '';
     updateShippingTimeDisplay(); updatePriceDisplay();
