@@ -173,7 +173,7 @@
 <footer>© The ABC of ASD – All rights reserved</footer>
 
 <script>
-    const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_b3ayETYbMdP2uqyaxO_TaMTHpXgV8hEV2o0tgJkCZoxqOyqfbl1moiPFuJIBdbaX/exec";
+    const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycby90bFAredciLvFLRJ3piRJvWzbkCnI8t8y2uEl7mEivZ2ld9M1VZ6awjHSOCsKGritRg/exec";
 
     let siteVars = {}, brand = {}, products = [], regionRates = [], shippingRates = [], currencyRates = [], aboutData = {};
     let exchangeRates = {};
@@ -186,10 +186,24 @@
     let placesAutocomplete = null;
     let paypalClientId = "";
 
-    async function fetchTab(tabName) {
-        const url = `${APPSCRIPT_URL}?tab=${tabName}`;
-        const res = await fetch(url);
-        return await res.json();
+    // JSONP loader – works without CORS
+    function fetchTab(tabName) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        window[callbackName] = (data) => {
+          resolve(data);
+          document.body.removeChild(script);
+          delete window[callbackName];
+        };
+        const script = document.createElement('script');
+        script.src = `${APPSCRIPT_URL}?tab=${tabName}&callback=${callbackName}`;
+        script.onerror = () => {
+          reject(new Error('JSONP request failed'));
+          document.body.removeChild(script);
+          delete window[callbackName];
+        };
+        document.body.appendChild(script);
+      });
     }
 
     async function fetchAllData() {
