@@ -196,7 +196,15 @@
         try {
             const siteVarsRaw = await fetchTab("SiteVariables");
             siteVars = siteVarsRaw.reduce((acc, row) => { acc[row.Setting] = row.Value; return acc; }, {});
-            paypalClientId = siteVars.PayPalClientID || "";
+            
+            // Fetch PayPal Client ID from server (secure)
+            const idResp = await fetch(APPSCRIPT_URL, {
+              method: 'POST',
+              body: JSON.stringify({ action: 'getPaypalClientId' }),
+              headers: { 'Content-Type': 'text/plain' }
+            });
+            const idData = await idResp.json();
+            paypalClientId = idData.clientId || "";
             
             if (paypalClientId) {
                 const paypalScript = document.createElement('script');
