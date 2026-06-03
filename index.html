@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>The ABC of ASD – Tug Handling Guide</title>
-    <!-- Google Translate Widget -->
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <!-- PayPal JS SDK will be loaded dynamically after we fetch client-id from sheet -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -175,9 +173,7 @@
 <footer>© The ABC of ASD – All rights reserved</footer>
 
 <script>
-    // ======================== ONLY ONE CONSTANT NEEDED ========================
     const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYgpfNbA1n2QHz4u8isP0eb5GclVlnLbLR42laWQ_Pk3lEGx7se2npNd-akme9M1qh/exec";
-    // =========================================================================
 
     let siteVars = {}, brand = {}, products = [], regionRates = [], shippingRates = [], currencyRates = [], aboutData = {};
     let exchangeRates = {};
@@ -188,7 +184,7 @@
     let slideIndex = 0;
     let carouselInterval;
     let placesAutocomplete = null;
-    let payfastMerchantId = "", payfastMerchantKey = "", payfastPassphrase = "", paypalClientId = "";
+    let paypalClientId = "";
 
     async function fetchTab(tabName) {
         const url = `${APPSCRIPT_URL}?tab=${tabName}`;
@@ -198,17 +194,10 @@
 
     async function fetchAllData() {
         try {
-            // First fetch SiteVariables to get all credentials
             const siteVarsRaw = await fetchTab("SiteVariables");
             siteVars = siteVarsRaw.reduce((acc, row) => { acc[row.Setting] = row.Value; return acc; }, {});
-            
-            // Extract payment credentials from siteVars
-            payfastMerchantId = siteVars.PayfastMerchantID || "";
-            payfastMerchantKey = siteVars.PayfastMerchantKey || "";
-            payfastPassphrase = siteVars.PayfastSecurityPassphrase || "";
             paypalClientId = siteVars.PayPalClientID || "";
             
-            // Dynamically load PayPal SDK with client ID from sheet
             if (paypalClientId) {
                 const paypalScript = document.createElement('script');
                 paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ZAR&intent=capture`;
@@ -218,7 +207,6 @@
                 console.warn("PayPal Client ID not found in SiteVariables");
             }
             
-            // Load other tabs
             const [brands, prods, regions, shippings, currencies, about] = await Promise.all([
                 fetchTab("BrandSettings"),
                 fetchTab("Products"),
@@ -236,7 +224,7 @@
             exchangeRates = {};
             currencyRates.forEach(c => { exchangeRates[c.CurrencyCode] = parseFloat(c.RateToBase); });
             applyBrandColors();
-            loadGoogleMapsScript(); // Load Maps API using key from siteVars
+            loadGoogleMapsScript();
             populateUI();
         } catch (err) {
             console.error(err);
@@ -402,7 +390,6 @@
             updateAllPrices();
         });
 
-        // Locate Me button
         const locateBtn = document.getElementById('locateMeBtn');
         if (locateBtn) {
             locateBtn.addEventListener('click', () => {
@@ -449,7 +436,7 @@
 
     function startCarousel() {
         if(carouselInterval) clearInterval(carouselInterval);
-        carouselInterval = setInterval(() => changeSlide(1), siteVars.HpmePageCarouselInterval || 3000);
+        carouselInterval = setInterval(() => changeSlide(1), siteVars.HomePageCarouselInterval || 3000);
     }
     function changeSlide(direction) {
         const slides = document.querySelectorAll('.carousel-slide');
@@ -490,7 +477,7 @@
             const resp = await fetch(APPSCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'verify', email }),
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'text/plain' }
             });
             const result = await resp.json();
             if(result.success) {
@@ -506,12 +493,25 @@
     async function verifyCode() {
         const code = document.getElementById('verifCode').value;
         if(!code || code.length !== 6) { alert("Enter 6-digit code."); return; }
-        verifiedEmail = document.getElementById('orderEmail').value;
-        document.getElementById('emailVerifiedStatus').innerText = "Email verified!";
-        document.getElementById('orderRestFields').style.display = 'block';
-        document.getElementById('verifyCodeBtn').style.display = 'none';
-        updateOrderSummary();
-        renderPayPalButton();
+        const email = document.getElementById('orderEmail').value;
+        try {
+            const resp = await fetch(APPSCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'checkCode', email, code }),
+                headers: { 'Content-Type': 'text/plain' }
+            });
+            const result = await resp.json();
+            if(result.success) {
+                verifiedEmail = email;
+                document.getElementById('emailVerifiedStatus').innerText = "Email verified!";
+                document.getElementById('orderRestFields').style.display = 'block';
+                document.getElementById('verifyCodeBtn').style.display = 'none';
+                updateOrderSummary();
+                renderPayPalButton();
+            } else {
+                alert("Invalid or expired verification code.");
+            }
+        } catch(e) { alert("Verification failed. Please try again."); }
     }
 
     function prefillOrderProduct(productId) {
@@ -576,6 +576,7 @@
         const confirmMsg = `Confirm order:\nProduct: ${currentOrder.productName}\nQuantity: ${currentOrder.qty}\nTotal: ${(currentOrder.total*exchangeRates[currentCurrency]).toFixed(2)} ${currentCurrency}\n\nProceed to payment?`;
         if(!confirm(confirmMsg)) return;
 
+        // 1. Save order to sheet
         const orderData = {
             action: 'order',
             customerName: custName, customerEmail: verifiedEmail, customerPhone: phone,
@@ -585,31 +586,31 @@
             shippingCost: currentOrder.shipping, total: currentOrder.total, currency: currentOrder.currency,
             paymentGateway: "Payfast"
         };
-        const resp = await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'application/json'} });
-        const result = await resp.json();
+        const orderResp = await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'text/plain'} });
+        const orderResult = await orderResp.json();
 
-        // Build Payfast form – use sandbox or live based on siteVars (you can add a flag)
-        const pfForm = document.createElement('form');
-        pfForm.method = 'POST';
-        // You can add a variable in SiteVariables like "PayfastLiveMode" to switch
-        pfForm.action = 'https://sandbox.payfast.co.za/eng/process'; // change to live when ready
-        pfForm.innerHTML = `
-            <input type="hidden" name="merchant_id" value="${payfastMerchantId}">
-            <input type="hidden" name="merchant_key" value="${payfastMerchantKey}">
-            <input type="hidden" name="amount" value="${(currentOrder.total * (exchangeRates[currentCurrency]||1)).toFixed(2)}">
-            <input type="hidden" name="item_name" value="${currentOrder.productName}">
-            <input type="hidden" name="email_address" value="${verifiedEmail}">
-            <input type="hidden" name="m_payment_id" value="${result.orderId}">
-            <input type="hidden" name="return_url" value="${window.location.href}">
-        `;
-        // If passphrase is set, you should generate a signature. For simplicity, we omit here.
-        document.body.appendChild(pfForm);
-        pfForm.submit();
+        // 2. Request signed Payfast URL from server
+        const payfastRequest = {
+            action: 'payfast',
+            amount: (currentOrder.total * (exchangeRates[currentCurrency]||1)).toFixed(2),
+            itemName: currentOrder.productName,
+            email: verifiedEmail,
+            orderId: orderResult.orderId,
+            returnUrl: window.location.href,
+            cancelUrl: window.location.href,
+            notifyUrl: APPSCRIPT_URL  // You can set a dedicated IPN endpoint later
+        };
+        const pfResp = await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(payfastRequest), headers:{'Content-Type':'text/plain'} });
+        const pfResult = await pfResp.json();
+        if(pfResult.redirectUrl) {
+            window.location.href = pfResult.redirectUrl;
+        } else {
+            alert("Could not initiate Payfast payment.");
+        }
     }
 
     function renderPayPalButton() {
         if (typeof paypal === 'undefined') {
-            console.warn("PayPal SDK not loaded yet");
             setTimeout(renderPayPalButton, 500);
             return;
         }
@@ -628,7 +629,7 @@
             onApprove: async (data, actions) => {
                 const capture = await actions.order.capture();
                 const orderData = { action: 'order', ...currentOrder, paymentGateway: "PayPal", transactionId: capture.id };
-                await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'application/json'} });
+                await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'text/plain'} });
                 document.getElementById('modalMsg').innerHTML = `Payment successful! Transaction ID: ${capture.id}<br>Thank you.`;
                 document.getElementById('statusModal').style.display = 'flex';
             },
@@ -650,7 +651,7 @@
             message: document.getElementById('contactMsg').value
         };
         try {
-            await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(data), headers:{'Content-Type':'application/json'} });
+            await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(data), headers:{'Content-Type':'text/plain'} });
             alert("Message sent! We'll get back to you soon.");
             document.getElementById('contactForm').reset();
         } catch(err) { alert("Error sending message. Please try again."); }
