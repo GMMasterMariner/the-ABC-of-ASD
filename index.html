@@ -53,8 +53,8 @@
             font-weight: 200; opacity: 0.95;
         }
         .banner-text h2 {
-            font-size: 1.2rem;            /* slightly larger */
-            letter-spacing: 0.4px;        /* a touch wider */
+            font-size: 1.2rem;
+            letter-spacing: 0.4px;
             font-weight: 400;
             line-height: 1.3; margin: 0.25rem 0 0 0;
             opacity: 0.9;
@@ -69,7 +69,6 @@
             min-height: 48px;
         }
 
-        /* Hamburger button – hidden on desktop */
         .hamburger {
             display: none;
             background: none;
@@ -80,19 +79,28 @@
             padding: 0.2rem;
             margin-right: 1rem;
             z-index: 3;
-            color: #194373;   /* brand colour */
+            color: #194373;
         }
 
         .nav-left {
             display: flex; align-items: center; gap: 1.2rem;
             z-index: 2;
         }
-        .nav-left a { display: inline-flex; align-items: center; text-decoration: none; }
+        .nav-left a {
+            display: inline-flex; align-items: center;
+            text-decoration: none;
+            color: #194373; /* for text labels */
+        }
         .nav-left a img {
             height: 30px;
             transition: transform 0.2s ease;
         }
         .nav-left a:hover img { transform: scale(1.15); }
+
+        /* Text labels: hidden on desktop (use title) */
+        .nav-label {
+            display: none;
+        }
 
         .nav-center {
             position: absolute; left: 50%; transform: translateX(-50%);
@@ -107,18 +115,11 @@
             max-width: 960px;
             margin: 0 auto;
         }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
 
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-        }
-
-        /* ---- About Section (desktop) ---- */
-        .about-section-content {
-            /* clearfix for floats */
-        }
+        /* ---- About Section ---- */
+        .about-section-content { /* clearfix */ }
         .clearfix::after {
             content: "";
             display: table;
@@ -136,7 +137,6 @@
 
         .about-text {
             line-height: 1.6;
-            /* no overflow:hidden – text will wrap around the float */
         }
 
         .bio-toggle {
@@ -149,16 +149,13 @@
         .bio-extended {
             display: none;
             margin-top: 0.5rem;
-            position: relative;            /* for absolute positioning of image2 */
-            /* padding-bottom will be added dynamically for image2 height? We'll use min-height trick */
-            /* Actually we'll just let the container expand and place image2 absolutely at bottom right */
+            /* clearfix for float right image */
+            overflow: auto; /* or clearfix */
         }
-
-        /* Image 2: absolute at bottom right on desktop */
+        /* Image 2: float right inside extended bio */
         .about-img-2 {
-            position: absolute;
-            bottom: 0;
-            right: 0;
+            float: right;
+            margin: 0 0 1rem 1.5rem;
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -167,7 +164,6 @@
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
-            /* Banner: stack on very small screens? We'll keep left logo but adjust sizes */
             body { padding-top: 125px; }
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
@@ -175,34 +171,40 @@
             .banner-text h1 { font-size: 1.1rem; }
             .banner-text h2 { font-size: 1rem; letter-spacing: 0.2px; }
 
-            /* Hamburger visible, nav-left becomes vertical dropdown */
-            .hamburger {
-                display: block;
-            }
+            .hamburger { display: block; }
             .nav-left {
                 position: absolute;
                 top: 100%;
                 left: 0;
                 background: white;
                 flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.8rem 1rem;
+                gap: 0.3rem;
+                padding: 0.8rem;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                display: none;          /* hidden by default */
+                display: none;
                 z-index: 10;
-                min-width: 150px;
+                min-width: 160px;  /* narrower */
             }
-            .nav-left.open {
-                display: flex;
+            .nav-left.open { display: flex; }
+
+            /* Show text labels on mobile */
+            .nav-label {
+                display: inline-block;
+                margin-left: 0.5rem;
+                font-size: 0.9rem;
+                font-weight: 500;
             }
-            .navbar {
-                padding: 0.4rem 0.6rem;
-                min-height: 42px;
+            .nav-left a img {
+                height: 24px;
             }
-            .nav-center {
-                font-size: 0.95rem;
-                /* keep visible */
+            /* Adjust link styles for dropdown */
+            .nav-left a {
+                padding: 0.3rem 0;
+                gap: 0.3rem;
             }
+
+            .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
+            .nav-center { font-size: 0.95rem; }
         }
 
         @media (max-width: 600px) {
@@ -211,7 +213,7 @@
             .banner { min-height: 46px; }
             .banner-logo img { max-height: 28px; }
 
-            /* About: stack images normally, no absolute positioning */
+            /* About: stack normally, no floats */
             .about-img-1 {
                 float: none;
                 display: block;
@@ -220,14 +222,11 @@
                 max-width: 250px;
             }
             .about-img-2 {
-                position: static;       /* fallback to normal flow */
+                float: none;
                 display: block;
                 margin: 1rem auto 0 auto;
                 width: 80%;
                 max-width: 250px;
-            }
-            .bio-extended {
-                padding-bottom: 0;       /* reset */
             }
         }
 
@@ -252,7 +251,6 @@
         </div>
 
         <nav class="navbar" id="navbar">
-            <!-- Hamburger button (mobile only) -->
             <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
             <div class="nav-left" id="navIcons"></div>
             <div class="nav-center" id="pageTitleDisplay">Home</div>
@@ -277,8 +275,8 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
-                        <p id="aboutExtendedBioText"></p>
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                        <p id="aboutExtendedBioText"></p>
                         <span class="bio-toggle" id="bioToggleLess"> read less...</span>
                     </div>
                 </div>
@@ -313,13 +311,28 @@
             return await res.json();
         }
 
+        // ---------- RESET ABOUT BIO ----------
+        function resetAboutBio() {
+            const bioExtended = document.getElementById('bioExtended');
+            const toggleMore = document.getElementById('bioToggleMore');
+            if (bioExtended && toggleMore) {
+                bioExtended.style.display = 'none';
+                toggleMore.style.display = 'inline';
+            }
+        }
+
         // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
+            // Reset about bio state whenever we switch pages (even if going to About)
+            resetAboutBio();
+
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
+
             updateNavTitle(sectionId);
-            // Close mobile menu if open
+
+            // Close mobile menu
             document.getElementById('navIcons').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
         }
@@ -336,7 +349,7 @@
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
-        // ---------- HAMBURGER TOGGLE ----------
+        // ---------- HAMBURGER ----------
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
@@ -344,7 +357,6 @@
                 const expanded = menu.classList.toggle('open');
                 btn.setAttribute('aria-expanded', expanded);
             });
-            // Close menu when a link is clicked (already handled in showPage, but also we can add)
             menu.addEventListener('click', (e) => {
                 if (e.target.closest('a')) {
                     menu.classList.remove('open');
@@ -384,16 +396,17 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Build navigation
+            // Navigation with labels
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
-                { setting: 'NavIconURLHome', section: 'home-section' },
-                { setting: 'NavIconURLOrder', section: 'order-section' },
-                { setting: 'NavIconURLAbout', section: 'about-section' },
-                { setting: 'NavIconURLContact', section: 'contact-section' },
-                { setting: 'NavIconURLLinkedIn', external: true }
+                { setting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
+                { setting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
+                { setting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
+                { setting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
+                { setting: 'NavIconURLLinkedIn', external: true, label: 'LinkedIn' }
             ];
+
             navItems.forEach(item => {
                 const url = settings[item.setting];
                 if (url && url.trim() !== '') {
@@ -405,15 +418,24 @@
                     } else {
                         a.dataset.section = item.section;
                     }
+                    // Set title for desktop tooltip
+                    a.title = item.label;
+
                     const img = document.createElement('img');
                     img.src = url;
-                    img.alt = item.setting.replace('NavIconURL', '');
+                    img.alt = item.label;
                     a.appendChild(img);
+
+                    // Text label (hidden on desktop, shown on mobile)
+                    const span = document.createElement('span');
+                    span.className = 'nav-label';
+                    span.textContent = item.label;
+                    a.appendChild(span);
+
                     navContainer.appendChild(a);
                 }
             });
 
-            // Click delegation for SPA links
             navContainer.addEventListener('click', (e) => {
                 const link = e.target.closest('a');
                 if (!link || link.target === '_blank') return;
@@ -451,6 +473,7 @@
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
             document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
 
+            // Toggle logic
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
@@ -463,6 +486,9 @@
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
             });
+
+            // Ensure initial state (collapsed)
+            resetAboutBio();
         }
 
         // ---------- INIT ----------
