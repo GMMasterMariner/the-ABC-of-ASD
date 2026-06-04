@@ -2,705 +2,127 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>The ABC of ASD – Tug Handling Guide</title>
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dynamic Website</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #194373;
-            --secondary: #5693ac;
-            --bg: #eee6ca;
-            --cta: #f29b2a;
-            --alert: #dc3c33;
-            --text: #2c3e50;
-        }
+        /* We'll set colors dynamically later, but here's a fallback base */
         body {
-            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .banner {
-            position: sticky; top: 0; background: var(--primary); color: white;
-            padding: 0.75rem 2rem; display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; z-index: 100;
+            text-align: center;
+            padding: 2rem 1rem;
         }
-        .logo img { height: 50px; width: auto; }
-        .title-block { text-align: center; flex-grow: 1; }
-        .title-main { font-size: 1.6rem; font-weight: bold; }
-        .title-abbr { font-size: 1rem; margin-left: 0.5rem; }
-        .subtitle { font-size: 0.85rem; opacity: 0.9; }
-        .lang-selector { min-width: 160px; }
-        .nav-bar {
-            position: sticky; top: 80px; background: white; display: flex;
-            justify-content: space-between; align-items: center; padding: 0.5rem 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 99; flex-wrap: wrap;
+        .banner img.logo {
+            max-height: 80px;
         }
-        .nav-left { display: flex; gap: 1rem; align-items: center; }
-        .nav-icon { width: 32px; height: 32px; cursor: pointer; transition: transform 0.2s; }
-        .nav-icon:hover { transform: scale(1.1); }
-        .nav-center { font-size: 1.4rem; font-weight: 600; color: var(--primary); }
-        .currency-selector { background: var(--secondary); padding: 0.3rem 0.8rem; border-radius: 2rem; border: none; font-weight: bold; cursor: pointer; }
-        .page { display: none; padding: 2rem; max-width: 1400px; margin: 0 auto; animation: fade 0.2s; }
-        .active-page { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-        .home-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 2rem; margin-top: 2rem; }
-        @media (max-width: 900px) { .home-grid { grid-template-columns: 1fr; } .banner, .nav-bar { flex-direction: column; top: 0; } }
-        .carousel-container { position: relative; overflow: hidden; border-radius: 1rem; background: #ddd; }
-        .carousel-slide { width: 100%; display: none; }
-        .carousel-slide.active { display: block; }
-        .carousel-btn { position: absolute; top: 50%; background: rgba(0,0,0,0.5); color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; }
-        .prev { left: 0; } .next { right: 0; }
-        .product-card { background: white; border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .product-price { font-size: 1.6rem; font-weight: bold; color: var(--cta); }
-        .btn-order, button[type="submit"] { background: var(--cta); border: none; padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: bold; cursor: pointer; color: white; }
-        .order-form { background: white; padding: 2rem; border-radius: 1.5rem; max-width: 800px; margin: 0 auto; }
-        .form-group { margin-bottom: 1rem; }
-        input, select, textarea { width: 100%; padding: 0.6rem; border-radius: 0.5rem; border: 1px solid #ccc; }
-        .address-group { display: flex; gap: 0.5rem; align-items: flex-start; flex-wrap: wrap; }
-        .address-group textarea { flex: 1; }
-        .locate-btn { background: var(--secondary); border: none; padding: 0.6rem 1rem; border-radius: 0.5rem; cursor: pointer; color: white; font-weight: bold; }
-        .verification-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-        .summary { background: #f4f4f4; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 2rem; border-radius: 1rem; max-width: 500px; text-align: center; }
-        .extended-bio { display: none; margin-top: 1rem; }
-        .read-more-btn { color: var(--primary); cursor: pointer; text-decoration: underline; }
-        footer { text-align: center; padding: 2rem; background: var(--primary); color: white; margin-top: 3rem; }
+        .banner h1 {
+            margin: 0.5rem 0;
+        }
+        .banner h2 {
+            font-weight: normal;
+        }
+        .nav-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 1rem;
+            background: rgba(0,0,0,0.05);
+        }
+        .nav-icons a img {
+            height: 40px;
+        }
+        .content {
+            padding: 2rem;
+        }
     </style>
 </head>
 <body>
-
-<div class="banner">
-    <div class="logo"><img id="brandLogo" src="" alt="Logo"></div>
-    <div class="title-block">
-        <span class="title-main" id="bannerTitle"></span><span class="title-abbr" id="bannerAbbr"></span>
-        <div class="subtitle" id="bannerSubtitle"></div>
+    <!-- Banner Section -->
+    <div class="banner" id="banner">
+        <img class="logo" id="bannerLogo" src="" alt="Logo">
+        <h1 id="bannerTitle"></h1>
+        <h2 id="bannerSubtitle"></h2>
     </div>
-    <div class="lang-selector" id="google_translate_element"></div>
-</div>
 
-<div class="nav-bar">
-    <div class="nav-left">
-        <img class="nav-icon" data-page="home" id="navHomeIcon" src="" alt="Home">
-        <img class="nav-icon" data-page="order" id="navOrderIcon" src="" alt="Order">
-        <img class="nav-icon" data-page="about" id="navAboutIcon" src="" alt="About">
-        <img class="nav-icon" data-page="contact" id="navContactIcon" src="" alt="Contact">
-        <img class="nav-icon" id="navLinkedInIcon" src="" alt="LinkedIn" onclick="window.open('https://linkedin.com/in/yourprofile')">
+    <!-- Navigation Icons -->
+    <div class="nav-icons" id="navIcons"></div>
+
+    <!-- Main Content (placeholder for now) -->
+    <div class="content">
+        <p>Welcome! This page is styled live from your Google Sheet.</p>
     </div>
-    <div class="nav-center" id="pageTitle">Home</div>
-    <select id="currencySelector" class="currency-selector"></select>
-</div>
 
-<!-- Home Page -->
-<div id="home" class="page active-page">
-    <h1 id="homeHeadline"></h1>
-    <div class="home-grid">
-        <div class="description" id="homeDescription"></div>
-        <div class="carousel-container">
-            <div id="carouselInner"></div>
-            <button class="carousel-btn prev" onclick="changeSlide(-1)">❮</button>
-            <button class="carousel-btn next" onclick="changeSlide(1)">❯</button>
-        </div>
-        <div class="products-side" id="productCards"></div>
-    </div>
-</div>
+    <script>
+        // ==============================================
+        // 🔧 REPLACE THIS URL WITH YOUR WEB APP URL
+        // ==============================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
 
-<!-- Order Page -->
-<div id="order" class="page">
-    <h1>Complete Your Order</h1>
-    <div class="order-form">
-        <div class="form-group">
-            <label>Email *</label>
-            <input type="email" id="orderEmail" placeholder="you@example.com">
-        </div>
-        <div class="form-group verification-group">
-            <input type="text" id="verifCode" placeholder="6-digit code" disabled>
-            <button id="sendCodeBtn" class="btn-order">Send Code</button>
-            <button id="verifyCodeBtn" class="btn-order" style="display:none;">Verify</button>
-        </div>
-        <div id="emailVerifiedStatus" style="color:green;"></div>
-        <div id="orderRestFields" style="display:none;">
-            <div class="form-group"><label>Product</label><select id="productSelect"></select></div>
-            <div class="form-group"><label>Quantity</label><input type="number" id="quantity" value="1" min="1"></div>
-            <div class="form-group"><label>Full Name</label><input type="text" id="custName"></div>
-            <div class="form-group"><label>Phone</label><input type="tel" id="custPhone"></div>
-            <div class="form-group" id="shippingGroup">
-                <label>Shipping Address</label>
-                <div class="address-group">
-                    <textarea id="shippingAddr" rows="2" placeholder="Street address, city, postal code..."></textarea>
-                    <button type="button" id="locateMeBtn" class="locate-btn">📍 Locate Me</button>
-                </div>
-            </div>
-            <div class="form-group"><label>Country</label><select id="countrySelect"></select></div>
-            <div class="summary" id="orderSummary"></div>
-            <div class="payment-buttons" style="display:flex; gap:1rem; flex-wrap:wrap;">
-                <div id="paypal-button-container"></div>
-                <button id="payfastBtn" class="btn-order" style="background:#6b21a5;">Pay with Payfast</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- About Page -->
-<div id="about" class="page">
-    <h1 id="aboutTitle"></h1>
-    <div style="display:flex; flex-wrap:wrap; gap:2rem;">
-        <img id="aboutImg1" src="" style="max-width:200px; border-radius:1rem;">
-        <img id="aboutImg2" src="" style="max-width:200px; border-radius:1rem;">
-    </div>
-    <p id="shortBio"></p>
-    <div id="extendedBio" class="extended-bio"></div>
-    <span class="read-more-btn" id="readMoreBtn">Read more...</span>
-</div>
-
-<!-- Contact Page -->
-<div id="contact" class="page">
-    <h1>Contact Me</h1>
-    <form id="contactForm" style="max-width:600px; background:white; padding:2rem; border-radius:1rem;">
-        <input type="text" id="contactName" placeholder="Your Name" required><br>
-        <input type="email" id="contactEmail" placeholder="Your Email" required><br>
-        <input type="tel" id="contactPhone" placeholder="Phone"><br>
-        <input type="text" id="contactCountry" placeholder="Country"><br>
-        <textarea id="contactMsg" rows="4" placeholder="Your message..." required></textarea><br>
-        <button type="submit">Send Message</button>
-    </form>
-</div>
-
-<div id="statusModal" class="modal"><div class="modal-content"><p id="modalMsg"></p><button onclick="closeModal()">Close</button></div></div>
-
-<footer>© The ABC of ASD – All rights reserved</footer>
-
-<script>
-    // ======================== CONFIG ========================
-    const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycby90bFAredciLvFLRJ3piRJvWzbkCnI8t8y2uEl7mEivZ2ld9M1VZ6awjHSOCsKGritRg/exec";
-    // =========================================================
-
-    let siteVars = {}, brand = {}, products = [], regionRates = [], shippingRates = [], currencyRates = [], aboutData = {};
-    let exchangeRates = {};
-    let currentCurrency = 'ZAR';
-    let verifiedEmail = null;
-    let currentOrder = null;
-    let carouselImages = [];
-    let slideIndex = 0;
-    let carouselInterval;
-    let placesAutocomplete = null;
-    let paypalClientId = "";
-
-    // JSONP loader – works without CORS
-    function fetchTab(tabName) {
-        return new Promise((resolve, reject) => {
-            const callbackName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-            window[callbackName] = (data) => {
-                resolve(data);
-                document.body.removeChild(script);
-                delete window[callbackName];
-            };
-            const script = document.createElement('script');
-            script.src = `${APPSCRIPT_URL}?tab=${tabName}&callback=${callbackName}`;
-            script.onerror = () => {
-                reject(new Error('JSONP request failed'));
-                document.body.removeChild(script);
-                delete window[callbackName];
-            };
-            document.body.appendChild(script);
-        });
-    }
-
-    async function fetchAllData() {
-        try {
-            const siteVarsRaw = await fetchTab("SiteVariables");
-            siteVars = siteVarsRaw.reduce((acc, row) => { acc[row.Setting] = row.Value; return acc; }, {});
-
-            // Fetch PayPal Client ID from server (secure)
-            const idResp = await fetch(APPSCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'getPaypalClientId' }),
-                headers: { 'Content-Type': 'text/plain' }
+        // Helper: extract settings into a simple object like { Setting: Value }
+        async function fetchSettings() {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            const settings = {};
+            data.forEach(item => {
+                settings[item.Setting] = item.Value;
             });
-            const idData = await idResp.json();
-            paypalClientId = idData.clientId || "";
+            return settings;
+        }
 
-            if (paypalClientId) {
-                const paypalScript = document.createElement('script');
-                paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ZAR&intent=capture`;
-                paypalScript.async = true;
-                document.head.appendChild(paypalScript);
+        // Apply the settings to the page
+        async function applySettings() {
+            const s = await fetchSettings();
+
+            // --- Colors ---
+            document.body.style.backgroundColor = s.BackgroundColor || '#ffffff';
+            document.body.style.color = s.TextColor || '#000000';
+            // If you have a banner/nav bar color, you can set it similarly:
+            // e.g., document.getElementById('banner').style.backgroundColor = s.PrimaryColor;
+
+            // --- Banner Logo ---
+            const bannerLogo = document.getElementById('bannerLogo');
+            if (s.LogoURL) {
+                bannerLogo.src = s.LogoURL;
+                bannerLogo.style.display = 'block';
             } else {
-                console.warn("PayPal Client ID not found");
+                bannerLogo.style.display = 'none';
             }
 
-            const [brands, prods, regions, shippings, currencies, about] = await Promise.all([
-                fetchTab("BrandSettings"),
-                fetchTab("Products"),
-                fetchTab("RegionRates"),
-                fetchTab("ShippingRates"),
-                fetchTab("CurrencyRates"),
-                fetchTab("About")
-            ]);
-            brand = brands.reduce((acc, row) => { acc[row.Setting] = row.Value; return acc; }, {});
-            products = prods;
-            regionRates = regions;
-            shippingRates = shippings;
-            currencyRates = currencies;
-            aboutData = about.reduce((acc, row) => { acc[row.Setting] = row.Value; return acc; }, {});
-            exchangeRates = {};
-            currencyRates.forEach(c => { exchangeRates[c.CurrencyCode] = parseFloat(c.RateToBase); });
-            applyBrandColors();
-            loadGoogleMapsScript();
-            populateUI();
-        } catch (err) {
-            console.error(err);
-            alert("Could not load configuration. Check Apps Script URL and deployment.");
-        }
-    }
+            // --- Banner Text ---
+            document.getElementById('bannerTitle').textContent = s.BannerBookTitle || '';
+            document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitile || '';
 
-    function loadGoogleMapsScript() {
-        const apiKey = siteVars.GoogleMapsApiKey;
-        if (!apiKey) {
-            console.warn("No Google Maps API key found in SiteVariables");
-            return;
-        }
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-    }
+            // --- Navigation Icons (Home, Order, About, Contact, LinkedIn) ---
+            const navContainer = document.getElementById('navIcons');
+            navContainer.innerHTML = ''; // clear
 
-    window.initAutocomplete = function() {
-        const addressField = document.getElementById('shippingAddr');
-        if (addressField) {
-            placesAutocomplete = new google.maps.places.Autocomplete(addressField, {
-                types: ['address'],
-                componentRestrictions: { country: [] }
-            });
-            placesAutocomplete.addListener('place_changed', () => {
-                const place = placesAutocomplete.getPlace();
-                if (place.address_components) {
-                    const countryComponent = place.address_components.find(c => c.types.includes('country'));
-                    if (countryComponent) {
-                        const countryName = countryComponent.long_name;
-                        const countrySelect = document.getElementById('countrySelect');
-                        for (let i = 0; i < countrySelect.options.length; i++) {
-                            if (countrySelect.options[i].value === countryName) {
-                                countrySelect.selectedIndex = i;
-                                updateOrderSummary();
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    };
+            const navItems = [
+                { setting: 'NavIconURLHome', textSetting: 'HomePageTitle', href: '#' },
+                { setting: 'NavIconURLOrder', textSetting: 'OrderPageTitle', href: '#' },
+                { setting: 'NavIconURLAbout', textSetting: 'AboutPageTitle', href: '#' },
+                { setting: 'NavIconURLContact', textSetting: 'ContactPageTitle', href: '#' },
+                { setting: 'NavIconURLLinkedIn', textSetting: null, href: '#', external: true }
+            ];
 
-    function applyBrandColors() {
-        document.documentElement.style.setProperty('--primary', brand.PrimaryColor);
-        document.documentElement.style.setProperty('--secondary', brand.SecondaryColor);
-        document.documentElement.style.setProperty('--bg', brand.BackgroundColor);
-        document.documentElement.style.setProperty('--cta', brand.CTAColor);
-        document.documentElement.style.setProperty('--alert', brand.AlertColor);
-        document.documentElement.style.setProperty('--text', brand.TextColor);
-    }
-
-    function populateUI() {
-        document.getElementById('brandLogo').src = siteVars.LogoURL;
-        document.getElementById('bannerTitle').innerText = siteVars.BannerBookTitle;
-        document.getElementById('bannerAbbr').innerText = siteVars.BannerBookTitleAbbreviation;
-        document.getElementById('bannerSubtitle').innerText = siteVars.BannerBookSubTitile;
-        document.getElementById('navHomeIcon').src = siteVars.NavIconURLHome;
-        document.getElementById('navOrderIcon').src = siteVars.NavIconURLOrder;
-        document.getElementById('navAboutIcon').src = siteVars.NavIconURLAbout;
-        document.getElementById('navContactIcon').src = siteVars.NavIconURLContact;
-        document.getElementById('navLinkedInIcon').src = siteVars.NavIconURLLinkedIn;
-        document.getElementById('homeHeadline').innerText = siteVars.HomePageBookHeadline;
-        document.getElementById('homeDescription').innerHTML = siteVars.HomePageBookDescription;
-
-        carouselImages = [];
-        for(let i=1; i<=9; i++) {
-            let img = siteVars[`HomePageCarouselImage${i}`];
-            if(img && img.trim()) carouselImages.push(img);
-        }
-        const carouselInner = document.getElementById('carouselInner');
-        carouselInner.innerHTML = '';
-        carouselImages.forEach((src, idx) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.className = `carousel-slide ${idx===0?'active':''}`;
-            img.style.width = '100%';
-            carouselInner.appendChild(img);
-        });
-        startCarousel();
-
-        const productCardsDiv = document.getElementById('productCards');
-        productCardsDiv.innerHTML = '';
-        products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <h3>${p.ProductName}</h3>
-                <p>${p.Description}</p>
-                <div class="product-price" data-baseprice="${p.BasePrice}">${p.BasePrice} ZAR</div>
-                <button class="btn-order" data-id="${p.ProductID}" data-name="${p.ProductName}" data-type="${p.Type}" data-price="${p.BasePrice}">Order Now</button>
-            `;
-            productCardsDiv.appendChild(card);
-        });
-
-        document.getElementById('aboutTitle').innerText = aboutData.AboutPageTitle || "About the Author";
-        document.getElementById('aboutImg1').src = aboutData.AuthorImage1URL;
-        document.getElementById('aboutImg2').src = aboutData.AuthorImage2URL;
-        document.getElementById('shortBio').innerHTML = `<strong>${aboutData.AuthorName}</strong><br>${aboutData.AuthorTitle}<br>${aboutData.AuthorShortBio}`;
-        document.getElementById('extendedBio').innerHTML = aboutData.AuthorExtendedBio;
-
-        const prodSelect = document.getElementById('productSelect');
-        prodSelect.innerHTML = '';
-        products.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.ProductID;
-            opt.textContent = `${p.ProductName} - ${p.BasePrice} ZAR`;
-            opt.dataset.type = p.Type;
-            opt.dataset.price = p.BasePrice;
-            opt.dataset.discountThresh = p.DiscountThreshold;
-            opt.dataset.discountPercent = p.DiscountPercent;
-            prodSelect.appendChild(opt);
-        });
-
-        const countrySelect = document.getElementById('countrySelect');
-        countrySelect.innerHTML = '';
-        shippingRates.forEach(rate => {
-            const opt = document.createElement('option');
-            opt.value = rate.Location;
-            opt.textContent = rate.Location;
-            opt.dataset.region = rate.Region;
-            countrySelect.appendChild(opt);
-        });
-
-        const currSelect = document.getElementById('currencySelector');
-        currSelect.innerHTML = '';
-        currencyRates.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.CurrencyCode;
-            opt.textContent = `${c.CurrencyCode} (${c.CountryName})`;
-            currSelect.appendChild(opt);
-        });
-        detectUserCurrency();
-
-        document.querySelectorAll('.btn-order').forEach(btn => btn.addEventListener('click', (e) => {
-            const productId = btn.dataset.id;
-            showPage('order');
-            setTimeout(() => prefillOrderProduct(productId), 100);
-        }));
-        document.getElementById('productSelect').addEventListener('change', updateOrderSummary);
-        document.getElementById('quantity').addEventListener('input', updateOrderSummary);
-        document.getElementById('countrySelect').addEventListener('change', updateOrderSummary);
-        document.getElementById('sendCodeBtn').addEventListener('click', sendVerificationCode);
-        document.getElementById('verifyCodeBtn').addEventListener('click', verifyCode);
-        document.getElementById('payfastBtn').addEventListener('click', processPayfast);
-        document.getElementById('contactForm').addEventListener('submit', submitContactForm);
-        document.getElementById('readMoreBtn').addEventListener('click', () => {
-            const ext = document.getElementById('extendedBio');
-            if(ext.style.display === 'none' || !ext.style.display) {
-                ext.style.display = 'block';
-                document.getElementById('readMoreBtn').innerText = 'Read less...';
-            } else {
-                ext.style.display = 'none';
-                document.getElementById('readMoreBtn').innerText = 'Read more...';
-            }
-        });
-        document.getElementById('currencySelector').addEventListener('change', (e) => {
-            currentCurrency = e.target.value;
-            updateAllPrices();
-        });
-
-        const locateBtn = document.getElementById('locateMeBtn');
-        if (locateBtn) {
-            locateBtn.addEventListener('click', () => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(async (position) => {
-                        const { latitude, longitude } = position.coords;
-                        const geocoder = new google.maps.Geocoder();
-                        const latlng = { lat: latitude, lng: longitude };
-                        geocoder.geocode({ location: latlng }, (results, status) => {
-                            if (status === 'OK' && results[0]) {
-                                const address = results[0].formatted_address;
-                                document.getElementById('shippingAddr').value = address;
-                                const countryComponent = results[0].address_components.find(c => c.types.includes('country'));
-                                if (countryComponent) {
-                                    const countryName = countryComponent.long_name;
-                                    const countrySelect = document.getElementById('countrySelect');
-                                    for (let i = 0; i < countrySelect.options.length; i++) {
-                                        if (countrySelect.options[i].value === countryName) {
-                                            countrySelect.selectedIndex = i;
-                                            updateOrderSummary();
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (placesAutocomplete) placesAutocomplete.setComponentRestrictions({ country: [] });
-                            } else {
-                                alert("Could not detect address from location.");
-                            }
-                        });
-                    }, () => {
-                        alert("Geolocation failed or denied.");
-                    });
-                } else {
-                    alert("Geolocation not supported.");
+            navItems.forEach(item => {
+                const url = s[item.setting];
+                if (url && url.trim() !== '') {
+                    const a = document.createElement('a');
+                    a.href = item.href;
+                    if (item.external) a.target = '_blank';
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = item.setting.replace('NavIconURL', '');
+                    a.appendChild(img);
+                    navContainer.appendChild(a);
                 }
             });
         }
 
-        document.querySelectorAll('.nav-icon[data-page]').forEach(icon => {
-            icon.addEventListener('click', () => showPage(icon.dataset.page));
-        });
-        showPage('home');
-    }
-
-    function startCarousel() {
-        if(carouselInterval) clearInterval(carouselInterval);
-        carouselInterval = setInterval(() => changeSlide(1), siteVars.HomePageCarouselInterval || 3000);
-    }
-    function changeSlide(direction) {
-        const slides = document.querySelectorAll('.carousel-slide');
-        if(slides.length === 0) return;
-        slides[slideIndex].classList.remove('active');
-        slideIndex = (slideIndex + direction + slides.length) % slides.length;
-        slides[slideIndex].classList.add('active');
-    }
-
-    async function detectUserCurrency() {
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            const currency = data.currency || 'ZAR';
-            if(exchangeRates[currency]) currentCurrency = currency;
-            else currentCurrency = 'ZAR';
-            document.getElementById('currencySelector').value = currentCurrency;
-            updateAllPrices();
-        } catch(e) { updateAllPrices(); }
-    }
-
-    function updateAllPrices() {
-        const rate = exchangeRates[currentCurrency] || 1;
-        document.querySelectorAll('.product-price').forEach(el => {
-            const base = parseFloat(el.dataset.baseprice);
-            if(!isNaN(base)) el.innerText = `${(base*rate).toFixed(2)} ${currentCurrency}`;
-        });
-        updateOrderSummary();
-    }
-
-    async function sendVerificationCode() {
-        const email = document.getElementById('orderEmail').value;
-        if(!email) { alert("Please enter your email."); return; }
-        const btn = document.getElementById('sendCodeBtn');
-        btn.disabled = true;
-        btn.innerText = "Sending...";
-        try {
-            const resp = await fetch(APPSCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'verify', email }),
-                headers: { 'Content-Type': 'text/plain' }
-            });
-            const result = await resp.json();
-            if(result.success) {
-                alert("Verification code sent to your email.");
-                document.getElementById('verifCode').disabled = false;
-                document.getElementById('verifyCodeBtn').style.display = 'inline-block';
-            } else throw new Error();
-        } catch(e) { alert("Failed to send code. Please try again."); }
-        btn.disabled = false;
-        btn.innerText = "Send Code";
-    }
-
-    async function verifyCode() {
-        const code = document.getElementById('verifCode').value;
-        if(!code || code.length !== 6) { alert("Enter 6-digit code."); return; }
-        const email = document.getElementById('orderEmail').value;
-        try {
-            const resp = await fetch(APPSCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'checkCode', email, code }),
-                headers: { 'Content-Type': 'text/plain' }
-            });
-            const result = await resp.json();
-            if(result.success) {
-                verifiedEmail = email;
-                document.getElementById('emailVerifiedStatus').innerText = "Email verified!";
-                document.getElementById('orderRestFields').style.display = 'block';
-                document.getElementById('verifyCodeBtn').style.display = 'none';
-                updateOrderSummary();
-                renderPayPalButton();
-            } else {
-                alert("Invalid or expired verification code.");
-            }
-        } catch(e) { alert("Verification failed. Please try again."); }
-    }
-
-    function prefillOrderProduct(productId) {
-        const select = document.getElementById('productSelect');
-        for(let i=0;i<select.options.length;i++) {
-            if(select.options[i].value === productId) {
-                select.selectedIndex = i;
-                break;
-            }
-        }
-        updateOrderSummary();
-    }
-
-    async function updateOrderSummary() {
-        if(!verifiedEmail) return;
-        const productId = document.getElementById('productSelect').value;
-        const product = products.find(p => p.ProductID === productId);
-        if(!product) return;
-        const qty = parseInt(document.getElementById('quantity').value) || 1;
-        const basePrice = parseFloat(product.BasePrice);
-        const discountPercent = parseFloat(product.DiscountPercent) || 0;
-        const discountThreshold = parseFloat(product.DiscountThreshold) || 0;
-        const discountApplied = (qty >= discountThreshold) ? discountPercent : 0;
-        const unitPriceAfterDisc = basePrice * (1 - discountApplied/100);
-        const subtotal = unitPriceAfterDisc * qty;
-        const countryName = document.getElementById('countrySelect').value;
-        const shippingEntry = shippingRates.find(s => s.Location === countryName);
-        const region = shippingEntry ? shippingEntry.Region : 'Rest of world';
-        const weight = parseFloat(product.Weight) || 0;
-        const regionRateList = regionRates.filter(r => r.Region === region);
-        let shipping = 0;
-        for(let rate of regionRateList) {
-            if(weight <= parseFloat(rate.MaxWeight)) {
-                shipping = parseFloat(rate.Cost);
-                break;
-            }
-        }
-        if(region === 'South Africa' && weight>0 && shipping===0) shipping = 359;
-        const totalVal = subtotal + shipping;
-        const rate = exchangeRates[currentCurrency] || 1;
-        document.getElementById('orderSummary').innerHTML = `
-            Subtotal: ${(subtotal*rate).toFixed(2)} ${currentCurrency}<br>
-            Shipping: ${(shipping*rate).toFixed(2)} ${currentCurrency}<br>
-            Discount: ${discountApplied}%<br>
-            <strong>Total: ${(totalVal*rate).toFixed(2)} ${currentCurrency}</strong>
-        `;
-        currentOrder = { productId, productName: product.ProductName, type: product.Type, qty, unitPrice: unitPriceAfterDisc, subtotal, shipping, total: totalVal, currency: currentCurrency };
-        const shippingGroup = document.getElementById('shippingGroup');
-        if(product.Type === 'Digital') shippingGroup.style.display = 'none';
-        else shippingGroup.style.display = 'block';
-    }
-
-    async function processPayfast() {
-        if(!verifiedEmail) { alert("Please verify your email first."); return; }
-        const custName = document.getElementById('custName').value;
-        const phone = document.getElementById('custPhone').value;
-        let addr = document.getElementById('shippingAddr').value;
-        const country = document.getElementById('countrySelect').value;
-        if(!custName || !phone) { alert("Please fill in name and phone."); return; }
-        if(currentOrder.type !== 'Digital' && !addr) { alert("Please provide shipping address."); return; }
-        if(currentOrder.type === 'Digital') addr = 'N/A';
-        const confirmMsg = `Confirm order:\nProduct: ${currentOrder.productName}\nQuantity: ${currentOrder.qty}\nTotal: ${(currentOrder.total*exchangeRates[currentCurrency]).toFixed(2)} ${currentCurrency}\n\nProceed to payment?`;
-        if(!confirm(confirmMsg)) return;
-
-        // 1. Save order to sheet
-        const orderData = {
-            action: 'order',
-            customerName: custName, customerEmail: verifiedEmail, customerPhone: phone,
-            shippingAddress: addr, productId: currentOrder.productId, productName: currentOrder.productName,
-            type: currentOrder.type, quantity: currentOrder.qty, unitPrice: currentOrder.unitPrice,
-            discountPercent: 0, discountAmount: 0, subtotal: currentOrder.subtotal,
-            shippingCost: currentOrder.shipping, total: currentOrder.total, currency: currentOrder.currency,
-            paymentGateway: "Payfast"
-        };
-        const orderResp = await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'text/plain'} });
-        const orderResult = await orderResp.json();
-
-        // 2. Request signed Payfast URL from server
-        const payfastRequest = {
-            action: 'payfast',
-            amount: (currentOrder.total * (exchangeRates[currentCurrency]||1)).toFixed(2),
-            itemName: currentOrder.productName,
-            email: verifiedEmail,
-            orderId: orderResult.orderId,
-            returnUrl: window.location.href,
-            cancelUrl: window.location.href,
-            notifyUrl: APPSCRIPT_URL  // You can set a dedicated IPN endpoint later
-        };
-        const pfResp = await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(payfastRequest), headers:{'Content-Type':'text/plain'} });
-        const pfResult = await pfResp.json();
-        if(pfResult.redirectUrl) {
-            window.location.href = pfResult.redirectUrl;
-        } else {
-            alert("Could not initiate Payfast payment.");
-        }
-    }
-
-    function renderPayPalButton() {
-        if (typeof paypal === 'undefined') {
-            setTimeout(renderPayPalButton, 500);
-            return;
-        }
-        const container = document.getElementById('paypal-button-container');
-        if(!container) return;
-        container.innerHTML = '';
-        paypal.Buttons({
-            createOrder: (data, actions) => {
-                if(!verifiedEmail) throw new Error("Email not verified");
-                const totalInCurrency = (currentOrder.total * (exchangeRates[currentCurrency]||1)).toFixed(2);
-                return actions.order.create({
-                    purchase_units: [{ amount: { value: totalInCurrency, currency_code: currentCurrency } }],
-                    payer: { email_address: verifiedEmail }
-                });
-            },
-            onApprove: async (data, actions) => {
-                const capture = await actions.order.capture();
-                const orderData = { action: 'order', ...currentOrder, paymentGateway: "PayPal", transactionId: capture.id };
-                await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(orderData), headers:{'Content-Type':'text/plain'} });
-                document.getElementById('modalMsg').innerHTML = `Payment successful! Transaction ID: ${capture.id}<br>Thank you.`;
-                document.getElementById('statusModal').style.display = 'flex';
-            },
-            onError: (err) => {
-                document.getElementById('modalMsg').innerText = "Payment failed. Please try again.";
-                document.getElementById('statusModal').style.display = 'flex';
-            }
-        }).render('#paypal-button-container');
-    }
-
-    async function submitContactForm(e) {
-        e.preventDefault();
-        const data = {
-            action: 'contact',
-            name: document.getElementById('contactName').value,
-            email: document.getElementById('contactEmail').value,
-            phone: document.getElementById('contactPhone').value,
-            country: document.getElementById('contactCountry').value,
-            message: document.getElementById('contactMsg').value
-        };
-        try {
-            await fetch(APPSCRIPT_URL, { method:'POST', body: JSON.stringify(data), headers:{'Content-Type':'text/plain'} });
-            alert("Message sent! We'll get back to you soon.");
-            document.getElementById('contactForm').reset();
-        } catch(err) { alert("Error sending message. Please try again."); }
-    }
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.getElementById(pageId).classList.add('active-page');
-        const titles = { home: siteVars.HomePageTitle || "Home", order: "Order", about: "About", contact: "Contact" };
-        document.getElementById('pageTitle').innerText = titles[pageId] || pageId;
-        if(pageId === 'order' && verifiedEmail) document.getElementById('orderRestFields').style.display = 'block';
-        if(pageId === 'order') renderPayPalButton();
-        if(pageId === 'home') startCarousel();
-    }
-
-    function closeModal() {
-        document.getElementById('statusModal').style.display = 'none';
-    }
-
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element');
-    }
-    window.googleTranslateElementInit = googleTranslateElementInit;
-
-    fetchAllData();
-</script>
+        // Run when page loads
+        applySettings().catch(err => console.error('Error applying settings:', err));
+    </script>
 </body>
 </html>
