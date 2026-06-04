@@ -84,29 +84,30 @@
             pointer-events: none; z-index: 1;
         }
 
-        /* ---------- MAIN CONTENT ---------- */
+        /* ---------- MAIN CONTENT AREA ---------- */
         .content {
             padding: 2rem;
             max-width: 960px;
             margin: 0 auto;
         }
 
-        /* ---- About Section ---- */
-        .about-section {
-            margin-top: 2rem;
+        /* All page sections hidden by default */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
         }
 
-        /* Floating image 1: top left, text wraps around */
+        /* ---- About Section ---- */
         .about-img-1 {
             float: left;
             margin: 0 1.5rem 1rem 0;
             max-width: 300px;
-            width: 40%;           /* scales nicely on mobile */
+            width: 40%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
-        /* Floating image 2: bottom right of extended bio */
         .about-img-2 {
             float: right;
             margin: 0 0 1rem 1.5rem;
@@ -115,22 +116,18 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
         .about-text {
             line-height: 1.6;
-            overflow: hidden;   /* clearfix for floats */
+            overflow: hidden;
         }
-
         .bio-toggle {
             color: var(--primary-color, #194373);
             cursor: pointer;
             font-weight: 600;
             text-decoration: underline;
-            /* inline by default, so it sits right after the text */
         }
-
         .bio-extended {
-            display: none;       /* hidden initially */
+            display: none;
             margin-top: 0.5rem;
         }
 
@@ -182,34 +179,47 @@
         </nav>
     </div>
 
-    <!-- ================== MAIN CONTENT ================== -->
+    <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- About Section -->
-        <div class="about-section" id="aboutSection">
-            <!-- Image 1 (floated left) -->
-            <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+        <!-- Home Section (visible by default) -->
+        <div class="page-section active" id="home-section">
+            <h2>Welcome!</h2>
+            <p>This is the home page, styled live from your Google Sheet.</p>
+            <p>Use the icons above to navigate.</p>
+        </div>
 
-            <div class="about-text" id="aboutTextContainer">
-                <!-- Short bio paragraph (inline read more) -->
-                <p id="aboutShortBioParagraph">
-                    <span id="aboutShortBioText"></span>
-                    <span class="bio-toggle" id="bioToggleMore"> read more...</span>
-                </p>
-
-                <!-- Extended bio area (hidden initially) -->
-                <div class="bio-extended" id="bioExtended">
-                    <!-- Image 2 (floated right inside extended bio) -->
-                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-                    <p id="aboutExtendedBioText"></p>
-                    <span class="bio-toggle" id="bioToggleLess"> read less...</span>
+        <!-- About Section (hidden) -->
+        <div class="page-section" id="about-section">
+            <div class="about-section-content">
+                <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <div class="about-text" id="aboutTextContainer">
+                    <p id="aboutShortBioParagraph">
+                        <span id="aboutShortBioText"></span>
+                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    </p>
+                    <div class="bio-extended" id="bioExtended">
+                        <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                        <p id="aboutExtendedBioText"></p>
+                        <span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Placeholder for future pages -->
+        <div class="page-section" id="order-section">
+            <h2>Order</h2>
+            <p>Order page coming soon.</p>
+        </div>
+        <div class="page-section" id="contact-section">
+            <h2>Contact</h2>
+            <p>Contact form coming soon.</p>
         </div>
     </div>
 
     <script>
         // ==============================================
-        // 🔧 REPLACE WITH YOUR WEB APP URL (two places)
+        // 🔧 REPLACE WITH YOUR WEB APP URL (only once)
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
 
@@ -224,11 +234,44 @@
             return await res.json();
         }
 
-        // ---------- APPLY SETTINGS (header) ----------
+        // ---------- SPA NAVIGATION LOGIC ----------
+        function showPage(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Show the target section
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active');
+            }
+            // Update the navbar title
+            updateNavTitle(sectionId);
+        }
+
+        function updateNavTitle(sectionId) {
+            const titleEl = document.getElementById('pageTitleDisplay');
+            // We'll get the title from the settings object, but we may not have it yet at click time.
+            // So we'll store settings globally, or we can set a default based on section ID.
+            // For now, we'll use the stored settings if available, else fallback.
+            const pageTitles = {
+                'home-section': window.appSettings?.HomePageTitle || 'Home',
+                'about-section': window.appSettings?.AboutPageTitle || 'About',
+                'order-section': window.appSettings?.OrderPageTitle || 'Order',
+                'contact-section': window.appSettings?.ContactPageTitle || 'Contact'
+            };
+            titleEl.textContent = pageTitles[sectionId] || 'Home';
+            titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
+        }
+
+        // ---------- APPLY SETTINGS (header + nav) ----------
         async function applySettings() {
             const s = await fetchSettings();
             const settings = {};
             s.forEach(item => { settings[item.Setting] = item.Value; });
+
+            // Store globally so navigation can use it
+            window.appSettings = settings;
 
             // Page colors
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
@@ -259,24 +302,30 @@
             // Subtitle
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Navigation icons (with Home link fixed)
+            // Navigation icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
 
             const navItems = [
-                { setting: 'NavIconURLHome', href: '/' },               // ← home page
-                { setting: 'NavIconURLOrder', href: '#' },
-                { setting: 'NavIconURLAbout', href: '#' },
-                { setting: 'NavIconURLContact', href: '#' },
-                { setting: 'NavIconURLLinkedIn', href: '#', external: true }
+                { setting: 'NavIconURLHome', section: 'home-section' },
+                { setting: 'NavIconURLOrder', section: 'order-section' },
+                { setting: 'NavIconURLAbout', section: 'about-section' },
+                { setting: 'NavIconURLContact', section: 'contact-section' },
+                { setting: 'NavIconURLLinkedIn', external: true }
             ];
 
             navItems.forEach(item => {
                 const url = settings[item.setting];
                 if (url && url.trim() !== '') {
                     const a = document.createElement('a');
-                    a.href = item.href;
-                    if (item.external) a.target = '_blank';
+                    a.href = '#';  // no real link, JavaScript handles navigation
+                    if (item.external) {
+                        a.href = url;
+                        a.target = '_blank';
+                    } else if (item.section) {
+                        a.dataset.section = item.section;
+                    }
+
                     const img = document.createElement('img');
                     img.src = url;
                     img.alt = item.setting.replace('NavIconURL', '');
@@ -285,23 +334,34 @@
                 }
             });
 
-            // Page title in navbar (use AboutPageTitle if available, else default)
-            const pageTitle = settings.AboutPageTitle || 'About';
-            const ptEl = document.getElementById('pageTitleDisplay');
-            ptEl.textContent = pageTitle;
-            ptEl.style.color = settings.PrimaryColor || '#194373';
+            // Add click listener to the nav container (event delegation)
+            navContainer.addEventListener('click', (e) => {
+                // Find the closest 'a' tag
+                const link = e.target.closest('a');
+                if (!link) return;
+                // If it's an external link, let it be
+                if (link.target === '_blank') return;
+                e.preventDefault();
+                const section = link.dataset.section;
+                if (section) {
+                    showPage(section);
+                }
+            });
 
-            // CSS variable for bio toggles
+            // Set CSS variable for bio toggles
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
+
+            // Set initial nav title (home page)
+            updateNavTitle('home-section');
         }
 
-        // ---------- POPULATE ABOUT SECTION ----------
+        // ---------- POPULATE ABOUT SECTION (data) ----------
         async function loadAboutSection() {
             const data = await fetchAboutData();
             const about = {};
             data.forEach(item => { about[item.Setting] = item.Value; });
 
-            // Image 1 (top left)
+            // Image 1
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) {
                 img1.src = about.AuthorImage1URL;
@@ -310,7 +370,7 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 (inside extended bio, bottom right)
+            // Image 2
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
@@ -319,13 +379,13 @@
                 img2.style.display = 'none';
             }
 
-            // Short bio text (inside the paragraph)
+            // Short bio
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
 
-            // Extended bio text
+            // Extended bio
             document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
 
-            // Toggle logic (inline read more/less)
+            // Toggle logic
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtendedDiv = document.getElementById('bioExtended');
@@ -337,7 +397,7 @@
 
             toggleLess.addEventListener('click', () => {
                 bioExtendedDiv.style.display = 'none';
-                toggleMore.style.display = 'inline';  // back to inline
+                toggleMore.style.display = 'inline';
             });
         }
 
@@ -345,6 +405,7 @@
         async function init() {
             await applySettings();
             await loadAboutSection();
+            // Show home page by default (already has class "active")
         }
 
         init().catch(err => console.error('Error initializing page:', err));
