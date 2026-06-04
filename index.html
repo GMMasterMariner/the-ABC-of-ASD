@@ -82,7 +82,12 @@
         }
 
         /* Currency selector */
-        .nav-right { display: flex; align-items: center; z-index: 2; }
+        .nav-right { display: flex; align-items: center; z-index: 2; gap: 0.4rem; }
+        .currency-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #194373;
+        }
         .currency-btn {
             display: flex; align-items: center;
             gap: 0.4rem;
@@ -154,14 +159,15 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;   /* top‑align */
+            justify-content: flex-start;
             text-align: center;
             box-sizing: border-box;
-            overflow-y: auto;             /* scroll if text overflows */
+            overflow-y: auto;
         }
         .home-col-left-box h3 {
             font-weight: 700;
-            margin-bottom: 1rem;          /* space between heading and paragraph */
+            font-size: 1rem;            /* match product card title size */
+            margin-bottom: 1rem;
         }
         .home-col-left-box p {
             line-height: 1.6;
@@ -200,7 +206,7 @@
             padding: 1.5rem;
             text-align: center;
         }
-        .product-card h4 { font-weight: 700; margin-bottom: 0.5rem; }
+        .product-card h4 { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
         .product-card .price {
             font-weight: 700;
@@ -242,7 +248,7 @@
             max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;               /* hidden until read more */
+            display: none;
         }
         .about-text { line-height: 1.6; }
         .bio-toggle {
@@ -295,9 +301,22 @@
             resize: vertical;
             min-height: 120px;
         }
-        .contact-form button {
+        .contact-form .btn-wrapper {
+            text-align: center;
             margin-top: 1.5rem;
         }
+        .contact-form button {
+            background-color: var(--cta-color, #f29b2a);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .contact-form button:hover { opacity: 0.9; }
+        .contact-form button:disabled { opacity: 0.6; cursor: not-allowed; }
         .contact-result {
             text-align: center;
             margin-top: 2rem;
@@ -391,9 +410,10 @@
         <nav class="navbar" id="navbar">
             <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
             <div class="nav-left" id="navIcons"></div>
-            <div class="nav-center" id="pageTitleDisplay">Home</div>
+            <div class="nav-center" id="pageTitleDisplay"></div>   <!-- empty by default -->
             <div class="nav-right" id="currencySelectorContainer">
-                <!-- injected by JS -->
+                <span class="currency-label">Currency:</span>
+                <!-- currency button & dropdown injected by JS -->
             </div>
         </nav>
     </div>
@@ -468,7 +488,9 @@
                         <label for="message">Message *</label>
                         <textarea id="message" name="message" required></textarea>
                     </div>
-                    <button type="submit" class="btn" id="sendButton">Send Message</button>
+                    <div class="btn-wrapper">
+                        <button type="submit" id="sendButton">Send Message</button>
+                    </div>
                 </form>
                 <div class="contact-result" id="contactResult"></div>
             </div>
@@ -486,6 +508,7 @@
         let exchangeRates = [];
         let selectedCurrency = null;
         let products = [];
+        let aboutData = {};
 
         // ---------- SINGLE FETCH FOR ALL DATA ----------
         async function fetchAllSiteData() {
@@ -496,7 +519,12 @@
         // ---------- CURRENCY FUNCTIONS ----------
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
-            container.innerHTML = '';
+            // Clear previously injected elements (keep the label)
+            const existingBtn = document.getElementById('currencyBtn');
+            const existingDropdown = document.getElementById('currencyDropdown');
+            if (existingBtn) existingBtn.remove();
+            if (existingDropdown) existingDropdown.remove();
+
             if (!exchangeRates.length) return;
 
             const btn = document.createElement('div');
@@ -588,7 +616,6 @@
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-            // Map some common codes to explicit symbols if Intl fails
             const symbolMap = {
                 'USD': 'US$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$',
                 'ZAR': 'R', 'CNY': '¥', 'INR': '₹', 'KRW': '₩', 'BRL': 'R$', 'TRY': '₺',
@@ -669,7 +696,7 @@
             setInterval(rotate, interval);
         }
 
-        // ---------- DIRECT SETTINGS / HOME / ABOUT LOADERS ----------
+        // ---------- DIRECT DATA LOADERS ----------
         function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
@@ -805,10 +832,8 @@
             refreshAllPrices();
         }
 
-        function loadAboutSectionDirect(aboutArray) {
-            const about = {};
-            aboutArray.forEach(item => { about[item.Setting] = item.Value; });
-
+        function loadAboutSectionDirect(about) {
+            aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) {
                 img1.src = about.AuthorImage1URL;
@@ -820,7 +845,9 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                img2.style.display = 'none'; // initially hidden, shown on read more
+                img2.style.display = 'none'; // shown on read more
+            } else {
+                img2.style.display = 'none';
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -829,6 +856,11 @@
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
+
+            // Reset state
+            bioExtended.style.display = 'none';
+            toggleMore.style.display = 'inline';
+            img2.style.display = 'none';
 
             toggleMore.addEventListener('click', () => {
                 if (about.AuthorImage2URL) {
@@ -850,9 +882,20 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
+
             updateNavTitle(sectionId);
+
+            // Toggle currency selector visibility
+            const currencyContainer = document.getElementById('currencySelectorContainer');
+            if (sectionId === 'contact-section' || sectionId === 'about-section') {
+                currencyContainer.style.display = 'none';
+            } else {
+                currencyContainer.style.display = 'flex';   // default flex
+            }
+
             document.getElementById('navIcons').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+
             if (sectionId === 'home-section') {
                 setTimeout(equalizeHeights, 50);
             }
@@ -860,13 +903,13 @@
 
         function updateNavTitle(sectionId) {
             const titles = {
-                'home-section': appSettings?.HomePageTitle || 'Home',
+                'home-section': '',                           // no title on home page
                 'about-section': appSettings?.AboutPageTitle || 'About',
                 'order-section': appSettings?.OrderPageTitle || 'Order',
                 'contact-section': appSettings?.ContactPageTitle || 'Contact'
             };
             const titleEl = document.getElementById('pageTitleDisplay');
-            titleEl.textContent = titles[sectionId] || 'Home';
+            titleEl.textContent = titles[sectionId] || '';
             titleEl.style.color = appSettings?.PrimaryColor || '#194373';
         }
 
@@ -959,13 +1002,8 @@
                     loadHomePageDirect(allData.home);
                 }
 
-                // Load About data if present
                 if (allData.about) {
                     loadAboutSectionDirect(allData.about);
-                } else if (allData.settings) {
-                    // The about data may be under a different key; our combined endpoint doesn't include About sheet.
-                    // We'll fetch it separately for now (still one extra request, can be merged later).
-                    // For now, we load about on demand.
                 }
 
                 setupHamburger();
