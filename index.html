@@ -196,7 +196,7 @@
             justify-content: center;
         }
         .carousel-slide img {
-            width: 70%;
+            width: 70%;                   /* desktop size */
             height: auto;
             max-height: 100%;
             object-fit: contain;
@@ -419,10 +419,10 @@
             }
 
             .carousel-slide img {
-                width: 60%;
+                width: 60%;               /* mobile size */
             }
             .carousel-wrapper {
-                padding-bottom: 1.8rem;
+                padding-bottom: 1.8rem;   /* space for dots */
             }
 
             .home-headline {
@@ -691,31 +691,19 @@
             return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
 
-        // 🔥 CURRENCY SYMBOLS – FULL MAP (covers all your exchange rates)
-        const currencySymbols = {
-            'ZAR': 'R',   'USD': 'US$', 'EUR': '€',   'GBP': '£',
-            'AUD': 'A$',  'CAD': 'C$',  'SGD': 'S$',  'NOK': 'kr',
-            'SEK': 'kr',  'DKK': 'kr',  'JPY': '¥',   'CNY': '¥',
-            'KRW': '₩',   'INR': '₹',   'BRL': 'R$',  'TRY': '₺',
-            'NGN': '₦',   'PHP': '₱',   'IDR': 'Rp',  'MXN': 'MX$',
-            'HKD': 'HK$', 'NZD': 'NZ$', 'AED': 'د.إ', 'CLP': 'CLP$',
-            'ZMW': 'ZK',  'EGP': 'LE',  'MYR': 'RM',  'PLN': 'zł'
-        };
-
+        // 🔥 CURRENCY FORMAT – uses Symbol from ExchangeRates sheet
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
 
-            // Format the number with thousand separators and two decimals
+            // Format number with thousand separators and two decimals
             const formattedNumber = converted.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
 
-            // Get the symbol from the map, or fallback to code itself
-            const symbol = currencySymbols[code] || code + ' ';
-
-            // For most currencies, symbol goes before the amount. AED is fine as prefix too.
+            // Symbol from selectedCurrency object (fetched from sheet)
+            const symbol = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code;
             return symbol + ' ' + formattedNumber;
         }
 
