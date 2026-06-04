@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
 
     <style>
-        /* ---------- BASE ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -45,13 +44,8 @@
         .banner-logo img { max-height: 45px; display: block; }
 
         .banner-text { width: 100%; text-align: center; }
-        .banner-text h1 {
-            font-size: 1.4rem; font-weight: 700;
-            line-height: 1.2; margin: 0;
-        }
-        .banner-text h1 .abbreviation {
-            font-weight: 200; opacity: 0.95;
-        }
+        .banner-text h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin: 0; }
+        .banner-text h1 .abbreviation { font-weight: 200; opacity: 0.95; }
         .banner-text h2 {
             font-size: 1.2rem;
             letter-spacing: 0.4px;
@@ -68,39 +62,22 @@
             border-top: 1px solid rgba(0,0,0,0.05);
             min-height: 48px;
         }
-
         .hamburger {
             display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            line-height: 1;
-            cursor: pointer;
-            padding: 0.2rem;
-            margin-right: 1rem;
-            z-index: 3;
+            background: none; border: none;
+            font-size: 1.5rem; line-height: 1;
+            cursor: pointer; padding: 0.2rem;
+            margin-right: 1rem; z-index: 3;
             color: #194373;
         }
-
-        .nav-left {
-            display: flex; align-items: center; gap: 1.2rem;
-            z-index: 2;
-        }
+        .nav-left { display: flex; align-items: center; gap: 1.2rem; z-index: 2; }
         .nav-left a {
             display: inline-flex; align-items: center;
-            text-decoration: none;
-            color: #194373; /* for text labels */
+            text-decoration: none; color: #194373;
         }
-        .nav-left a img {
-            height: 30px;
-            transition: transform 0.2s ease;
-        }
+        .nav-left a img { height: 30px; transition: transform 0.2s ease; }
         .nav-left a:hover img { transform: scale(1.15); }
-
-        /* Text labels: hidden on desktop (use title) */
-        .nav-label {
-            display: none;
-        }
+        .nav-label { display: none; }
 
         .nav-center {
             position: absolute; left: 50%; transform: translateX(-50%);
@@ -110,49 +87,33 @@
         }
 
         /* ---------- MAIN CONTENT ---------- */
-        .content {
-            padding: 2rem;
-            max-width: 960px;
-            margin: 0 auto;
-        }
+        .content { padding: 2rem; max-width: 960px; margin: 0 auto; }
         .page-section { display: none; }
         .page-section.active { display: block; }
 
-        /* ---- About Section ---- */
-        .about-section-content { /* clearfix */ }
-        .clearfix::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
+        /* About */
+        .about-section-content { }
+        .clearfix::after { content: ""; display: table; clear: both; }
 
         .about-img-1 {
             float: left;
-            margin: 0 1.5rem 1rem 0;
+            margin: 0 1.5rem 0.5rem 0;   /* bottom margin reduced */
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
-        .about-text {
-            line-height: 1.6;
-        }
-
+        .about-text { line-height: 1.6; }
         .bio-toggle {
             color: var(--primary-color, #194373);
-            cursor: pointer;
-            font-weight: 600;
+            cursor: pointer; font-weight: 600;
             text-decoration: underline;
         }
-
         .bio-extended {
             display: none;
             margin-top: 0.5rem;
-            /* clearfix for float right image */
-            overflow: auto; /* or clearfix */
+            overflow: auto;
         }
-        /* Image 2: float right inside extended bio */
         .about-img-2 {
             float: right;
             margin: 0 0 1rem 1.5rem;
@@ -160,6 +121,12 @@
             width: 40%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Justify all bio text */
+        #aboutShortBioParagraph,
+        #aboutExtendedBioText {
+            text-align: justify;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -174,46 +141,39 @@
             .hamburger { display: block; }
             .nav-left {
                 position: absolute;
-                top: 100%;
-                left: 0;
+                top: 100%; left: 0;
                 background: white;
                 flex-direction: column;
-                gap: 0.3rem;
-                padding: 0.8rem;
+                gap: 0.2rem;
+                padding: 0.6rem;           /* uniform reduced padding */
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 display: none;
                 z-index: 10;
-                min-width: 160px;  /* narrower */
+                min-width: 150px;
+                align-items: flex-start;   /* left‑align all links */
             }
             .nav-left.open { display: flex; }
 
-            /* Show text labels on mobile */
+            /* Show labels, fixed icon width for alignment */
             .nav-label {
                 display: inline-block;
-                margin-left: 0.5rem;
+                margin-left: 0.6rem;       /* space between icon and text */
                 font-size: 0.9rem;
                 font-weight: 500;
             }
             .nav-left a img {
-                height: 24px;
+                width: 24px;               /* fixed width so all icons align */
+                height: auto;
             }
-            /* Adjust link styles for dropdown */
             .nav-left a {
-                padding: 0.3rem 0;
-                gap: 0.3rem;
+                padding: 0.2rem 0;
+                gap: 0;                    /* we control spacing manually */
             }
 
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
-        }
 
-        @media (max-width: 600px) {
-            .banner-text h1 { font-size: 1rem; }
-            .banner-text h2 { font-size: 0.9rem; }
-            .banner { min-height: 46px; }
-            .banner-logo img { max-height: 28px; }
-
-            /* About: stack normally, no floats */
+            /* Mobile About: image 1 still centered, no float */
             .about-img-1 {
                 float: none;
                 display: block;
@@ -221,13 +181,35 @@
                 width: 80%;
                 max-width: 250px;
             }
-            .about-img-2 {
+            /* Extended bio uses flex to reorder image2 after text */
+            .bio-extended {
+                display: none;   /* hidden by default, when shown we set display:flex via JS? Actually we'll handle with class */
+                flex-direction: column;
+            }
+            .bio-extended.show-flex {
+                display: flex;
+            }
+            .bio-extended .about-img-2 {
+                order: 2;           /* after the text */
                 float: none;
-                display: block;
                 margin: 1rem auto 0 auto;
                 width: 80%;
                 max-width: 250px;
+                display: block;
             }
+            .bio-extended #aboutExtendedBioText {
+                order: 1;
+            }
+            .bio-extended .bio-toggle {
+                order: 3;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .banner-text h1 { font-size: 1rem; }
+            .banner-text h2 { font-size: 0.9rem; }
+            .banner { min-height: 46px; }
+            .banner-logo img { max-height: 28px; }
         }
 
         @media (max-width: 400px) {
@@ -259,13 +241,11 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2>Welcome!</h2>
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About -->
         <div class="page-section" id="about-section">
             <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -275,6 +255,7 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
+                        <!-- image2 kept before text for desktop float, CSS reorders on mobile -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <p id="aboutExtendedBioText"></p>
                         <span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -283,7 +264,6 @@
             </div>
         </div>
 
-        <!-- Placeholders -->
         <div class="page-section" id="order-section">
             <h2>Order</h2>
             <p>Order page coming soon.</p>
@@ -300,7 +280,6 @@
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
 
-        // ---------- FETCH HELPERS ----------
         async function fetchSettings() {
             const res = await fetch(API_URL);
             return await res.json();
@@ -311,28 +290,22 @@
             return await res.json();
         }
 
-        // ---------- RESET ABOUT BIO ----------
         function resetAboutBio() {
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
+                bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
             }
         }
 
-        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
-            // Reset about bio state whenever we switch pages (even if going to About)
             resetAboutBio();
-
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
-
             updateNavTitle(sectionId);
-
-            // Close mobile menu
             document.getElementById('navIcons').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
         }
@@ -349,7 +322,6 @@
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
-        // ---------- HAMBURGER ----------
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
@@ -365,7 +337,6 @@
             });
         }
 
-        // ---------- APPLY SETTINGS ----------
         async function applySettings() {
             const s = await fetchSettings();
             const settings = {};
@@ -396,7 +367,6 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Navigation with labels
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -418,7 +388,6 @@
                     } else {
                         a.dataset.section = item.section;
                     }
-                    // Set title for desktop tooltip
                     a.title = item.label;
 
                     const img = document.createElement('img');
@@ -426,7 +395,6 @@
                     img.alt = item.label;
                     a.appendChild(img);
 
-                    // Text label (hidden on desktop, shown on mobile)
                     const span = document.createElement('span');
                     span.className = 'nav-label';
                     span.textContent = item.label;
@@ -448,7 +416,6 @@
             updateNavTitle('home-section');
         }
 
-        // ---------- LOAD ABOUT DATA ----------
         async function loadAboutSection() {
             const data = await fetchAboutData();
             const about = {};
@@ -473,25 +440,30 @@
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
             document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
 
-            // Toggle logic
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                bioExtended.style.display = 'block';
+                // On mobile we need flex display, on desktop we use block
+                if (window.innerWidth <= 768) {
+                    bioExtended.classList.add('show-flex');
+                    bioExtended.style.display = 'flex';  // override display:none
+                } else {
+                    bioExtended.style.display = 'block';
+                }
                 toggleMore.style.display = 'none';
             });
+
             toggleLess.addEventListener('click', () => {
                 bioExtended.style.display = 'none';
+                bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
             });
 
-            // Ensure initial state (collapsed)
             resetAboutBio();
         }
 
-        // ---------- INIT ----------
         async function init() {
             await applySettings();
             await loadAboutSection();
