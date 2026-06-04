@@ -17,7 +17,7 @@
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            padding-top: 108px;      /* exact header height desktop */
+            padding-top: 108px;
         }
 
         /* ---------- STICKY HEADER ---------- */
@@ -45,17 +45,10 @@
 
         .banner-text { width: 100%; text-align: center; }
         .banner-text h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin: 0; }
-        .banner-text h1 .abbreviation {
-            font-weight: 200;
-            opacity: 0.95;
-            letter-spacing: -0.3px;
-        }
+        .banner-text h1 .abbreviation { font-weight: 200; opacity: 0.95; letter-spacing: -0.3px; }
         .banner-text h2 {
-            font-size: 1.2rem;
-            letter-spacing: 0.4px;
-            font-weight: 400;
-            line-height: 1.3; margin: 0.25rem 0 0 0;
-            opacity: 0.9;
+            font-size: 1.2rem; letter-spacing: 0.4px; font-weight: 400;
+            line-height: 1.3; margin: 0.25rem 0 0 0; opacity: 0.9;
         }
 
         .navbar {
@@ -75,10 +68,7 @@
             color: #194373;
         }
         .nav-left { display: flex; align-items: center; gap: 1.2rem; z-index: 2; }
-        .nav-left a {
-            display: inline-flex; align-items: center;
-            text-decoration: none; color: #194373;
-        }
+        .nav-left a { display: inline-flex; align-items: center; text-decoration: none; color: #194373; }
         .nav-left a img { height: 30px; transition: transform 0.2s ease; }
         .nav-left a:hover img { transform: scale(1.15); }
         .nav-label { display: none; }
@@ -91,45 +81,54 @@
         }
 
         /* ---------- MAIN CONTENT ---------- */
-        .content {
-            padding: 2rem;
-            max-width: 960px;
-            margin: 0 auto;
-        }
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-            padding-top: 0.5rem;        /* uniform start spacing */
-        }
+        .content { padding: 2rem; max-width: 960px; margin: 0 auto; }
+        .page-section { display: none; }
+        .page-section.active { display: block; padding-top: 0.5rem; }
 
-        /* About */
+        /* ---- About Section (desktop) ---- */
         .about-section-content { }
-        .clearfix::after { content: ""; display: table; clear: both; }
 
         .about-img-1 {
             float: left;
-            margin: 0.5rem 1.5rem 0.3rem 0;   /* top increased slightly */
+            margin: 0.5rem 1.5rem 0.3rem 0;
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        /* Wrapper that holds the float placeholder, the absolute image, and the text */
         .bio-wrapper {
-            /* Contains the float image and the text paragraphs */
+            position: relative;           /* for absolute positioning of image2 */
+            /* clearfix */
+        }
+        .bio-wrapper::after {
+            content: "";
+            display: table;
+            clear: both;
         }
 
-        /* Image 2 – floated right, placed before the text so it wraps */
-        .about-img-2 {
+        /* Invisible floated placeholder – forces text to wrap around image2 dimensions */
+        .img2-placeholder {
             float: right;
+            width: 40%;
+            max-width: 300px;
             margin: 0 0 1rem 1.5rem;
+            visibility: hidden;
+            /* height will be set via JS */
+        }
+
+        /* Actual image2 – absolutely positioned at bottom right of .bio-wrapper */
+        .about-img-2 {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;               /* hidden initially */
+            display: none;                 /* hidden initially */
+            z-index: 2;
         }
 
         .about-text { line-height: 1.6; }
@@ -138,11 +137,7 @@
             cursor: pointer; font-weight: 600;
             text-decoration: underline;
         }
-
-        .bio-extended {
-            display: none;                /* hidden initially */
-            margin-top: 0.5rem;
-        }
+        .bio-extended { display: none; margin-top: 0.5rem; }
 
         #aboutShortBioParagraph,
         #aboutExtendedBioText {
@@ -151,69 +146,32 @@
 
         /* ---- Contact Form ---- */
         .contact-form {
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 500px; margin: 0 auto;
         }
         .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            display: flex; gap: 1rem; margin-top: 1rem;
         }
-        .form-row .form-group {
-            flex: 1;
-            margin-top: 0;
+        .form-row .form-group { flex: 1; margin-top: 0; }
+        .form-group { margin-top: 0.5rem; }
+        .form-group:first-child { margin-top: 0; }
+        .contact-form label { display: block; font-weight: 600; margin-bottom: 0.2rem; }
+        .contact-form input, .contact-form textarea {
+            width: 100%; padding: 0.6rem; border: 1px solid #ccc;
+            border-radius: 4px; font-family: inherit; font-size: 1rem;
         }
-        .form-group {
-            margin-top: 0.5rem;
-        }
-        .form-group:first-child {
-            margin-top: 0;
-        }
-        .contact-form label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-        }
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 0.6rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
+        .contact-form textarea { resize: vertical; min-height: 120px; }
         .contact-form button {
             margin-top: 1.5rem;
             background-color: var(--primary-color, #194373);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
+            color: white; border: none;
+            padding: 0.8rem 2rem; font-size: 1rem;
+            border-radius: 4px; cursor: pointer;
             transition: background 0.2s;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+            display: block; margin-left: auto; margin-right: auto;
         }
-        .contact-form button:hover {
-            opacity: 0.9;
-        }
-        .contact-form button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .contact-result {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 1.1rem;
-            display: none;
-        }
+        .contact-form button:hover { opacity: 0.9; }
+        .contact-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
@@ -228,55 +186,37 @@
 
             .hamburger { display: block; }
             .nav-left {
-                position: absolute;
-                top: 100%; left: 0;
-                background: white;
-                flex-direction: column;
-                gap: 0.2rem;
-                padding: 0.4rem;
+                position: absolute; top: 100%; left: 0;
+                background: white; flex-direction: column;
+                gap: 0.2rem; padding: 0.4rem;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                display: none;
-                z-index: 10;
-                width: auto;
-                min-width: auto;
+                display: none; z-index: 10;
+                width: auto; min-width: auto;
                 align-items: flex-start;
             }
             .nav-left.open { display: flex; }
-
-            .nav-label {
-                display: inline-block;
-                margin-left: 0.6rem;
-                font-size: 0.9rem;
-                font-weight: 500;
-            }
-            .nav-left a img {
-                width: 24px;
-                height: auto;
-            }
-            .nav-left a {
-                padding: 0.2rem 0;
-                gap: 0;
-            }
-
+            .nav-label { display: inline-block; margin-left: 0.6rem; font-size: 0.9rem; font-weight: 500; }
+            .nav-left a img { width: 24px; height: auto; }
+            .nav-left a { padding: 0.2rem 0; gap: 0; }
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* About images – mobile stacking */
+            /* Mobile About: stack normally, no floats / absolute */
             .about-img-1 {
-                float: none;
-                display: block;
+                float: none; display: block;
                 margin: 0.5rem auto 1rem auto;
-                width: 80%;
-                max-width: 250px;
+                width: 80%; max-width: 250px;
             }
-            /* Image 2: reset to normal flow, displayed after text */
+            .img2-placeholder { display: none; }
             .about-img-2 {
-                float: none;
-                display: block !important;   /* overrides inline display:none when active */
+                position: static;          /* back to normal flow */
+                display: block !important;  /* overrides hide */
                 margin: 1rem auto 0 auto;
-                width: 80%;
-                max-width: 250px;
+                width: 80%; max-width: 250px;
                 order: 3;
+            }
+            .bio-wrapper {
+                position: static;
             }
             .bio-extended {
                 display: none;
@@ -286,20 +226,11 @@
                 display: flex;
             }
             .bio-extended #aboutExtendedBioText { order: 1; }
-            /* In mobile, image2 is placed after extended text via order */
-            .bio-extended .about-img-2 {
-                order: 3;
-            }
+            .bio-extended .about-img-2 { order: 3; }   /* image after text */
 
-            /* Stack form row on mobile */
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-                margin-top: 0.5rem;
-            }
-            .form-row .form-group:last-child {
-                margin-top: 0.5rem;
-            }
+            /* Stack form row */
+            .form-row { flex-direction: column; gap: 0; margin-top: 0.5rem; }
+            .form-row .form-group:last-child { margin-top: 0.5rem; }
         }
 
         @media (max-width: 600px) {
@@ -339,21 +270,23 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2>Welcome!</h2>
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About -->
+        <!-- About (final version) -->
         <div class="page-section" id="about-section">
-            <div class="about-section-content clearfix">
+            <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
-                    <!-- Bio wrapper: holds image2 (floated) and the two text paragraphs -->
-                    <div class="bio-wrapper clearfix">
-                        <!-- Image2 placed BEFORE the short bio so it affects wrapping -->
+                    <div class="bio-wrapper" id="bioWrapper">
+                        <!-- Invisible placeholder (float right) – sets text wrap area -->
+                        <div id="img2placeholder" class="img2-placeholder"></div>
+
+                        <!-- Actual image (absolute, bottom-right) -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+
                         <p id="aboutShortBioParagraph">
                             <span id="aboutShortBioText"></span>
                             <span class="bio-toggle" id="bioToggleMore"> read more...</span>
@@ -368,13 +301,11 @@
             </div>
         </div>
 
-        <!-- Order placeholder -->
         <div class="page-section" id="order-section">
             <h2>Order</h2>
             <p>Order page coming soon.</p>
         </div>
 
-        <!-- Contact -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
@@ -409,7 +340,6 @@
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
-        // ---------- FETCH HELPERS (parallel) ----------
         async function fetchSettings() {
             const res = await fetch(API_URL);
             return await res.json();
@@ -420,26 +350,28 @@
             return await res.json();
         }
 
-        // ---------- RESET ABOUT BIO ----------
         function resetAboutBio() {
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
             const img2 = document.getElementById('aboutImg2');
+            const placeholder = document.getElementById('img2placeholder');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
-                if (img2) img2.style.display = 'none';   // hide image2
+                if (img2) img2.style.display = 'none';
+                if (placeholder) {
+                    placeholder.style.width = '0';
+                    placeholder.style.height = '0';
+                }
             }
         }
 
-        // ---------- RESET CONTACT FORM ----------
         function resetContactForm(targetSection) {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
             const sendBtn = document.getElementById('sendButton');
             if (!form || !resultDiv) return;
-
             if (targetSection === 'contact-section') {
                 form.style.display = 'block';
                 form.reset();
@@ -452,11 +384,9 @@
             }
         }
 
-        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
             resetAboutBio();
             resetContactForm(sectionId);
-
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
@@ -477,7 +407,6 @@
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
-        // ---------- HAMBURGER ----------
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
@@ -493,7 +422,6 @@
             });
         }
 
-        // ---------- APPLY SETTINGS ----------
         function applySettings(settingsArray) {
             const settings = {};
             settingsArray.forEach(item => { settings[item.Setting] = item.Value; });
@@ -523,7 +451,7 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Build navigation
+            // Navigation
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -533,20 +461,15 @@
                 { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
                 { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
             ];
-
             navItems.forEach(item => {
                 const iconUrl = settings[item.iconSetting];
                 if (!iconUrl || iconUrl.trim() === '') return;
-
                 const a = document.createElement('a');
                 a.title = item.label;
-
                 if (item.externalLinkSetting) {
                     let linkUrl = settings[item.externalLinkSetting];
                     if (linkUrl && linkUrl.trim() !== '') {
-                        if (!/^https?:\/\//i.test(linkUrl)) {
-                            linkUrl = 'https://' + linkUrl;
-                        }
+                        if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
                         a.href = linkUrl;
                         a.target = '_blank';
                     } else {
@@ -556,20 +479,16 @@
                     a.href = '#';
                     a.dataset.section = item.section;
                 }
-
                 const img = document.createElement('img');
                 img.src = iconUrl;
                 img.alt = item.label;
                 a.appendChild(img);
-
                 const span = document.createElement('span');
                 span.className = 'nav-label';
                 span.textContent = item.label;
                 a.appendChild(span);
-
                 navContainer.appendChild(a);
             });
-
             navContainer.addEventListener('click', (e) => {
                 const link = e.target.closest('a');
                 if (!link || link.target === '_blank') return;
@@ -582,7 +501,6 @@
             updateNavTitle('home-section');
         }
 
-        // ---------- LOAD ABOUT DATA (new structure) ----------
         function loadAboutSection(aboutArray) {
             const about = {};
             aboutArray.forEach(item => { about[item.Setting] = item.Value; });
@@ -596,11 +514,23 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 – just set src, keep hidden
+            // Image 2 and placeholder
             const img2 = document.getElementById('aboutImg2');
+            const placeholder = document.getElementById('img2placeholder');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // display will be toggled by read more/less
+                // When image loads, set placeholder dimensions
+                img2.addEventListener('load', () => {
+                    placeholder.style.width = img2.offsetWidth + 'px';
+                    placeholder.style.height = img2.offsetHeight + 'px';
+                });
+                if (img2.complete) {
+                    placeholder.style.width = img2.offsetWidth + 'px';
+                    placeholder.style.height = img2.offsetHeight + 'px';
+                }
+            } else {
+                placeholder.style.width = '0';
+                placeholder.style.height = '0';
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -611,9 +541,12 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // Show image2 and extended bio
+                // Show image2 and placeholder
                 if (about.AuthorImage2URL) {
                     img2.style.display = 'block';
+                    // Ensure placeholder size is up to date
+                    placeholder.style.width = img2.offsetWidth + 'px';
+                    placeholder.style.height = img2.offsetHeight + 'px';
                 }
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
@@ -627,15 +560,16 @@
             toggleLess.addEventListener('click', () => {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
-                img2.style.display = 'none';    // hide image2
+                img2.style.display = 'none';
+                placeholder.style.width = '0';
+                placeholder.style.height = '0';
                 toggleMore.style.display = 'inline';
             });
 
-            // Initial state: image hidden, extended hidden
+            // Initial state: image hidden, placeholder collapsed
             resetAboutBio();
         }
 
-        // ---------- CONTACT FORM HANDLING (with sending state) ----------
         function setupContactForm() {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
@@ -643,7 +577,6 @@
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const phone = document.getElementById('phone').value.trim();
@@ -667,12 +600,8 @@
                 params.append('message', message);
 
                 try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        body: params
-                    });
+                    const response = await fetch(API_URL, { method: 'POST', body: params });
                     const data = await response.json();
-
                     if (data.result === 'success') {
                         form.style.display = 'none';
                         resultDiv.style.display = 'block';
@@ -695,7 +624,6 @@
             });
         }
 
-        // ---------- INIT (parallel data fetch) ----------
         async function init() {
             try {
                 const [settingsData, aboutData] = await Promise.all([
