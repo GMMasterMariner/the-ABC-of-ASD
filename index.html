@@ -53,7 +53,9 @@
             font-weight: 200; opacity: 0.95;
         }
         .banner-text h2 {
-            font-size: 1.15rem; font-weight: 400;
+            font-size: 1.2rem;            /* slightly larger */
+            letter-spacing: 0.4px;        /* a touch wider */
+            font-weight: 400;
             line-height: 1.3; margin: 0.25rem 0 0 0;
             opacity: 0.9;
         }
@@ -66,6 +68,21 @@
             border-top: 1px solid rgba(0,0,0,0.05);
             min-height: 48px;
         }
+
+        /* Hamburger button – hidden on desktop */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0.2rem;
+            margin-right: 1rem;
+            z-index: 3;
+            color: #194373;   /* brand colour */
+        }
+
         .nav-left {
             display: flex; align-items: center; gap: 1.2rem;
             z-index: 2;
@@ -84,14 +101,13 @@
             pointer-events: none; z-index: 1;
         }
 
-        /* ---------- MAIN CONTENT AREA ---------- */
+        /* ---------- MAIN CONTENT ---------- */
         .content {
             padding: 2rem;
             max-width: 960px;
             margin: 0 auto;
         }
 
-        /* All page sections hidden by default */
         .page-section {
             display: none;
         }
@@ -99,7 +115,16 @@
             display: block;
         }
 
-        /* ---- About Section ---- */
+        /* ---- About Section (desktop) ---- */
+        .about-section-content {
+            /* clearfix for floats */
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
         .about-img-1 {
             float: left;
             margin: 0 1.5rem 1rem 0;
@@ -108,55 +133,108 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .about-img-2 {
-            float: right;
-            margin: 0 0 1rem 1.5rem;
-            max-width: 300px;
-            width: 40%;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+
         .about-text {
             line-height: 1.6;
-            overflow: hidden;
+            /* no overflow:hidden – text will wrap around the float */
         }
+
         .bio-toggle {
             color: var(--primary-color, #194373);
             cursor: pointer;
             font-weight: 600;
             text-decoration: underline;
         }
+
         .bio-extended {
             display: none;
             margin-top: 0.5rem;
+            position: relative;            /* for absolute positioning of image2 */
+            /* padding-bottom will be added dynamically for image2 height? We'll use min-height trick */
+            /* Actually we'll just let the container expand and place image2 absolutely at bottom right */
+        }
+
+        /* Image 2: absolute at bottom right on desktop */
+        .about-img-2 {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         /* ---------- RESPONSIVE ---------- */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            /* Banner: stack on very small screens? We'll keep left logo but adjust sizes */
             body { padding-top: 125px; }
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
             .banner-logo img { max-height: 35px; }
             .banner-text h1 { font-size: 1.1rem; }
-            .banner-text h2 { font-size: 1rem; }
-            .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
-            .nav-left { gap: 0.8rem; }
-            .nav-left a img { height: 24px; }
-            .nav-center { font-size: 0.95rem; }
+            .banner-text h2 { font-size: 1rem; letter-spacing: 0.2px; }
 
-            .about-img-1,
-            .about-img-2 {
-                float: none;
+            /* Hamburger visible, nav-left becomes vertical dropdown */
+            .hamburger {
                 display: block;
-                margin: 0 auto 1rem auto;
-                width: 70%;
-                max-width: 250px;
+            }
+            .nav-left {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.8rem 1rem;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                display: none;          /* hidden by default */
+                z-index: 10;
+                min-width: 150px;
+            }
+            .nav-left.open {
+                display: flex;
+            }
+            .navbar {
+                padding: 0.4rem 0.6rem;
+                min-height: 42px;
+            }
+            .nav-center {
+                font-size: 0.95rem;
+                /* keep visible */
             }
         }
 
-        @media (max-width: 480px) {
-            .nav-center { display: none; }
-            .nav-left { justify-content: center; width: 100%; }
+        @media (max-width: 600px) {
+            .banner-text h1 { font-size: 1rem; }
+            .banner-text h2 { font-size: 0.9rem; }
+            .banner { min-height: 46px; }
+            .banner-logo img { max-height: 28px; }
+
+            /* About: stack images normally, no absolute positioning */
+            .about-img-1 {
+                float: none;
+                display: block;
+                margin: 0 auto 1rem auto;
+                width: 80%;
+                max-width: 250px;
+            }
+            .about-img-2 {
+                position: static;       /* fallback to normal flow */
+                display: block;
+                margin: 1rem auto 0 auto;
+                width: 80%;
+                max-width: 250px;
+            }
+            .bio-extended {
+                padding-bottom: 0;       /* reset */
+            }
+        }
+
+        @media (max-width: 400px) {
+            .banner-text h1 { font-size: 0.9rem; }
+            .banner-text h2 { font-size: 0.8rem; }
+            .nav-center { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -174,6 +252,8 @@
         </div>
 
         <nav class="navbar" id="navbar">
+            <!-- Hamburger button (mobile only) -->
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
             <div class="nav-left" id="navIcons"></div>
             <div class="nav-center" id="pageTitleDisplay">Home</div>
         </nav>
@@ -181,16 +261,15 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- Home Section (visible by default) -->
+        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2>Welcome!</h2>
             <p>This is the home page, styled live from your Google Sheet.</p>
-            <p>Use the icons above to navigate.</p>
         </div>
 
-        <!-- About Section (hidden) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
-            <div class="about-section-content">
+            <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
                     <p id="aboutShortBioParagraph">
@@ -198,15 +277,15 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
-                        <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <p id="aboutExtendedBioText"></p>
+                        <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <span class="bio-toggle" id="bioToggleLess"> read less...</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Placeholder for future pages -->
+        <!-- Placeholders -->
         <div class="page-section" id="order-section">
             <h2>Order</h2>
             <p>Order page coming soon.</p>
@@ -219,7 +298,7 @@
 
     <script>
         // ==============================================
-        // 🔧 REPLACE WITH YOUR WEB APP URL (only once)
+        // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
 
@@ -234,51 +313,57 @@
             return await res.json();
         }
 
-        // ---------- SPA NAVIGATION LOGIC ----------
+        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            // Show the target section
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
-            if (target) {
-                target.classList.add('active');
-            }
-            // Update the navbar title
+            if (target) target.classList.add('active');
             updateNavTitle(sectionId);
+            // Close mobile menu if open
+            document.getElementById('navIcons').classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
         }
 
         function updateNavTitle(sectionId) {
-            const titleEl = document.getElementById('pageTitleDisplay');
-            // We'll get the title from the settings object, but we may not have it yet at click time.
-            // So we'll store settings globally, or we can set a default based on section ID.
-            // For now, we'll use the stored settings if available, else fallback.
-            const pageTitles = {
+            const titles = {
                 'home-section': window.appSettings?.HomePageTitle || 'Home',
                 'about-section': window.appSettings?.AboutPageTitle || 'About',
                 'order-section': window.appSettings?.OrderPageTitle || 'Order',
                 'contact-section': window.appSettings?.ContactPageTitle || 'Contact'
             };
-            titleEl.textContent = pageTitles[sectionId] || 'Home';
+            const titleEl = document.getElementById('pageTitleDisplay');
+            titleEl.textContent = titles[sectionId] || 'Home';
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
-        // ---------- APPLY SETTINGS (header + nav) ----------
+        // ---------- HAMBURGER TOGGLE ----------
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('navIcons');
+            btn.addEventListener('click', () => {
+                const expanded = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', expanded);
+            });
+            // Close menu when a link is clicked (already handled in showPage, but also we can add)
+            menu.addEventListener('click', (e) => {
+                if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        // ---------- APPLY SETTINGS ----------
         async function applySettings() {
             const s = await fetchSettings();
             const settings = {};
             s.forEach(item => { settings[item.Setting] = item.Value; });
-
-            // Store globally so navigation can use it
             window.appSettings = settings;
 
-            // Page colors
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
 
-            // Logo
             const logo = document.getElementById('bannerLogo');
             if (settings.LogoURL) {
                 logo.src = settings.LogoURL;
@@ -287,7 +372,6 @@
                 logo.style.display = 'none';
             }
 
-            // Banner title + abbreviation
             const titleEl = document.getElementById('bannerTitle');
             const mainTitle = settings.BannerBookTitle || '';
             const abbrev = settings.BannerBookTitleAbbreviation || '';
@@ -298,14 +382,11 @@
             } else {
                 titleEl.textContent = '';
             }
-
-            // Subtitle
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Navigation icons
+            // Build navigation
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
-
             const navItems = [
                 { setting: 'NavIconURLHome', section: 'home-section' },
                 { setting: 'NavIconURLOrder', section: 'order-section' },
@@ -313,19 +394,17 @@
                 { setting: 'NavIconURLContact', section: 'contact-section' },
                 { setting: 'NavIconURLLinkedIn', external: true }
             ];
-
             navItems.forEach(item => {
                 const url = settings[item.setting];
                 if (url && url.trim() !== '') {
                     const a = document.createElement('a');
-                    a.href = '#';  // no real link, JavaScript handles navigation
+                    a.href = '#';
                     if (item.external) {
                         a.href = url;
                         a.target = '_blank';
-                    } else if (item.section) {
+                    } else {
                         a.dataset.section = item.section;
                     }
-
                     const img = document.createElement('img');
                     img.src = url;
                     img.alt = item.setting.replace('NavIconURL', '');
@@ -334,34 +413,25 @@
                 }
             });
 
-            // Add click listener to the nav container (event delegation)
+            // Click delegation for SPA links
             navContainer.addEventListener('click', (e) => {
-                // Find the closest 'a' tag
                 const link = e.target.closest('a');
-                if (!link) return;
-                // If it's an external link, let it be
-                if (link.target === '_blank') return;
+                if (!link || link.target === '_blank') return;
                 e.preventDefault();
                 const section = link.dataset.section;
-                if (section) {
-                    showPage(section);
-                }
+                if (section) showPage(section);
             });
 
-            // Set CSS variable for bio toggles
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
-
-            // Set initial nav title (home page)
             updateNavTitle('home-section');
         }
 
-        // ---------- POPULATE ABOUT SECTION (data) ----------
+        // ---------- LOAD ABOUT DATA ----------
         async function loadAboutSection() {
             const data = await fetchAboutData();
             const about = {};
             data.forEach(item => { about[item.Setting] = item.Value; });
 
-            // Image 1
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) {
                 img1.src = about.AuthorImage1URL;
@@ -370,7 +440,6 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
@@ -379,24 +448,19 @@
                 img2.style.display = 'none';
             }
 
-            // Short bio
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
-
-            // Extended bio
             document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
 
-            // Toggle logic
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
-            const bioExtendedDiv = document.getElementById('bioExtended');
+            const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                bioExtendedDiv.style.display = 'block';
+                bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
             });
-
             toggleLess.addEventListener('click', () => {
-                bioExtendedDiv.style.display = 'none';
+                bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
             });
         }
@@ -405,7 +469,7 @@
         async function init() {
             await applySettings();
             await loadAboutSection();
-            // Show home page by default (already has class "active")
+            setupHamburger();
         }
 
         init().catch(err => console.error('Error initializing page:', err));
