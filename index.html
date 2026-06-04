@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dynamic Website</title>
 
-    <!-- Google Font: Nunito Sans (all weights) -->
+    <!-- Google Font: Nunito Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
 
     <style>
         /* ---------- BASE ---------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Nunito Sans', sans-serif;
@@ -28,104 +24,64 @@
         /* ---------- STICKY HEADER ---------- */
         .sticky-header {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             z-index: 1000;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        /* ---- Banner ---- */
         .banner {
             position: relative;
-            background-color: #194373;  /* overridden by PrimaryColor */
+            background-color: #194373;
             color: #ffffff;
             padding: 0.8rem 1.2rem;
             min-height: 60px;
         }
-
         .banner-logo {
             position: absolute;
-            left: 1.2rem;
-            top: 50%;
+            left: 1.2rem; top: 50%;
             transform: translateY(-50%);
             z-index: 2;
         }
+        .banner-logo img { max-height: 45px; display: block; }
 
-        .banner-logo img {
-            max-height: 45px;
-            display: block;
-        }
-
-        .banner-text {
-            width: 100%;
-            text-align: center;
-        }
-
+        .banner-text { width: 100%; text-align: center; }
         .banner-text h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin: 0;
+            font-size: 1.4rem; font-weight: 700;
+            line-height: 1.2; margin: 0;
         }
-
-        /* ✨ ABBREVIATION: even finer weight (200) */
         .banner-text h1 .abbreviation {
-            font-weight: 200;
-            opacity: 0.95;
+            font-weight: 200; opacity: 0.95;
         }
-
         .banner-text h2 {
-            font-size: 1.15rem;         /* ✨ slightly larger */
-            font-weight: 400;
-            line-height: 1.3;
-            margin: 0.25rem 0 0 0;
+            font-size: 1.15rem; font-weight: 400;
+            line-height: 1.3; margin: 0.25rem 0 0 0;
             opacity: 0.9;
         }
 
-        /* ---- Nav Bar ---- */
         .navbar {
             position: relative;
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             background-color: #ffffff;
             padding: 0.5rem 1.2rem;
             border-top: 1px solid rgba(0,0,0,0.05);
             min-height: 48px;
         }
-
         .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
+            display: flex; align-items: center; gap: 1.2rem;
             z-index: 2;
         }
-
-        .nav-left a {
-            display: inline-flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
+        .nav-left a { display: inline-flex; align-items: center; text-decoration: none; }
         .nav-left a img {
             height: 30px;
             transition: transform 0.2s ease;
         }
-
-        .nav-left a:hover img {
-            transform: scale(1.15);
-        }
+        .nav-left a:hover img { transform: scale(1.15); }
 
         .nav-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #194373;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 1;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 1.1rem; font-weight: 600;
+            color: #194373; white-space: nowrap;
+            pointer-events: none; z-index: 1;
         }
 
         /* ---------- MAIN CONTENT ---------- */
@@ -140,23 +96,29 @@
             margin-top: 2rem;
         }
 
-        .about-images {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .about-images img {
+        /* Floating image 1: top left, text wraps around */
+        .about-img-1 {
+            float: left;
+            margin: 0 1.5rem 1rem 0;
             max-width: 300px;
-            height: auto;
+            width: 40%;           /* scales nicely on mobile */
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .about-bio {
+        /* Floating image 2: bottom right of extended bio */
+        .about-img-2 {
+            float: right;
+            margin: 0 0 1rem 1.5rem;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .about-text {
             line-height: 1.6;
+            overflow: hidden;   /* clearfix for floats */
         }
 
         .bio-toggle {
@@ -164,13 +126,12 @@
             cursor: pointer;
             font-weight: 600;
             text-decoration: underline;
-            margin-top: 0.5rem;
-            display: inline-block;
+            /* inline by default, so it sits right after the text */
         }
 
         .bio-extended {
-            display: none;   /* hidden by default */
-            margin-top: 1rem;
+            display: none;       /* hidden initially */
+            margin-top: 0.5rem;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -185,7 +146,15 @@
             .nav-left { gap: 0.8rem; }
             .nav-left a img { height: 24px; }
             .nav-center { font-size: 0.95rem; }
-            .about-images { flex-direction: column; align-items: center; }
+
+            .about-img-1,
+            .about-img-2 {
+                float: none;
+                display: block;
+                margin: 0 auto 1rem auto;
+                width: 70%;
+                max-width: 250px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -215,18 +184,24 @@
 
     <!-- ================== MAIN CONTENT ================== -->
     <div class="content">
-        <!-- About Section (dynamic) -->
+        <!-- About Section -->
         <div class="about-section" id="aboutSection">
-            <div class="about-images">
-                <img id="aboutImg1" src="" alt="Author image 1" style="display:none;">
-                <img id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-            </div>
-            <div class="about-bio">
-                <p id="aboutShortBio"></p>
-                <span class="bio-toggle" id="bioToggle">read more...</span>
+            <!-- Image 1 (floated left) -->
+            <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+
+            <div class="about-text" id="aboutTextContainer">
+                <!-- Short bio paragraph (inline read more) -->
+                <p id="aboutShortBioParagraph">
+                    <span id="aboutShortBioText"></span>
+                    <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                </p>
+
+                <!-- Extended bio area (hidden initially) -->
                 <div class="bio-extended" id="bioExtended">
-                    <p id="aboutExtendedBio"></p>
-                    <span class="bio-toggle" id="bioToggleLess">read less...</span>
+                    <!-- Image 2 (floated right inside extended bio) -->
+                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                    <p id="aboutExtendedBioText"></p>
+                    <span class="bio-toggle" id="bioToggleLess"> read less...</span>
                 </div>
             </div>
         </div>
@@ -252,11 +227,10 @@
         // ---------- APPLY SETTINGS (header) ----------
         async function applySettings() {
             const s = await fetchSettings();
-            // Convert array of objects into a single key-value object
             const settings = {};
             s.forEach(item => { settings[item.Setting] = item.Value; });
 
-            // Colors
+            // Page colors
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
@@ -285,16 +259,18 @@
             // Subtitle
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Nav icons
+            // Navigation icons (with Home link fixed)
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
+
             const navItems = [
-                { setting: 'NavIconURLHome', href: '#' },
+                { setting: 'NavIconURLHome', href: '/' },               // ← home page
                 { setting: 'NavIconURLOrder', href: '#' },
                 { setting: 'NavIconURLAbout', href: '#' },
                 { setting: 'NavIconURLContact', href: '#' },
                 { setting: 'NavIconURLLinkedIn', href: '#', external: true }
             ];
+
             navItems.forEach(item => {
                 const url = settings[item.setting];
                 if (url && url.trim() !== '') {
@@ -309,31 +285,33 @@
                 }
             });
 
-            // Page title in navbar center
-            const pageTitle = settings.AboutPageTitle || 'About';  // default to 'About' if empty
-            document.getElementById('pageTitleDisplay').textContent = pageTitle;
-            document.getElementById('pageTitleDisplay').style.color = settings.PrimaryColor || '#194373';
+            // Page title in navbar (use AboutPageTitle if available, else default)
+            const pageTitle = settings.AboutPageTitle || 'About';
+            const ptEl = document.getElementById('pageTitleDisplay');
+            ptEl.textContent = pageTitle;
+            ptEl.style.color = settings.PrimaryColor || '#194373';
 
-            // Set CSS variable for bio toggle color (so it can use PrimaryColor)
+            // CSS variable for bio toggles
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
         }
 
         // ---------- POPULATE ABOUT SECTION ----------
         async function loadAboutSection() {
             const data = await fetchAboutData();
-            // data is array of objects like [{Setting: 'AboutPageTitle', Value: ''}, ...]
             const about = {};
             data.forEach(item => { about[item.Setting] = item.Value; });
 
-            // Images
+            // Image 1 (top left)
             const img1 = document.getElementById('aboutImg1');
-            const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage1URL) {
                 img1.src = about.AuthorImage1URL;
                 img1.style.display = 'block';
             } else {
                 img1.style.display = 'none';
             }
+
+            // Image 2 (inside extended bio, bottom right)
+            const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
                 img2.style.display = 'block';
@@ -341,27 +319,25 @@
                 img2.style.display = 'none';
             }
 
-            // Short bio
-            document.getElementById('aboutShortBio').textContent = about.AuthorShortBio || '';
+            // Short bio text (inside the paragraph)
+            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
 
-            // Extended bio (hidden initially)
-            document.getElementById('aboutExtendedBio').textContent = about.AuthorExtendedBio || '';
+            // Extended bio text
+            document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
 
-            // Toggle logic
-            const toggleMore = document.getElementById('bioToggle');
+            // Toggle logic (inline read more/less)
+            const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtendedDiv = document.getElementById('bioExtended');
 
-            // "Read more..." click -> show extended, hide 'more' link, show 'less' link
             toggleMore.addEventListener('click', () => {
                 bioExtendedDiv.style.display = 'block';
                 toggleMore.style.display = 'none';
             });
 
-            // "Read less..." click -> hide extended, show 'more' link again
             toggleLess.addEventListener('click', () => {
                 bioExtendedDiv.style.display = 'none';
-                toggleMore.style.display = 'inline-block';
+                toggleMore.style.display = 'inline';  // back to inline
             });
         }
 
