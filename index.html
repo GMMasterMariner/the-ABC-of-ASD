@@ -139,7 +139,7 @@
         .home-columns {
             display: flex;
             gap: 2rem;
-            align-items: flex-start;   /* top alignment, height set by JS */
+            align-items: flex-start;
         }
         .home-col {
             flex: 1;
@@ -147,7 +147,7 @@
             flex-direction: column;
         }
 
-        /* Left box – height will be overridden by JS */
+        /* Left box – now scrollable if content exceeds height */
         .home-col-left-box {
             background: white;
             border: 1px solid #e0e0e0;
@@ -155,9 +155,10 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;   /* top‑align when scrolling */
             text-align: center;
             box-sizing: border-box;
+            overflow-y: auto;             /* KEY CHANGE: scroll when text overflows */
         }
 
         /* Center column – carousel container, height set by JS */
@@ -202,7 +203,7 @@
             margin-bottom: 0;
         }
 
-        /* Central order button – vertical spacing matches column gap */
+        /* Central order button */
         .central-order-btn {
             margin: 2rem 0;
             text-align: center;
@@ -257,6 +258,7 @@
             .home-col-left-box,
             .carousel-container {
                 height: auto !important;
+                overflow-y: visible;      /* no scroll on mobile */
             }
         }
 
@@ -563,31 +565,27 @@
 
             refreshAllPrices();
 
-            // Equalise heights with a robust, delayed measurement
+            // Equalise heights
             equalizeHeights();
         }
 
-        // ---------- HEIGHT EQUALISATION (the fix) ----------
+        // ---------- HEIGHT EQUALISATION ----------
         function equalizeHeights() {
             const rightCol = document.getElementById('productCardsColumn');
             const leftBox = document.getElementById('leftBox');
             const carouselContainer = document.getElementById('carouselContainer');
             if (!rightCol || !leftBox || !carouselContainer) return;
 
-            // If we're on mobile (flex-direction: column), clear any forced heights
             if (window.innerWidth <= 768) {
                 leftBox.style.height = 'auto';
                 carouselContainer.style.height = 'auto';
                 return;
             }
 
-            // Temporarily reset to auto so we can measure the natural height
             leftBox.style.height = 'auto';
             carouselContainer.style.height = 'auto';
 
-            // Use requestAnimationFrame to ensure layout is done
             requestAnimationFrame(() => {
-                // Measure right column's offsetHeight (includes margins, borders, padding)
                 const targetHeight = rightCol.offsetHeight;
                 if (targetHeight > 0) {
                     leftBox.style.height = targetHeight + 'px';
@@ -596,7 +594,6 @@
             });
         }
 
-        // Re-equalize on window resize and when home page becomes visible
         window.addEventListener('resize', () => {
             if (document.getElementById('home-section')?.classList.contains('active')) {
                 equalizeHeights();
@@ -716,7 +713,6 @@
             updateNavTitle(sectionId);
             document.getElementById('navIcons').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
-            // Re-equalize when returning to home
             if (sectionId === 'home-section') {
                 setTimeout(equalizeHeights, 50);
             }
