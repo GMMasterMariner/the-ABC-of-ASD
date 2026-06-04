@@ -196,7 +196,7 @@
             justify-content: center;
         }
         .carousel-slide img {
-            width: 70%;                   /* desktop size */
+            width: 70%;
             height: auto;
             max-height: 100%;
             object-fit: contain;
@@ -418,12 +418,11 @@
                 overflow-y: visible;
             }
 
-            /* Phone – smaller carousel images & dots padding */
             .carousel-slide img {
                 width: 60%;
             }
             .carousel-wrapper {
-                padding-bottom: 1.8rem;   /* prevents dots overlapping */
+                padding-bottom: 1.8rem;
             }
 
             .home-headline {
@@ -437,18 +436,11 @@
                 font-size: 0.8rem;
             }
 
-            /* Mobile About – images stack */
-            .about-img-1 {
-                float: none;
-                display: block;
-                margin: 0.5rem auto 1rem auto;
-                width: 80%;
-                max-width: 250px;
-            }
+            .about-img-1,
             .about-img-2 {
                 float: none;
-                display: block;          /* will be toggled via JS */
-                margin: 1rem auto 0 auto;
+                display: block;
+                margin: 1rem auto;
                 width: 80%;
                 max-width: 250px;
             }
@@ -527,7 +519,7 @@
             </div>
         </div>
 
-        <!-- About (new structure for mobile) -->
+        <!-- About (Image2 placed after short bio) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -536,7 +528,6 @@
                         <span id="aboutShortBioText"></span>
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
-                    <!-- Image2 placed after short bio -->
                     <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                     <div class="bio-extended" id="bioExtended">
                         <p id="aboutExtendedBioText">
@@ -700,22 +691,32 @@
             return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
 
+        // 🔥 CURRENCY SYMBOLS – FULL MAP (covers all your exchange rates)
+        const currencySymbols = {
+            'ZAR': 'R',   'USD': 'US$', 'EUR': '€',   'GBP': '£',
+            'AUD': 'A$',  'CAD': 'C$',  'SGD': 'S$',  'NOK': 'kr',
+            'SEK': 'kr',  'DKK': 'kr',  'JPY': '¥',   'CNY': '¥',
+            'KRW': '₩',   'INR': '₹',   'BRL': 'R$',  'TRY': '₺',
+            'NGN': '₦',   'PHP': '₱',   'IDR': 'Rp',  'MXN': 'MX$',
+            'HKD': 'HK$', 'NZD': 'NZ$', 'AED': 'د.إ', 'CLP': 'CLP$',
+            'ZMW': 'ZK',  'EGP': 'LE',  'MYR': 'RM',  'PLN': 'zł'
+        };
+
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-            const symbolMap = {
-                'USD': 'US$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$',
-                'ZAR': 'R', 'CNY': '¥', 'INR': '₹', 'KRW': '₩', 'BRL': 'R$', 'TRY': '₺',
-                'NGN': '₦', 'PHP': '₱', 'IDR': 'Rp', 'MXN': 'MX$', 'HKD': 'HK$', 'NZD': 'NZ$',
-                'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł', 'MYR': 'RM', 'SGD': 'S$',
-                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'LE'
-            };
-            try {
-                return new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(converted);
-            } catch (e) {
-                const symbol = symbolMap[code] || code + ' ';
-                return symbol + ' ' + converted.toFixed(2);
-            }
+
+            // Format the number with thousand separators and two decimals
+            const formattedNumber = converted.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Get the symbol from the map, or fallback to code itself
+            const symbol = currencySymbols[code] || code + ' ';
+
+            // For most currencies, symbol goes before the amount. AED is fine as prefix too.
+            return symbol + ' ' + formattedNumber;
         }
 
         function refreshAllPrices() {
@@ -758,7 +759,7 @@
             }
         });
 
-        // ---------- INFINITE LOOP CAROUSEL (no peeking) ----------
+        // ---------- INFINITE LOOP CAROUSEL ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -1030,7 +1031,7 @@
             refreshAllPrices();
         }
 
-        // ---------- ABOUT SECTION (new mobile logic) ----------
+        // ---------- ABOUT SECTION (mobile image swap) ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1044,7 +1045,6 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // Desktop always visible (float right), mobile initially hidden
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
@@ -1062,29 +1062,24 @@
             const bioExtended = document.getElementById('bioExtended');
             const shortBioPara = document.getElementById('aboutShortBioParagraph');
 
-            // Collapse state: image2 right after short bio (default position)
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
-                // Place image2 after short bio paragraph
                 shortBioPara.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
                     img2.style.display = 'block';
                 }
             }
 
-            // Expand state: image2 after extended bio
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
-                // Move image2 after the extended bio div
                 bioExtended.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
                     img2.style.display = 'block';
                 }
             }
 
-            // Initial state: collapsed
             collapse();
 
             toggleMore.addEventListener('click', expand);
