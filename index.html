@@ -97,7 +97,7 @@
 
         .about-img-1 {
             float: left;
-            margin: 0 1.5rem 0.3rem 0;   /* bottom margin tightened */
+            margin: 0 1.5rem 0.3rem 0;   /* tighter bottom margin */
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -135,7 +135,7 @@
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
             .banner-logo img { max-height: 35px; }
-            .banner-text h1 { font-size: 1rem; }      /* slightly smaller */
+            .banner-text h1 { font-size: 1rem; }
             .banner-text h2 { font-size: 0.9rem; letter-spacing: 0.2px; }
 
             .hamburger { display: block; }
@@ -145,11 +145,12 @@
                 background: white;
                 flex-direction: column;
                 gap: 0.2rem;
-                padding: 0.5rem;            /* narrower padding */
+                padding: 0.4rem;                /* uniform tight padding */
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 display: none;
                 z-index: 10;
-                min-width: 130px;           /* narrower */
+                width: auto;                    /* dynamic width */
+                min-width: auto;
                 align-items: flex-start;
             }
             .nav-left.open { display: flex; }
@@ -181,34 +182,34 @@
                 max-width: 250px;
             }
             .bio-extended {
-                display: none;   /* will be flex when shown */
+                display: none;
                 flex-direction: column;
             }
             .bio-extended.show-flex {
                 display: flex;
             }
-            .bio-extended #aboutExtendedBioText { order: 1; }
-            .bio-extended .bio-toggle { order: 2; }          /* read less right after text */
+            .bio-extended #aboutExtendedBioText { order: 1; }   /* contains text + read-less */
             .bio-extended .about-img-2 {
-                order: 3;                 /* image at the end */
+                order: 3;
                 float: none;
                 margin: 1rem auto 0 auto;
                 width: 80%;
                 max-width: 250px;
                 display: block;
             }
+            /* read-less is inside the paragraph, so no extra ordering needed */
         }
 
         @media (max-width: 600px) {
-            .banner-text h1 { font-size: 0.9rem; }   /* even smaller */
-            .banner-text h2 { font-size: 0.8rem; }
+            .banner-text h1 { font-size: 0.8rem; }   /* even smaller */
+            .banner-text h2 { font-size: 0.7rem; }
             .banner { min-height: 46px; }
             .banner-logo img { max-height: 28px; }
         }
 
         @media (max-width: 400px) {
-            .banner-text h1 { font-size: 0.8rem; }
-            .banner-text h2 { font-size: 0.7rem; }
+            .banner-text h1 { font-size: 0.7rem; }
+            .banner-text h2 { font-size: 0.6rem; }
             .nav-center { font-size: 0.85rem; }
         }
     </style>
@@ -249,9 +250,11 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
+                        <!-- Image 2 is separate; on mobile it gets ordered after text -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-                        <p id="aboutExtendedBioText"></p>
-                        <span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        <p id="aboutExtendedBioText">
+                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -341,7 +344,6 @@
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
 
             const logo = document.getElementById('bannerLogo');
-            // Updated: use BannerLogo instead of LogoURL
             if (settings.BannerLogo) {
                 logo.src = settings.BannerLogo;
                 logo.style.display = 'block';
@@ -432,7 +434,8 @@
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
-            document.getElementById('aboutExtendedBioText').textContent = about.AuthorExtendedBio || '';
+            // Fill the inner span for extended bio (not the whole paragraph)
+            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
 
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
