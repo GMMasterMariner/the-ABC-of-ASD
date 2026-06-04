@@ -375,9 +375,9 @@
         let selectedCurrency = null;
         let products = [];
 
-        // ---------- FETCH HELPERS ----------
-        async function fetchSheet(sheetName) {
-            const res = await fetch(API_URL + '?sheet=' + sheetName);
+        // ---------- FETCH HELPERS (combined single request) ----------
+        async function fetchAllSiteData() {
+            const res = await fetch(API_URL + '?combined=true');
             return await res.json();
         }
 
@@ -802,14 +802,164 @@
             });
         }
 
-        // ---------- INIT ----------
+        // ---------- DIRECT APPLY (no fetch) ----------
+        function applySettingsDirect(settings) {
+            document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
+            document.body.style.color = settings.TextColor || '#000000';
+            document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
+
+            document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
+            document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
+            document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
+
+            const logo = document.getElementById('bannerLogo');
+            if (settings.BannerLogo) {
+                logo.src = settings.BannerLogo;
+                logo.style.display = 'block';
+            } else {
+                logo.style.display = 'none';
+            }
+
+            const titleEl = document.getElementById('bannerTitle');
+            const mainTitle = settings.BannerBookTitle || '';
+            const abbrev = settings.BannerBookTitleAbbreviation || '';
+            if (mainTitle && abbrev) {
+                titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
+            } else if (mainTitle) {
+                titleEl.textContent = mainTitle;
+            } else {
+                titleEl.textContent = '';
+            }
+            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
+
+            // Navigation icons
+            const navContainer = document.getElementById('navIcons');
+            navContainer.innerHTML = '';
+            const navItems = [
+                { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
+                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
+                { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
+                { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
+                { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
+            ];
+            navItems.forEach(item => {
+                const iconUrl = settings[item.iconSetting];
+                if (!iconUrl || iconUrl.trim() === '') return;
+                const a = document.createElement('a');
+                a.title = item.label;
+                if (item.externalLinkSetting) {
+                    let linkUrl = settings[item.externalLinkSetting];
+                    if (linkUrl && linkUrl.trim() !== '') {
+                        if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
+                        a.href = linkUrl;
+                        a.target = '_blank';
+                    } else { return; }
+                } else if (item.section) {
+                    a.href = '#';
+                    a.dataset.section = item.section;
+                }
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = item.label;
+                a.appendChild(img);
+                const span = document.createElement('span');
+                span.className = 'nav-label';
+                span.textContent = item.label;
+                a.appendChild(span);
+                navContainer.appendChild(a);
+            });
+            navContainer.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (!link || link.target === '_blank') return;
+                e.preventDefault();
+                const section = link.dataset.section;
+                if (section) showPage(section);
+            });
+
+            updateNavTitle('home-section');
+        }
+
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
+
+            // Carousel
+            const carousel = document.getElementById('carousel');
+            carousel.innerHTML = '';
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) {
+                buildCarousel(images, home.HomePageCarouselInterval || 3000);
+            }
+
+            // Products cards
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = '';
+
+            const item1Main = home.HomePageItem1MainText || '';
+            const item1Sub = home.HomePageItem1SubText || '';
+            const item2Main = home.HomePageItem2MainText || '';
+            const item2Sub = home.HomePageItem2SubText || '';
+
+            const product1 = products[0] || {};
+            const product2 = products[1] || {};
+
+            function createCard(mainText, subText, product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <h4>${mainText}</h4>
+                    <p class="sub">${subText}</p>
+                    <p class="price" data-zar="${product.BasePrice || 0}">${formatPrice(product.BasePrice || 0)}</p>
+                `;
+                return card;
+            }
+
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
+
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            orderBtn.querySelector('.btn').addEventListener('click', () => {
+                showPage('order-section');
+            });
+
+            refreshAllPrices();
+        }
+        
+        // ---------- INIT (one network request for everything) ----------
         async function init() {
             try {
-                await applySettings();
-                await loadExchangeRates();
-                await loadHomePage();
+                const allData = await fetchAllSiteData();
+                appSettings = allData.settings || {};
+                // Apply settings to header
+                applySettingsDirect(appSettings);
+                // Load exchange rates
+                if (allData.exchangeRates) {
+                    exchangeRates = allData.exchangeRates;
+                }
+                buildCurrencySelector();
+                await detectUserCurrency();
+                // Load home page
+                if (allData.home) {
+                    loadHomePageDirect(allData.home);
+                }
+                if (allData.products) {
+                    products = allData.products;
+                }
                 setupHamburger();
                 setupContactForm();
+                equalizeHeights();
             } catch (err) {
                 console.error('Error initializing:', err);
             }
