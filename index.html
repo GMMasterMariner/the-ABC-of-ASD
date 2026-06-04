@@ -101,7 +101,7 @@
         }
         .page-section.active {
             display: block;
-            padding-top: 0.5rem;        /* uniform start spacing for all pages */
+            padding-top: 0.5rem;        /* uniform start spacing */
         }
 
         /* About */
@@ -116,40 +116,32 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
+        .bio-wrapper {
+            /* Contains the float image and the text paragraphs */
+        }
+
+        /* Image 2 – floated right, placed before the text so it wraps */
+        .about-img-2 {
+            float: right;
+            margin: 0 0 1rem 1.5rem;
+            width: 40%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;               /* hidden initially */
+        }
+
         .about-text { line-height: 1.6; }
         .bio-toggle {
             color: var(--primary-color, #194373);
             cursor: pointer; font-weight: 600;
             text-decoration: underline;
         }
+
         .bio-extended {
-            display: none;
+            display: none;                /* hidden initially */
             margin-top: 0.5rem;
-            overflow: auto;
-            position: relative;         /* for absolute positioning of image2 */
-        }
-
-        /* Placeholder for image2 – floated right so text wraps around it */
-        .placeholder-float {
-            float: right;
-            clear: right;
-            width: 40%;
-            max-width: 300px;
-            margin: 0 0 1rem 1.5rem;
-            visibility: hidden;          /* invisible but occupies space */
-        }
-
-        /* Image 2 – absolutely positioned at bottom right of the extended bio container */
-        .about-img-2 {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 40%;
-            max-width: 300px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 2;
-            display: none;
         }
 
         #aboutShortBioParagraph,
@@ -165,17 +157,17 @@
         .form-row {
             display: flex;
             gap: 1rem;
-            margin-top: 1rem;           /* spacing from Name field */
+            margin-top: 1rem;
         }
         .form-row .form-group {
             flex: 1;
-            margin-top: 0;              /* remove individual top margin */
+            margin-top: 0;
         }
         .form-group {
             margin-top: 0.5rem;
         }
         .form-group:first-child {
-            margin-top: 0;              /* Name field sits right at top of section */
+            margin-top: 0;
         }
         .contact-form label {
             display: block;
@@ -225,8 +217,8 @@
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
-            body { padding-top: 94px; }    /* exact header height tablet */
-            .content { padding: 1.5rem; }   /* reduced content padding */
+            body { padding-top: 94px; }
+            .content { padding: 1.5rem; }
 
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
@@ -277,6 +269,15 @@
                 width: 80%;
                 max-width: 250px;
             }
+            /* Image 2: reset to normal flow, displayed after text */
+            .about-img-2 {
+                float: none;
+                display: block !important;   /* overrides inline display:none when active */
+                margin: 1rem auto 0 auto;
+                width: 80%;
+                max-width: 250px;
+                order: 3;
+            }
             .bio-extended {
                 display: none;
                 flex-direction: column;
@@ -285,17 +286,9 @@
                 display: flex;
             }
             .bio-extended #aboutExtendedBioText { order: 1; }
-            .about-img-2 {
-                position: static;       /* back to normal flow on mobile */
-                float: none;
-                display: block;
-                margin: 1rem auto 0 auto;
-                width: 80%;
-                max-width: 250px;
+            /* In mobile, image2 is placed after extended text via order */
+            .bio-extended .about-img-2 {
                 order: 3;
-            }
-            .placeholder-float {
-                display: none;          /* hide placeholder on mobile */
             }
 
             /* Stack form row on mobile */
@@ -310,7 +303,7 @@
         }
 
         @media (max-width: 600px) {
-            body { padding-top: 88px; }    /* exact header height small phone */
+            body { padding-top: 88px; }
             .banner-text h1 { font-size: 0.8rem; }
             .banner-text h2 { font-size: 0.7rem; }
             .banner { min-height: 46px; }
@@ -357,18 +350,19 @@
             <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
-                    <p id="aboutShortBioParagraph">
-                        <span id="aboutShortBioText"></span>
-                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
-                    </p>
-                    <div class="bio-extended" id="bioExtended">
-                        <!-- Placeholder for text wrap (invisible) -->
-                        <div id="img2placeholder" class="placeholder-float"></div>
-                        <!-- Actual image (absolute) -->
+                    <!-- Bio wrapper: holds image2 (floated) and the two text paragraphs -->
+                    <div class="bio-wrapper clearfix">
+                        <!-- Image2 placed BEFORE the short bio so it affects wrapping -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-                        <p id="aboutExtendedBioText">
-                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        <p id="aboutShortBioParagraph">
+                            <span id="aboutShortBioText"></span>
+                            <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                         </p>
+                        <div class="bio-extended" id="bioExtended">
+                            <p id="aboutExtendedBioText">
+                                <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -384,13 +378,10 @@
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
-                    <!-- Name full width -->
                     <div class="form-group">
                         <label for="name">Name *</label>
                         <input type="text" id="name" name="name" required>
                     </div>
-
-                    <!-- Email + Phone side by side -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="email">Email *</label>
@@ -401,13 +392,10 @@
                             <input type="tel" id="phone" name="phone">
                         </div>
                     </div>
-
-                    <!-- Message full width -->
                     <div class="form-group">
                         <label for="message">Message *</label>
                         <textarea id="message" name="message" required></textarea>
                     </div>
-
                     <button type="submit" id="sendButton">Send Message</button>
                 </form>
                 <div class="contact-result" id="contactResult"></div>
@@ -436,10 +424,12 @@
         function resetAboutBio() {
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
+            const img2 = document.getElementById('aboutImg2');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
+                if (img2) img2.style.display = 'none';   // hide image2
             }
         }
 
@@ -592,7 +582,7 @@
             updateNavTitle('home-section');
         }
 
-        // ---------- LOAD ABOUT DATA (with Image2 alignment) ----------
+        // ---------- LOAD ABOUT DATA (new structure) ----------
         function loadAboutSection(aboutArray) {
             const about = {};
             aboutArray.forEach(item => { about[item.Setting] = item.Value; });
@@ -606,25 +596,11 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 – wait for load to set placeholder dimensions
+            // Image 2 – just set src, keep hidden
             const img2 = document.getElementById('aboutImg2');
-            const placeholder = document.getElementById('img2placeholder');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                img2.style.display = 'block';
-                img2.addEventListener('load', function() {
-                    placeholder.style.width = img2.offsetWidth + 'px';
-                    placeholder.style.height = img2.offsetHeight + 'px';
-                });
-                // In case image is cached and already loaded
-                if (img2.complete) {
-                    placeholder.style.width = img2.offsetWidth + 'px';
-                    placeholder.style.height = img2.offsetHeight + 'px';
-                }
-            } else {
-                img2.style.display = 'none';
-                placeholder.style.width = '0';
-                placeholder.style.height = '0';
+                // display will be toggled by read more/less
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -635,6 +611,10 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
+                // Show image2 and extended bio
+                if (about.AuthorImage2URL) {
+                    img2.style.display = 'block';
+                }
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
                     bioExtended.style.display = 'flex';
@@ -647,9 +627,11 @@
             toggleLess.addEventListener('click', () => {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
+                img2.style.display = 'none';    // hide image2
                 toggleMore.style.display = 'inline';
             });
 
+            // Initial state: image hidden, extended hidden
             resetAboutBio();
         }
 
