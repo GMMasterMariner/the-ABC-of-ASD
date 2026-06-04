@@ -156,7 +156,7 @@
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 1rem 1.5rem;        /* reduced top/bottom from 1.5rem to 1rem */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -232,10 +232,10 @@
         }
         .btn:hover { opacity: 0.9; }
 
-        /* ---- About Section ---- */
+        /* ---- About Section (new layout) ---- */
         .about-img-1 {
             float: left;
-            margin: 0.5rem 1.5rem 0.3rem 0;
+            margin: 0 1.5rem 1rem 0;
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -244,13 +244,19 @@
         .about-img-2 {
             float: right;
             margin: 0 0 1rem 1.5rem;
-            width: 40%;
             max-width: 300px;
+            width: 40%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;
         }
-        .about-text { line-height: 1.6; }
+        .about-text {
+            line-height: 1.6;
+        }
+        .about-text .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
         .bio-toggle {
             color: var(--primary-color, #194373);
             cursor: pointer; font-weight: 600;
@@ -361,6 +367,18 @@
                 height: auto !important;
                 overflow-y: visible;
             }
+            /* Smaller text on phone */
+            .home-headline {
+                font-size: 1rem;
+            }
+            .home-col-left-box h3 {
+                font-size: 0.95rem;
+            }
+            .home-col-left-box p {
+                font-size: 0.9rem;
+            }
+
+            /* About images stack on mobile */
             .about-img-1,
             .about-img-2 {
                 float: none;
@@ -369,6 +387,21 @@
                 width: 80%;
                 max-width: 250px;
             }
+            /* On mobile, image2 appears after short bio only when extended is shown */
+            .about-img-2 {
+                display: none;   /* hidden until read more */
+            }
+            .bio-extended {
+                flex-direction: column;
+            }
+            .bio-extended.show-flex {
+                display: flex;
+            }
+            .bio-extended .about-img-2 {
+                order: 3;
+                display: block !important;
+            }
+
             .form-row {
                 flex-direction: column;
                 gap: 0;
@@ -441,12 +474,13 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (new layout) -->
         <div class="page-section" id="about-section">
-            <div class="about-section-content clearfix">
+            <div class="about-section-content">
+                <!-- Both images placed before text -->
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
-                <div class="about-text" id="aboutTextContainer">
-                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                <div class="about-text clearfix">
                     <p id="aboutShortBioParagraph">
                         <span id="aboutShortBioText"></span>
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
@@ -519,7 +553,6 @@
         // ---------- CURRENCY FUNCTIONS ----------
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
-            // Clear previously injected elements (keep the label)
             const existingBtn = document.getElementById('currencyBtn');
             const existingDropdown = document.getElementById('currencyDropdown');
             if (existingBtn) existingBtn.remove();
@@ -616,14 +649,16 @@
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
+            // Complete symbol map for all your currencies
             const symbolMap = {
                 'USD': 'US$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$',
                 'ZAR': 'R', 'CNY': '¥', 'INR': '₹', 'KRW': '₩', 'BRL': 'R$', 'TRY': '₺',
                 'NGN': '₦', 'PHP': '₱', 'IDR': 'Rp', 'MXN': 'MX$', 'HKD': 'HK$', 'NZD': 'NZ$',
                 'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł', 'MYR': 'RM', 'SGD': 'S$',
-                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'EGP'
+                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'LE', 'SGD': 'S$'
             };
             try {
+                // Use undefined locale to let browser decide, which usually handles major codes
                 return new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(converted);
             } catch (e) {
                 const symbol = symbolMap[code] || code + ' ';
@@ -845,7 +880,12 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                img2.style.display = 'none'; // shown on read more
+                // On desktop, image2 is always visible (float right). On mobile, hidden until read more.
+                if (window.innerWidth > 768) {
+                    img2.style.display = 'block';
+                } else {
+                    img2.style.display = 'none';
+                }
             } else {
                 img2.style.display = 'none';
             }
@@ -860,20 +900,22 @@
             // Reset state
             bioExtended.style.display = 'none';
             toggleMore.style.display = 'inline';
-            img2.style.display = 'none';
 
             toggleMore.addEventListener('click', () => {
-                if (about.AuthorImage2URL) {
-                    img2.style.display = 'block';
-                }
+                // Show extended bio and, on mobile, show image2
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    img2.style.display = 'block';
+                }
             });
 
             toggleLess.addEventListener('click', () => {
                 bioExtended.style.display = 'none';
-                img2.style.display = 'none';
                 toggleMore.style.display = 'inline';
+                if (window.innerWidth <= 768) {
+                    img2.style.display = 'none';
+                }
             });
         }
 
@@ -890,7 +932,7 @@
             if (sectionId === 'contact-section' || sectionId === 'about-section') {
                 currencyContainer.style.display = 'none';
             } else {
-                currencyContainer.style.display = 'flex';   // default flex
+                currencyContainer.style.display = 'flex';
             }
 
             document.getElementById('navIcons').classList.remove('open');
