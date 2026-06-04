@@ -91,9 +91,18 @@
         }
 
         /* ---------- MAIN CONTENT ---------- */
-        .content { padding: 2rem; max-width: 960px; margin: 0 auto; }
-        .page-section { display: none; }
-        .page-section.active { display: block; }
+        .content {
+            padding: 2rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+            padding-top: 0.5rem;        /* uniform start spacing for all pages */
+        }
 
         /* About */
         .about-section-content { }
@@ -136,21 +145,21 @@
         .contact-form {
             max-width: 500px;
             margin: 0 auto;
-            margin-top: 0.5rem;     /* tiny space after navbar */
         }
         .form-row {
             display: flex;
             gap: 1rem;
-            margin-top: 0.5rem;
+            margin-top: 1rem;           /* spacing from Name field */
         }
         .form-row .form-group {
             flex: 1;
+            margin-top: 0;              /* remove individual top margin */
         }
         .form-group {
             margin-top: 0.5rem;
         }
         .form-group:first-child {
-            margin-top: 0;          /* first form-group (Name) sticks to top */
+            margin-top: 0;              /* Name field sits right at top of section */
         }
         .contact-form label {
             display: block;
@@ -272,6 +281,7 @@
             .form-row {
                 flex-direction: column;
                 gap: 0;
+                margin-top: 0.5rem;     /* reduced from 1rem */
             }
             .form-row .form-group:last-child {
                 margin-top: 0.5rem;
@@ -346,7 +356,7 @@
             <p>Order page coming soon.</p>
         </div>
 
-        <!-- Contact (no heading) -->
+        <!-- Contact -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
@@ -421,7 +431,6 @@
                 form.reset();
                 resultDiv.style.display = 'none';
                 resultDiv.innerHTML = '';
-                // Re-enable button and restore original text
                 if (sendBtn) {
                     sendBtn.disabled = false;
                     sendBtn.textContent = 'Send Message';
@@ -627,7 +636,6 @@
                     return;
                 }
 
-                // Sending state
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Sending...';
 
@@ -654,7 +662,6 @@
                         resultDiv.style.display = 'block';
                         resultDiv.textContent = 'Sorry, something went wrong. Please try again later.';
                         resultDiv.style.color = 'red';
-                        // Re-enable button on error
                         sendBtn.disabled = false;
                         sendBtn.textContent = 'Send Message';
                     }
