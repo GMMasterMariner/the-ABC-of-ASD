@@ -174,34 +174,33 @@
             margin-top: 0;
         }
 
-        /* ---- Horizontal Carousel (no adjacent image leaks) ---- */
+        /* ---- Horizontal Carousel (NO PEEKING, NO PADDING) ---- */
         .carousel-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: hidden;             /* this clips the track – no adjacent images */
             border-radius: 8px;
             background: transparent;
-            padding: 0.5rem 2.8rem 2rem 2.8rem;
+            /* NO horizontal padding – image size is controlled by the slide */
         }
         .carousel-track {
             display: flex;
             height: 100%;
             transition: transform 0.5s ease;
         }
-        /* Individual slide container – fills the entire width, padded to visually shrink image */
         .carousel-slide {
-            flex: 0 0 100%;
+            flex: 0 0 100%;               /* exactly one slide visible at a time */
             height: 100%;
-            padding: 0 7.5%;            /* creates the visual 85% image width */
-            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
+            /* NO padding – the image element itself will be sized down */
         }
         .carousel-slide img {
-            width: 100%;
-            height: 100%;
+            width: 85%;                   /* leaves room for arrows & dots */
+            height: auto;
+            max-height: 100%;
             object-fit: contain;
             user-select: none;
             display: block;
@@ -227,8 +226,8 @@
             line-height: 1;
         }
         .carousel-arrow:hover { background: white; }
-        .carousel-arrow.prev { left: 0.8rem; }
-        .carousel-arrow.next { right: 0.8rem; }
+        .carousel-arrow.prev { left: 0.5rem; }
+        .carousel-arrow.next { right: 0.5rem; }
         .carousel-dots {
             position: absolute;
             bottom: 0.5rem;
@@ -420,13 +419,6 @@
                 height: auto !important;
                 overflow-y: visible;
             }
-            .carousel-wrapper {
-                padding: 0.2rem 2.2rem 1.8rem 2.2rem;
-            }
-            /* Smaller slide padding on mobile still keeps images nicely sized */
-            .carousel-slide {
-                padding: 0 5%;          /* images a bit wider but still centered */
-            }
 
             /* Even smaller text on phones */
             .home-headline {
@@ -437,7 +429,7 @@
                 font-size: 0.8rem;
             }
             .home-col-left-box p {
-                font-size: 0.75rem;
+                font-size: 0.8rem;        /* now matches h3 on mobile */
             }
 
             .about-img-1,
@@ -766,7 +758,7 @@
             }
         });
 
-        // ---------- INFINITE LOOP CAROUSEL (no peeking) ----------
+        // ---------- INFINITE LOOP CAROUSEL (NO PEEKING, NO PADDING) ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -802,7 +794,7 @@
                 dotsContainer.appendChild(dot);
             }
 
-            let currentIndex = 1;          // start on first real image (index 1 in extended)
+            let currentIndex = 1;          // start on first real image
             const totalSlides = imageUrls.length;
             let isTransitioning = false;
 
@@ -814,7 +806,6 @@
                 }
                 track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
-                // Update dots (map to real index)
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
                     dot.classList.toggle('active', i === realIndex);
@@ -833,7 +824,6 @@
                 currentIndex++;
                 updateCarousel();
 
-                // If we hit the clone of the first image, jump back to real first image
                 if (currentIndex === extendedUrls.length - 1) {
                     setTimeout(() => {
                         track.style.transition = 'none';
@@ -843,9 +833,7 @@
                         updateDots();
                     }, 500);
                 } else {
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, 500);
+                    setTimeout(() => { isTransitioning = false; }, 500);
                 }
             }
 
@@ -855,7 +843,6 @@
                 currentIndex--;
                 updateCarousel();
 
-                // If we hit the clone of the last image, jump to real last image
                 if (currentIndex === 0) {
                     setTimeout(() => {
                         track.style.transition = 'none';
@@ -865,9 +852,7 @@
                         updateDots();
                     }, 500);
                 } else {
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, 500);
+                    setTimeout(() => { isTransitioning = false; }, 500);
                 }
             }
 
@@ -896,30 +881,20 @@
                 startAutoPlay();
             }
 
-            // Arrow events
-            nextBtn.addEventListener('click', () => {
-                nextSlide();
-                resetAutoPlay();
-            });
-            prevBtn.addEventListener('click', () => {
-                prevSlide();
-                resetAutoPlay();
-            });
+            nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
+            prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
 
-            // Pause on hover / touch
             const wrapper = document.getElementById('carouselWrapper');
             wrapper.addEventListener('mouseenter', stopAutoPlay);
             wrapper.addEventListener('mouseleave', startAutoPlay);
             wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
             wrapper.addEventListener('touchend', startAutoPlay);
 
-            // Keyboard
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); }
                 if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); }
             });
 
-            // Initial position without animation
             updateCarousel(false);
             startAutoPlay();
         }
