@@ -281,7 +281,7 @@
         }
         .btn:hover { opacity: 0.9; }
 
-        /* ---- About Section ---- */
+        /* ---- About Section (desktop: both images at top) ---- */
         .about-img-1 {
             float: left;
             margin: 0 1.5rem 1rem 0;
@@ -436,6 +436,7 @@
                 font-size: 0.8rem;
             }
 
+            /* Mobile About – images stack, Image2 moved by JS */
             .about-img-1,
             .about-img-2 {
                 float: none;
@@ -519,16 +520,17 @@
             </div>
         </div>
 
-        <!-- About (Image2 placed after short bio) -->
+        <!-- About (desktop: both images at top; mobile: Image2 repositioned by JS) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
+                <!-- Both images placed before the text container -->
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                 <div class="about-text clearfix">
                     <p id="aboutShortBioParagraph">
                         <span id="aboutShortBioText"></span>
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
-                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                     <div class="bio-extended" id="bioExtended">
                         <p id="aboutExtendedBioText">
                             <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -696,13 +698,11 @@
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
 
-            // Format number with thousand separators and two decimals
             const formattedNumber = converted.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
 
-            // Symbol from selectedCurrency object (fetched from sheet)
             const symbol = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code;
             return symbol + ' ' + formattedNumber;
         }
@@ -1019,7 +1019,7 @@
             refreshAllPrices();
         }
 
-        // ---------- ABOUT SECTION (mobile image swap) ----------
+        // ---------- ABOUT SECTION (desktop: both images at top, mobile: reposition) ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1033,10 +1033,11 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
+                // Desktop: show immediately (float right, already in correct position)
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
-                    img2.style.display = 'none';
+                    img2.style.display = 'none';   // hidden until we move it
                 }
             } else {
                 img2.style.display = 'none';
@@ -1049,26 +1050,44 @@
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
             const shortBioPara = document.getElementById('aboutShortBioParagraph');
+            const textContainer = document.querySelector('.about-text');
+
+            // On mobile, move Image2 to its correct position
+            function arrangeForMobile() {
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    // Initially: Image2 after short bio
+                    shortBioPara.insertAdjacentElement('afterend', img2);
+                    img2.style.display = 'block';
+                }
+            }
 
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
-                shortBioPara.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    // Move Image2 back to after short bio
+                    shortBioPara.insertAdjacentElement('afterend', img2);
                     img2.style.display = 'block';
                 }
+                // On desktop, image stays where it is (before text), no action needed
             }
 
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
-                bioExtended.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    // Move Image2 after extended bio
+                    bioExtended.insertAdjacentElement('afterend', img2);
                     img2.style.display = 'block';
                 }
+                // On desktop, image stays where it is (before text), text wraps around it
             }
 
-            collapse();
+            // Initial setup
+            if (window.innerWidth <= 768) {
+                arrangeForMobile();
+            }
+            collapse();   // sets initial state
 
             toggleMore.addEventListener('click', expand);
             toggleLess.addEventListener('click', collapse);
