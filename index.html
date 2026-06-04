@@ -174,7 +174,7 @@
             margin-top: 0;
         }
 
-        /* ---- Horizontal Carousel (images now 75% width) ---- */
+        /* ---- Horizontal Carousel (images 70% desktop, 60% mobile) ---- */
         .carousel-wrapper {
             position: relative;
             width: 100%;
@@ -196,7 +196,7 @@
             justify-content: center;
         }
         .carousel-slide img {
-            width: 70%;                   /* reduced from 85% to 75% */
+            width: 70%;                   /* desktop size */
             height: auto;
             max-height: 100%;
             object-fit: contain;
@@ -418,17 +418,14 @@
                 overflow-y: visible;
             }
 
-            /* Phone – smaller carousel images */
+            /* Phone – smaller carousel images & dots padding */
             .carousel-slide img {
-                width: 60%;   /* adjust as needed */
+                width: 60%;
             }
-
-            /* Phone – push dots below the smaller image */
             .carousel-wrapper {
-                padding-bottom: 1.8rem;   /* adjust as needed */
+                padding-bottom: 1.8rem;   /* prevents dots overlapping */
             }
 
-            /* Even smaller text on phones */
             .home-headline {
                 font-size: 0.85rem;
                 margin-bottom: 1.5rem;
@@ -437,11 +434,11 @@
                 font-size: 0.8rem;
             }
             .home-col-left-box p {
-                font-size: 0.8rem;        /* matches h3 */
+                font-size: 0.8rem;
             }
 
-            .about-img-1,
-            .about-img-2 {
+            /* Mobile About – images stack */
+            .about-img-1 {
                 float: none;
                 display: block;
                 margin: 0.5rem auto 1rem auto;
@@ -449,17 +446,11 @@
                 max-width: 250px;
             }
             .about-img-2 {
-                display: none;
-            }
-            .bio-extended {
-                flex-direction: column;
-            }
-            .bio-extended.show-flex {
-                display: flex;
-            }
-            .bio-extended .about-img-2 {
-                order: 3;
-                display: block !important;
+                float: none;
+                display: block;          /* will be toggled via JS */
+                margin: 1rem auto 0 auto;
+                width: 80%;
+                max-width: 250px;
             }
 
             .form-row {
@@ -536,16 +527,17 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (new structure for mobile) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
-                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                 <div class="about-text clearfix">
                     <p id="aboutShortBioParagraph">
                         <span id="aboutShortBioText"></span>
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
+                    <!-- Image2 placed after short bio -->
+                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                     <div class="bio-extended" id="bioExtended">
                         <p id="aboutExtendedBioText">
                             <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -766,7 +758,7 @@
             }
         });
 
-        // ---------- INFINITE LOOP CAROUSEL (75% images) ----------
+        // ---------- INFINITE LOOP CAROUSEL (no peeking) ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -869,7 +861,6 @@
                 });
             }
 
-            // Auto-play
             function startAutoPlay() {
                 if (carouselIntervalId) clearInterval(carouselIntervalId);
                 carouselIntervalId = setInterval(nextSlide, interval);
@@ -1039,6 +1030,7 @@
             refreshAllPrices();
         }
 
+        // ---------- ABOUT SECTION (new mobile logic) ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1052,6 +1044,7 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
+                // Desktop always visible (float right), mobile initially hidden
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
@@ -1067,25 +1060,35 @@
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
+            const shortBioPara = document.getElementById('aboutShortBioParagraph');
 
-            bioExtended.style.display = 'none';
-            toggleMore.style.display = 'inline';
-
-            toggleMore.addEventListener('click', () => {
-                bioExtended.style.display = 'block';
-                toggleMore.style.display = 'none';
+            // Collapse state: image2 right after short bio (default position)
+            function collapse() {
+                bioExtended.style.display = 'none';
+                toggleMore.style.display = 'inline';
+                // Place image2 after short bio paragraph
+                shortBioPara.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
                     img2.style.display = 'block';
                 }
-            });
+            }
 
-            toggleLess.addEventListener('click', () => {
-                bioExtended.style.display = 'none';
-                toggleMore.style.display = 'inline';
-                if (window.innerWidth <= 768) {
-                    img2.style.display = 'none';
+            // Expand state: image2 after extended bio
+            function expand() {
+                bioExtended.style.display = 'block';
+                toggleMore.style.display = 'none';
+                // Move image2 after the extended bio div
+                bioExtended.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    img2.style.display = 'block';
                 }
-            });
+            }
+
+            // Initial state: collapsed
+            collapse();
+
+            toggleMore.addEventListener('click', expand);
+            toggleLess.addEventListener('click', collapse);
         }
 
         // ---------- SPA NAVIGATION ----------
