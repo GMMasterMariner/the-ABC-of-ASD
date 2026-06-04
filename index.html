@@ -97,26 +97,37 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Wrapper that holds the image (float right), short bio, and extended bio */
+        /* Container that holds image2 placeholder, actual image, and text */
         .bio-wrapper {
-            position: relative;       /* for measurement */
-            /* clearfix */
+            position: relative;       /* for absolute positioning of image2 */
+            overflow: visible;        /* allow image2 to protrude upward */
         }
         .bio-wrapper::after {
             content: "";
             display: table;
-            clear: both;
+            clear: both;              /* clearfix for placeholder float */
         }
 
-        /* Image 2 – floated right, initially hidden, margin-top set by JS */
-        .about-img-2 {
+        /* Invisible placeholder – floated right, negative margin cancels its height */
+        .img2-placeholder {
             float: right;
-            margin: 0 0 1rem 1.5rem;   /* margin-top will be overridden inline */
+            width: 40%;
+            max-width: 300px;
+            margin: 0 0 -9999px 1.5rem;   /* negative bottom margin will be set exactly via JS */
+            visibility: hidden;
+        }
+
+        /* Actual image2 – absolutely positioned at bottom right, matching placeholder */
+        .about-img-2 {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: none;             /* hidden initially */
+            z-index: 2;
         }
 
         .about-text { line-height: 1.6; }
@@ -185,29 +196,24 @@
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* Mobile About: stack normally, no float alignment */
+            /* Mobile About: stack normally */
             .about-img-1 {
                 float: none; display: block;
                 margin: 0.5rem auto 1rem auto;
                 width: 80%; max-width: 250px;
             }
+            .img2-placeholder { display: none; }
             .about-img-2 {
-                float: none !important;
+                position: static;          /* normal flow */
+                float: none;
                 display: block !important;
-                margin: 1rem auto 0 auto !important;
+                margin: 1rem auto 0 auto;
                 width: 80%; max-width: 250px;
-                position: static;
             }
-            .bio-wrapper {
-                position: static;
-            }
-            .bio-extended {
-                display: none;
-                flex-direction: column;
-            }
-            .bio-extended.show-flex {
-                display: flex;
-            }
+            .bio-wrapper { position: static; }
+
+            .bio-extended { display: none; flex-direction: column; }
+            .bio-extended.show-flex { display: flex; }
             .bio-extended #aboutExtendedBioText { order: 1; }
             .bio-extended .about-img-2 { order: 3; }
 
@@ -257,13 +263,16 @@
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About (final dynamic version) -->
+        <!-- About (final, robust version) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
                     <div class="bio-wrapper" id="bioWrapper">
-                        <!-- Image2 placed before short bio so text wraps around it -->
+                        <!-- Invisible placeholder – floated right, negative margin cancels height -->
+                        <div id="img2placeholder" class="img2-placeholder"></div>
+
+                        <!-- Actual image (absolute, bottom-right) -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
 
                         <p id="aboutShortBioParagraph">
@@ -335,13 +344,16 @@
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
             const img2 = document.getElementById('aboutImg2');
+            const placeholder = document.getElementById('img2placeholder');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
-                if (img2) {
-                    img2.style.display = 'none';
-                    img2.style.marginTop = '';   // reset
+                if (img2) img2.style.display = 'none';
+                if (placeholder) {
+                    placeholder.style.width = '0';
+                    placeholder.style.height = '0';
+                    placeholder.style.marginBottom = '0';
                 }
             }
         }
@@ -404,37 +416,17 @@
             });
         }
 
-        // ---------- ALIGN IMAGE2 TO BOTTOM OF EXTENDED BIO ----------
-        function alignImage2() {
+        // ---------- UPDATE PLACEHOLDER DIMENSIONS ----------
+        function updatePlaceholder() {
             const img2 = document.getElementById('aboutImg2');
-            const wrapper = document.getElementById('bioWrapper');
-            const extendedBio = document.getElementById('bioExtended');
+            const placeholder = document.getElementById('img2placeholder');
+            if (!img2 || !placeholder || img2.style.display === 'none') return;
 
-            if (!img2 || !wrapper || !extendedBio) return;
-            // Only on desktop (not mobile)
-            if (window.innerWidth <= 768) return;
-
-            // Temporarily hide image to measure text height
-            const prevDisplay = img2.style.display;
-            img2.style.display = 'none';
-            // Force layout
-            wrapper.offsetHeight;
-
-            // Get the bottom of the extended bio paragraph relative to wrapper
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const extendedRect = extendedBio.getBoundingClientRect();
-            const textBottom = extendedRect.bottom - wrapperRect.top;
-
-            // Restore image display (but keep original state for later)
-            img2.style.display = prevDisplay;
-
-            // Get image height (if it was visible; if not, wait for load)
-            const imgHeight = img2.offsetHeight;
-            if (imgHeight === 0) return;   // image not loaded yet
-
-            // Calculate margin-top so that image bottom = textBottom
-            const newMarginTop = textBottom - imgHeight;
-            img2.style.marginTop = newMarginTop + 'px';
+            const w = img2.offsetWidth;
+            const h = img2.offsetHeight;
+            placeholder.style.width = w + 'px';
+            placeholder.style.height = h + 'px';
+            placeholder.style.marginBottom = '-' + h + 'px';   // cancels its own height
         }
 
         // ---------- APPLY SETTINGS ----------
@@ -531,19 +523,12 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2
+            // Image 2 – wait for load to configure placeholder
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // Wait for image load to enable alignment
-                img2.addEventListener('load', () => {
-                    if (img2.style.display !== 'none') {
-                        alignImage2();
-                    }
-                });
-                if (img2.complete) {
-                    if (img2.style.display !== 'none') alignImage2();
-                }
+                img2.addEventListener('load', updatePlaceholder);
+                if (img2.complete) updatePlaceholder();   // cached image
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -554,18 +539,16 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // Show image2
+                // Show image and placeholder
                 if (about.AuthorImage2URL) {
                     img2.style.display = 'block';
+                    updatePlaceholder();
                 }
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
                     bioExtended.style.display = 'flex';
-                    // No alignment needed on mobile
                 } else {
                     bioExtended.style.display = 'block';
-                    // Align after layout
-                    setTimeout(alignImage2, 10);
                 }
                 toggleMore.style.display = 'none';
             });
@@ -574,19 +557,14 @@
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 img2.style.display = 'none';
-                img2.style.marginTop = '';   // reset
+                document.getElementById('img2placeholder').style.width = '0';
+                document.getElementById('img2placeholder').style.height = '0';
+                document.getElementById('img2placeholder').style.marginBottom = '0';
                 toggleMore.style.display = 'inline';
             });
 
-            // Initial state
+            // Initial state: image hidden, placeholder collapsed
             resetAboutBio();
-
-            // Re-align on window resize (desktop only)
-            window.addEventListener('resize', () => {
-                if (img2.style.display !== 'none' && window.innerWidth > 768) {
-                    alignImage2();
-                }
-            });
         }
 
         // ---------- CONTACT FORM ----------
