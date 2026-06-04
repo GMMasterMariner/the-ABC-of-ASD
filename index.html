@@ -20,9 +20,9 @@
 
         body {
             font-family: 'Nunito Sans', sans-serif;
-            background-color: #ffffff;  /* sheet override */
-            color: #000000;             /* sheet override */
-            padding-top: 140px;         /* space for sticky header */
+            background-color: #ffffff;
+            color: #000000;
+            padding-top: 140px;
         }
 
         /* ---------- STICKY HEADER ---------- */
@@ -35,13 +35,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        /* ---- Banner: logo absolute left, text truly centered ---- */
+        /* ---- Banner ---- */
         .banner {
             position: relative;
-            background-color: #194373;  /* fallback, overridden by PrimaryColor */
+            background-color: #194373;  /* overridden by PrimaryColor */
             color: #ffffff;
             padding: 0.8rem 1.2rem;
-            min-height: 60px;           /* ensures enough height for logo */
+            min-height: 60px;
         }
 
         .banner-logo {
@@ -69,21 +69,21 @@
             margin: 0;
         }
 
-        /* abbreviation inside h1 – lighter weight */
+        /* ✨ ABBREVIATION: even finer weight (200) */
         .banner-text h1 .abbreviation {
-            font-weight: 300;           /* Light */
+            font-weight: 200;
             opacity: 0.95;
         }
 
         .banner-text h2 {
-            font-size: 1.05rem;         /* slightly larger than before */
+            font-size: 1.15rem;         /* ✨ slightly larger */
             font-weight: 400;
             line-height: 1.3;
             margin: 0.25rem 0 0 0;
             opacity: 0.9;
         }
 
-        /* ---- Nav Bar: white, icons left, page title absolutely centered ---- */
+        /* ---- Nav Bar ---- */
         .navbar {
             position: relative;
             display: flex;
@@ -122,71 +122,81 @@
             transform: translateX(-50%);
             font-size: 1.1rem;
             font-weight: 600;
-            color: #194373;             /* set dynamically */
+            color: #194373;
             white-space: nowrap;
-            pointer-events: none;       /* allow clicks to pass through to icons behind */
+            pointer-events: none;
             z-index: 1;
         }
 
-        /* ---- Main Content ---- */
+        /* ---------- MAIN CONTENT ---------- */
         .content {
             padding: 2rem;
             max-width: 960px;
             margin: 0 auto;
         }
 
+        /* ---- About Section ---- */
+        .about-section {
+            margin-top: 2rem;
+        }
+
+        .about-images {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .about-images img {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .about-bio {
+            line-height: 1.6;
+        }
+
+        .bio-toggle {
+            color: var(--primary-color, #194373);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .bio-extended {
+            display: none;   /* hidden by default */
+            margin-top: 1rem;
+        }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 600px) {
-            body {
-                padding-top: 125px;
-            }
-            .banner {
-                padding: 0.6rem 0.8rem;
-                min-height: 52px;
-            }
-            .banner-logo {
-                left: 0.8rem;
-            }
-            .banner-logo img {
-                max-height: 35px;
-            }
-            .banner-text h1 {
-                font-size: 1.1rem;
-            }
-            .banner-text h2 {
-                font-size: 0.9rem;
-            }
-            .navbar {
-                padding: 0.4rem 0.6rem;
-                min-height: 42px;
-            }
-            .nav-left {
-                gap: 0.8rem;
-            }
-            .nav-left a img {
-                height: 24px;
-            }
-            .nav-center {
-                font-size: 0.95rem;
-            }
+            body { padding-top: 125px; }
+            .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
+            .banner-logo { left: 0.8rem; }
+            .banner-logo img { max-height: 35px; }
+            .banner-text h1 { font-size: 1.1rem; }
+            .banner-text h2 { font-size: 1rem; }
+            .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
+            .nav-left { gap: 0.8rem; }
+            .nav-left a img { height: 24px; }
+            .nav-center { font-size: 0.95rem; }
+            .about-images { flex-direction: column; align-items: center; }
         }
 
         @media (max-width: 480px) {
-            /* On very small screens, hide the centered page title to avoid icon overlap */
-            .nav-center {
-                display: none;
-            }
-            .nav-left {
-                justify-content: center;  /* optionally center the icons themselves */
-                width: 100%;
-            }
+            .nav-center { display: none; }
+            .nav-left { justify-content: center; width: 100%; }
         }
     </style>
 </head>
 <body>
     <!-- ================== STICKY HEADER ================== -->
     <div class="sticky-header" id="stickyHeader">
-        <!-- Banner: logo absolute left + title/subtitle centered -->
         <div class="banner" id="banner">
             <div class="banner-logo">
                 <img id="bannerLogo" src="" alt="Logo">
@@ -197,7 +207,6 @@
             </div>
         </div>
 
-        <!-- Navigation Bar: icons left + page title absolutely centered -->
         <nav class="navbar" id="navbar">
             <div class="nav-left" id="navIcons"></div>
             <div class="nav-center" id="pageTitleDisplay">Home</div>
@@ -206,55 +215,66 @@
 
     <!-- ================== MAIN CONTENT ================== -->
     <div class="content">
-        <p>Welcome! This page is styled live from your Google Sheet.</p>
-        <p>Add your own content, forms, or anything you like here.</p>
+        <!-- About Section (dynamic) -->
+        <div class="about-section" id="aboutSection">
+            <div class="about-images">
+                <img id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <img id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+            </div>
+            <div class="about-bio">
+                <p id="aboutShortBio"></p>
+                <span class="bio-toggle" id="bioToggle">read more...</span>
+                <div class="bio-extended" id="bioExtended">
+                    <p id="aboutExtendedBio"></p>
+                    <span class="bio-toggle" id="bioToggleLess">read less...</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // ==============================================
-        // 🔧 REPLACE THIS URL WITH YOUR WEB APP URL
+        // 🔧 REPLACE WITH YOUR WEB APP URL (two places)
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
 
+        // ---------- FETCH HELPERS ----------
         async function fetchSettings() {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            const settings = {};
-            data.forEach(item => {
-                settings[item.Setting] = item.Value;
-            });
-            return settings;
+            const res = await fetch(API_URL);
+            return await res.json();
         }
 
+        async function fetchAboutData() {
+            const res = await fetch(API_URL + '?sheet=About');
+            return await res.json();
+        }
+
+        // ---------- APPLY SETTINGS (header) ----------
         async function applySettings() {
             const s = await fetchSettings();
+            // Convert array of objects into a single key-value object
+            const settings = {};
+            s.forEach(item => { settings[item.Setting] = item.Value; });
 
-            // --- Page colors ---
-            document.body.style.backgroundColor = s.BackgroundColor || '#ffffff';
-            document.body.style.color = s.TextColor || '#000000';
+            // Colors
+            document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
+            document.body.style.color = settings.TextColor || '#000000';
+            document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
 
-            // --- Banner background = PrimaryColor ---
-            const banner = document.getElementById('banner');
-            banner.style.backgroundColor = s.PrimaryColor || '#194373';
-
-            // --- Banner logo ---
-            const bannerLogo = document.getElementById('bannerLogo');
-            if (s.LogoURL) {
-                bannerLogo.src = s.LogoURL;
-                bannerLogo.style.display = 'block';
+            // Logo
+            const logo = document.getElementById('bannerLogo');
+            if (settings.LogoURL) {
+                logo.src = settings.LogoURL;
+                logo.style.display = 'block';
             } else {
-                bannerLogo.style.display = 'none';
+                logo.style.display = 'none';
             }
 
-            // --- Banner title with abbreviation in lighter font ---
+            // Banner title + abbreviation
             const titleEl = document.getElementById('bannerTitle');
-            const mainTitle = s.BannerBookTitle || '';
-            const abbrev = s.BannerBookTitleAbbreviation && s.BannerBookTitleAbbreviation.trim() !== '' 
-                            ? s.BannerBookTitleAbbreviation 
-                            : '';
-
+            const mainTitle = settings.BannerBookTitle || '';
+            const abbrev = settings.BannerBookTitleAbbreviation || '';
             if (mainTitle && abbrev) {
-                // Wrap abbreviation in a span for light weight styling
                 titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
             } else if (mainTitle) {
                 titleEl.textContent = mainTitle;
@@ -262,23 +282,21 @@
                 titleEl.textContent = '';
             }
 
-            // --- Banner subtitle ---
-            document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitile || '';
+            // Subtitle
+            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // --- Navigation icons (left side) ---
+            // Nav icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
-
             const navItems = [
-                { setting: 'NavIconURLHome', textSetting: 'HomePageTitle', href: '#' },
-                { setting: 'NavIconURLOrder', textSetting: 'OrderPageTitle', href: '#' },
-                { setting: 'NavIconURLAbout', textSetting: 'AboutPageTitle', href: '#' },
-                { setting: 'NavIconURLContact', textSetting: 'ContactPageTitle', href: '#' },
-                { setting: 'NavIconURLLinkedIn', textSetting: null, href: '#', external: true }
+                { setting: 'NavIconURLHome', href: '#' },
+                { setting: 'NavIconURLOrder', href: '#' },
+                { setting: 'NavIconURLAbout', href: '#' },
+                { setting: 'NavIconURLContact', href: '#' },
+                { setting: 'NavIconURLLinkedIn', href: '#', external: true }
             ];
-
             navItems.forEach(item => {
-                const url = s[item.setting];
+                const url = settings[item.setting];
                 if (url && url.trim() !== '') {
                     const a = document.createElement('a');
                     a.href = item.href;
@@ -291,14 +309,69 @@
                 }
             });
 
-            // --- Page title in center of navbar ---
-            const pageTitle = s.HomePageTitle || 'Home';
-            const pageTitleEl = document.getElementById('pageTitleDisplay');
-            pageTitleEl.textContent = pageTitle;
-            pageTitleEl.style.color = s.PrimaryColor || '#194373';
+            // Page title in navbar center
+            const pageTitle = settings.AboutPageTitle || 'About';  // default to 'About' if empty
+            document.getElementById('pageTitleDisplay').textContent = pageTitle;
+            document.getElementById('pageTitleDisplay').style.color = settings.PrimaryColor || '#194373';
+
+            // Set CSS variable for bio toggle color (so it can use PrimaryColor)
+            document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
         }
 
-        applySettings().catch(err => console.error('Error applying settings:', err));
+        // ---------- POPULATE ABOUT SECTION ----------
+        async function loadAboutSection() {
+            const data = await fetchAboutData();
+            // data is array of objects like [{Setting: 'AboutPageTitle', Value: ''}, ...]
+            const about = {};
+            data.forEach(item => { about[item.Setting] = item.Value; });
+
+            // Images
+            const img1 = document.getElementById('aboutImg1');
+            const img2 = document.getElementById('aboutImg2');
+            if (about.AuthorImage1URL) {
+                img1.src = about.AuthorImage1URL;
+                img1.style.display = 'block';
+            } else {
+                img1.style.display = 'none';
+            }
+            if (about.AuthorImage2URL) {
+                img2.src = about.AuthorImage2URL;
+                img2.style.display = 'block';
+            } else {
+                img2.style.display = 'none';
+            }
+
+            // Short bio
+            document.getElementById('aboutShortBio').textContent = about.AuthorShortBio || '';
+
+            // Extended bio (hidden initially)
+            document.getElementById('aboutExtendedBio').textContent = about.AuthorExtendedBio || '';
+
+            // Toggle logic
+            const toggleMore = document.getElementById('bioToggle');
+            const toggleLess = document.getElementById('bioToggleLess');
+            const bioExtendedDiv = document.getElementById('bioExtended');
+
+            // "Read more..." click -> show extended, hide 'more' link, show 'less' link
+            toggleMore.addEventListener('click', () => {
+                bioExtendedDiv.style.display = 'block';
+                toggleMore.style.display = 'none';
+            });
+
+            // "Read less..." click -> hide extended, show 'more' link again
+            toggleLess.addEventListener('click', () => {
+                bioExtendedDiv.style.display = 'none';
+                toggleMore.style.display = 'inline-block';
+            });
+        }
+
+        // ---------- INIT ----------
+        async function init() {
+            await applySettings();
+            await loadAboutSection();
+        }
+
+        init().catch(err => console.error('Error initializing page:', err));
     </script>
 </body>
 </html>
