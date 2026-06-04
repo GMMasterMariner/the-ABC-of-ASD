@@ -97,10 +97,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Image 2 – floated right, initially hidden, margin-top will be set dynamically */
+        /* Image 2 – floated right, margin-top will be set dynamically */
         .about-img-2 {
             float: right;
-            margin: 0 0 1rem 1.5rem;     /* margin-top overridden by JS */
+            margin: 0 0 1rem 1.5rem;     /* margin-top overridden inline */
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
@@ -238,7 +238,7 @@
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About (final floating + dynamic margin-top, text wraps) -->
+        <!-- About (final floating + dynamic margin-top, text wraps correctly) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -393,24 +393,34 @@
             // Only for desktop
             if (window.innerWidth <= 768) return;
 
-            // Ensure the image is loaded and has dimensions
-            if (img2.offsetHeight === 0) {
-                // Try again shortly
-                setTimeout(alignImage2, 100);
+            // Reset margin to measure natural position
+            img2.style.marginTop = '0';
+            // Force layout recalculation
+            void img2.offsetHeight;
+
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const imgRect = img2.getBoundingClientRect();
+            const extendedRect = extendedBio.getBoundingClientRect();
+
+            // Natural top of image (relative to wrapper)
+            const naturalTop = imgRect.top - wrapperRect.top;
+            // Height of image
+            const imgHeight = img2.offsetHeight;
+            if (imgHeight === 0) {
+                // Image not loaded – try again later
+                setTimeout(alignImage2, 150);
                 return;
             }
 
-            // Get positions relative to the wrapper top
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const extendedRect = extendedBio.getBoundingClientRect();
-            const textBottom = extendedRect.bottom - wrapperRect.top;   // distance from wrapper top to text bottom
-            const imgHeight = img2.offsetHeight;
+            // Bottom of extended bio relative to wrapper
+            const textBottom = extendedRect.bottom - wrapperRect.top;
 
-            // Desired margin-top so that image bottom = textBottom
-            // For a float at the top of the wrapper, its natural top is at the wrapper's top.
-            // So we need margin-top = textBottom - imgHeight
-            const newMarginTop = textBottom - imgHeight;
-            img2.style.marginTop = newMarginTop + 'px';
+            // Desired top of image so that its bottom = textBottom
+            const desiredTop = textBottom - imgHeight;
+
+            // Required margin-top
+            const marginTop = desiredTop - naturalTop;
+            img2.style.marginTop = marginTop + 'px';
         }
 
         // ---------- APPLY SETTINGS ----------
@@ -511,7 +521,7 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // Once the image loads, we can align, but it's hidden initially – we'll align when it's shown.
+                // When image loads, if visible, align it
                 img2.addEventListener('load', () => {
                     if (img2.style.display !== 'none') {
                         alignImage2();
@@ -540,7 +550,7 @@
                     // No alignment needed on mobile
                 } else {
                     bioExtended.style.display = 'block';
-                    // Wait for layout then align
+                    // Align after layout: wait for image to have dimensions, then align
                     requestAnimationFrame(() => {
                         alignImage2();
                     });
