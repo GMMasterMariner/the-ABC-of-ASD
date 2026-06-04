@@ -174,15 +174,14 @@
             margin-top: 0;
         }
 
-        /* ---- Horizontal Carousel (NO PEEKING, NO PADDING) ---- */
+        /* ---- Horizontal Carousel (images now 75% width) ---- */
         .carousel-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;             /* this clips the track – no adjacent images */
+            overflow: hidden;
             border-radius: 8px;
             background: transparent;
-            /* NO horizontal padding – image size is controlled by the slide */
         }
         .carousel-track {
             display: flex;
@@ -190,15 +189,14 @@
             transition: transform 0.5s ease;
         }
         .carousel-slide {
-            flex: 0 0 100%;               /* exactly one slide visible at a time */
+            flex: 0 0 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* NO padding – the image element itself will be sized down */
         }
         .carousel-slide img {
-            width: 85%;                   /* leaves room for arrows & dots */
+            width: 75%;                   /* reduced from 85% to 75% */
             height: auto;
             max-height: 100%;
             object-fit: contain;
@@ -429,7 +427,7 @@
                 font-size: 0.8rem;
             }
             .home-col-left-box p {
-                font-size: 0.8rem;        /* now matches h3 on mobile */
+                font-size: 0.8rem;        /* matches h3 */
             }
 
             .about-img-1,
@@ -758,7 +756,7 @@
             }
         });
 
-        // ---------- INFINITE LOOP CAROUSEL (NO PEEKING, NO PADDING) ----------
+        // ---------- INFINITE LOOP CAROUSEL (75% images) ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -769,7 +767,6 @@
 
             if (!imageUrls.length) return;
 
-            // Clone logic for seamless loop
             const firstClone = imageUrls[imageUrls.length - 1];
             const lastClone = imageUrls[0];
             const extendedUrls = [firstClone, ...imageUrls, lastClone];
@@ -785,7 +782,6 @@
                 track.appendChild(slide);
             });
 
-            // Dots for real images
             for (let i = 0; i < imageUrls.length; i++) {
                 const dot = document.createElement('span');
                 dot.className = 'carousel-dot';
@@ -794,7 +790,7 @@
                 dotsContainer.appendChild(dot);
             }
 
-            let currentIndex = 1;          // start on first real image
+            let currentIndex = 1;
             const totalSlides = imageUrls.length;
             let isTransitioning = false;
 
