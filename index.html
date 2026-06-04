@@ -156,7 +156,7 @@
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 1rem 1.5rem;        /* reduced top/bottom from 1.5rem to 1rem */
+            padding: 1rem 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -166,7 +166,7 @@
         }
         .home-col-left-box h3 {
             font-weight: 700;
-            font-size: 1rem;            /* match product card title size */
+            font-size: 1rem;
             margin-bottom: 1rem;
         }
         .home-col-left-box p {
@@ -174,29 +174,71 @@
             margin-top: 0;
         }
 
-        .carousel-container {
-            perspective: 1000px;
-            width: 100%;
+        /* ---- New Horizontal Carousel ---- */
+        .carousel-wrapper {
             position: relative;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-        .carousel {
             width: 100%;
-            height: 100%;
-            position: absolute;
-            transform-style: preserve-3d;
-            transition: transform 0.8s ease;
-        }
-        .carousel img {
-            position: absolute;
-            width: 80%;
-            height: auto;
-            max-height: 100%;
-            left: 10%;
+            height: 100%;               /* will be set by JS */
+            overflow: hidden;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            backface-visibility: hidden;
+            background: #f5f5f5;        /* subtle background */
+        }
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+        .carousel-track img {
+            flex: 0 0 100%;
+            height: 100%;
+            width: 100%;
+            object-fit: contain;        /* scale naturally, never exceed box */
+            padding: 0.5rem;            /* tiny breathing room */
+            user-select: none;
+        }
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #194373;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 3;
+            transition: background 0.2s;
+            line-height: 1;
+        }
+        .carousel-arrow:hover { background: white; }
+        .carousel-arrow.prev { left: 0.5rem; }
+        .carousel-arrow.next { right: 0.5rem; }
+        .carousel-dots {
+            position: absolute;
+            bottom: 0.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 3;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 1px solid #194373;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .carousel-dot.active {
+            background: #194373;
         }
 
         .product-card {
@@ -363,7 +405,8 @@
                 gap: 1.5rem;
             }
             .home-col-left-box,
-            .carousel-container {
+            .carousel-container,
+            .carousel-wrapper {
                 height: auto !important;
                 overflow-y: visible;
             }
@@ -387,7 +430,6 @@
                 width: 80%;
                 max-width: 250px;
             }
-            /* On mobile, image2 appears after short bio only when extended is shown */
             .about-img-2 {
                 display: none;   /* hidden until read more */
             }
@@ -443,10 +485,9 @@
         <nav class="navbar" id="navbar">
             <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
             <div class="nav-left" id="navIcons"></div>
-            <div class="nav-center" id="pageTitleDisplay"></div>   <!-- empty by default -->
+            <div class="nav-center" id="pageTitleDisplay"></div>
             <div class="nav-right" id="currencySelectorContainer">
                 <span class="currency-label">Currency:</span>
-                <!-- currency button & dropdown injected by JS -->
             </div>
         </nav>
     </div>
@@ -465,19 +506,21 @@
                 </div>
                 <div class="home-col home-col-center">
                     <div class="carousel-container" id="carouselContainer">
-                        <div class="carousel" id="carousel"></div>
+                        <div class="carousel-wrapper" id="carouselWrapper">
+                            <div class="carousel-track" id="carouselTrack"></div>
+                            <button class="carousel-arrow prev" id="prevBtn" aria-label="Previous">‹</button>
+                            <button class="carousel-arrow next" id="nextBtn" aria-label="Next">›</button>
+                            <div class="carousel-dots" id="carouselDots"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="home-col home-col-right" id="productCardsColumn">
-                    <!-- product cards and order button -->
-                </div>
+                <div class="home-col home-col-right" id="productCardsColumn"></div>
             </div>
         </div>
 
-        <!-- About (new layout) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
-                <!-- Both images placed before text -->
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                 <div class="about-text clearfix">
@@ -543,6 +586,7 @@
         let selectedCurrency = null;
         let products = [];
         let aboutData = {};
+        let carouselIntervalId = null;
 
         // ---------- SINGLE FETCH FOR ALL DATA ----------
         async function fetchAllSiteData() {
@@ -649,16 +693,14 @@
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-            // Complete symbol map for all your currencies
             const symbolMap = {
                 'USD': 'US$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$',
                 'ZAR': 'R', 'CNY': '¥', 'INR': '₹', 'KRW': '₩', 'BRL': 'R$', 'TRY': '₺',
                 'NGN': '₦', 'PHP': '₱', 'IDR': 'Rp', 'MXN': 'MX$', 'HKD': 'HK$', 'NZD': 'NZ$',
                 'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł', 'MYR': 'RM', 'SGD': 'S$',
-                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'LE', 'SGD': 'S$'
+                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'LE'
             };
             try {
-                // Use undefined locale to let browser decide, which usually handles major codes
                 return new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(converted);
             } catch (e) {
                 const symbol = symbolMap[code] || code + ' ';
@@ -706,29 +748,96 @@
             }
         });
 
-        // ---------- 3D CAROUSEL ----------
+        // ---------- NEW HORIZONTAL CAROUSEL ----------
         function buildCarousel(imageUrls, interval) {
-            const carousel = document.getElementById('carousel');
-            const numSlides = imageUrls.length;
-            if (!numSlides) return;
-            const angle = 360 / numSlides;
-            const radius = 300;
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
 
-            for (let i = 0; i < numSlides; i++) {
+            if (!imageUrls.length) return;
+
+            // Add images
+            imageUrls.forEach((url, idx) => {
                 const img = document.createElement('img');
-                img.src = imageUrls[i];
-                img.alt = `Slide ${i + 1}`;
-                const rotation = i * angle;
-                img.style.transform = `rotateY(${rotation}deg) translateZ(${radius}px)`;
-                carousel.appendChild(img);
+                img.src = url;
+                img.alt = `Slide ${idx + 1}`;
+                img.loading = 'lazy';
+                track.appendChild(img);
+
+                // Dot
+                const dot = document.createElement('span');
+                dot.className = 'carousel-dot';
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(idx));
+                dotsContainer.appendChild(dot);
+            });
+
+            let currentIndex = 0;
+            const totalSlides = imageUrls.length;
+
+            function updateCarousel() {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
             }
 
-            let currentAngle = 0;
-            const rotate = () => {
-                currentAngle -= angle;
-                carousel.style.transform = `rotateY(${currentAngle}deg)`;
-            };
-            setInterval(rotate, interval);
+            function goToSlide(index) {
+                currentIndex = index;
+                updateCarousel();
+                resetAutoPlay();
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateCarousel();
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateCarousel();
+            }
+
+            // Arrow events
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            // Auto-play
+            function startAutoPlay() {
+                if (carouselIntervalId) clearInterval(carouselIntervalId);
+                carouselIntervalId = setInterval(nextSlide, interval);
+            }
+
+            function stopAutoPlay() {
+                if (carouselIntervalId) {
+                    clearInterval(carouselIntervalId);
+                    carouselIntervalId = null;
+                }
+            }
+
+            function resetAutoPlay() {
+                stopAutoPlay();
+                startAutoPlay();
+            }
+
+            // Pause on hover / touch
+            const wrapper = document.getElementById('carouselWrapper');
+            wrapper.addEventListener('mouseenter', stopAutoPlay);
+            wrapper.addEventListener('mouseleave', startAutoPlay);
+            wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
+            wrapper.addEventListener('touchend', startAutoPlay);
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
+
+            startAutoPlay();
+            updateCarousel();
         }
 
         // ---------- DIRECT DATA LOADERS ----------
@@ -814,8 +923,6 @@
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
 
             // Carousel
-            const carousel = document.getElementById('carousel');
-            carousel.innerHTML = '';
             const images = [];
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
@@ -880,7 +987,6 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // On desktop, image2 is always visible (float right). On mobile, hidden until read more.
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
@@ -897,12 +1003,10 @@
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
 
-            // Reset state
             bioExtended.style.display = 'none';
             toggleMore.style.display = 'inline';
 
             toggleMore.addEventListener('click', () => {
-                // Show extended bio and, on mobile, show image2
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
@@ -927,7 +1031,6 @@
 
             updateNavTitle(sectionId);
 
-            // Toggle currency selector visibility
             const currencyContainer = document.getElementById('currencySelectorContainer');
             if (sectionId === 'contact-section' || sectionId === 'about-section') {
                 currencyContainer.style.display = 'none';
@@ -945,7 +1048,7 @@
 
         function updateNavTitle(sectionId) {
             const titles = {
-                'home-section': '',                           // no title on home page
+                'home-section': '',
                 'about-section': appSettings?.AboutPageTitle || 'About',
                 'order-section': appSettings?.OrderPageTitle || 'Order',
                 'contact-section': appSettings?.ContactPageTitle || 'Contact'
@@ -1027,7 +1130,7 @@
             });
         }
 
-        // ---------- INIT (one request only) ----------
+        // ---------- INIT ----------
         async function init() {
             try {
                 const allData = await fetchAllSiteData();
