@@ -17,7 +17,7 @@
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            padding-top: 108px;      /* exact header height desktop */
+            padding-top: 108px;
         }
 
         /* ---------- STICKY HEADER ---------- */
@@ -97,10 +97,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Image 2 – floated right, margin-top will be set dynamically */
+        /* Image 2 – floated right, initially hidden, margin-top will be set dynamically */
         .about-img-2 {
             float: right;
-            margin: 0 0 1rem 1.5rem;     /* margin-top will be overridden inline */
+            margin: 0 0 1rem 1.5rem;     /* margin-top overridden by JS */
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
@@ -238,7 +238,7 @@
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About (final floating + JS alignment) -->
+        <!-- About (final floating + dynamic margin-top, text wraps) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -387,50 +387,30 @@
         function alignImage2() {
             const img2 = document.getElementById('aboutImg2');
             const extendedBio = document.getElementById('bioExtended');
-            const wrapper = img2.closest('.about-text');   // parent container
+            const wrapper = img2 && img2.closest('.about-text');
 
             if (!img2 || !extendedBio || !wrapper) return;
-            // Only do this on desktop
+            // Only for desktop
             if (window.innerWidth <= 768) return;
 
-            // Ensure image is visible (temporarily) to measure
-            const wasDisplayed = img2.style.display;
-            img2.style.display = 'block';   // needed to get offsetHeight
+            // Ensure the image is loaded and has dimensions
+            if (img2.offsetHeight === 0) {
+                // Try again shortly
+                setTimeout(alignImage2, 100);
+                return;
+            }
 
-            // Wait for browser to layout
-            requestAnimationFrame(() => {
-                // Get positions relative to the wrapper
-                const wrapperRect = wrapper.getBoundingClientRect();
-                const extendedRect = extendedBio.getBoundingClientRect();
-                const textBottom = extendedRect.bottom - wrapperRect.top;   // relative to top of wrapper
-                const imgHeight = img2.offsetHeight;
+            // Get positions relative to the wrapper top
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const extendedRect = extendedBio.getBoundingClientRect();
+            const textBottom = extendedRect.bottom - wrapperRect.top;   // distance from wrapper top to text bottom
+            const imgHeight = img2.offsetHeight;
 
-                if (imgHeight === 0) {
-                    // Image hasn't loaded yet – try again after a short delay
-                    img2.style.display = wasDisplayed;   // restore
-                    setTimeout(alignImage2, 200);
-                    return;
-                }
-
-                // Calculate the margin-top needed so that image bottom = textBottom
-                // The image's current top (if margin-top were 0) would be at the top of the float flow.
-                // Since it's floated right and placed before the paragraphs, its default top would be aligned with the top of the short bio.
-                // We measure the current top of the image (with default margin-top) to compute the offset.
-                const imgTop = img2.getBoundingClientRect().top - wrapperRect.top;
-                // Desired image bottom = textBottom
-                // Desired image top = textBottom - imgHeight
-                // margin-top change = desiredTop - imgTop (positive pushes down, negative pulls up)
-                const desiredTop = textBottom - imgHeight;
-                const currentTop = imgTop - parseFloat(getComputedStyle(img2).marginTop);   // subtract existing margin
-                const newMarginTop = desiredTop - currentTop;
-                img2.style.marginTop = newMarginTop + 'px';
-
-                // Restore original display state if it was hidden before
-                if (wasDisplayed !== 'block') {
-                    // but we need to keep it block if we want it visible; after alignment, we can set display back to 'block'? Actually we want it shown.
-                    img2.style.display = 'block';
-                }
-            });
+            // Desired margin-top so that image bottom = textBottom
+            // For a float at the top of the wrapper, its natural top is at the wrapper's top.
+            // So we need margin-top = textBottom - imgHeight
+            const newMarginTop = textBottom - imgHeight;
+            img2.style.marginTop = newMarginTop + 'px';
         }
 
         // ---------- APPLY SETTINGS ----------
@@ -527,17 +507,19 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 – just set src, stay hidden initially
+            // Image 2
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // When the image loads, if it's already visible, align it (but it's hidden, so we'll align on click)
+                // Once the image loads, we can align, but it's hidden initially – we'll align when it's shown.
                 img2.addEventListener('load', () => {
                     if (img2.style.display !== 'none') {
                         alignImage2();
                     }
                 });
-                if (img2.complete && img2.style.display !== 'none') alignImage2();
+                if (img2.complete && img2.style.display !== 'none') {
+                    alignImage2();
+                }
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -548,7 +530,7 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // Show image2
+                // Show image and extended bio
                 if (about.AuthorImage2URL) {
                     img2.style.display = 'block';
                 }
@@ -558,8 +540,10 @@
                     // No alignment needed on mobile
                 } else {
                     bioExtended.style.display = 'block';
-                    // Align after the extended bio is visible and the image has dimensions
-                    alignImage2();
+                    // Wait for layout then align
+                    requestAnimationFrame(() => {
+                        alignImage2();
+                    });
                 }
                 toggleMore.style.display = 'none';
             });
