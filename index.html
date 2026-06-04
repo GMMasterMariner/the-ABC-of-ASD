@@ -17,7 +17,7 @@
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            padding-top: 140px;
+            padding-top: 108px;      /* exact header height desktop */
         }
 
         /* ---------- STICKY HEADER ---------- */
@@ -136,17 +136,21 @@
         .contact-form {
             max-width: 500px;
             margin: 0 auto;
+            margin-top: 0.5rem;     /* tiny space after navbar */
         }
         .form-row {
             display: flex;
             gap: 1rem;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
         .form-row .form-group {
             flex: 1;
         }
         .form-group {
-            margin-bottom: 0; /* handled by row margin */
+            margin-top: 0.5rem;
+        }
+        .form-group:first-child {
+            margin-top: 0;          /* first form-group (Name) sticks to top */
         }
         .contact-form label {
             display: block;
@@ -183,6 +187,10 @@
         .contact-form button:hover {
             opacity: 0.9;
         }
+        .contact-form button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         .contact-result {
             text-align: center;
             margin-top: 2rem;
@@ -192,7 +200,9 @@
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
-            body { padding-top: 125px; }
+            body { padding-top: 94px; }    /* exact header height tablet */
+            .content { padding: 1.5rem; }   /* reduced content padding */
+
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
             .banner-logo img { max-height: 35px; }
@@ -258,17 +268,18 @@
                 display: block;
             }
 
-            /* Stack form fields on mobile */
+            /* Stack form row on mobile */
             .form-row {
                 flex-direction: column;
                 gap: 0;
             }
-            .form-row .form-group:first-child {
-                margin-bottom: 1rem;
+            .form-row .form-group:last-child {
+                margin-top: 0.5rem;
             }
         }
 
         @media (max-width: 600px) {
+            body { padding-top: 88px; }    /* exact header height small phone */
             .banner-text h1 { font-size: 0.8rem; }
             .banner-text h2 { font-size: 0.7rem; }
             .banner { min-height: 46px; }
@@ -339,28 +350,31 @@
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
+                    <!-- Name full width -->
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <!-- Email + Phone side by side -->
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Name *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
                         <div class="form-group">
                             <label for="email">Email *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-
+                    <!-- Message full width -->
                     <div class="form-group">
                         <label for="message">Message *</label>
                         <textarea id="message" name="message" required></textarea>
                     </div>
 
-                    <button type="submit">Send Message</button>
+                    <button type="submit" id="sendButton">Send Message</button>
                 </form>
                 <div class="contact-result" id="contactResult"></div>
             </div>
@@ -373,7 +387,7 @@
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
-        // ---------- FETCH HELPERS ----------
+        // ---------- FETCH HELPERS (parallel) ----------
         async function fetchSettings() {
             const res = await fetch(API_URL);
             return await res.json();
@@ -399,6 +413,7 @@
         function resetContactForm(targetSection) {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
             if (!form || !resultDiv) return;
 
             if (targetSection === 'contact-section') {
@@ -406,6 +421,11 @@
                 form.reset();
                 resultDiv.style.display = 'none';
                 resultDiv.innerHTML = '';
+                // Re-enable button and restore original text
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
             }
         }
 
@@ -451,10 +471,9 @@
         }
 
         // ---------- APPLY SETTINGS ----------
-        async function applySettings() {
-            const s = await fetchSettings();
+        function applySettings(settingsArray) {
             const settings = {};
-            s.forEach(item => { settings[item.Setting] = item.Value; });
+            settingsArray.forEach(item => { settings[item.Setting] = item.Value; });
             window.appSettings = settings;
 
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
@@ -540,63 +559,10 @@
             updateNavTitle('home-section');
         }
 
-        // ---------- CONTACT FORM HANDLING ----------
-        function setupContactForm() {
-            const form = document.getElementById('contactForm');
-            const resultDiv = document.getElementById('contactResult');
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const phone = document.getElementById('phone').value.trim();
-                const message = document.getElementById('message').value.trim();
-
-                if (!name || !email || !message) {
-                    resultDiv.style.display = 'block';
-                    resultDiv.textContent = 'Please fill in all required fields.';
-                    resultDiv.style.color = 'red';
-                    return;
-                }
-
-                const params = new URLSearchParams();
-                params.append('action', 'sendContact');
-                params.append('name', name);
-                params.append('email', email);
-                params.append('phone', phone);
-                params.append('message', message);
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        body: params
-                    });
-                    const data = await response.json();
-
-                    if (data.result === 'success') {
-                        form.style.display = 'none';
-                        resultDiv.style.display = 'block';
-                        resultDiv.innerHTML = '✅ Thank you for your message! I\'ll get back to you soon.';
-                        resultDiv.style.color = 'var(--primary-color, #194373)';
-                    } else {
-                        resultDiv.style.display = 'block';
-                        resultDiv.textContent = 'Sorry, something went wrong. Please try again later.';
-                        resultDiv.style.color = 'red';
-                    }
-                } catch (err) {
-                    resultDiv.style.display = 'block';
-                    resultDiv.textContent = 'Network error. Please try again.';
-                    resultDiv.style.color = 'red';
-                }
-            });
-        }
-
         // ---------- LOAD ABOUT DATA ----------
-        async function loadAboutSection() {
-            const data = await fetchAboutData();
+        function loadAboutSection(aboutArray) {
             const about = {};
-            data.forEach(item => { about[item.Setting] = item.Value; });
+            aboutArray.forEach(item => { about[item.Setting] = item.Value; });
 
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) {
@@ -640,15 +606,85 @@
             resetAboutBio();
         }
 
-        // ---------- INIT ----------
-        async function init() {
-            await applySettings();
-            await loadAboutSection();
-            setupHamburger();
-            setupContactForm();
+        // ---------- CONTACT FORM HANDLING (with sending state) ----------
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                // Sending state
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: params
+                    });
+                    const data = await response.json();
+
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you for your message! I\'ll get back to you soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Sorry, something went wrong. Please try again later.';
+                        resultDiv.style.color = 'red';
+                        // Re-enable button on error
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send Message';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error. Please try again.';
+                    resultDiv.style.color = 'red';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
+            });
         }
 
-        init().catch(err => console.error('Error initializing page:', err));
+        // ---------- INIT (parallel data fetch) ----------
+        async function init() {
+            try {
+                const [settingsData, aboutData] = await Promise.all([
+                    fetchSettings(),
+                    fetchAboutData()
+                ]);
+                applySettings(settingsData);
+                loadAboutSection(aboutData);
+                setupHamburger();
+                setupContactForm();
+            } catch (err) {
+                console.error('Error initializing page:', err);
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
