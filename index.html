@@ -174,28 +174,36 @@
             margin-top: 0;
         }
 
-        /* ---- Carousel (transparent, smaller images, no peeking) ---- */
+        /* ---- Horizontal Carousel (no adjacent image leaks) ---- */
         .carousel-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;          /* crucial – clips adjacent images */
+            overflow: hidden;
             border-radius: 8px;
             background: transparent;
-            padding: 0.5rem 2.8rem 2rem 2.8rem;  /* space for arrows & dots */
+            padding: 0.5rem 2.8rem 2rem 2.8rem;
         }
         .carousel-track {
             display: flex;
             height: 100%;
             transition: transform 0.5s ease;
         }
-        .carousel-track img {
-            flex: 0 0 100%;            /* each slide takes exactly the content area width */
+        /* Individual slide container – fills the entire width, padded to visually shrink image */
+        .carousel-slide {
+            flex: 0 0 100%;
             height: 100%;
-            width: 85%;                /* smaller image, centred automatically if we add margin auto? We'll center via align-items */
+            padding: 0 7.5%;            /* creates the visual 85% image width */
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             user-select: none;
-            margin: 0 auto;            /* centre the image inside its slide */
             display: block;
         }
         .carousel-arrow {
@@ -415,18 +423,21 @@
             .carousel-wrapper {
                 padding: 0.2rem 2.2rem 1.8rem 2.2rem;
             }
-            .carousel-track img {
-                width: 90%;   /* slightly wider on mobile, still no peeking */
+            /* Smaller slide padding on mobile still keeps images nicely sized */
+            .carousel-slide {
+                padding: 0 5%;          /* images a bit wider but still centered */
             }
 
+            /* Even smaller text on phones */
             .home-headline {
-                font-size: 1rem;
+                font-size: 0.85rem;
+                margin-bottom: 1.5rem;
             }
             .home-col-left-box h3 {
-                font-size: 0.95rem;
+                font-size: 0.8rem;
             }
             .home-col-left-box p {
-                font-size: 0.9rem;
+                font-size: 0.75rem;
             }
 
             .about-img-1,
@@ -771,12 +782,15 @@
             const lastClone = imageUrls[0];
             const extendedUrls = [firstClone, ...imageUrls, lastClone];
 
-            extendedUrls.forEach((url, idx) => {
+            extendedUrls.forEach((url) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
                 const img = document.createElement('img');
                 img.src = url;
-                img.alt = `Slide`;
+                img.alt = 'Slide';
                 img.loading = 'lazy';
-                track.appendChild(img);
+                slide.appendChild(img);
+                track.appendChild(slide);
             });
 
             // Dots for real images
@@ -827,7 +841,7 @@
                         track.style.transform = `translateX(-${currentIndex * 100}%)`;
                         isTransitioning = false;
                         updateDots();
-                    }, 500); // match transition duration
+                    }, 500);
                 } else {
                     setTimeout(() => {
                         isTransitioning = false;
