@@ -45,7 +45,11 @@
 
         .banner-text { width: 100%; text-align: center; }
         .banner-text h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin: 0; }
-        .banner-text h1 .abbreviation { font-weight: 200; opacity: 0.95; }
+        .banner-text h1 .abbreviation {
+            font-weight: 200;
+            opacity: 0.95;
+            letter-spacing: -0.3px;      /* narrower horizontal footprint */
+        }
         .banner-text h2 {
             font-size: 1.2rem;
             letter-spacing: 0.4px;
@@ -97,7 +101,7 @@
 
         .about-img-1 {
             float: left;
-            margin: 0 1.5rem 0.3rem 0;   /* tighter bottom margin */
+            margin: 0 1.5rem 0.3rem 0;
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -123,7 +127,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Justify all bio text */
         #aboutShortBioParagraph,
         #aboutExtendedBioText {
             text-align: justify;
@@ -145,11 +148,11 @@
                 background: white;
                 flex-direction: column;
                 gap: 0.2rem;
-                padding: 0.4rem;                /* uniform tight padding */
+                padding: 0.4rem;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 display: none;
                 z-index: 10;
-                width: auto;                    /* dynamic width */
+                width: auto;
                 min-width: auto;
                 align-items: flex-start;
             }
@@ -173,7 +176,6 @@
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* Mobile About: stack */
             .about-img-1 {
                 float: none;
                 display: block;
@@ -188,7 +190,7 @@
             .bio-extended.show-flex {
                 display: flex;
             }
-            .bio-extended #aboutExtendedBioText { order: 1; }   /* contains text + read-less */
+            .bio-extended #aboutExtendedBioText { order: 1; }
             .bio-extended .about-img-2 {
                 order: 3;
                 float: none;
@@ -197,11 +199,10 @@
                 max-width: 250px;
                 display: block;
             }
-            /* read-less is inside the paragraph, so no extra ordering needed */
         }
 
         @media (max-width: 600px) {
-            .banner-text h1 { font-size: 0.8rem; }   /* even smaller */
+            .banner-text h1 { font-size: 0.8rem; }
             .banner-text h2 { font-size: 0.7rem; }
             .banner { min-height: 46px; }
             .banner-logo img { max-height: 28px; }
@@ -250,7 +251,6 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
-                        <!-- Image 2 is separate; on mobile it gets ordered after text -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <p id="aboutExtendedBioText">
                             <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -363,41 +363,51 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
+            // Build navigation
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
+
             const navItems = [
-                { setting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
-                { setting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
-                { setting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
-                { setting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
-                { setting: 'NavIconURLLinkedIn', external: true, label: 'LinkedIn' }
+                { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
+                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
+                { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
+                { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
+                { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
             ];
 
             navItems.forEach(item => {
-                const url = settings[item.setting];
-                if (url && url.trim() !== '') {
-                    const a = document.createElement('a');
-                    a.href = '#';
-                    if (item.external) {
-                        a.href = url;
+                const iconUrl = settings[item.iconSetting];
+                if (!iconUrl || iconUrl.trim() === '') return;   // skip if no icon
+
+                const a = document.createElement('a');
+                a.title = item.label;
+
+                if (item.externalLinkSetting) {
+                    // External link: use separate URL setting
+                    const linkUrl = settings[item.externalLinkSetting];
+                    if (linkUrl && linkUrl.trim() !== '') {
+                        a.href = linkUrl;
                         a.target = '_blank';
                     } else {
-                        a.dataset.section = item.section;
+                        // No link provided – don’t create the link at all, or you can use '#'
+                        return;   // skip this nav item
                     }
-                    a.title = item.label;
-
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = item.label;
-                    a.appendChild(img);
-
-                    const span = document.createElement('span');
-                    span.className = 'nav-label';
-                    span.textContent = item.label;
-                    a.appendChild(span);
-
-                    navContainer.appendChild(a);
+                } else if (item.section) {
+                    a.href = '#';
+                    a.dataset.section = item.section;
                 }
+
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = item.label;
+                a.appendChild(img);
+
+                const span = document.createElement('span');
+                span.className = 'nav-label';
+                span.textContent = item.label;
+                a.appendChild(span);
+
+                navContainer.appendChild(a);
             });
 
             navContainer.addEventListener('click', (e) => {
@@ -434,7 +444,6 @@
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
-            // Fill the inner span for extended bio (not the whole paragraph)
             document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
 
             const toggleMore = document.getElementById('bioToggleMore');
