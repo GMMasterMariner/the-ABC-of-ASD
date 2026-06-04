@@ -138,8 +138,8 @@
 
         .home-columns {
             display: flex;
-            gap: 2rem;               /* column gap */
-            align-items: flex-start; /* let children stretch as needed */
+            gap: 2rem;
+            align-items: flex-start;   /* top alignment, height set by JS */
         }
         .home-col {
             flex: 1;
@@ -147,31 +147,26 @@
             flex-direction: column;
         }
 
-        /* Left box */
+        /* Left box – height will be overridden by JS */
         .home-col-left-box {
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 1.5rem;
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             text-align: center;
+            box-sizing: border-box;
         }
-        .home-col-left-box h3 {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .home-col-left-box p { line-height: 1.6; }
 
-        /* Center column – carousel */
+        /* Center column – carousel container, height set by JS */
         .carousel-container {
             perspective: 1000px;
             width: 100%;
-            flex: 1;
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
         .carousel {
             width: 100%;
@@ -199,23 +194,17 @@
             padding: 1.5rem;
             text-align: center;
         }
-        .product-card h4 {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .product-card .sub {
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
+        .product-card h4 { font-weight: 700; margin-bottom: 0.5rem; }
+        .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
         .product-card .price {
             font-weight: 700;
             font-size: 1.2rem;
             margin-bottom: 0;
         }
 
-        /* Central order button – margin matches column gap */
+        /* Central order button – vertical spacing matches column gap */
         .central-order-btn {
-            margin: 2rem 0;          /* same as column gap */
+            margin: 2rem 0;
             text-align: center;
         }
         .btn {
@@ -264,7 +253,11 @@
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            .home-col { flex: auto; }   /* reset flex on mobile */
+            /* Reset heights to auto on mobile */
+            .home-col-left-box,
+            .carousel-container {
+                height: auto !important;
+            }
         }
 
         @media (max-width: 600px) {
@@ -330,7 +323,7 @@
 
         <!-- About (placeholder) -->
         <div class="page-section" id="about-section">
-            <!-- about content kept as before (omitted for brevity) -->
+            <!-- about content omitted for brevity -->
         </div>
 
         <!-- Order placeholder -->
@@ -570,31 +563,40 @@
 
             refreshAllPrices();
 
-            // Equalise heights after all content is present
+            // Equalise heights with a robust, delayed measurement
             equalizeHeights();
         }
 
-        // ---------- EQUALIZE HEIGHTS ----------
+        // ---------- HEIGHT EQUALISATION (the fix) ----------
         function equalizeHeights() {
             const rightCol = document.getElementById('productCardsColumn');
             const leftBox = document.getElementById('leftBox');
             const carouselContainer = document.getElementById('carouselContainer');
             if (!rightCol || !leftBox || !carouselContainer) return;
 
-            // Reset any inline heights
+            // If we're on mobile (flex-direction: column), clear any forced heights
+            if (window.innerWidth <= 768) {
+                leftBox.style.height = 'auto';
+                carouselContainer.style.height = 'auto';
+                return;
+            }
+
+            // Temporarily reset to auto so we can measure the natural height
             leftBox.style.height = 'auto';
             carouselContainer.style.height = 'auto';
 
-            // Get the right column's natural height
-            const targetHeight = rightCol.offsetHeight;
-
-            if (targetHeight > 0) {
-                leftBox.style.height = targetHeight + 'px';
-                carouselContainer.style.height = targetHeight + 'px';
-            }
+            // Use requestAnimationFrame to ensure layout is done
+            requestAnimationFrame(() => {
+                // Measure right column's offsetHeight (includes margins, borders, padding)
+                const targetHeight = rightCol.offsetHeight;
+                if (targetHeight > 0) {
+                    leftBox.style.height = targetHeight + 'px';
+                    carouselContainer.style.height = targetHeight + 'px';
+                }
+            });
         }
 
-        // Re‑equalize on window resize
+        // Re-equalize on window resize and when home page becomes visible
         window.addEventListener('resize', () => {
             if (document.getElementById('home-section')?.classList.contains('active')) {
                 equalizeHeights();
@@ -628,7 +630,7 @@
 
         // ---------- SETTINGS & NAVIGATION ----------
         async function applySettings() {
-            const data = await fetchSheet('');  // first sheet
+            const data = await fetchSheet('');  // first sheet (Settings)
             const settings = {};
             data.forEach(item => { settings[item.Setting] = item.Value; });
             appSettings = settings;
@@ -714,7 +716,7 @@
             updateNavTitle(sectionId);
             document.getElementById('navIcons').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
-            // Recalculate heights if home page is shown
+            // Re-equalize when returning to home
             if (sectionId === 'home-section') {
                 setTimeout(equalizeHeights, 50);
             }
@@ -748,7 +750,7 @@
             });
         }
 
-        // Contact form (simplified)
+        // Contact form
         function setupContactForm() {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
