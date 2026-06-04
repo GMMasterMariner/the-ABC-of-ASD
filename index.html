@@ -54,7 +54,7 @@
         .navbar {
             position: relative;
             display: flex; align-items: center;
-            justify-content: space-between;    /* left, center, right */
+            justify-content: space-between;
             background-color: #ffffff;
             padding: 0.5rem 1.2rem;
             border-top: 1px solid rgba(0,0,0,0.05);
@@ -81,36 +81,59 @@
             pointer-events: none; z-index: 1;
         }
 
-        /* Currency selector on the right */
+        /* Currency selector – button style */
         .nav-right {
             display: flex; align-items: center;
             z-index: 2;
         }
-        .currency-selector {
+        .currency-btn {
             display: flex; align-items: center;
             gap: 0.4rem;
             background: #f0f0f0;
+            border: 1px solid #ccc;
             border-radius: 4px;
             padding: 0.3rem 0.5rem;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
             color: #194373;
-            border: 1px solid #ccc;
+            position: relative;
         }
-        .currency-selector img {
+        .currency-btn img {
             height: 20px;
             width: auto;
         }
-        .currency-selector select {
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
+        .currency-dropdown {
+            position: absolute;
+            top: 100%; right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 20;
+            display: none;
+            min-width: 160px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .currency-dropdown.open {
+            display: block;
+        }
+        .currency-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
             cursor: pointer;
-            outline: none;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+        .currency-dropdown-item:hover {
+            background: #f0f0f0;
+        }
+        .currency-dropdown-item img {
+            height: 20px;
+            width: auto;
         }
 
         /* ---------- MAIN CONTENT ---------- */
@@ -121,35 +144,52 @@
         /* ---- Home Page ---- */
         .home-headline {
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.2rem;           /* similar to banner subtitle */
+            letter-spacing: 0.5px;
             margin-bottom: 2rem;
+            font-weight: 600;
         }
 
         .home-columns {
             display: flex;
             gap: 2rem;
-            align-items: flex-start;
+            align-items: stretch;        /* columns equal height */
         }
         .home-col {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Left column */
-        .home-col-left h3 {
+        /* Left box */
+        .home-col-left-box {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        .home-col-left-box h3 {
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-        .home-col-left p {
+        .home-col-left-box p {
             line-height: 1.6;
         }
 
-        /* Center column – Carousel */
+        /* Center column – carousel */
         .carousel-container {
             perspective: 1000px;
             width: 100%;
-            height: 300px;             /* adjust as needed */
+            flex: 1;
             position: relative;
             overflow: hidden;
+            /* height set dynamically via JS, but initial value */
+            height: 300px;
         }
         .carousel {
             width: 100%;
@@ -163,7 +203,7 @@
             width: 80%;
             height: auto;
             max-height: 100%;
-            left: 10%;                 /* center horizontally */
+            left: 10%;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             backface-visibility: hidden;
@@ -174,22 +214,25 @@
             background: #fafafa;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
             text-align: center;
         }
         .product-card h4 {
             font-weight: 700;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
         }
         .product-card .sub {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             line-height: 1.4;
         }
         .product-card .price {
             font-weight: 700;
             font-size: 1.2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0;            /* no button inside, we add external button */
+        }
+        .central-order-btn {
+            margin: 1rem 0;
+            text-align: center;
         }
         .btn {
             display: inline-block;
@@ -200,6 +243,8 @@
             cursor: pointer;
             border: none;
             transition: opacity 0.2s;
+            background-color: var(--cta-color, #f29b2a);
+            color: white;
         }
         .btn:hover { opacity: 0.9; }
 
@@ -283,26 +328,28 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- Home (new layout) -->
+        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2 class="home-headline" id="homeHeadline"></h2>
             <div class="home-columns">
                 <div class="home-col home-col-left">
-                    <h3 id="homeDesc1"></h3>
-                    <p id="homeDesc2"></p>
+                    <div class="home-col-left-box" id="leftBox">
+                        <h3 id="homeDesc1"></h3>
+                        <p id="homeDesc2"></p>
+                    </div>
                 </div>
                 <div class="home-col home-col-center">
                     <div class="carousel-container" id="carouselContainer">
                         <div class="carousel" id="carousel"></div>
                     </div>
                 </div>
-                <div class="home-col home-col-right" id="productCards">
-                    <!-- dynamically populated -->
+                <div class="home-col home-col-right" id="productCardsColumn">
+                    <!-- product cards and button will be placed here -->
                 </div>
             </div>
         </div>
 
-        <!-- About (unchanged structure, hidden) -->
+        <!-- About (unchanged) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -364,9 +411,9 @@
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
-        let exchangeRates = [];          // array of { CurrencyCode, RateToBase, FlagURL, CountryName }
-        let selectedCurrency = null;     // current CurrencyCode (e.g., 'USD')
-        let products = [];               // from Products sheet
+        let exchangeRates = [];
+        let selectedCurrency = null;
+        let products = [];
 
         // ---------- FETCH HELPERS ----------
         async function fetchSheet(sheetName) {
@@ -379,7 +426,6 @@
             const data = await fetchSheet('ExchangeRates');
             exchangeRates = data;
             buildCurrencySelector();
-            // determine initial currency
             await detectUserCurrency();
         }
 
@@ -388,55 +434,67 @@
             container.innerHTML = '';
             if (!exchangeRates.length) return;
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'currency-selector';
-
-            // Flag and code display
+            // Button
+            const btn = document.createElement('div');
+            btn.className = 'currency-btn';
+            btn.id = 'currencyBtn';
             const flagImg = document.createElement('img');
             flagImg.id = 'currencyFlag';
-            const select = document.createElement('select');
-            select.id = 'currencySelect';
+            const codeSpan = document.createElement('span');
+            codeSpan.id = 'currencyCodeDisplay';
+            btn.appendChild(flagImg);
+            btn.appendChild(codeSpan);
 
+            // Dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'currency-dropdown';
+            dropdown.id = 'currencyDropdown';
             exchangeRates.forEach(rate => {
-                const option = document.createElement('option');
-                option.value = rate.CurrencyCode;
-                option.textContent = `${rate.CurrencyCode} - ${rate.CountryName}`;
-                select.appendChild(option);
-            });
-
-            wrapper.appendChild(flagImg);
-            wrapper.appendChild(select);
-            container.appendChild(wrapper);
-
-            // Set initial flag
-            updateCurrencyFlag();
-            // Event listener
-            select.addEventListener('change', () => {
-                const code = select.value;
-                const rateObj = exchangeRates.find(r => r.CurrencyCode === code);
-                if (rateObj) {
-                    selectedCurrency = rateObj;
-                    updateCurrencyFlag();
+                const item = document.createElement('div');
+                item.className = 'currency-dropdown-item';
+                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"> <span>${rate.CurrencyCode} – ${rate.CountryName}</span>`;
+                item.addEventListener('click', () => {
+                    selectedCurrency = rate;
+                    updateCurrencyDisplay();
                     refreshAllPrices();
-                    localStorage.setItem('selectedCurrency', code);
-                }
+                    localStorage.setItem('selectedCurrency', rate.CurrencyCode);
+                    dropdown.classList.remove('open');
+                });
+                dropdown.appendChild(item);
             });
+
+            container.appendChild(btn);
+            container.appendChild(dropdown);
+
+            // Toggle dropdown
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('open');
+            });
+
+            // Initial display with selectedCurrency (if set) else first
+            if (selectedCurrency) {
+                updateCurrencyDisplay();
+            } else {
+                // set to first available
+                selectedCurrency = exchangeRates[0];
+                updateCurrencyDisplay();
+            }
         }
 
-        function updateCurrencyFlag() {
-            const flagImg = document.getElementById('currencyFlag');
-            const select = document.getElementById('currencySelect');
-            if (!flagImg || !select) return;
-            const code = select.value;
-            const rate = exchangeRates.find(r => r.CurrencyCode === code);
-            if (rate) {
-                flagImg.src = rate.FlagURL;
-                flagImg.alt = code;
+        function updateCurrencyDisplay() {
+            const flag = document.getElementById('currencyFlag');
+            const codeDisplay = document.getElementById('currencyCodeDisplay');
+            if (flag && codeDisplay && selectedCurrency) {
+                flag.src = selectedCurrency.FlagURL;
+                codeDisplay.textContent = selectedCurrency.CurrencyCode;
             }
         }
 
         async function detectUserCurrency() {
-            // Try to detect from IP (free service)
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const geo = await res.json();
@@ -445,58 +503,35 @@
                     const match = exchangeRates.find(r => r.CurrencyCode === countryCode);
                     if (match) {
                         selectedCurrency = match;
-                        const select = document.getElementById('currencySelect');
-                        if (select) select.value = match.CurrencyCode;
-                        updateCurrencyFlag();
-                        localStorage.setItem('selectedCurrency', match.CurrencyCode);
+                        updateCurrencyDisplay();
                         refreshAllPrices();
+                        localStorage.setItem('selectedCurrency', match.CurrencyCode);
                         return;
                     }
                 }
             } catch (e) {}
-            // Fallback: saved preference or USD, else first
+            // Fallback
             const saved = localStorage.getItem('selectedCurrency');
             if (saved && exchangeRates.find(r => r.CurrencyCode === saved)) {
                 selectedCurrency = exchangeRates.find(r => r.CurrencyCode === saved);
             } else {
                 selectedCurrency = exchangeRates.find(r => r.CurrencyCode === 'USD') || exchangeRates[0];
             }
-            const select = document.getElementById('currencySelect');
-            if (select && selectedCurrency) {
-                select.value = selectedCurrency.CurrencyCode;
-            }
-            updateCurrencyFlag();
+            updateCurrencyDisplay();
             refreshAllPrices();
         }
 
-        // Convert ZAR amount to selected currency
         function convertPrice(zarAmount) {
             if (!selectedCurrency || selectedCurrency.CurrencyCode === 'ZAR') return zarAmount;
-            return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;   // 2 decimals
+            return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
 
-        // Format price in selected currency with proper symbol
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-            // Use Intl for proper formatting
-            const localeMap = {
-                ZAR: 'en-ZA',
-                USD: 'en-US',
-                EUR: 'de-DE',
-                GBP: 'en-GB',
-                AUD: 'en-AU',
-                CAD: 'en-CA',
-                // add more if needed
-            };
-            const locale = localeMap[code] || 'en-US';
             try {
-                return new Intl.NumberFormat(locale, {
-                    style: 'currency',
-                    currency: code
-                }).format(converted);
+                return new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(converted);
             } catch (e) {
-                // fallback
                 return code + ' ' + converted.toFixed(2);
             }
         }
@@ -505,6 +540,9 @@
             document.querySelectorAll('.price[data-zar]').forEach(el => {
                 const zar = parseFloat(el.getAttribute('data-zar'));
                 el.textContent = formatPrice(zar);
+                // apply alert colour from settings
+                const alertColor = appSettings.AlertColour || '#dc3c33';
+                el.style.color = alertColor;
             });
         }
 
@@ -517,7 +555,7 @@
             // Headline
             document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
 
-            // Left column
+            // Left column text
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
 
@@ -533,51 +571,70 @@
                 buildCarousel(images, home.HomePageCarouselInterval || 3000);
             }
 
-            // Products (right column)
-            const productCardsContainer = document.getElementById('productCards');
-            productCardsContainer.innerHTML = '';
-            // We'll fetch products if not already loaded
+            // Products
             if (!products.length) {
                 products = await fetchSheet('Products');
             }
 
-            // We need product items from Home sheet: HomePageItem1MainText, HomePageItem1SubText, etc.
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = ''; // clear
+
             const item1Main = home.HomePageItem1MainText || '';
             const item1Sub = home.HomePageItem1SubText || '';
             const item2Main = home.HomePageItem2MainText || '';
             const item2Sub = home.HomePageItem2SubText || '';
 
-            // Get base prices from products (assuming first product = item1, second = item2)
             const product1 = products[0] || {};
             const product2 = products[1] || {};
 
-            // Build cards
-            const buildCard = (mainText, subText, product, isProduct1) => {
+            function createCard(mainText, subText, product) {
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
                     <h4>${mainText}</h4>
                     <p class="sub">${subText}</p>
                     <p class="price" data-zar="${product.BasePrice || 0}">${formatPrice(product.BasePrice || 0)}</p>
-                    <button class="btn" style="background-color: var(--cta-color, #f29b2a); color: white;">Order Now</button>
                 `;
-                productCardsContainer.appendChild(card);
-                if (!isProduct1) {
-                    // Add line space? Already margin between cards.
-                }
-            };
+                return card;
+            }
 
-            buildCard(item1Main, item1Sub, product1, true);
-            // Add a small gap line? We'll just add second card with margin-bottom.
-            buildCard(item2Main, item2Sub, product2, false);
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
 
-            // Button actions (placeholder)
-            productCardsContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('btn')) {
-                    // Navigate to order page or show product
-                    showPage('order-section');
-                }
+            // Central Order button
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            // Order button click handler
+            orderBtn.querySelector('.btn').addEventListener('click', () => {
+                showPage('order-section');
             });
+
+            // Refresh prices for initial currency
+            refreshAllPrices();
+
+            // Equalise heights after content is rendered
+            equalizeHomeBoxes();
+        }
+
+        function equalizeHomeBoxes() {
+            const leftBox = document.getElementById('leftBox');
+            const rightColumn = document.getElementById('productCardsColumn');
+            const carouselContainer = document.getElementById('carouselContainer');
+            if (!leftBox || !rightColumn || !carouselContainer) return;
+            // Force layout
+            rightColumn.style.height = 'auto';
+            leftBox.style.height = 'auto';
+            const rightHeight = rightColumn.offsetHeight;
+            if (rightHeight > 0) {
+                leftBox.style.height = rightHeight + 'px';
+                carouselContainer.style.height = rightHeight + 'px';
+            }
         }
 
         // ---------- 3D CAROUSEL ----------
@@ -586,7 +643,7 @@
             const numSlides = imageUrls.length;
             if (!numSlides) return;
             const angle = 360 / numSlides;
-            const radius = 300;  // adjust for perspective
+            const radius = 300; // adjust perspective distance
 
             for (let i = 0; i < numSlides; i++) {
                 const img = document.createElement('img');
@@ -602,11 +659,10 @@
                 currentAngle -= angle;
                 carousel.style.transform = `rotateY(${currentAngle}deg)`;
             };
-
             setInterval(rotate, interval);
         }
 
-        // ---------- APPLY SETTINGS (header, colors) ----------
+        // ---------- SETTINGS & NAVIGATION ----------
         async function applySettings() {
             const data = await fetchSheet('');  // first sheet (Settings)
             const settings = {};
@@ -617,10 +673,12 @@
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
 
-            // CTA color as CSS variable
             const ctaColor = settings.CTAColor || '#f29b2a';
             document.documentElement.style.setProperty('--cta-color', ctaColor);
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
+            // Also set alert colour for prices
+            const alertColor = settings.AlertColour || '#dc3c33';
+            document.documentElement.style.setProperty('--alert-color', alertColor);
 
             const logo = document.getElementById('bannerLogo');
             if (settings.BannerLogo) {
@@ -642,7 +700,7 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            // Navigation
+            // Navigation icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -687,9 +745,8 @@
             });
         }
 
-        // ---------- SPA NAVIGATION ----------
+        // ---------- SPA ----------
         function showPage(sectionId) {
-            // (keep previous logic, but without about bio handling for now)
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
@@ -726,21 +783,7 @@
             });
         }
 
-        // ---------- INIT ----------
-        async function init() {
-            try {
-                await applySettings();
-                await loadExchangeRates();
-                await loadHomePage();
-                setupHamburger();
-                // Contact form setup remains same (but we'll re-add later when we revisit contact)
-                setupContactForm();
-            } catch (err) {
-                console.error('Error initializing:', err);
-            }
-        }
-
-        // (Keep the contact form setup function from previous code – I've omitted for brevity, but you can copy it from the final file)
+        // Contact form (from earlier code, included)
         function setupContactForm() {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
@@ -794,6 +837,19 @@
                     sendBtn.textContent = 'Send Message';
                 }
             });
+        }
+
+        // ---------- INIT ----------
+        async function init() {
+            try {
+                await applySettings();
+                await loadExchangeRates();
+                await loadHomePage();
+                setupHamburger();
+                setupContactForm();
+            } catch (err) {
+                console.error('Error initializing:', err);
+            }
         }
 
         init();
