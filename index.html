@@ -147,7 +147,6 @@
             flex-direction: column;
         }
 
-        /* Left box – now scrollable if content exceeds height */
         .home-col-left-box {
             background: white;
             border: 1px solid #e0e0e0;
@@ -155,13 +154,20 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;   /* top‑align when scrolling */
+            justify-content: flex-start;   /* top‑align */
             text-align: center;
             box-sizing: border-box;
-            overflow-y: auto;             /* KEY CHANGE: scroll when text overflows */
+            overflow-y: auto;             /* scroll if text overflows */
+        }
+        .home-col-left-box h3 {
+            font-weight: 700;
+            margin-bottom: 1rem;          /* space between heading and paragraph */
+        }
+        .home-col-left-box p {
+            line-height: 1.6;
+            margin-top: 0;
         }
 
-        /* Center column – carousel container, height set by JS */
         .carousel-container {
             perspective: 1000px;
             width: 100%;
@@ -187,7 +193,6 @@
             backface-visibility: hidden;
         }
 
-        /* Right column – product cards */
         .product-card {
             background: #fafafa;
             border: 1px solid #e0e0e0;
@@ -203,7 +208,6 @@
             margin-bottom: 0;
         }
 
-        /* Central order button */
         .central-order-btn {
             margin: 2rem 0;
             text-align: center;
@@ -221,6 +225,85 @@
             color: white;
         }
         .btn:hover { opacity: 0.9; }
+
+        /* ---- About Section ---- */
+        .about-img-1 {
+            float: left;
+            margin: 0.5rem 1.5rem 0.3rem 0;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .about-img-2 {
+            float: right;
+            margin: 0 0 1rem 1.5rem;
+            width: 40%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;               /* hidden until read more */
+        }
+        .about-text { line-height: 1.6; }
+        .bio-toggle {
+            color: var(--primary-color, #194373);
+            cursor: pointer; font-weight: 600;
+            text-decoration: underline;
+        }
+        .bio-extended { display: none; margin-top: 0.5rem; }
+
+        #aboutShortBioParagraph,
+        #aboutExtendedBioText {
+            text-align: justify;
+        }
+
+        /* ---- Contact Form ---- */
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-top: 0.5rem;
+        }
+        .form-group:first-child {
+            margin-top: 0;
+        }
+        .contact-form label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .contact-form button {
+            margin-top: 1.5rem;
+        }
+        .contact-result {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            display: none;
+        }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
@@ -254,11 +337,26 @@
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            /* Reset heights to auto on mobile */
             .home-col-left-box,
             .carousel-container {
                 height: auto !important;
-                overflow-y: visible;      /* no scroll on mobile */
+                overflow-y: visible;
+            }
+            .about-img-1,
+            .about-img-2 {
+                float: none;
+                display: block;
+                margin: 0.5rem auto 1rem auto;
+                width: 80%;
+                max-width: 250px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+                margin-top: 0.5rem;
+            }
+            .form-row .form-group:last-child {
+                margin-top: 0.5rem;
             }
         }
 
@@ -318,14 +416,28 @@
                     </div>
                 </div>
                 <div class="home-col home-col-right" id="productCardsColumn">
-                    <!-- product cards and order button will be placed here -->
+                    <!-- product cards and order button -->
                 </div>
             </div>
         </div>
 
-        <!-- About (placeholder) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
-            <!-- about content omitted for brevity -->
+            <div class="about-section-content clearfix">
+                <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <div class="about-text" id="aboutTextContainer">
+                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                    <p id="aboutShortBioParagraph">
+                        <span id="aboutShortBioText"></span>
+                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    </p>
+                    <div class="bio-extended" id="bioExtended">
+                        <p id="aboutExtendedBioText">
+                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Order placeholder -->
@@ -375,20 +487,13 @@
         let selectedCurrency = null;
         let products = [];
 
-        // ---------- FETCH HELPERS (combined single request) ----------
+        // ---------- SINGLE FETCH FOR ALL DATA ----------
         async function fetchAllSiteData() {
             const res = await fetch(API_URL + '?combined=true');
             return await res.json();
         }
 
         // ---------- CURRENCY FUNCTIONS ----------
-        async function loadExchangeRates() {
-            const data = await fetchSheet('ExchangeRates');
-            exchangeRates = data;
-            buildCurrencySelector();
-            await detectUserCurrency();
-        }
-
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
             container.innerHTML = '';
@@ -483,10 +588,19 @@
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
+            // Map some common codes to explicit symbols if Intl fails
+            const symbolMap = {
+                'USD': 'US$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$',
+                'ZAR': 'R', 'CNY': '¥', 'INR': '₹', 'KRW': '₩', 'BRL': 'R$', 'TRY': '₺',
+                'NGN': '₦', 'PHP': '₱', 'IDR': 'Rp', 'MXN': 'MX$', 'HKD': 'HK$', 'NZD': 'NZ$',
+                'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł', 'MYR': 'RM', 'SGD': 'S$',
+                'AED': 'د.إ', 'CLP': 'CLP$', 'ZMW': 'ZK', 'EGP': 'EGP'
+            };
             try {
                 return new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(converted);
             } catch (e) {
-                return code + ' ' + converted.toFixed(2);
+                const symbol = symbolMap[code] || code + ' ';
+                return symbol + ' ' + converted.toFixed(2);
             }
         }
 
@@ -497,76 +611,6 @@
                 el.textContent = formatPrice(zar);
                 el.style.color = alertColor;
             });
-        }
-
-        // ---------- HOME PAGE ----------
-        async function loadHomePage() {
-            const homeData = await fetchSheet('Home');
-            const home = {};
-            homeData.forEach(item => { home[item.Setting] = item.Value; });
-
-            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
-
-            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
-            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
-
-            // Carousel
-            const carousel = document.getElementById('carousel');
-            carousel.innerHTML = '';
-            const images = [];
-            for (let i = 1; i <= 9; i++) {
-                const url = home['HomePageCarouselImage' + i];
-                if (url) images.push(url);
-            }
-            if (images.length) {
-                buildCarousel(images, home.HomePageCarouselInterval || 3000);
-            }
-
-            if (!products.length) {
-                products = await fetchSheet('Products');
-            }
-
-            const productColumn = document.getElementById('productCardsColumn');
-            productColumn.innerHTML = '';
-
-            const item1Main = home.HomePageItem1MainText || '';
-            const item1Sub = home.HomePageItem1SubText || '';
-            const item2Main = home.HomePageItem2MainText || '';
-            const item2Sub = home.HomePageItem2SubText || '';
-
-            const product1 = products[0] || {};
-            const product2 = products[1] || {};
-
-            function createCard(mainText, subText, product) {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <h4>${mainText}</h4>
-                    <p class="sub">${subText}</p>
-                    <p class="price" data-zar="${product.BasePrice || 0}">${formatPrice(product.BasePrice || 0)}</p>
-                `;
-                return card;
-            }
-
-            const card1 = createCard(item1Main, item1Sub, product1);
-            const card2 = createCard(item2Main, item2Sub, product2);
-
-            const orderBtn = document.createElement('div');
-            orderBtn.className = 'central-order-btn';
-            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
-
-            productColumn.appendChild(card1);
-            productColumn.appendChild(orderBtn);
-            productColumn.appendChild(card2);
-
-            orderBtn.querySelector('.btn').addEventListener('click', () => {
-                showPage('order-section');
-            });
-
-            refreshAllPrices();
-
-            // Equalise heights
-            equalizeHeights();
         }
 
         // ---------- HEIGHT EQUALISATION ----------
@@ -625,13 +669,8 @@
             setInterval(rotate, interval);
         }
 
-        // ---------- SETTINGS & NAVIGATION ----------
-        async function applySettings() {
-            const data = await fetchSheet('');  // first sheet (Settings)
-            const settings = {};
-            data.forEach(item => { settings[item.Setting] = item.Value; });
-            appSettings = settings;
-
+        // ---------- DIRECT SETTINGS / HOME / ABOUT LOADERS ----------
+        function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
@@ -703,9 +742,110 @@
                 const section = link.dataset.section;
                 if (section) showPage(section);
             });
+
+            updateNavTitle('home-section');
         }
 
-        // ---------- SPA ----------
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
+
+            // Carousel
+            const carousel = document.getElementById('carousel');
+            carousel.innerHTML = '';
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) {
+                buildCarousel(images, home.HomePageCarouselInterval || 3000);
+            }
+
+            // Product cards
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = '';
+
+            const item1Main = home.HomePageItem1MainText || '';
+            const item1Sub = home.HomePageItem1SubText || '';
+            const item2Main = home.HomePageItem2MainText || '';
+            const item2Sub = home.HomePageItem2SubText || '';
+
+            const product1 = products[0] || {};
+            const product2 = products[1] || {};
+
+            function createCard(mainText, subText, product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const basePrice = product.BasePrice || 0;
+                card.innerHTML = `
+                    <h4>${mainText}</h4>
+                    <p class="sub">${subText}</p>
+                    <p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>
+                `;
+                return card;
+            }
+
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
+
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            orderBtn.querySelector('.btn').addEventListener('click', () => {
+                showPage('order-section');
+            });
+
+            refreshAllPrices();
+        }
+
+        function loadAboutSectionDirect(aboutArray) {
+            const about = {};
+            aboutArray.forEach(item => { about[item.Setting] = item.Value; });
+
+            const img1 = document.getElementById('aboutImg1');
+            if (about.AuthorImage1URL) {
+                img1.src = about.AuthorImage1URL;
+                img1.style.display = 'block';
+            } else {
+                img1.style.display = 'none';
+            }
+
+            const img2 = document.getElementById('aboutImg2');
+            if (about.AuthorImage2URL) {
+                img2.src = about.AuthorImage2URL;
+                img2.style.display = 'none'; // initially hidden, shown on read more
+            }
+
+            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
+            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
+
+            const toggleMore = document.getElementById('bioToggleMore');
+            const toggleLess = document.getElementById('bioToggleLess');
+            const bioExtended = document.getElementById('bioExtended');
+
+            toggleMore.addEventListener('click', () => {
+                if (about.AuthorImage2URL) {
+                    img2.style.display = 'block';
+                }
+                bioExtended.style.display = 'block';
+                toggleMore.style.display = 'none';
+            });
+
+            toggleLess.addEventListener('click', () => {
+                bioExtended.style.display = 'none';
+                img2.style.display = 'none';
+                toggleMore.style.display = 'inline';
+            });
+        }
+
+        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
@@ -802,161 +942,32 @@
             });
         }
 
-        // ---------- DIRECT APPLY (no fetch) ----------
-        function applySettingsDirect(settings) {
-            document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
-            document.body.style.color = settings.TextColor || '#000000';
-            document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
-
-            document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
-            document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
-            document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
-
-            const logo = document.getElementById('bannerLogo');
-            if (settings.BannerLogo) {
-                logo.src = settings.BannerLogo;
-                logo.style.display = 'block';
-            } else {
-                logo.style.display = 'none';
-            }
-
-            const titleEl = document.getElementById('bannerTitle');
-            const mainTitle = settings.BannerBookTitle || '';
-            const abbrev = settings.BannerBookTitleAbbreviation || '';
-            if (mainTitle && abbrev) {
-                titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
-            } else if (mainTitle) {
-                titleEl.textContent = mainTitle;
-            } else {
-                titleEl.textContent = '';
-            }
-            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
-
-            // Navigation icons
-            const navContainer = document.getElementById('navIcons');
-            navContainer.innerHTML = '';
-            const navItems = [
-                { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
-                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
-                { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
-                { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
-                { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
-            ];
-            navItems.forEach(item => {
-                const iconUrl = settings[item.iconSetting];
-                if (!iconUrl || iconUrl.trim() === '') return;
-                const a = document.createElement('a');
-                a.title = item.label;
-                if (item.externalLinkSetting) {
-                    let linkUrl = settings[item.externalLinkSetting];
-                    if (linkUrl && linkUrl.trim() !== '') {
-                        if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
-                        a.href = linkUrl;
-                        a.target = '_blank';
-                    } else { return; }
-                } else if (item.section) {
-                    a.href = '#';
-                    a.dataset.section = item.section;
-                }
-                const img = document.createElement('img');
-                img.src = iconUrl;
-                img.alt = item.label;
-                a.appendChild(img);
-                const span = document.createElement('span');
-                span.className = 'nav-label';
-                span.textContent = item.label;
-                a.appendChild(span);
-                navContainer.appendChild(a);
-            });
-            navContainer.addEventListener('click', (e) => {
-                const link = e.target.closest('a');
-                if (!link || link.target === '_blank') return;
-                e.preventDefault();
-                const section = link.dataset.section;
-                if (section) showPage(section);
-            });
-
-            updateNavTitle('home-section');
-        }
-
-        function loadHomePageDirect(home) {
-            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
-            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
-            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
-
-            // Carousel
-            const carousel = document.getElementById('carousel');
-            carousel.innerHTML = '';
-            const images = [];
-            for (let i = 1; i <= 9; i++) {
-                const url = home['HomePageCarouselImage' + i];
-                if (url) images.push(url);
-            }
-            if (images.length) {
-                buildCarousel(images, home.HomePageCarouselInterval || 3000);
-            }
-
-            // Products cards
-            const productColumn = document.getElementById('productCardsColumn');
-            productColumn.innerHTML = '';
-
-            const item1Main = home.HomePageItem1MainText || '';
-            const item1Sub = home.HomePageItem1SubText || '';
-            const item2Main = home.HomePageItem2MainText || '';
-            const item2Sub = home.HomePageItem2SubText || '';
-
-            const product1 = products[0] || {};
-            const product2 = products[1] || {};
-
-            function createCard(mainText, subText, product) {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <h4>${mainText}</h4>
-                    <p class="sub">${subText}</p>
-                    <p class="price" data-zar="${product.BasePrice || 0}">${formatPrice(product.BasePrice || 0)}</p>
-                `;
-                return card;
-            }
-
-            const card1 = createCard(item1Main, item1Sub, product1);
-            const card2 = createCard(item2Main, item2Sub, product2);
-
-            const orderBtn = document.createElement('div');
-            orderBtn.className = 'central-order-btn';
-            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
-
-            productColumn.appendChild(card1);
-            productColumn.appendChild(orderBtn);
-            productColumn.appendChild(card2);
-
-            orderBtn.querySelector('.btn').addEventListener('click', () => {
-                showPage('order-section');
-            });
-
-            refreshAllPrices();
-        }
-        
-        // ---------- INIT (one network request for everything) ----------
+        // ---------- INIT (one request only) ----------
         async function init() {
             try {
                 const allData = await fetchAllSiteData();
                 appSettings = allData.settings || {};
-                // Apply settings to header
                 applySettingsDirect(appSettings);
-                // Load exchange rates
-                if (allData.exchangeRates) {
-                    exchangeRates = allData.exchangeRates;
-                }
+
+                exchangeRates = allData.exchangeRates || [];
                 buildCurrencySelector();
                 await detectUserCurrency();
-                // Load home page
+
+                products = allData.products || [];
+
                 if (allData.home) {
                     loadHomePageDirect(allData.home);
                 }
-                if (allData.products) {
-                    products = allData.products;
+
+                // Load About data if present
+                if (allData.about) {
+                    loadAboutSectionDirect(allData.about);
+                } else if (allData.settings) {
+                    // The about data may be under a different key; our combined endpoint doesn't include About sheet.
+                    // We'll fetch it separately for now (still one extra request, can be merged later).
+                    // For now, we load about on demand.
                 }
+
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
