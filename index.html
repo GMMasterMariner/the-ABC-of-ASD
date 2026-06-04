@@ -137,16 +137,26 @@
             max-width: 500px;
             margin: 0 auto;
         }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .form-group {
+            margin-bottom: 0; /* handled by row margin */
+        }
         .contact-form label {
             display: block;
-            margin-top: 1rem;
             font-weight: 600;
+            margin-bottom: 0.2rem;
         }
         .contact-form input,
         .contact-form textarea {
             width: 100%;
             padding: 0.6rem;
-            margin-top: 0.2rem;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-family: inherit;
@@ -166,6 +176,9 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background 0.2s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .contact-form button:hover {
             opacity: 0.9;
@@ -244,6 +257,15 @@
                 max-width: 250px;
                 display: block;
             }
+
+            /* Stack form fields on mobile */
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .form-row .form-group:first-child {
+                margin-bottom: 1rem;
+            }
         }
 
         @media (max-width: 600px) {
@@ -313,22 +335,30 @@
             <p>Order page coming soon.</p>
         </div>
 
-        <!-- Contact -->
+        <!-- Contact (no heading) -->
         <div class="page-section" id="contact-section">
-            <h2>Contact</h2>
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
-                    <label for="name">Name *</label>
-                    <input type="text" id="name" name="name" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
 
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
 
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" name="phone">
-
-                    <label for="message">Message *</label>
-                    <textarea id="message" name="message" required></textarea>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
 
                     <button type="submit">Send Message</button>
                 </form>
@@ -472,7 +502,6 @@
                 if (item.externalLinkSetting) {
                     let linkUrl = settings[item.externalLinkSetting];
                     if (linkUrl && linkUrl.trim() !== '') {
-                        // Auto-add https:// if missing
                         if (!/^https?:\/\//i.test(linkUrl)) {
                             linkUrl = 'https://' + linkUrl;
                         }
