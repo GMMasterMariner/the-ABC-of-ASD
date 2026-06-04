@@ -97,7 +97,7 @@
 
         .about-img-1 {
             float: left;
-            margin: 0 1.5rem 0.5rem 0;   /* bottom margin reduced */
+            margin: 0 1.5rem 0.3rem 0;   /* bottom margin tightened */
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -135,8 +135,8 @@
             .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
             .banner-logo { left: 0.8rem; }
             .banner-logo img { max-height: 35px; }
-            .banner-text h1 { font-size: 1.1rem; }
-            .banner-text h2 { font-size: 1rem; letter-spacing: 0.2px; }
+            .banner-text h1 { font-size: 1rem; }      /* slightly smaller */
+            .banner-text h2 { font-size: 0.9rem; letter-spacing: 0.2px; }
 
             .hamburger { display: block; }
             .nav-left {
@@ -145,35 +145,34 @@
                 background: white;
                 flex-direction: column;
                 gap: 0.2rem;
-                padding: 0.6rem;           /* uniform reduced padding */
+                padding: 0.5rem;            /* narrower padding */
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 display: none;
                 z-index: 10;
-                min-width: 150px;
-                align-items: flex-start;   /* left‑align all links */
+                min-width: 130px;           /* narrower */
+                align-items: flex-start;
             }
             .nav-left.open { display: flex; }
 
-            /* Show labels, fixed icon width for alignment */
             .nav-label {
                 display: inline-block;
-                margin-left: 0.6rem;       /* space between icon and text */
+                margin-left: 0.6rem;
                 font-size: 0.9rem;
                 font-weight: 500;
             }
             .nav-left a img {
-                width: 24px;               /* fixed width so all icons align */
+                width: 24px;
                 height: auto;
             }
             .nav-left a {
                 padding: 0.2rem 0;
-                gap: 0;                    /* we control spacing manually */
+                gap: 0;
             }
 
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* Mobile About: image 1 still centered, no float */
+            /* Mobile About: stack */
             .about-img-1 {
                 float: none;
                 display: block;
@@ -181,40 +180,35 @@
                 width: 80%;
                 max-width: 250px;
             }
-            /* Extended bio uses flex to reorder image2 after text */
             .bio-extended {
-                display: none;   /* hidden by default, when shown we set display:flex via JS? Actually we'll handle with class */
+                display: none;   /* will be flex when shown */
                 flex-direction: column;
             }
             .bio-extended.show-flex {
                 display: flex;
             }
+            .bio-extended #aboutExtendedBioText { order: 1; }
+            .bio-extended .bio-toggle { order: 2; }          /* read less right after text */
             .bio-extended .about-img-2 {
-                order: 2;           /* after the text */
+                order: 3;                 /* image at the end */
                 float: none;
                 margin: 1rem auto 0 auto;
                 width: 80%;
                 max-width: 250px;
                 display: block;
             }
-            .bio-extended #aboutExtendedBioText {
-                order: 1;
-            }
-            .bio-extended .bio-toggle {
-                order: 3;
-            }
         }
 
         @media (max-width: 600px) {
-            .banner-text h1 { font-size: 1rem; }
-            .banner-text h2 { font-size: 0.9rem; }
+            .banner-text h1 { font-size: 0.9rem; }   /* even smaller */
+            .banner-text h2 { font-size: 0.8rem; }
             .banner { min-height: 46px; }
             .banner-logo img { max-height: 28px; }
         }
 
         @media (max-width: 400px) {
-            .banner-text h1 { font-size: 0.9rem; }
-            .banner-text h2 { font-size: 0.8rem; }
+            .banner-text h1 { font-size: 0.8rem; }
+            .banner-text h2 { font-size: 0.7rem; }
             .nav-center { font-size: 0.85rem; }
         }
     </style>
@@ -255,7 +249,6 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
-                        <!-- image2 kept before text for desktop float, CSS reorders on mobile -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <p id="aboutExtendedBioText"></p>
                         <span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -348,8 +341,9 @@
             document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
 
             const logo = document.getElementById('bannerLogo');
-            if (settings.LogoURL) {
-                logo.src = settings.LogoURL;
+            // Updated: use BannerLogo instead of LogoURL
+            if (settings.BannerLogo) {
+                logo.src = settings.BannerLogo;
                 logo.style.display = 'block';
             } else {
                 logo.style.display = 'none';
@@ -445,10 +439,9 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // On mobile we need flex display, on desktop we use block
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
-                    bioExtended.style.display = 'flex';  // override display:none
+                    bioExtended.style.display = 'flex';
                 } else {
                     bioExtended.style.display = 'block';
                 }
