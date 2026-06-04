@@ -48,7 +48,7 @@
         .banner-text h1 .abbreviation {
             font-weight: 200;
             opacity: 0.95;
-            letter-spacing: -0.3px;      /* narrower horizontal footprint */
+            letter-spacing: -0.3px;
         }
         .banner-text h2 {
             font-size: 1.2rem;
@@ -130,6 +130,51 @@
         #aboutShortBioParagraph,
         #aboutExtendedBioText {
             text-align: justify;
+        }
+
+        /* ---- Contact Form ---- */
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .contact-form label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.2rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .contact-form button {
+            margin-top: 1.5rem;
+            background-color: var(--primary-color, #194373);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .contact-form button:hover {
+            opacity: 0.9;
+        }
+        .contact-result {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            display: none;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -237,11 +282,13 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
+        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2>Welcome!</h2>
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
+        <!-- About -->
         <div class="page-section" id="about-section">
             <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -260,13 +307,33 @@
             </div>
         </div>
 
+        <!-- Order placeholder -->
         <div class="page-section" id="order-section">
             <h2>Order</h2>
             <p>Order page coming soon.</p>
         </div>
+
+        <!-- Contact -->
         <div class="page-section" id="contact-section">
             <h2>Contact</h2>
-            <p>Contact form coming soon.</p>
+            <div class="contact-form" id="contactFormContainer">
+                <form id="contactForm">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone">
+
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required></textarea>
+
+                    <button type="submit">Send Message</button>
+                </form>
+                <div class="contact-result" id="contactResult"></div>
+            </div>
         </div>
     </div>
 
@@ -274,8 +341,9 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwYyqg5oWjfGuZkBH96GO_htc8ljiI3os3RGbqh2cWJPGkB3efyAnTRkkQex4Cn2c7j/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
+        // ---------- FETCH HELPERS ----------
         async function fetchSettings() {
             const res = await fetch(API_URL);
             return await res.json();
@@ -286,6 +354,7 @@
             return await res.json();
         }
 
+        // ---------- RESET ABOUT BIO ----------
         function resetAboutBio() {
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
@@ -296,6 +365,7 @@
             }
         }
 
+        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
             resetAboutBio();
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -318,6 +388,7 @@
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
+        // ---------- HAMBURGER ----------
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
@@ -333,6 +404,7 @@
             });
         }
 
+        // ---------- APPLY SETTINGS ----------
         async function applySettings() {
             const s = await fetchSettings();
             const settings = {};
@@ -366,7 +438,6 @@
             // Build navigation
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
-
             const navItems = [
                 { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
                 { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
@@ -377,20 +448,22 @@
 
             navItems.forEach(item => {
                 const iconUrl = settings[item.iconSetting];
-                if (!iconUrl || iconUrl.trim() === '') return;   // skip if no icon
+                if (!iconUrl || iconUrl.trim() === '') return;
 
                 const a = document.createElement('a');
                 a.title = item.label;
 
                 if (item.externalLinkSetting) {
-                    // External link: use separate URL setting
-                    const linkUrl = settings[item.externalLinkSetting];
+                    let linkUrl = settings[item.externalLinkSetting];
                     if (linkUrl && linkUrl.trim() !== '') {
+                        // Auto-add https:// if missing
+                        if (!/^https?:\/\//i.test(linkUrl)) {
+                            linkUrl = 'https://' + linkUrl;
+                        }
                         a.href = linkUrl;
                         a.target = '_blank';
                     } else {
-                        // No link provided – don’t create the link at all, or you can use '#'
-                        return;   // skip this nav item
+                        return;   // no link provided
                     }
                 } else if (item.section) {
                     a.href = '#';
@@ -422,6 +495,62 @@
             updateNavTitle('home-section');
         }
 
+        // ---------- CONTACT FORM HANDLING ----------
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Get form values
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                // Simple validation
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                // Prepare POST data
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: params
+                    });
+                    const data = await response.json();
+
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you for your message! I\'ll get back to you soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Sorry, something went wrong. Please try again later.';
+                        resultDiv.style.color = 'red';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error. Please try again.';
+                    resultDiv.style.color = 'red';
+                }
+            });
+        }
+
+        // ---------- LOAD ABOUT DATA ----------
         async function loadAboutSection() {
             const data = await fetchAboutData();
             const about = {};
@@ -469,10 +598,12 @@
             resetAboutBio();
         }
 
+        // ---------- INIT ----------
         async function init() {
             await applySettings();
             await loadAboutSection();
             setupHamburger();
+            setupContactForm();
         }
 
         init().catch(err => console.error('Error initializing page:', err));
