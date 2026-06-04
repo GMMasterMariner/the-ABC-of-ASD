@@ -365,9 +365,25 @@
             }
         }
 
+        // ---------- RESET CONTACT FORM ----------
+        function resetContactForm(targetSection) {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            if (!form || !resultDiv) return;
+
+            if (targetSection === 'contact-section') {
+                form.style.display = 'block';
+                form.reset();
+                resultDiv.style.display = 'none';
+                resultDiv.innerHTML = '';
+            }
+        }
+
         // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
             resetAboutBio();
+            resetContactForm(sectionId);
+
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
@@ -463,7 +479,7 @@
                         a.href = linkUrl;
                         a.target = '_blank';
                     } else {
-                        return;   // no link provided
+                        return;
                     }
                 } else if (item.section) {
                     a.href = '#';
@@ -503,13 +519,11 @@
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // Get form values
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const phone = document.getElementById('phone').value.trim();
                 const message = document.getElementById('message').value.trim();
 
-                // Simple validation
                 if (!name || !email || !message) {
                     resultDiv.style.display = 'block';
                     resultDiv.textContent = 'Please fill in all required fields.';
@@ -517,7 +531,6 @@
                     return;
                 }
 
-                // Prepare POST data
                 const params = new URLSearchParams();
                 params.append('action', 'sendContact');
                 params.append('name', name);
