@@ -110,7 +110,7 @@
 
         .about-img-1 {
             float: left;
-            margin: 0.5rem 1.5rem 0.3rem 0;
+            margin: 0.5rem 1.5rem 0.3rem 0;   /* top increased slightly */
             max-width: 300px;
             width: 40%;
             border-radius: 8px;
@@ -126,14 +126,30 @@
             display: none;
             margin-top: 0.5rem;
             overflow: auto;
+            position: relative;         /* for absolute positioning of image2 */
         }
-        .about-img-2 {
+
+        /* Placeholder for image2 – floated right so text wraps around it */
+        .placeholder-float {
             float: right;
-            margin: 0 0 1rem 1.5rem;
-            max-width: 300px;
+            clear: right;
             width: 40%;
+            max-width: 300px;
+            margin: 0 0 1rem 1.5rem;
+            visibility: hidden;          /* invisible but occupies space */
+        }
+
+        /* Image 2 – absolutely positioned at bottom right of the extended bio container */
+        .about-img-2 {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40%;
+            max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 2;
+            display: none;
         }
 
         #aboutShortBioParagraph,
@@ -253,6 +269,7 @@
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
+            /* About images – mobile stacking */
             .about-img-1 {
                 float: none;
                 display: block;
@@ -268,20 +285,24 @@
                 display: flex;
             }
             .bio-extended #aboutExtendedBioText { order: 1; }
-            .bio-extended .about-img-2 {
-                order: 3;
+            .about-img-2 {
+                position: static;       /* back to normal flow on mobile */
                 float: none;
+                display: block;
                 margin: 1rem auto 0 auto;
                 width: 80%;
                 max-width: 250px;
-                display: block;
+                order: 3;
+            }
+            .placeholder-float {
+                display: none;          /* hide placeholder on mobile */
             }
 
             /* Stack form row on mobile */
             .form-row {
                 flex-direction: column;
                 gap: 0;
-                margin-top: 0.5rem;     /* reduced from 1rem */
+                margin-top: 0.5rem;
             }
             .form-row .form-group:last-child {
                 margin-top: 0.5rem;
@@ -341,6 +362,9 @@
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
                     </p>
                     <div class="bio-extended" id="bioExtended">
+                        <!-- Placeholder for text wrap (invisible) -->
+                        <div id="img2placeholder" class="placeholder-float"></div>
+                        <!-- Actual image (absolute) -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                         <p id="aboutExtendedBioText">
                             <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
@@ -568,11 +592,12 @@
             updateNavTitle('home-section');
         }
 
-        // ---------- LOAD ABOUT DATA ----------
+        // ---------- LOAD ABOUT DATA (with Image2 alignment) ----------
         function loadAboutSection(aboutArray) {
             const about = {};
             aboutArray.forEach(item => { about[item.Setting] = item.Value; });
 
+            // Image 1
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) {
                 img1.src = about.AuthorImage1URL;
@@ -581,12 +606,25 @@
                 img1.style.display = 'none';
             }
 
+            // Image 2 – wait for load to set placeholder dimensions
             const img2 = document.getElementById('aboutImg2');
+            const placeholder = document.getElementById('img2placeholder');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
                 img2.style.display = 'block';
+                img2.addEventListener('load', function() {
+                    placeholder.style.width = img2.offsetWidth + 'px';
+                    placeholder.style.height = img2.offsetHeight + 'px';
+                });
+                // In case image is cached and already loaded
+                if (img2.complete) {
+                    placeholder.style.width = img2.offsetWidth + 'px';
+                    placeholder.style.height = img2.offsetHeight + 'px';
+                }
             } else {
                 img2.style.display = 'none';
+                placeholder.style.width = '0';
+                placeholder.style.height = '0';
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
