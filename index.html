@@ -17,7 +17,7 @@
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            padding-top: 108px;
+            padding-top: 108px;      /* exact header height desktop */
         }
 
         /* ---------- STICKY HEADER ---------- */
@@ -85,7 +85,7 @@
         .page-section { display: none; }
         .page-section.active { display: block; padding-top: 0.5rem; }
 
-        /* ---- About Section (desktop) ---- */
+        /* About */
         .about-section-content { }
 
         .about-img-1 {
@@ -97,9 +97,9 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Wrapper that holds the float placeholder, the absolute image, and the text */
+        /* Wrapper that holds the image (float right), short bio, and extended bio */
         .bio-wrapper {
-            position: relative;           /* for absolute positioning of image2 */
+            position: relative;       /* for measurement */
             /* clearfix */
         }
         .bio-wrapper::after {
@@ -108,27 +108,15 @@
             clear: both;
         }
 
-        /* Invisible floated placeholder – forces text to wrap around image2 dimensions */
-        .img2-placeholder {
-            float: right;
-            width: 40%;
-            max-width: 300px;
-            margin: 0 0 1rem 1.5rem;
-            visibility: hidden;
-            /* height will be set via JS */
-        }
-
-        /* Actual image2 – absolutely positioned at bottom right of .bio-wrapper */
+        /* Image 2 – floated right, initially hidden, margin-top set by JS */
         .about-img-2 {
-            position: absolute;
-            bottom: 0;
-            right: 0;
+            float: right;
+            margin: 0 0 1rem 1.5rem;   /* margin-top will be overridden inline */
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;                 /* hidden initially */
-            z-index: 2;
+            display: none;             /* hidden initially */
         }
 
         .about-text { line-height: 1.6; }
@@ -145,12 +133,8 @@
         }
 
         /* ---- Contact Form ---- */
-        .contact-form {
-            max-width: 500px; margin: 0 auto;
-        }
-        .form-row {
-            display: flex; gap: 1rem; margin-top: 1rem;
-        }
+        .contact-form { max-width: 500px; margin: 0 auto; }
+        .form-row { display: flex; gap: 1rem; margin-top: 1rem; }
         .form-row .form-group { flex: 1; margin-top: 0; }
         .form-group { margin-top: 0.5rem; }
         .form-group:first-child { margin-top: 0; }
@@ -201,19 +185,18 @@
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* Mobile About: stack normally, no floats / absolute */
+            /* Mobile About: stack normally, no float alignment */
             .about-img-1 {
                 float: none; display: block;
                 margin: 0.5rem auto 1rem auto;
                 width: 80%; max-width: 250px;
             }
-            .img2-placeholder { display: none; }
             .about-img-2 {
-                position: static;          /* back to normal flow */
-                display: block !important;  /* overrides hide */
-                margin: 1rem auto 0 auto;
+                float: none !important;
+                display: block !important;
+                margin: 1rem auto 0 auto !important;
                 width: 80%; max-width: 250px;
-                order: 3;
+                position: static;
             }
             .bio-wrapper {
                 position: static;
@@ -226,9 +209,8 @@
                 display: flex;
             }
             .bio-extended #aboutExtendedBioText { order: 1; }
-            .bio-extended .about-img-2 { order: 3; }   /* image after text */
+            .bio-extended .about-img-2 { order: 3; }
 
-            /* Stack form row */
             .form-row { flex-direction: column; gap: 0; margin-top: 0.5rem; }
             .form-row .form-group:last-child { margin-top: 0.5rem; }
         }
@@ -275,16 +257,13 @@
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About (final version) -->
+        <!-- About (final dynamic version) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
                     <div class="bio-wrapper" id="bioWrapper">
-                        <!-- Invisible placeholder (float right) – sets text wrap area -->
-                        <div id="img2placeholder" class="img2-placeholder"></div>
-
-                        <!-- Actual image (absolute, bottom-right) -->
+                        <!-- Image2 placed before short bio so text wraps around it -->
                         <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
 
                         <p id="aboutShortBioParagraph">
@@ -340,6 +319,7 @@
         // ==============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
+        // ---------- FETCH HELPERS (parallel) ----------
         async function fetchSettings() {
             const res = await fetch(API_URL);
             return await res.json();
@@ -350,23 +330,23 @@
             return await res.json();
         }
 
+        // ---------- RESET ABOUT BIO ----------
         function resetAboutBio() {
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
             const img2 = document.getElementById('aboutImg2');
-            const placeholder = document.getElementById('img2placeholder');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
-                if (img2) img2.style.display = 'none';
-                if (placeholder) {
-                    placeholder.style.width = '0';
-                    placeholder.style.height = '0';
+                if (img2) {
+                    img2.style.display = 'none';
+                    img2.style.marginTop = '';   // reset
                 }
             }
         }
 
+        // ---------- RESET CONTACT FORM ----------
         function resetContactForm(targetSection) {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
@@ -384,6 +364,7 @@
             }
         }
 
+        // ---------- SPA NAVIGATION ----------
         function showPage(sectionId) {
             resetAboutBio();
             resetContactForm(sectionId);
@@ -407,6 +388,7 @@
             titleEl.style.color = window.appSettings?.PrimaryColor || '#194373';
         }
 
+        // ---------- HAMBURGER ----------
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
@@ -422,6 +404,40 @@
             });
         }
 
+        // ---------- ALIGN IMAGE2 TO BOTTOM OF EXTENDED BIO ----------
+        function alignImage2() {
+            const img2 = document.getElementById('aboutImg2');
+            const wrapper = document.getElementById('bioWrapper');
+            const extendedBio = document.getElementById('bioExtended');
+
+            if (!img2 || !wrapper || !extendedBio) return;
+            // Only on desktop (not mobile)
+            if (window.innerWidth <= 768) return;
+
+            // Temporarily hide image to measure text height
+            const prevDisplay = img2.style.display;
+            img2.style.display = 'none';
+            // Force layout
+            wrapper.offsetHeight;
+
+            // Get the bottom of the extended bio paragraph relative to wrapper
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const extendedRect = extendedBio.getBoundingClientRect();
+            const textBottom = extendedRect.bottom - wrapperRect.top;
+
+            // Restore image display (but keep original state for later)
+            img2.style.display = prevDisplay;
+
+            // Get image height (if it was visible; if not, wait for load)
+            const imgHeight = img2.offsetHeight;
+            if (imgHeight === 0) return;   // image not loaded yet
+
+            // Calculate margin-top so that image bottom = textBottom
+            const newMarginTop = textBottom - imgHeight;
+            img2.style.marginTop = newMarginTop + 'px';
+        }
+
+        // ---------- APPLY SETTINGS ----------
         function applySettings(settingsArray) {
             const settings = {};
             settingsArray.forEach(item => { settings[item.Setting] = item.Value; });
@@ -501,6 +517,7 @@
             updateNavTitle('home-section');
         }
 
+        // ---------- LOAD ABOUT DATA ----------
         function loadAboutSection(aboutArray) {
             const about = {};
             aboutArray.forEach(item => { about[item.Setting] = item.Value; });
@@ -514,23 +531,19 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 and placeholder
+            // Image 2
             const img2 = document.getElementById('aboutImg2');
-            const placeholder = document.getElementById('img2placeholder');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // When image loads, set placeholder dimensions
+                // Wait for image load to enable alignment
                 img2.addEventListener('load', () => {
-                    placeholder.style.width = img2.offsetWidth + 'px';
-                    placeholder.style.height = img2.offsetHeight + 'px';
+                    if (img2.style.display !== 'none') {
+                        alignImage2();
+                    }
                 });
                 if (img2.complete) {
-                    placeholder.style.width = img2.offsetWidth + 'px';
-                    placeholder.style.height = img2.offsetHeight + 'px';
+                    if (img2.style.display !== 'none') alignImage2();
                 }
-            } else {
-                placeholder.style.width = '0';
-                placeholder.style.height = '0';
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -541,18 +554,18 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // Show image2 and placeholder
+                // Show image2
                 if (about.AuthorImage2URL) {
                     img2.style.display = 'block';
-                    // Ensure placeholder size is up to date
-                    placeholder.style.width = img2.offsetWidth + 'px';
-                    placeholder.style.height = img2.offsetHeight + 'px';
                 }
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
                     bioExtended.style.display = 'flex';
+                    // No alignment needed on mobile
                 } else {
                     bioExtended.style.display = 'block';
+                    // Align after layout
+                    setTimeout(alignImage2, 10);
                 }
                 toggleMore.style.display = 'none';
             });
@@ -561,15 +574,22 @@
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 img2.style.display = 'none';
-                placeholder.style.width = '0';
-                placeholder.style.height = '0';
+                img2.style.marginTop = '';   // reset
                 toggleMore.style.display = 'inline';
             });
 
-            // Initial state: image hidden, placeholder collapsed
+            // Initial state
             resetAboutBio();
+
+            // Re-align on window resize (desktop only)
+            window.addEventListener('resize', () => {
+                if (img2.style.display !== 'none' && window.innerWidth > 768) {
+                    alignImage2();
+                }
+            });
         }
 
+        // ---------- CONTACT FORM ----------
         function setupContactForm() {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
@@ -624,6 +644,7 @@
             });
         }
 
+        // ---------- INIT ----------
         async function init() {
             try {
                 const [settingsData, aboutData] = await Promise.all([
