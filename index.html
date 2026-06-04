@@ -97,37 +97,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Container that holds image2 placeholder, actual image, and text */
-        .bio-wrapper {
-            position: relative;       /* for absolute positioning of image2 */
-            overflow: visible;        /* allow image2 to protrude upward */
-        }
-        .bio-wrapper::after {
-            content: "";
-            display: table;
-            clear: both;              /* clearfix for placeholder float */
-        }
-
-        /* Invisible placeholder – floated right, negative margin cancels its height */
-        .img2-placeholder {
-            float: right;
-            width: 40%;
-            max-width: 300px;
-            margin: 0 0 -9999px 1.5rem;   /* negative bottom margin will be set exactly via JS */
-            visibility: hidden;
-        }
-
-        /* Actual image2 – absolutely positioned at bottom right, matching placeholder */
+        /* Image 2 – floated right, margin-top will be set dynamically */
         .about-img-2 {
-            position: absolute;
-            bottom: 0;
-            right: 0;
+            float: right;
+            margin: 0 0 1rem 1.5rem;     /* margin-top will be overridden inline */
             width: 40%;
             max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;             /* hidden initially */
-            z-index: 2;
+            display: none;               /* hidden until read more */
         }
 
         .about-text { line-height: 1.6; }
@@ -196,22 +174,19 @@
             .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
             .nav-center { font-size: 0.95rem; }
 
-            /* Mobile About: stack normally */
+            /* Mobile About: stack normally, no float alignment */
             .about-img-1 {
                 float: none; display: block;
                 margin: 0.5rem auto 1rem auto;
                 width: 80%; max-width: 250px;
             }
-            .img2-placeholder { display: none; }
             .about-img-2 {
-                position: static;          /* normal flow */
-                float: none;
+                float: none !important;
                 display: block !important;
-                margin: 1rem auto 0 auto;
+                margin: 1rem auto 0 auto !important;
                 width: 80%; max-width: 250px;
+                position: static;
             }
-            .bio-wrapper { position: static; }
-
             .bio-extended { display: none; flex-direction: column; }
             .bio-extended.show-flex { display: flex; }
             .bio-extended #aboutExtendedBioText { order: 1; }
@@ -263,27 +238,22 @@
             <p>This is the home page, styled live from your Google Sheet.</p>
         </div>
 
-        <!-- About (final, robust version) -->
+        <!-- About (final floating + JS alignment) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text" id="aboutTextContainer">
-                    <div class="bio-wrapper" id="bioWrapper">
-                        <!-- Invisible placeholder – floated right, negative margin cancels height -->
-                        <div id="img2placeholder" class="img2-placeholder"></div>
+                    <!-- Image2 is floated right, placed before short bio so text wraps around it -->
+                    <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
 
-                        <!-- Actual image (absolute, bottom-right) -->
-                        <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-
-                        <p id="aboutShortBioParagraph">
-                            <span id="aboutShortBioText"></span>
-                            <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    <p id="aboutShortBioParagraph">
+                        <span id="aboutShortBioText"></span>
+                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    </p>
+                    <div class="bio-extended" id="bioExtended">
+                        <p id="aboutExtendedBioText">
+                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
                         </p>
-                        <div class="bio-extended" id="bioExtended">
-                            <p id="aboutExtendedBioText">
-                                <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -344,16 +314,13 @@
             const bioExtended = document.getElementById('bioExtended');
             const toggleMore = document.getElementById('bioToggleMore');
             const img2 = document.getElementById('aboutImg2');
-            const placeholder = document.getElementById('img2placeholder');
             if (bioExtended && toggleMore) {
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 toggleMore.style.display = 'inline';
-                if (img2) img2.style.display = 'none';
-                if (placeholder) {
-                    placeholder.style.width = '0';
-                    placeholder.style.height = '0';
-                    placeholder.style.marginBottom = '0';
+                if (img2) {
+                    img2.style.display = 'none';
+                    img2.style.marginTop = '';   // remove dynamic margin
                 }
             }
         }
@@ -416,17 +383,54 @@
             });
         }
 
-        // ---------- UPDATE PLACEHOLDER DIMENSIONS ----------
-        function updatePlaceholder() {
+        // ---------- ALIGN IMAGE2 (float + dynamic margin-top) ----------
+        function alignImage2() {
             const img2 = document.getElementById('aboutImg2');
-            const placeholder = document.getElementById('img2placeholder');
-            if (!img2 || !placeholder || img2.style.display === 'none') return;
+            const extendedBio = document.getElementById('bioExtended');
+            const wrapper = img2.closest('.about-text');   // parent container
 
-            const w = img2.offsetWidth;
-            const h = img2.offsetHeight;
-            placeholder.style.width = w + 'px';
-            placeholder.style.height = h + 'px';
-            placeholder.style.marginBottom = '-' + h + 'px';   // cancels its own height
+            if (!img2 || !extendedBio || !wrapper) return;
+            // Only do this on desktop
+            if (window.innerWidth <= 768) return;
+
+            // Ensure image is visible (temporarily) to measure
+            const wasDisplayed = img2.style.display;
+            img2.style.display = 'block';   // needed to get offsetHeight
+
+            // Wait for browser to layout
+            requestAnimationFrame(() => {
+                // Get positions relative to the wrapper
+                const wrapperRect = wrapper.getBoundingClientRect();
+                const extendedRect = extendedBio.getBoundingClientRect();
+                const textBottom = extendedRect.bottom - wrapperRect.top;   // relative to top of wrapper
+                const imgHeight = img2.offsetHeight;
+
+                if (imgHeight === 0) {
+                    // Image hasn't loaded yet – try again after a short delay
+                    img2.style.display = wasDisplayed;   // restore
+                    setTimeout(alignImage2, 200);
+                    return;
+                }
+
+                // Calculate the margin-top needed so that image bottom = textBottom
+                // The image's current top (if margin-top were 0) would be at the top of the float flow.
+                // Since it's floated right and placed before the paragraphs, its default top would be aligned with the top of the short bio.
+                // We measure the current top of the image (with default margin-top) to compute the offset.
+                const imgTop = img2.getBoundingClientRect().top - wrapperRect.top;
+                // Desired image bottom = textBottom
+                // Desired image top = textBottom - imgHeight
+                // margin-top change = desiredTop - imgTop (positive pushes down, negative pulls up)
+                const desiredTop = textBottom - imgHeight;
+                const currentTop = imgTop - parseFloat(getComputedStyle(img2).marginTop);   // subtract existing margin
+                const newMarginTop = desiredTop - currentTop;
+                img2.style.marginTop = newMarginTop + 'px';
+
+                // Restore original display state if it was hidden before
+                if (wasDisplayed !== 'block') {
+                    // but we need to keep it block if we want it visible; after alignment, we can set display back to 'block'? Actually we want it shown.
+                    img2.style.display = 'block';
+                }
+            });
         }
 
         // ---------- APPLY SETTINGS ----------
@@ -523,12 +527,17 @@
                 img1.style.display = 'none';
             }
 
-            // Image 2 – wait for load to configure placeholder
+            // Image 2 – just set src, stay hidden initially
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                img2.addEventListener('load', updatePlaceholder);
-                if (img2.complete) updatePlaceholder();   // cached image
+                // When the image loads, if it's already visible, align it (but it's hidden, so we'll align on click)
+                img2.addEventListener('load', () => {
+                    if (img2.style.display !== 'none') {
+                        alignImage2();
+                    }
+                });
+                if (img2.complete && img2.style.display !== 'none') alignImage2();
             }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
@@ -539,16 +548,18 @@
             const bioExtended = document.getElementById('bioExtended');
 
             toggleMore.addEventListener('click', () => {
-                // Show image and placeholder
+                // Show image2
                 if (about.AuthorImage2URL) {
                     img2.style.display = 'block';
-                    updatePlaceholder();
                 }
                 if (window.innerWidth <= 768) {
                     bioExtended.classList.add('show-flex');
                     bioExtended.style.display = 'flex';
+                    // No alignment needed on mobile
                 } else {
                     bioExtended.style.display = 'block';
+                    // Align after the extended bio is visible and the image has dimensions
+                    alignImage2();
                 }
                 toggleMore.style.display = 'none';
             });
@@ -557,14 +568,19 @@
                 bioExtended.style.display = 'none';
                 bioExtended.classList.remove('show-flex');
                 img2.style.display = 'none';
-                document.getElementById('img2placeholder').style.width = '0';
-                document.getElementById('img2placeholder').style.height = '0';
-                document.getElementById('img2placeholder').style.marginBottom = '0';
+                img2.style.marginTop = '';   // reset
                 toggleMore.style.display = 'inline';
             });
 
-            // Initial state: image hidden, placeholder collapsed
+            // Initial state: image hidden, extended hidden
             resetAboutBio();
+
+            // Re-align on window resize (desktop only)
+            window.addEventListener('resize', () => {
+                if (img2.style.display !== 'none' && window.innerWidth > 768) {
+                    alignImage2();
+                }
+            });
         }
 
         // ---------- CONTACT FORM ----------
