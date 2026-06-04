@@ -174,16 +174,15 @@
             margin-top: 0;
         }
 
-        /* ---- Horizontal Carousel (transparent, inset) ---- */
+        /* ---- Carousel (transparent, smaller images, no peeking) ---- */
         .carousel-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: hidden;          /* crucial – clips adjacent images */
             border-radius: 8px;
             background: transparent;
-            /* Padding gives space for arrows and dots, images won't overlap them */
-            padding: 0.5rem 2.8rem 2rem 2.8rem;
+            padding: 0.5rem 2.8rem 2rem 2.8rem;  /* space for arrows & dots */
         }
         .carousel-track {
             display: flex;
@@ -191,11 +190,13 @@
             transition: transform 0.5s ease;
         }
         .carousel-track img {
-            flex: 0 0 100%;
+            flex: 0 0 100%;            /* each slide takes exactly the content area width */
             height: 100%;
-            width: 100%;
+            width: 85%;                /* smaller image, centred automatically if we add margin auto? We'll center via align-items */
             object-fit: contain;
             user-select: none;
+            margin: 0 auto;            /* centre the image inside its slide */
+            display: block;
         }
         .carousel-arrow {
             position: absolute;
@@ -411,9 +412,11 @@
                 height: auto !important;
                 overflow-y: visible;
             }
-            /* Carousel wrapper padding reduced for mobile */
             .carousel-wrapper {
                 padding: 0.2rem 2.2rem 1.8rem 2.2rem;
+            }
+            .carousel-track img {
+                width: 90%;   /* slightly wider on mobile, still no peeking */
             }
 
             .home-headline {
@@ -752,7 +755,7 @@
             }
         });
 
-        // ---------- INFINITE LOOP CAROUSEL ----------
+        // ---------- INFINITE LOOP CAROUSEL (no peeking) ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -763,7 +766,7 @@
 
             if (!imageUrls.length) return;
 
-            // Create clones: first clone of last image at start, last clone of first image at end
+            // Clone logic for seamless loop
             const firstClone = imageUrls[imageUrls.length - 1];
             const lastClone = imageUrls[0];
             const extendedUrls = [firstClone, ...imageUrls, lastClone];
@@ -776,7 +779,7 @@
                 track.appendChild(img);
             });
 
-            // Dots only for actual images (not clones)
+            // Dots for real images
             for (let i = 0; i < imageUrls.length; i++) {
                 const dot = document.createElement('span');
                 dot.className = 'carousel-dot';
@@ -785,7 +788,7 @@
                 dotsContainer.appendChild(dot);
             }
 
-            let currentIndex = 1;          // start on first real image (index 1 in extended array)
+            let currentIndex = 1;          // start on first real image (index 1 in extended)
             const totalSlides = imageUrls.length;
             let isTransitioning = false;
 
@@ -797,7 +800,7 @@
                 }
                 track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
-                // Update dots (map real index: currentIndex - 1)
+                // Update dots (map to real index)
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
                     dot.classList.toggle('active', i === realIndex);
@@ -805,8 +808,7 @@
             }
 
             function goToSlide(realIndex) {
-                // realIndex is 0-based for real images
-                currentIndex = realIndex + 1;   // shift because of start clone
+                currentIndex = realIndex + 1;
                 updateCarousel();
                 resetAutoPlay();
             }
@@ -817,15 +819,15 @@
                 currentIndex++;
                 updateCarousel();
 
-                // If we reached the clone of the first image, jump back to real first image after transition
+                // If we hit the clone of the first image, jump back to real first image
                 if (currentIndex === extendedUrls.length - 1) {
                     setTimeout(() => {
                         track.style.transition = 'none';
-                        currentIndex = 1;          // real first image
+                        currentIndex = 1;
                         track.style.transform = `translateX(-${currentIndex * 100}%)`;
                         isTransitioning = false;
                         updateDots();
-                    }, 500); // matches transition duration
+                    }, 500); // match transition duration
                 } else {
                     setTimeout(() => {
                         isTransitioning = false;
@@ -839,11 +841,11 @@
                 currentIndex--;
                 updateCarousel();
 
-                // If we reached the clone of the last image, jump to real last image
+                // If we hit the clone of the last image, jump to real last image
                 if (currentIndex === 0) {
                     setTimeout(() => {
                         track.style.transition = 'none';
-                        currentIndex = extendedUrls.length - 2;   // real last image
+                        currentIndex = extendedUrls.length - 2;
                         track.style.transform = `translateX(-${currentIndex * 100}%)`;
                         isTransitioning = false;
                         updateDots();
@@ -903,8 +905,8 @@
                 if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); }
             });
 
-            // Set initial position (currentIndex = 1) and show
-            updateCarousel(false);   // no animation on load
+            // Initial position without animation
+            updateCarousel(false);
             startAutoPlay();
         }
 
