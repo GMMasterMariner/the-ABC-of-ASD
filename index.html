@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GM Master Mariner</title>
+    <title>The ABC of ASD</title>
 
     <!-- Google Font: Nunito Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,7 +196,7 @@
             justify-content: center;
         }
         .carousel-slide img {
-            width: 70%;                   /* desktop size */
+            width: 70%;
             height: auto;
             max-height: 100%;
             object-fit: contain;
@@ -281,7 +281,7 @@
         }
         .btn:hover { opacity: 0.9; }
 
-        /* ---- About Section (desktop: both images at top) ---- */
+        /* ---- About Section ---- */
         .about-img-1 {
             float: left;
             margin: 0 1.5rem 1rem 0;
@@ -379,6 +379,143 @@
             display: none;
         }
 
+        /* ---- Order Form ---- */
+        .order-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .order-product-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .order-product-option {
+            flex: 1;
+            min-width: 200px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        .order-product-option.selected {
+            border-color: var(--primary-color, #194373);
+        }
+        .order-product-option img {
+            max-height: 80px;
+            margin-bottom: 0.5rem;
+        }
+        .order-product-option h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        .order-product-option .product-price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--alert-color, #dc3c33);
+        }
+        .order-quantity {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .order-quantity label {
+            font-weight: 600;
+        }
+        .order-quantity input {
+            width: 70px;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .order-email-verify {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .order-email-verify input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .order-email-verify .btn {
+            white-space: nowrap;
+        }
+        .order-customer-details {
+            display: none;            /* shown after email verification */
+            margin-top: 1.5rem;
+        }
+        .order-customer-details.visible {
+            display: block;
+        }
+        .order-shipping-address {
+            display: none;            /* shown only for physical product */
+            margin-top: 1.5rem;
+        }
+        .order-shipping-address.visible {
+            display: block;
+        }
+        .address-autocomplete-wrapper {
+            position: relative;
+        }
+        .address-autocomplete-wrapper input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .locate-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .order-summary {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .order-summary h4 {
+            margin-bottom: 1rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .summary-row.total {
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-top: 1px solid #ddd;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .order-payment-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        .order-payment-buttons .btn {
+            background-color: #ccc;
+            color: #333;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
             body { padding-top: 94px; }
@@ -419,10 +556,10 @@
             }
 
             .carousel-slide img {
-                width: 60%;               /* mobile size */
+                width: 60%;
             }
             .carousel-wrapper {
-                padding-bottom: 1.8rem;   /* space for dots */
+                padding-bottom: 1.8rem;
             }
 
             .home-headline {
@@ -436,7 +573,6 @@
                 font-size: 0.8rem;
             }
 
-            /* Mobile About – images stack, Image2 moved by JS */
             .about-img-1,
             .about-img-2 {
                 float: none;
@@ -520,10 +656,9 @@
             </div>
         </div>
 
-        <!-- About (desktop: both images at top; mobile: Image2 repositioned by JS) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
-                <!-- Both images placed before the text container -->
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                 <div class="about-text clearfix">
@@ -540,10 +675,65 @@
             </div>
         </div>
 
-        <!-- Order placeholder -->
+        <!-- Order (new design) -->
         <div class="page-section" id="order-section">
-            <h2>Order</h2>
-            <p>Order page coming soon.</p>
+            <div class="order-wrapper">
+                <!-- Product Selection -->
+                <h3>Select Your Book Format</h3>
+                <div class="order-product-selection" id="productSelection"></div>
+
+                <!-- Quantity -->
+                <div class="order-quantity">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="100">
+                </div>
+
+                <!-- Email Verification -->
+                <div class="order-email-verify">
+                    <input type="email" id="orderEmail" placeholder="Your email address" required>
+                    <button type="button" class="btn" id="verifyEmailBtn">Verify Email</button>
+                </div>
+
+                <!-- Customer Details (hidden initially) -->
+                <div class="order-customer-details" id="customerDetails">
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Phone</label>
+                        <input type="tel" id="customerPhone">
+                    </div>
+
+                    <!-- Shipping Address (only if physical product selected) -->
+                    <div class="order-shipping-address" id="shippingAddressSection">
+                        <div class="form-group">
+                            <label for="shippingAddress">Shipping Address *</label>
+                            <div class="address-autocomplete-wrapper">
+                                <input type="text" id="shippingAddress" placeholder="Start typing your address..." autocomplete="off">
+                                <button type="button" class="locate-btn" id="locateBtn" title="Use my current location">📍</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="order-summary" id="orderSummary">
+                    <h4>Order Summary</h4>
+                    <div class="summary-row"><span>Unit Price:</span><span id="sumUnitPrice">—</span></div>
+                    <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
+                    <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
+                    <div class="summary-row"><span>Discount:</span><span id="sumDiscount">—</span></div>
+                    <div class="summary-row"><span>Shipping:</span><span id="sumShipping">—</span></div>
+                    <div class="summary-row total"><span>Total:</span><span id="sumTotal">—</span></div>
+                </div>
+
+                <!-- Payment Buttons (placeholder) -->
+                <div class="order-payment-buttons">
+                    <button class="btn" id="paypalBtn">Pay with PayPal</button>
+                    <button class="btn" id="payfastBtn">Pay with Payfast</button>
+                </div>
+            </div>
         </div>
 
         <!-- Contact -->
@@ -590,6 +780,10 @@
         let products = [];
         let aboutData = {};
         let carouselIntervalId = null;
+        let shippingRegions = [];
+        let regionRates = [];
+        let selectedProduct = null;       // currently chosen product object
+        let userCountryRegion = null;     // region found from address
 
         // ---------- SINGLE FETCH FOR ALL DATA ----------
         async function fetchAllSiteData() {
@@ -693,7 +887,6 @@
             return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
 
-        // 🔥 CURRENCY FORMAT – uses Symbol from ExchangeRates sheet
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
@@ -714,6 +907,10 @@
                 el.textContent = formatPrice(zar);
                 el.style.color = alertColor;
             });
+            // Update order summary if visible
+            if (document.getElementById('order-section').classList.contains('active')) {
+                updateOrderSummary();
+            }
         }
 
         // ---------- HEIGHT EQUALISATION ----------
@@ -967,7 +1164,6 @@
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
 
-            // Carousel
             const images = [];
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
@@ -977,7 +1173,6 @@
                 buildCarousel(images, home.HomePageCarouselInterval || 3000);
             }
 
-            // Product cards
             const productColumn = document.getElementById('productCardsColumn');
             productColumn.innerHTML = '';
 
@@ -1019,7 +1214,6 @@
             refreshAllPrices();
         }
 
-        // ---------- ABOUT SECTION (desktop: both images at top, mobile: reposition) ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1033,11 +1227,10 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // Desktop: show immediately (float right, already in correct position)
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
-                    img2.style.display = 'none';   // hidden until we move it
+                    img2.style.display = 'none';
                 }
             } else {
                 img2.style.display = 'none';
@@ -1050,47 +1243,224 @@
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
             const shortBioPara = document.getElementById('aboutShortBioParagraph');
-            const textContainer = document.querySelector('.about-text');
-
-            // On mobile, move Image2 to its correct position
-            function arrangeForMobile() {
-                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    // Initially: Image2 after short bio
-                    shortBioPara.insertAdjacentElement('afterend', img2);
-                    img2.style.display = 'block';
-                }
-            }
 
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
+                shortBioPara.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    // Move Image2 back to after short bio
-                    shortBioPara.insertAdjacentElement('afterend', img2);
                     img2.style.display = 'block';
                 }
-                // On desktop, image stays where it is (before text), no action needed
             }
 
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
+                bioExtended.insertAdjacentElement('afterend', img2);
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    // Move Image2 after extended bio
-                    bioExtended.insertAdjacentElement('afterend', img2);
                     img2.style.display = 'block';
                 }
-                // On desktop, image stays where it is (before text), text wraps around it
             }
 
-            // Initial setup
-            if (window.innerWidth <= 768) {
-                arrangeForMobile();
-            }
-            collapse();   // sets initial state
-
+            collapse();
             toggleMore.addEventListener('click', expand);
             toggleLess.addEventListener('click', collapse);
+        }
+
+        // ---------- ORDER PAGE LOGIC ----------
+        function loadOrderPage() {
+            // Build product selection
+            const container = document.getElementById('productSelection');
+            container.innerHTML = '';
+            products.forEach((prod, idx) => {
+                const div = document.createElement('div');
+                div.className = 'order-product-option';
+                div.dataset.index = idx;
+                div.innerHTML = `
+                    <img src="${prod.ImageURL}" alt="${prod.ProductName}">
+                    <h3>${prod.ProductName}</h3>
+                    <p class="product-price" data-zar="${prod.BasePrice}">${formatPrice(prod.BasePrice)}</p>
+                `;
+                div.addEventListener('click', () => selectProduct(idx));
+                container.appendChild(div);
+            });
+
+            // Set default product (first)
+            selectProduct(0);
+
+            // Quantity change
+            document.getElementById('quantity').addEventListener('input', updateOrderSummary);
+
+            // Verify email button (placeholder)
+            document.getElementById('verifyEmailBtn').addEventListener('click', () => {
+                const email = document.getElementById('orderEmail').value.trim();
+                if (!email) { alert('Please enter an email address.'); return; }
+                // Simulate verification – show customer details
+                document.getElementById('customerDetails').classList.add('visible');
+                // If physical product, show shipping address
+                if (selectedProduct && selectedProduct.ype === 'Physical') {
+                    document.getElementById('shippingAddressSection').classList.add('visible');
+                    // Initialize Google Maps autocomplete if not already
+                    if (appSettings.GoogleMapsApiKey && !window.google) {
+                        loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                    }
+                } else {
+                    document.getElementById('shippingAddressSection').classList.remove('visible');
+                }
+                document.getElementById('verifyEmailBtn').textContent = 'Verified ✅';
+                document.getElementById('verifyEmailBtn').disabled = true;
+                updateOrderSummary();
+            });
+
+            // Location button
+            document.getElementById('locateBtn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        // Reverse geocode using Google Maps Geocoder (requires API loaded)
+                        if (window.google && google.maps) {
+                            const geocoder = new google.maps.Geocoder();
+                            const latlng = new google.maps.LatLng(latitude, longitude);
+                            geocoder.geocode({ location: latlng }, (results, status) => {
+                                if (status === 'OK' && results[0]) {
+                                    document.getElementById('shippingAddress').value = results[0].formatted_address;
+                                    // Extract country and set region
+                                    extractRegionFromPlace(results[0]);
+                                }
+                            });
+                        } else {
+                            alert('Geolocation service not available.');
+                        }
+                    }, () => alert('Unable to retrieve your location.'));
+                } else {
+                    alert('Geolocation is not supported by your browser.');
+                }
+            });
+
+            // Listen for address input changes (manual typing)
+            document.getElementById('shippingAddress').addEventListener('change', function() {
+                // If no Place object, we can't reliably extract country; skip for now
+            });
+
+            updateOrderSummary();
+        }
+
+        function selectProduct(index) {
+            const options = document.querySelectorAll('.order-product-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedProduct = products[index];
+            // Toggle shipping address visibility if email already verified
+            const isVerified = document.getElementById('verifyEmailBtn').disabled;
+            if (isVerified) {
+                if (selectedProduct.ype === 'Physical') {
+                    document.getElementById('shippingAddressSection').classList.add('visible');
+                } else {
+                    document.getElementById('shippingAddressSection').classList.remove('visible');
+                }
+            }
+            updateOrderSummary();
+        }
+
+        function getUnitPrice() {
+            if (!selectedProduct) return 0;
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) {
+                // Apply discount
+                return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            }
+            return selectedProduct.BasePrice;
+        }
+
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.ype === 'Digital') return 0;
+            if (!userCountryRegion) return 0; // region not determined yet
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            // Find the applicable rate row
+            const regionRows = regionRates.filter(r => r.Region === userCountryRegion);
+            if (!regionRows.length) return 0;
+            // Sort by MaxWeight ascending
+            regionRows.sort((a,b) => a.MaxWeight - b.MaxWeight);
+            for (const row of regionRows) {
+                if (totalWeight <= row.MaxWeight) {
+                    return row.Cost;
+                }
+            }
+            // If weight exceeds highest bracket, use last row's cost? Or maybe not ship. We'll use last row.
+            const last = regionRows[regionRows.length - 1];
+            return last.Cost;
+        }
+
+        function updateOrderSummary() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const unitPrice = getUnitPrice();
+            const subtotal = unitPrice * qty;
+            const discount = (selectedProduct.BasePrice * qty) - subtotal; // positive if discount applied
+            const shipping = getShippingCost();
+            const total = subtotal + shipping;
+
+            document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
+            document.getElementById('sumQuantity').textContent = qty;
+            document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
+            document.getElementById('sumDiscount').textContent = discount > 0 ? '- ' + formatPrice(discount) : formatPrice(0);
+            document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
+            document.getElementById('sumTotal').textContent = formatPrice(total);
+
+            // Show/hide shipping row based on product type
+            const shippingRow = document.getElementById('sumShipping').parentElement;
+            if (selectedProduct.ype === 'Digital') {
+                shippingRow.style.display = 'none';
+            } else {
+                shippingRow.style.display = 'flex';
+            }
+        }
+
+        // Google Maps helpers
+        function loadGoogleMapsScript(apiKey) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+            script.defer = true;
+            script.onload = initAutocomplete;
+            document.head.appendChild(script);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('shippingAddress');
+            if (!input) return;
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['address'] });
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                extractRegionFromPlace(place);
+            });
+        }
+
+        function extractRegionFromPlace(place) {
+            // Find country from address components
+            let countryName = '';
+            if (place.address_components) {
+                for (const comp of place.address_components) {
+                    if (comp.types.includes('country')) {
+                        countryName = comp.long_name;
+                        break;
+                    }
+                }
+            }
+            if (!countryName) return;
+            // Match against ShippingRegions
+            const match = shippingRegions.find(r => r.Location === countryName);
+            if (match) {
+                userCountryRegion = match.Region;
+            } else {
+                // Fallback: maybe partial match
+                const partial = shippingRegions.find(r => countryName.includes(r.Location) || r.Location.includes(countryName));
+                if (partial) userCountryRegion = partial.Region;
+                else userCountryRegion = 'Rest of world'; // default
+            }
+            updateOrderSummary();
         }
 
         // ---------- SPA NAVIGATION ----------
@@ -1113,6 +1483,10 @@
 
             if (sectionId === 'home-section') {
                 setTimeout(equalizeHeights, 50);
+            }
+            // Refresh order summary if entering order page
+            if (sectionId === 'order-section') {
+                updateOrderSummary();
             }
         }
 
@@ -1212,6 +1586,8 @@
                 await detectUserCurrency();
 
                 products = allData.products || [];
+                shippingRegions = allData.shippingRegions || [];
+                regionRates = allData.regionRates || [];
 
                 if (allData.home) {
                     loadHomePageDirect(allData.home);
@@ -1220,6 +1596,9 @@
                 if (allData.about) {
                     loadAboutSectionDirect(allData.about);
                 }
+
+                // Load order page once
+                loadOrderPage();
 
                 setupHamburger();
                 setupContactForm();
