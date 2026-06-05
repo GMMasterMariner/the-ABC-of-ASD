@@ -277,15 +277,27 @@
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Email verification block */
+        /* Email verification block – equal width, stretch height */
         .email-verify-wrapper {
-            display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center;
+            display: flex; gap: 1rem; margin-bottom: 1.5rem;
+            align-items: stretch;             /* make children equal height */
         }
-        .email-verify-wrapper > * { flex: 1; }
+        .email-verify-wrapper > * {
+            flex: 1;                          /* both input and button take half */
+        }
+        /* Ensure input inside email-wrapper uses full height */
+        .email-verify-wrapper input {
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
         .email-verify-wrapper .btn {
-            flex: 0 0 auto;
-            min-width: 140px;
-            max-width: 200px;
+            white-space: nowrap;
+            /* remove any max/min width */
+            max-width: none;
+            min-width: 0;
         }
 
         .code-input-row {
@@ -423,7 +435,6 @@
         .payment-row .pay-btn {
             flex: 1;
             max-width: 100%;
-            /* reset any unwanted height */
             height: auto;
         }
 
@@ -564,7 +575,7 @@
             </div>
         </div>
 
-        <!-- Order -->
+        <!-- Order (corrected) -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
                 <!-- Product Selection Box -->
@@ -590,13 +601,13 @@
                     </div>
                 </div>
 
-                <!-- Email Verification Block -->
+                <!-- Email Verification Block (hidden after verification code sent) -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <input type="email" id="orderEmail" placeholder="* Email address">
                     <button class="btn" id="verifyEmailBtn">Verify Email</button>
                 </div>
 
-                <!-- Code Input Row (hidden initially) -->
+                <!-- Code Input Row (hidden initially, appears after email sent) -->
                 <div class="code-input-row" id="codeInputRow" style="display: none;">
                     <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
                     <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
@@ -691,7 +702,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Row (full width) -->
+                <!-- Payment Row -->
                 <div class="payment-row">
                     <button class="pay-btn" id="paypalBtn">
                         <span>Pay with</span>
@@ -1349,6 +1360,8 @@
 
         async function sendVerificationCode(email) {
             lastEmailAttempt = email;
+            // Hide the email-verify wrapper, show code row and buttons
+            document.getElementById('emailVerifyWrapper').style.display = 'none';
             document.getElementById('verifyEmailBtn').style.display = 'none';
             document.getElementById('orderEmail').disabled = true;
 
@@ -1365,6 +1378,7 @@
                 document.getElementById('confirmCodeBtn').textContent = 'Verify';
             } else {
                 alert('Failed to send verification code. Please try again.');
+                document.getElementById('emailVerifyWrapper').style.display = 'flex';
                 document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
                 document.getElementById('orderEmail').disabled = false;
             }
