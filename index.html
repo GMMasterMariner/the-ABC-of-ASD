@@ -140,6 +140,7 @@
             gap: 0.5rem;
             line-height: 1.2;
             text-align: center;
+            width: auto;              /* reset for stretch override */
         }
         .btn:hover, .pay-btn:hover { opacity: 0.9; }
         .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -288,6 +289,10 @@
         .verify-right {
             display: flex; align-items: center; justify-content: center;
         }
+        /* Make button fill right column */
+        .verify-right .btn {
+            width: 100%;
+        }
 
         /* Code input row – stretch to fill left column */
         .code-input-row {
@@ -307,12 +312,19 @@
         .code-input-row input:focus { border-color: var(--primary-color, #194373); outline: none; }
 
         .verify-message {
-            font-size: 0.95rem; color: #333; font-weight: 500;
+            font-size: 0.85rem; color: #333; font-weight: 500;
             display: flex; align-items: center; gap: 0.5rem;
-            flex-wrap: wrap;
+            white-space: nowrap;          /* prevent text wrapping */
+            flex-wrap: nowrap;
         }
         .verify-message .btn {
             white-space: nowrap;
+            flex-shrink: 0;              /* button won't shrink */
+        }
+        .verify-message span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;     /* gracefully cut long email */
         }
 
         /* Customer details row */
@@ -1245,15 +1257,19 @@
             isEmailVerified = false;
             lastVerifiedEmail = '';
 
-            document.getElementById('orderEmail').value = '';
-            document.getElementById('orderEmail').disabled = false;
-            document.getElementById('codeInputRow').style.display = 'none';
+            // Reset email verification UI completely
+            document.getElementById('emailVerifyWrapper').style.display = 'flex';
+            document.getElementById('orderEmail').style.display = 'block';
             document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
             document.getElementById('verifyEmailBtn').disabled = true;
+            document.getElementById('codeInputRow').style.display = 'none';
             document.getElementById('codeMessageRow').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'none';
             document.getElementById('customerDetails').style.display = 'none';
             document.getElementById('shippingAddressSection').style.display = 'none';
+
+            document.getElementById('orderEmail').value = '';
+            document.getElementById('orderEmail').disabled = false;
 
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
@@ -1367,12 +1383,11 @@
         async function sendVerificationCode(email, silentResend = false) {
             lastEmailAttempt = email;
             if (!silentResend) {
-                // Switch to code entry UI
                 document.getElementById('orderEmail').style.display = 'none';
                 document.getElementById('verifyEmailBtn').style.display = 'none';
                 document.getElementById('codeInputRow').style.display = 'flex';
                 document.getElementById('codeMessageRow').style.display = 'flex';
-                document.getElementById('emailSentMessage').textContent = 'An email has been sent to ' + email + ' with the verification code.';
+                document.getElementById('emailSentMessage').textContent = 'Code sent to ' + email;
                 document.getElementById('code1').focus();
             }
 
@@ -1384,7 +1399,6 @@
             if (data.result !== 'success') {
                 alert('Failed to send verification code. Please try again.');
                 if (!silentResend) {
-                    // revert to email state
                     document.getElementById('orderEmail').style.display = 'block';
                     document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
                     document.getElementById('codeInputRow').style.display = 'none';
@@ -1394,7 +1408,6 @@
         }
 
         async function startVerification(code) {
-            // Keep code inputs visible, show verifying message on right
             document.getElementById('codeMessageRow').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'flex';
             document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
@@ -1406,7 +1419,6 @@
             const res = await fetch(API_URL, { method: 'POST', body: params });
             const data = await res.json();
             if (data.result === 'verified') {
-                // Success
                 isEmailVerified = true;
                 document.getElementById('emailVerifyWrapper').style.display = 'none';
                 document.getElementById('customerDetails').style.display = 'block';
@@ -1417,7 +1429,6 @@
                 }
                 updateOrderSummary();
             } else {
-                // Failed – go back to initial email state
                 alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
                 document.getElementById('orderEmail').style.display = 'block';
                 document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
