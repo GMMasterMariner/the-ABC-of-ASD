@@ -22,16 +22,16 @@
             padding-top: 108px;
         }
 
-        /* ---------- SPLASH SCREEN – brand colour, logo pulsing ---------- */
+        /* ---------- SPLASH SCREEN – semi-transparent, logo pulsing ---------- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #194373;                   /* your brand primary colour */
+            background: rgba(25, 67, 115, 0.85);   /* brand colour, semi-transparent */
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.5s ease;
             opacity: 1;
         }
         #splash-screen.hidden {
@@ -39,7 +39,7 @@
             pointer-events: none;
         }
         #splash-logo {
-            max-width: 200px;                     /* good size, adjust as needed */
+            max-width: 200px;
             height: auto;
             animation: pulse 1.5s ease-in-out infinite;
         }
@@ -562,7 +562,7 @@
 <body>
     <!-- ================== SPLASH SCREEN ================== -->
     <div id="splash-screen">
-        <img id="splash-logo" src="" alt="Logo">
+        <img id="splash-logo" src="https://i.ibb.co/DHhZNgL0/Logo-White-Trimmed.png" alt="Logo">
     </div>
 
     <!-- ================== STICKY HEADER ================== -->
@@ -658,7 +658,7 @@
                     </div>
                 </div>
 
-                <!-- Email Verification (dynamic layout) -->
+                <!-- Email Verification -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <div class="verify-left" id="verifyLeft">
                         <input type="email" id="orderEmail" placeholder="* Email address">
@@ -1152,8 +1152,6 @@
             if (settings.BannerLogo) {
                 logo.src = settings.BannerLogo;
                 logo.style.display = 'block';
-                // Also set splash logo
-                document.getElementById('splash-logo').src = settings.BannerLogo;
             } else {
                 logo.style.display = 'none';
             }
@@ -1217,8 +1215,88 @@
             updateNavTitle('home-section');
         }
 
-        function loadHomePageDirect(home) { /* unchanged, omitted for brevity */ }
-        function loadAboutSectionDirect(about) { /* unchanged */ }
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
+
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) buildCarousel(images, home.HomePageCarouselInterval || 3000);
+
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = '';
+
+            const item1Main = home.HomePageItem1MainText || '';
+            const item1Sub = home.HomePageItem1SubText || '';
+            const item2Main = home.HomePageItem2MainText || '';
+            const item2Sub = home.HomePageItem2SubText || '';
+
+            const product1 = products[0] || {};
+            const product2 = products[1] || {};
+
+            function createCard(mainText, subText, product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const basePrice = product.BasePrice || 0;
+                card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
+                return card;
+            }
+
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
+
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
+            refreshAllPrices();
+        }
+
+        function loadAboutSectionDirect(about) {
+            aboutData = about || {};
+            const img1 = document.getElementById('aboutImg1');
+            if (about.AuthorImage1URL) { img1.src = about.AuthorImage1URL; img1.style.display = 'block'; } else { img1.style.display = 'none'; }
+
+            const img2 = document.getElementById('aboutImg2');
+            if (about.AuthorImage2URL) {
+                img2.src = about.AuthorImage2URL;
+                if (window.innerWidth > 768) img2.style.display = 'block';
+                else img2.style.display = 'none';
+            } else img2.style.display = 'none';
+
+            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
+            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
+
+            const toggleMore = document.getElementById('bioToggleMore');
+            const toggleLess = document.getElementById('bioToggleLess');
+            const bioExtended = document.getElementById('bioExtended');
+            const shortBioPara = document.getElementById('aboutShortBioParagraph');
+
+            function collapse() {
+                bioExtended.style.display = 'none';
+                toggleMore.style.display = 'inline';
+                shortBioPara.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+            }
+            function expand() {
+                bioExtended.style.display = 'block';
+                toggleMore.style.display = 'none';
+                bioExtended.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+            }
+
+            collapse();
+            toggleMore.addEventListener('click', expand);
+            toggleLess.addEventListener('click', collapse);
+        }
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
@@ -1437,34 +1515,328 @@
             }
         }
 
-        function selectProduct(index) { /* unchanged */ }
-        function updateQuantityTotal() { /* unchanged */ }
-        function getUnitPrice() { /* unchanged */ }
-        function getShippingCost() { /* unchanged */ }
-        function getShippingTime() { /* unchanged */ }
-        function updateOrderSummary() { /* unchanged */ }
+        function selectProduct(index) {
+            const opt1 = document.getElementById('productOption1');
+            const opt2 = document.getElementById('productOption2');
+            opt1.classList.remove('selected');
+            opt2.classList.remove('selected');
+            if (index === 0) { opt1.classList.add('selected'); selectedProduct = products[0]; }
+            else { opt2.classList.add('selected'); selectedProduct = products[1]; }
+            document.getElementById('orderQuantity').disabled = false;
+            if (document.getElementById('orderQuantity').value === '') document.getElementById('orderQuantity').value = 1;
+            document.getElementById('formatText').textContent = selectedProduct.Type;
+            document.getElementById('orderProductType').classList.add('visible');
+            updateQuantityTotal();
+            updateOrderSummary();
+            if (isEmailVerified) {
+                if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
+                else document.getElementById('shippingAddressSection').style.display = 'none';
+            }
+        }
+
+        function updateQuantityTotal() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
+        }
+
+        function getUnitPrice() {
+            if (!selectedProduct) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            return selectedProduct.BasePrice;
+        }
+
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
+            if (!userCountryRegion) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 0;
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
+            return rows[rows.length-1].Cost || 0;
+        }
+
+        function getShippingTime() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 'N/A';
+            if (!userCountryRegion) return 'Please select a shipping address.';
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 'Shipping time unavailable.';
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Time || '';
+            return rows[rows.length-1].Time || '';
+        }
+
+        function updateOrderSummary() {
+            const digitalMsg = document.getElementById('digitalMessage');
+            const deliveryContainer = document.getElementById('deliveryDetailsContainer');
+            const shippingTime = document.getElementById('shippingTimeText');
+            if (!selectedProduct) {
+                shippingTime.textContent = 'Select a product and address to see delivery time.';
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'none';
+                document.getElementById('sumUnitPrice').textContent = '—';
+                document.getElementById('sumQuantity').textContent = '0';
+                document.getElementById('sumSubtotal').textContent = '—';
+                document.getElementById('sumTotal').textContent = '—';
+                document.getElementById('discountRow').style.display = 'none';
+                document.getElementById('shippingRow').style.display = 'none';
+                return;
+            }
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const unitPrice = getUnitPrice();
+            const subtotal = unitPrice * qty;
+            const shipping = getShippingCost();
+            const total = subtotal + shipping;
+            const discountAmount = (selectedProduct.BasePrice - unitPrice) * qty;
+
+            document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
+            document.getElementById('sumQuantity').textContent = qty;
+            document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
+            document.getElementById('sumTotal').textContent = formatPrice(total);
+
+            const discountRow = document.getElementById('discountRow');
+            if (qty >= (selectedProduct.DiscountThreshold || 0)) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountText').textContent = `${selectedProduct.DiscountPercent}% discount for ${selectedProduct.DiscountThreshold} or more items.`;
+                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            const shippingRow = document.getElementById('shippingRow');
+            if (selectedProduct.Type === 'Digital') {
+                shippingRow.style.display = 'none';
+                shippingTime.textContent = 'No shipping required.';
+                digitalMsg.style.display = 'block';
+                deliveryContainer.style.display = 'none';
+            } else {
+                shippingRow.style.display = 'flex';
+                document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
+                shippingTime.textContent = getShippingTime();
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'block';
+            }
+        }
 
         // ---------- COUNTRY & PHONE SELECTORS ----------
-        function buildCountrySelector() { /* unchanged */ }
-        function buildPhoneCodeSelector() { /* unchanged */ }
+        function buildCountrySelector() {
+            const dropdown = document.getElementById('countryDropdown');
+            const trigger = document.getElementById('countrySelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const item = document.createElement('div');
+                item.className = 'country-dropdown-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location}</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('countryNameDisplay').textContent = country.Location;
+                    document.getElementById('countryFlag').src = country.FlagURL;
+                    userCountryRegion = country.Region;
+                    dropdown.classList.remove('open');
+                    updateOrderSummary();
+                });
+                return { element: item, text: country.Location };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        function buildPhoneCodeSelector() {
+            const dropdown = document.getElementById('phoneCodeDropdown');
+            const trigger = document.getElementById('phoneCodeSelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const dial = country.PhoneCode || '+1';
+                const item = document.createElement('div');
+                item.className = 'phone-code-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location} (${dial})</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('phoneCodeInput').value = dial;
+                    document.getElementById('phoneFlag').src = country.FlagURL;
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: country.Location + ' ' + dial };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
 
         // ---------- GOOGLE MAPS & ADDRESS ----------
-        function loadGoogleMapsScript(apiKey) { /* unchanged */ }
-        function initAutocomplete() { /* unchanged */ }
-        function fillAddressFromPlace(place) { /* unchanged */ }
+        function loadGoogleMapsScript(apiKey) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+            script.defer = true;
+            script.onload = initAutocomplete;
+            document.head.appendChild(script);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('addressLine1');
+            if (!input) return;
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['address'] });
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                fillAddressFromPlace(place);
+            });
+        }
+
+        function fillAddressFromPlace(place) {
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+            document.getElementById('countryNameDisplay').textContent = 'Country';
+            document.getElementById('countryFlag').src = '';
+
+            document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
+
+            for (const comp of place.address_components) {
+                const types = comp.types;
+                if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
+                else if (types.includes('sublocality') || types.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name;
+                else if (types.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name;
+                else if (types.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name;
+                else if (types.includes('country')) {
+                    const countryName = comp.long_name;
+                    const regionMatch = shippingRegions.find(r => r.Location === countryName);
+                    if (regionMatch) {
+                        document.getElementById('countryNameDisplay').textContent = regionMatch.Location;
+                        document.getElementById('countryFlag').src = regionMatch.FlagURL;
+                        userCountryRegion = regionMatch.Region;
+                    }
+                }
+            }
+            updateOrderSummary();
+        }
 
         // ---------- SPA NAVIGATION ----------
-        function showPage(sectionId) { /* unchanged */ }
-        function updateNavTitle(sectionId) { /* unchanged */ }
-        function setupHamburger() { /* unchanged */ }
-        function setupContactForm() { /* unchanged */ }
+        function showPage(sectionId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
+            updateNavTitle(sectionId);
+
+            const currencyContainer = document.getElementById('currencySelectorContainer');
+            if (sectionId === 'contact-section' || sectionId === 'about-section') {
+                currencyContainer.style.display = 'none';
+            } else {
+                currencyContainer.style.display = 'flex';
+            }
+
+            document.getElementById('navIcons').classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+
+            if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
+            if (sectionId === 'order-section') resetOrderForm();
+        }
+
+        function updateNavTitle(sectionId) {
+            const titles = {
+                'home-section': '',
+                'about-section': appSettings?.AboutPageTitle || 'About',
+                'order-section': appSettings?.OrderPageTitle || 'Order',
+                'contact-section': appSettings?.ContactPageTitle || 'Contact'
+            };
+            const titleEl = document.getElementById('pageTitleDisplay');
+            titleEl.textContent = titles[sectionId] || '';
+            titleEl.style.color = appSettings?.PrimaryColor || '#194373';
+        }
+
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('navIcons');
+            btn.addEventListener('click', () => {
+                const expanded = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', expanded);
+            });
+            menu.addEventListener('click', (e) => {
+                if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you! I\'ll reply soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Error. Please try again.';
+                        resultDiv.style.color = 'red';
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send Message';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error.';
+                    resultDiv.style.color = 'red';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
+            });
+        }
 
         // ---------- SPLASH SCREEN ----------
         function hideSplashScreen() {
             const splash = document.getElementById('splash-screen');
             if (splash) {
                 splash.classList.add('hidden');
-                setTimeout(() => { splash.style.display = 'none'; }, 400);
+                setTimeout(() => { splash.style.display = 'none'; }, 500);
             }
         }
 
@@ -1492,7 +1864,8 @@
                 setupContactForm();
                 equalizeHeights();
 
-                hideSplashScreen();
+                // Give the browser a moment to render, then hide splash
+                setTimeout(hideSplashScreen, 200);
             } catch (err) {
                 console.error('Error initializing:', err);
                 hideSplashScreen();
