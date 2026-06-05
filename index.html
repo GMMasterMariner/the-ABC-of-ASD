@@ -1,1 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The ABC of ASD</title>
 
+    <!-- Google Font: Nunito Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scrollbar-gutter: stable; }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            padding-top: 108px;
+        }
+
+        /* ---------- STICKY HEADER ---------- */
+        .sticky-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .banner {
+            position: relative;
+            background-color: #194373;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            min-height: 60px;
+        }
+        .banner-logo {
+            position: absolute;
+            left: 1.2rem; top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        .banner-logo img { max-height: 45px; display: block; }
+
+        .banner-text { width: 100%; text-align: center; }
+        .banner-text h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin: 0; }
+        .banner-text h1 .abbreviation { font-weight: 200; opacity: 0.95; letter-spacing: -0.3px; }
+        .banner-text h2 {
+            font-size: 1.2rem; letter-spacing: 0.4px; font-weight: 400;
+            line-height: 1.3; margin: 0.25rem 0 0 0; opacity: 0.9;
+        }
+
+        .navbar {
+            position: relative;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            padding: 0.5rem 1.2rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            min-height: 48px;
+        }
+        .hamburger {
+            display: none;
+            background: none; border: none;
+            font-size: 1.5rem; line-height: 1;
+            cursor: pointer; padding: 0.2rem;
+            margin-right: 1rem; z-index: 3;
+            color: #194373;
+        }
+        .nav-left { display: flex; align-items: center; gap: 1.2rem; z-index: 2; }
+        .nav-left a { display: inline-flex; align-items: center; text-decoration: none; color: #194373; }
+        .nav-left a img { height: 30px; transition: transform 0.2s ease; }
+        .nav-left a:hover img { transform: scale(1.15); }
+        .nav-label { display: none; }
+
+        .nav-center {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 1.1rem; font-weight: 600;
+            color: #194373; white-space: nowrap;
+            pointer-events: none; z-index: 1;
+        }
+
+        /* Currency selector */
+        .nav-right { display: flex; align-items: center; z-index: 2; gap: 0.4rem; }
+        .currency-label { font-size: 0.9rem; font-weight: 500; color: #194373; }
+        .currency-btn {
+            display: flex; align-items: center;
+            gap: 0.4rem;
+            background: #f0f0f0; border: 1px solid #ccc;
+            border-radius: 4px; padding: 0.3rem 0.5rem;
+            cursor: pointer; font-size: 0.9rem; font-weight: 500;
+            color: #194373; position: relative;
+        }
+        .currency-btn img { height: 20px; width: auto; }
+        .currency-dropdown {
+            position: absolute; top: 100%; right: 0;
+            background: white; border: 1px solid #ddd;
+            border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 20; display: none; min-width: 220px;
+            max-height: 250px; overflow-y: auto;
+        }
+        .currency-dropdown.open { display: block; }
+        .currency-dropdown-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.8rem; cursor: pointer;
+            white-space: nowrap; font-size: 0.9rem;
+        }
+        .currency-dropdown-item:hover { background: #f0f0f0; }
+        .currency-dropdown-item img { width: 20px; height: auto; flex-shrink: 0; }
+
+        /* Dropdown search */
+        .dropdown-search {
+            width: 100%; padding: 0.4rem; border: none;
+            border-bottom: 1px solid #ddd; font-family: inherit;
+            font-size: 0.9rem; outline: none; position: sticky;
+            top: 0; background: white; z-index: 2;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+
+        /* ---------- BUTTONS (uniform) ---------- */
+        .btn, .pay-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem 1.8rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+            background-color: var(--cta-color, #f29b2a);
+            color: white;
+            white-space: nowrap;
+            gap: 0.5rem;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .btn:hover, .pay-btn:hover { opacity: 0.9; }
+        .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn img, .pay-btn img {
+            height: 28px;
+            width: auto;
+            max-width: 50%;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .page-section { display: none; }
+        .page-section.active { display: block; padding-top: 0.5rem; }
+
+        /* ---- Home Page ---- */
+        .home-headline {
+            text-align: center; font-size: 1.2rem;
+            letter-spacing: 0.5px; margin-bottom: 2rem; font-weight: 600;
+        }
+
+        .home-columns { display: flex; gap: 2rem; align-items: flex-start; }
+        .home-col { flex: 1; display: flex; flex-direction: column; }
+
+        .home-col-left-box {
+            background: white; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 1rem 1.5rem;
+            display: flex; flex-direction: column;
+            justify-content: flex-start; text-align: center;
+            box-sizing: border-box; overflow-y: auto;
+        }
+        .home-col-left-box h3 { font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+        .home-col-left-box p { line-height: 1.6; margin-top: 0; }
+
+        /* ---- Carousel ---- */
+        .carousel-wrapper {
+            position: relative; width: 100%; height: 100%;
+            overflow: hidden; border-radius: 8px; background: transparent;
+        }
+        .carousel-track { display: flex; height: 100%; transition: transform 0.5s ease; }
+        .carousel-slide {
+            flex: 0 0 100%; height: 100%; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .carousel-slide img {
+            width: 70%; height: auto; max-height: 100%;
+            object-fit: contain; user-select: none; display: block;
+        }
+        .carousel-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.8); border: none; border-radius: 50%;
+            width: 36px; height: 36px; font-size: 1.5rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #194373; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 3; transition: background 0.2s; line-height: 1;
+        }
+        .carousel-arrow:hover { background: white; }
+        .carousel-arrow.prev { left: 0.5rem; }
+        .carousel-arrow.next { right: 0.5rem; }
+        .carousel-dots {
+            position: absolute; bottom: 0.5rem; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 3;
+        }
+        .carousel-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255,255,255,0.5); border: 1px solid #194373;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .carousel-dot.active { background: #194373; }
+
+        .product-card {
+            background: #fafafa; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 1.5rem; text-align: center;
+        }
+        .product-card h4 { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+        .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
+        .product-card .price { font-weight: 700; font-size: 1.2rem; margin-bottom: 0; }
+
+        .central-order-btn { margin: 2rem 0; text-align: center; }
+
+        /* ---- About Section ---- */
+        .about-img-1 { float: left; margin: 0 1.5rem 1rem 0; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .about-img-2 { float: right; margin: 0 0 1rem 1.5rem; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .about-text { line-height: 1.6; }
+        .bio-toggle { color: var(--primary-color, #194373); cursor: pointer; font-weight: 600; text-decoration: underline; }
+        .bio-extended { display: none; margin-top: 0.5rem; }
+        #aboutShortBioParagraph, #aboutExtendedBioText { text-align: justify; }
+
+        /* ---- Contact Form ---- */
+        .contact-form { max-width: 500px; margin: 0 auto; }
+        .contact-form .form-group { margin-top: 0.5rem; }
+        .contact-form .form-group:first-child { margin-top: 0; }
+        .contact-form input, .contact-form textarea {
+            width: 100%; padding: 0.7rem; border: 1px solid #ccc;
+            border-radius: 4px; font-family: inherit; font-size: 1rem;
+        }
+        .contact-form textarea { resize: vertical; min-height: 120px; }
+        .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
+        .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
+
+        /* ---- Order Form (corrected) ---- */
+        .order-wrapper { max-width: 960px; margin: 0 auto; }
+
+        .order-product-box {
+            background: white; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 1.2rem 1rem;
+            margin-bottom: 1.5rem; display: flex; align-items: stretch; gap: 1.5rem;
+        }
+        .order-product-option, .order-quantity-center {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; text-align: center;
+        }
+        .order-product-option {
+            border: 2px solid transparent; border-radius: 8px;
+            cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; padding: 0.5rem;
+        }
+        .order-product-option.selected {
+            border-color: var(--alert-color, #dc3c33);
+            box-shadow: 0 0 12px rgba(220, 60, 51, 0.3);
+        }
+        .order-product-option img { max-height: 80px; margin-bottom: 0.5rem; }
+        .order-product-option h4 { font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .order-product-option .product-price, .order-quantity-total { margin-top: auto; }
+        .product-price { font-weight: 700; font-size: 1rem; color: var(--alert-color, #dc3c33); }
+
+        .order-quantity-center .quantity-label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .order-quantity-center input {
+            width: 90px; padding: 0.7rem 0.4rem; font-size: 1.6rem;
+            text-align: center; border: 1px solid #ccc; border-radius: 8px;
+        }
+        .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; }
+        .order-product-type {
+            font-size: 0.85rem; color: #666; margin: 0.5rem 0;
+            display: none; flex-direction: column; align-items: center;
+        }
+        .order-product-type.visible { display: flex; }
+        .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
+
+        /* Email verification block */
+        .email-verify-wrapper {
+            display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center;
+        }
+        .email-verify-wrapper > * { flex: 1; }
+        .email-verify-wrapper .btn {
+            flex: 0 0 auto;
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        .code-input-row {
+            display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;
+        }
+        .code-input-row input {
+            width: 50px; height: 60px; text-align: center; font-size: 1.5rem;
+            border: 1px solid #ccc; border-radius: 4px; font-family: inherit;
+        }
+        .code-input-row input:focus { border-color: var(--primary-color, #194373); outline: none; }
+
+        .verify-buttons {
+            display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem;
+        }
+        .verify-buttons .btn { flex: 1; max-width: 250px; }
+
+        /* Customer details row */
+        .order-contact-row {
+            display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center;
+        }
+        .order-contact-row > * { flex: 1; min-width: 0; }
+        .email-input-wrapper { position: relative; }
+        .email-input-wrapper input {
+            width: 100%; padding: 0.7rem; padding-right: 2rem;
+            border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;
+        }
+        .email-checkmark {
+            position: absolute; right: 0.5rem; top: 50%;
+            transform: translateY(-50%); color: green; font-size: 1.2rem;
+            display: none;
+        }
+        .name-input-wrapper input {
+            width: 100%; padding: 0.7rem; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 1rem;
+        }
+        .phone-composite { display: flex; gap: 0.4rem; }
+        .phone-code-selector {
+            display: flex; align-items: center; gap: 0.3rem;
+            border: 1px solid #ccc; border-radius: 4px;
+            padding: 0.7rem; cursor: pointer; position: relative;
+            background: white; font-size: 0.9rem; white-space: nowrap; flex-shrink: 0;
+        }
+        .phone-code-selector img { height: 20px; width: auto; }
+        .phone-code-selector input.phone-code-input {
+            border: none; background: transparent; font-family: inherit;
+            font-size: inherit; color: #194373; width: 60px; padding: 0; outline: none; min-width: 0;
+        }
+        .phone-code-dropdown {
+            position: absolute; top: 100%; left: 0; background: white;
+            border: 1px solid #ddd; border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
+            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
+        }
+        .phone-code-dropdown.open { display: block; }
+        .phone-code-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap;
+        }
+        .phone-code-item:hover { background: #f0f0f0; }
+        .phone-code-item img { width: 20px; height: auto; flex-shrink: 0; }
+        .phone-number-input { flex: 1; min-width: 0; }
+        .phone-number-input input {
+            width: 100%; padding: 0.7rem; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 1rem;
+        }
+
+        /* Shipping Address */
+        .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .shipping-header h4 { margin: 0; }
+        .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; margin: 0; }
+        .shipping-header .locate-btn img { height: 24px; width: auto; }
+        .address-fields-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+        .address-fields-grid input, .address-fields-grid .country-selector {
+            padding: 0.7rem; border: 1px solid #ccc; border-radius: 4px;
+            font-size: 1rem; width: 100%; font-family: inherit;
+        }
+        .address-stack { display: flex; flex-direction: column; gap: 0.8rem; }
+        .city-postcode-combo { display: flex; gap: 0.4rem; }
+        .city-postcode-combo input:first-child { flex: 1; }
+        .city-postcode-combo input:last-child { width: 80px; }
+        .region-country-stack { display: flex; flex-direction: column; gap: 0.8rem; }
+        .country-selector {
+            display: flex; align-items: center; gap: 0.3rem;
+            border: 1px solid #ccc; border-radius: 4px;
+            padding: 0.7rem; cursor: pointer; background: white;
+            position: relative; font-size: 1rem; height: auto; line-height: normal;
+        }
+        .country-selector img { height: 20px; width: auto; flex-shrink: 0; }
+        .country-dropdown {
+            position: absolute; top: 100%; left: 0; background: white;
+            border: 1px solid #ddd; border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
+            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
+        }
+        .country-dropdown.open { display: block; }
+        .country-dropdown-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.8rem; cursor: pointer;
+        }
+        .country-dropdown-item:hover { background: #f0f0f0; }
+        .country-dropdown-item img { width: 20px; height: auto; flex-shrink: 0; }
+
+        /* Summary + Info – equal height */
+        .order-bottom-row {
+            display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch;
+        }
+        .order-summary, .order-sidebar {
+            flex: 1; background: #f9f9f9; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 1.5rem;
+        }
+        .order-summary h4 { margin-bottom: 1rem; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .summary-row.total {
+            font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd;
+            padding-top: 0.5rem; margin-top: 0.5rem;
+        }
+        .discount-text { color: var(--alert-color, #dc3c33); font-size: 0.9rem; margin-left: 0.5rem; }
+        .order-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+        .shipping-info-box {
+            background: #f9f9f9; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 1.5rem; flex: 1;
+        }
+        .shipping-info-box h4 { margin-bottom: 0.5rem; }
+        .shipping-info-box p { margin-bottom: 0.5rem; }
+        .shipping-info-box textarea {
+            width: 100%; margin-top: 0.5rem; padding: 0.6rem;
+            border: 1px solid #ccc; border-radius: 4px;
+            font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
+        }
+
+        /* Pay buttons row – full width, properly sized */
+        .payment-row {
+            display: flex; gap: 1rem; margin-top: 2rem;
+        }
+        .payment-row .pay-btn {
+            flex: 1;
+            max-width: 100%;
+            /* reset any unwanted height */
+            height: auto;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 768px) {
+            body { padding-top: 94px; }
+            .content { padding: 1.5rem; }
+
+            .banner { padding: 0.6rem 0.8rem; min-height: 52px; }
+            .banner-logo { left: 0.8rem; }
+            .banner-logo img { max-height: 35px; }
+            .banner-text h1 { font-size: 1rem; }
+            .banner-text h2 { font-size: 0.9rem; letter-spacing: 0.2px; }
+
+            .hamburger { display: block; }
+            .nav-left {
+                position: absolute; top: 100%; left: 0; background: white;
+                flex-direction: column; gap: 0.2rem; padding: 0.4rem;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: none; z-index: 10;
+                width: auto; min-width: auto; align-items: flex-start;
+            }
+            .nav-left.open { display: flex; }
+            .nav-label { display: inline-block; margin-left: 0.6rem; font-size: 0.9rem; font-weight: 500; }
+            .nav-left a img { width: 24px; height: auto; }
+            .nav-left a { padding: 0.2rem 0; gap: 0; }
+            .navbar { padding: 0.4rem 0.6rem; min-height: 42px; }
+            .nav-center { font-size: 0.95rem; }
+
+            .home-columns { flex-direction: column; gap: 1.5rem; }
+            .home-col-left-box, .carousel-container, .carousel-wrapper {
+                height: auto !important; overflow-y: visible;
+            }
+            .carousel-slide img { width: 60%; }
+            .carousel-wrapper { padding-bottom: 1.8rem; }
+
+            .home-headline { font-size: 0.85rem; margin-bottom: 1.5rem; }
+            .home-col-left-box h3 { font-size: 0.8rem; }
+            .home-col-left-box p { font-size: 0.8rem; }
+
+            .about-img-1, .about-img-2 {
+                float: none; display: block; margin: 1rem auto;
+                width: 80%; max-width: 250px;
+            }
+
+            .form-row { flex-direction: column; gap: 0; margin-top: 0.5rem; }
+            .form-row .form-group:last-child { margin-top: 0.5rem; }
+
+            .order-bottom-row { flex-direction: column; }
+            .address-fields-grid { grid-template-columns: 1fr; }
+            .order-contact-row, .email-verify-wrapper { flex-direction: column; align-items: stretch; }
+            .order-contact-row > *, .email-verify-wrapper > * { flex: auto; }
+            .phone-composite { flex-direction: column; }
+            .phone-code-selector { width: 100%; }
+            .address-stack, .region-country-stack { gap: 0.5rem; }
+            .city-postcode-combo { flex-direction: row; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding-top: 88px; }
+            .banner-text h1 { font-size: 0.8rem; }
+            .banner-text h2 { font-size: 0.7rem; }
+            .banner { min-height: 46px; }
+            .banner-logo img { max-height: 28px; }
+        }
+
+        @media (max-width: 400px) {
+            .banner-text h1 { font-size: 0.7rem; }
+            .banner-text h2 { font-size: 0.6rem; }
+            .nav-center { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ================== STICKY HEADER ================== -->
+    <div class="sticky-header" id="stickyHeader">
+        <div class="banner" id="banner">
+            <div class="banner-logo">
+                <img id="bannerLogo" src="" alt="Logo">
+            </div>
+            <div class="banner-text">
+                <h1 id="bannerTitle"></h1>
+                <h2 id="bannerSubtitle"></h2>
+            </div>
+        </div>
+
+        <nav class="navbar" id="navbar">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
+            <div class="nav-left" id="navIcons"></div>
+            <div class="nav-center" id="pageTitleDisplay"></div>
+            <div class="nav-right" id="currencySelectorContainer">
+                <span class="currency-label">Currency:</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ================== PAGE SECTIONS ================== -->
+    <div class="content">
+        <!-- Home -->
+        <div class="page-section active" id="home-section">
+            <h2 class="home-headline" id="homeHeadline"></h2>
+            <div class="home-columns">
+                <div class="home-col home-col-left">
+                    <div class="home-col-left-box" id="leftBox">
+                        <h3 id="homeDesc1"></h3>
+                        <p id="homeDesc2"></p>
+                    </div>
+                </div>
+                <div class="home-col home-col-center">
+                    <div class="carousel-container" id="carouselContainer">
+                        <div class="carousel-wrapper" id="carouselWrapper">
+                            <div class="carousel-track" id="carouselTrack"></div>
+                            <button class="carousel-arrow prev" id="prevBtn" aria-label="Previous">‹</button>
+                            <button class="carousel-arrow next" id="nextBtn" aria-label="Next">›</button>
+                            <div class="carousel-dots" id="carouselDots"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-col home-col-right" id="productCardsColumn"></div>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="page-section" id="about-section">
+            <div class="about-section-content">
+                <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                <div class="about-text clearfix">
+                    <p id="aboutShortBioParagraph">
+                        <span id="aboutShortBioText"></span>
+                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    </p>
+                    <div class="bio-extended" id="bioExtended">
+                        <p id="aboutExtendedBioText">
+                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order -->
+        <div class="page-section" id="order-section">
+            <div class="order-wrapper" id="orderFormContainer">
+                <!-- Product Selection Box -->
+                <div class="order-product-box" id="productSelectionBox">
+                    <div class="order-product-option" id="productOption1" data-index="0">
+                        <img id="prod1Img" src="" alt="" style="display:none;">
+                        <h4 id="prod1Name"></h4>
+                        <p class="product-price" id="prod1Price" data-zar="0"></p>
+                    </div>
+                    <div class="order-quantity-center">
+                        <div class="quantity-label">Quantity</div>
+                        <input type="number" id="orderQuantity" value="" min="1" max="100" disabled>
+                        <div class="order-product-type" id="orderProductType">
+                            <span>Format</span>
+                            <span class="format-type-value" id="formatText"></span>
+                        </div>
+                        <span class="order-quantity-total" id="quantityTotalPrice"></span>
+                    </div>
+                    <div class="order-product-option" id="productOption2" data-index="1">
+                        <img id="prod2Img" src="" alt="" style="display:none;">
+                        <h4 id="prod2Name"></h4>
+                        <p class="product-price" id="prod2Price" data-zar="0"></p>
+                    </div>
+                </div>
+
+                <!-- Email Verification Block -->
+                <div class="email-verify-wrapper" id="emailVerifyWrapper">
+                    <input type="email" id="orderEmail" placeholder="* Email address">
+                    <button class="btn" id="verifyEmailBtn">Verify Email</button>
+                </div>
+
+                <!-- Code Input Row (hidden initially) -->
+                <div class="code-input-row" id="codeInputRow" style="display: none;">
+                    <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                    <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                    <input type="text" maxlength="1" class="code-digit" id="code3" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                    <input type="text" maxlength="1" class="code-digit" id="code4" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                    <input type="text" maxlength="1" class="code-digit" id="code5" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                    <input type="text" maxlength="1" class="code-digit" id="code6" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                </div>
+
+                <!-- Verify / Resend buttons (hidden initially) -->
+                <div class="verify-buttons" id="verifyButtons" style="display: none;">
+                    <button class="btn" id="resendBtn">Resend Code</button>
+                    <button class="btn" id="confirmCodeBtn">Check your email for code</button>
+                </div>
+
+                <!-- Customer Details (hidden until email verified) -->
+                <div id="customerDetails" style="display: none;">
+                    <div class="order-contact-row">
+                        <div class="email-input-wrapper">
+                            <input type="email" id="verifiedEmail" disabled style="background:#f9f9f9;">
+                            <span class="email-checkmark" style="display:block;">✔</span>
+                        </div>
+                        <div class="name-input-wrapper">
+                            <input type="text" id="customerName" placeholder="* Full Name">
+                        </div>
+                        <div class="phone-composite">
+                            <div class="phone-code-selector" id="phoneCodeSelector">
+                                <img id="phoneFlag" src="" alt="">
+                                <input type="text" class="phone-code-input" id="phoneCodeInput" value="+1" placeholder="+1">
+                                <div class="phone-code-dropdown" id="phoneCodeDropdown"></div>
+                            </div>
+                            <div class="phone-number-input">
+                                <input type="tel" id="customerPhone" placeholder="Phone number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-shipping-address" id="shippingAddressSection" style="display: none;">
+                        <div class="shipping-header">
+                            <h4>Shipping Address</h4>
+                            <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
+                                <img id="locationIcon" src="" alt="📍" style="height: 24px; width: auto;">
+                            </button>
+                        </div>
+                        <div class="address-fields-grid">
+                            <div class="address-stack">
+                                <input type="text" id="addressLine1" placeholder="* Address Line 1" autocomplete="off">
+                                <input type="text" id="addressLine2" placeholder="Address Line 2">
+                            </div>
+                            <div class="address-stack">
+                                <input type="text" id="addressSuburb" placeholder="Suburb">
+                                <div class="city-postcode-combo">
+                                    <input type="text" id="addressCity" placeholder="* City">
+                                    <input type="text" id="addressPostcode" placeholder="* Postcode">
+                                </div>
+                            </div>
+                            <div class="region-country-stack">
+                                <input type="text" id="addressRegion" placeholder="Region / State">
+                                <div class="country-selector" id="countrySelector">
+                                    <img id="countryFlag" src="" alt="">
+                                    <span id="countryNameDisplay">Country</span>
+                                    <div class="country-dropdown" id="countryDropdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Summary + Info -->
+                <div class="order-bottom-row">
+                    <div class="order-summary" id="orderSummary">
+                        <h4>Order Summary</h4>
+                        <div class="summary-row"><span>Unit Price:</span><span id="sumUnitPrice">—</span></div>
+                        <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
+                        <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
+                        <div class="summary-row" id="discountRow" style="display: none;">
+                            <span>Discount <span class="discount-text" id="discountText"></span>:</span>
+                            <span id="sumDiscount">—</span>
+                        </div>
+                        <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
+                        <div class="summary-row total"><span>Total:</span><span id="sumTotal">—</span></div>
+                    </div>
+                    <div class="order-sidebar">
+                        <div class="shipping-info-box" id="shippingInfoBox">
+                            <h4>Shipping Information</h4>
+                            <p id="shippingTimeText">Select a product and address to see delivery time.</p>
+                            <p id="digitalMessage" style="display: none;">A download link will be emailed once payment is completed.</p>
+                            <div id="deliveryDetailsContainer" style="display: none;">
+                                <textarea id="deliveryDetails" placeholder="Add any delivery details…"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Row (full width) -->
+                <div class="payment-row">
+                    <button class="pay-btn" id="paypalBtn">
+                        <span>Pay with</span>
+                        <img id="paypalLogoImg" src="" alt="PayPal">
+                    </button>
+                    <button class="pay-btn" id="payfastBtn">
+                        <span>Pay with</span>
+                        <img id="payfastLogoImg" src="" alt="Payfast">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="page-section" id="contact-section">
+            <div class="contact-form" id="contactFormContainer">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="* Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="* Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" name="phone" placeholder="Phone">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="* Message" required></textarea>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button type="submit" class="btn" id="sendButton">Send Message</button>
+                    </div>
+                </form>
+                <div class="contact-result" id="contactResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // 🔧 REPLACE WITH YOUR WEB APP URL
+        // ==============================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
+
+        // ---------- GLOBAL STATE ----------
+        let appSettings = {};
+        let exchangeRates = [];
+        let selectedCurrency = null;
+        let products = [];
+        let aboutData = {};
+        let carouselIntervalId = null;
+        let shippingRegions = [];
+        let regionRates = [];
+        let selectedProduct = null;
+        let userCountryRegion = null;
+        let isEmailVerified = false;
+        let lastVerifiedEmail = '';
+
+        // ---------- SINGLE FETCH ----------
+        async function fetchAllSiteData() {
+            const res = await fetch(API_URL + '?combined=true');
+            return await res.json();
+        }
+
+        // ---------- DROPDOWN HELPERS ----------
+        function setupDropdown(trigger, dropdown) {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.currency-dropdown, .phone-code-dropdown, .country-dropdown').forEach(d => d.classList.remove('open'));
+                if (!isOpen) {
+                    dropdown.classList.add('open');
+                    const searchInput = dropdown.querySelector('.dropdown-search');
+                    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+                } else {
+                    dropdown.classList.remove('open');
+                }
+            });
+            document.addEventListener('click', (event) => {
+                if (!dropdown.contains(event.target) && !trigger.contains(event.target)) {
+                    dropdown.classList.remove('open');
+                }
+            });
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        function buildSearchableDropdown(container, items, placeholder = 'Search...') {
+            container.innerHTML = '';
+            const search = document.createElement('input');
+            search.type = 'text';
+            search.className = 'dropdown-search';
+            search.placeholder = placeholder;
+            search.addEventListener('input', () => {
+                const filter = search.value.toLowerCase();
+                items.forEach(item => {
+                    item.element.style.display = item.text.toLowerCase().includes(filter) ? '' : 'none';
+                });
+            });
+            search.addEventListener('click', (e) => e.stopPropagation());
+            container.appendChild(search);
+            items.forEach(item => container.appendChild(item.element));
+        }
+
+        // ---------- CURRENCY FUNCTIONS ----------
+        function buildCurrencySelector() {
+            const container = document.getElementById('currencySelectorContainer');
+            const existingBtn = document.getElementById('currencyBtn');
+            const existingDropdown = document.getElementById('currencyDropdown');
+            if (existingBtn) existingBtn.remove();
+            if (existingDropdown) existingDropdown.remove();
+
+            if (!exchangeRates.length) return;
+
+            const btn = document.createElement('div');
+            btn.className = 'currency-btn';
+            btn.id = 'currencyBtn';
+            const flagImg = document.createElement('img');
+            flagImg.id = 'currencyFlag';
+            const codeSpan = document.createElement('span');
+            codeSpan.id = 'currencyCodeDisplay';
+            btn.appendChild(flagImg);
+            btn.appendChild(codeSpan);
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'currency-dropdown';
+            dropdown.id = 'currencyDropdown';
+
+            const sorted = [...exchangeRates].sort((a, b) => a.CurrencyCode.localeCompare(b.CurrencyCode));
+            const items = sorted.map(rate => {
+                const item = document.createElement('div');
+                item.className = 'currency-dropdown-item';
+                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"><span>${rate.CurrencyCode} – ${rate.CountryName}</span>`;
+                item.addEventListener('click', () => {
+                    selectedCurrency = rate;
+                    updateCurrencyDisplay();
+                    refreshAllPrices();
+                    localStorage.setItem('selectedCurrency', rate.CurrencyCode);
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: rate.CurrencyCode + ' ' + rate.CountryName };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search currency...');
+
+            container.appendChild(btn);
+            container.appendChild(dropdown);
+            setupDropdown(btn, dropdown);
+
+            if (selectedCurrency) { updateCurrencyDisplay(); } else { selectedCurrency = exchangeRates[0]; updateCurrencyDisplay(); }
+        }
+
+        function updateCurrencyDisplay() {
+            const flag = document.getElementById('currencyFlag');
+            const codeDisplay = document.getElementById('currencyCodeDisplay');
+            if (flag && codeDisplay && selectedCurrency) {
+                flag.src = selectedCurrency.FlagURL;
+                codeDisplay.textContent = selectedCurrency.CurrencyCode;
+            }
+        }
+
+        async function detectUserCurrency() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const geo = await res.json();
+                const countryCode = geo?.currency;
+                if (countryCode) {
+                    const match = exchangeRates.find(r => r.CurrencyCode === countryCode);
+                    if (match) {
+                        selectedCurrency = match;
+                        updateCurrencyDisplay();
+                        refreshAllPrices();
+                        localStorage.setItem('selectedCurrency', match.CurrencyCode);
+                    }
+                }
+                if (geo?.country_name) { setUserCountryFromName(geo.country_name); }
+            } catch (e) {}
+            if (!selectedCurrency) {
+                const saved = localStorage.getItem('selectedCurrency');
+                if (saved && exchangeRates.find(r => r.CurrencyCode === saved)) {
+                    selectedCurrency = exchangeRates.find(r => r.CurrencyCode === saved);
+                } else {
+                    selectedCurrency = exchangeRates.find(r => r.CurrencyCode === 'USD') || exchangeRates[0];
+                }
+                updateCurrencyDisplay();
+                refreshAllPrices();
+            }
+            if (!userCountryRegion && shippingRegions.length) {
+                setUserCountry(shippingRegions[0]);
+            }
+        }
+
+        function setUserCountryFromName(countryName) {
+            const match = shippingRegions.find(r => r.Location === countryName);
+            if (match) setUserCountry(match);
+        }
+
+        function setUserCountry(regionObj) {
+            document.getElementById('countryNameDisplay').textContent = regionObj.Location;
+            document.getElementById('countryFlag').src = regionObj.FlagURL;
+            userCountryRegion = regionObj.Region;
+            const code = regionObj.PhoneCode || '+1';
+            document.getElementById('phoneCodeInput').value = code;
+            document.getElementById('phoneFlag').src = regionObj.FlagURL;
+            updateOrderSummary();
+        }
+
+        function convertPrice(zarAmount) {
+            if (!selectedCurrency || selectedCurrency.CurrencyCode === 'ZAR') return zarAmount;
+            return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
+        }
+
+        function formatPrice(zarAmount) {
+            const converted = convertPrice(zarAmount);
+            const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
+            const formattedNumber = converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const symbol = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code;
+            return symbol + ' ' + formattedNumber;
+        }
+
+        function refreshAllPrices() {
+            const alertColor = appSettings.AlertColour || '#dc3c33';
+            document.querySelectorAll('[data-zar]').forEach(el => {
+                const zar = parseFloat(el.getAttribute('data-zar'));
+                if (!isNaN(zar)) {
+                    el.textContent = formatPrice(zar);
+                    if (el.classList.contains('product-price') || el.classList.contains('price')) el.style.color = alertColor;
+                }
+            });
+            if (document.getElementById('order-section').classList.contains('active')) updateOrderSummary();
+        }
+
+        // ---------- HEIGHT EQUALISATION ----------
+        function equalizeHeights() {
+            const rightCol = document.getElementById('productCardsColumn');
+            const leftBox = document.getElementById('leftBox');
+            const carouselContainer = document.getElementById('carouselContainer');
+            if (!rightCol || !leftBox || !carouselContainer) return;
+            if (window.innerWidth <= 768) {
+                leftBox.style.height = 'auto';
+                carouselContainer.style.height = 'auto';
+                return;
+            }
+            leftBox.style.height = 'auto';
+            carouselContainer.style.height = 'auto';
+            requestAnimationFrame(() => {
+                const targetHeight = rightCol.offsetHeight;
+                if (targetHeight > 0) {
+                    leftBox.style.height = targetHeight + 'px';
+                    carouselContainer.style.height = targetHeight + 'px';
+                }
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('home-section')?.classList.contains('active')) equalizeHeights();
+        });
+
+        // ---------- INFINITE LOOP CAROUSEL ----------
+        function buildCarousel(imageUrls, interval) {
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            if (!imageUrls.length) return;
+            const firstClone = imageUrls[imageUrls.length - 1];
+            const lastClone = imageUrls[0];
+            const extendedUrls = [firstClone, ...imageUrls, lastClone];
+            extendedUrls.forEach((url) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Slide';
+                img.loading = 'lazy';
+                slide.appendChild(img);
+                track.appendChild(slide);
+            });
+            for (let i = 0; i < imageUrls.length; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'carousel-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            }
+            let currentIndex = 1;
+            const totalSlides = imageUrls.length;
+            let isTransitioning = false;
+
+            function updateCarousel(animate = true) {
+                if (!animate) track.style.transition = 'none';
+                else track.style.transition = 'transform 0.5s ease';
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
+            }
+
+            function goToSlide(realIndex) {
+                currentIndex = realIndex + 1;
+                updateCarousel();
+                resetAutoPlay();
+            }
+
+            function nextSlide() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                currentIndex++;
+                updateCarousel();
+                if (currentIndex === extendedUrls.length - 1) {
+                    setTimeout(() => {
+                        track.style.transition = 'none';
+                        currentIndex = 1;
+                        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        isTransitioning = false;
+                        updateDots();
+                    }, 500);
+                } else { setTimeout(() => isTransitioning = false, 500); }
+            }
+
+            function prevSlide() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                currentIndex--;
+                updateCarousel();
+                if (currentIndex === 0) {
+                    setTimeout(() => {
+                        track.style.transition = 'none';
+                        currentIndex = extendedUrls.length - 2;
+                        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        isTransitioning = false;
+                        updateDots();
+                    }, 500);
+                } else { setTimeout(() => isTransitioning = false, 500); }
+            }
+
+            function updateDots() {
+                const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
+            }
+
+            function startAutoPlay() {
+                if (carouselIntervalId) clearInterval(carouselIntervalId);
+                carouselIntervalId = setInterval(nextSlide, interval);
+            }
+            function stopAutoPlay() {
+                if (carouselIntervalId) { clearInterval(carouselIntervalId); carouselIntervalId = null; }
+            }
+            function resetAutoPlay() { stopAutoPlay(); startAutoPlay(); }
+
+            nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
+            prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
+
+            const wrapper = document.getElementById('carouselWrapper');
+            wrapper.addEventListener('mouseenter', stopAutoPlay);
+            wrapper.addEventListener('mouseleave', startAutoPlay);
+            wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
+            wrapper.addEventListener('touchend', startAutoPlay);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); }
+                if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); }
+            });
+
+            updateCarousel(false);
+            startAutoPlay();
+        }
+
+        // ---------- DIRECT DATA LOADERS ----------
+        function applySettingsDirect(settings) {
+            document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
+            document.body.style.color = settings.TextColor || '#000000';
+            document.getElementById('banner').style.backgroundColor = settings.PrimaryColor || '#194373';
+
+            document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
+            document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
+            document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
+
+            const logo = document.getElementById('bannerLogo');
+            if (settings.BannerLogo) { logo.src = settings.BannerLogo; logo.style.display = 'block'; } else { logo.style.display = 'none'; }
+
+            const titleEl = document.getElementById('bannerTitle');
+            const mainTitle = settings.BannerBookTitle || '';
+            const abbrev = settings.BannerBookTitleAbbreviation || '';
+            if (mainTitle && abbrev) titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
+            else if (mainTitle) titleEl.textContent = mainTitle;
+            else titleEl.textContent = '';
+            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
+
+            if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
+            if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
+            if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
+
+            // Navigation icons
+            const navContainer = document.getElementById('navIcons');
+            navContainer.innerHTML = '';
+            const navItems = [
+                { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
+                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
+                { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
+                { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
+                { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
+            ];
+            navItems.forEach(item => {
+                const iconUrl = settings[item.iconSetting];
+                if (!iconUrl || iconUrl.trim() === '') return;
+                const a = document.createElement('a');
+                a.title = item.label;
+                if (item.externalLinkSetting) {
+                    let linkUrl = settings[item.externalLinkSetting];
+                    if (linkUrl && linkUrl.trim() !== '') {
+                        if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
+                        a.href = linkUrl;
+                        a.target = '_blank';
+                    } else return;
+                } else if (item.section) {
+                    a.href = '#';
+                    a.dataset.section = item.section;
+                }
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = item.label;
+                a.appendChild(img);
+                const span = document.createElement('span');
+                span.className = 'nav-label';
+                span.textContent = item.label;
+                a.appendChild(span);
+                navContainer.appendChild(a);
+            });
+            navContainer.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (!link || link.target === '_blank') return;
+                e.preventDefault();
+                const section = link.dataset.section;
+                if (section) showPage(section);
+            });
+
+            updateNavTitle('home-section');
+        }
+
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
+
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) buildCarousel(images, home.HomePageCarouselInterval || 3000);
+
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = '';
+
+            const item1Main = home.HomePageItem1MainText || '';
+            const item1Sub = home.HomePageItem1SubText || '';
+            const item2Main = home.HomePageItem2MainText || '';
+            const item2Sub = home.HomePageItem2SubText || '';
+
+            const product1 = products[0] || {};
+            const product2 = products[1] || {};
+
+            function createCard(mainText, subText, product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const basePrice = product.BasePrice || 0;
+                card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
+                return card;
+            }
+
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
+
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
+            refreshAllPrices();
+        }
+
+        function loadAboutSectionDirect(about) {
+            aboutData = about || {};
+            const img1 = document.getElementById('aboutImg1');
+            if (about.AuthorImage1URL) { img1.src = about.AuthorImage1URL; img1.style.display = 'block'; } else { img1.style.display = 'none'; }
+
+            const img2 = document.getElementById('aboutImg2');
+            if (about.AuthorImage2URL) {
+                img2.src = about.AuthorImage2URL;
+                if (window.innerWidth > 768) img2.style.display = 'block';
+                else img2.style.display = 'none';
+            } else img2.style.display = 'none';
+
+            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
+            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
+
+            const toggleMore = document.getElementById('bioToggleMore');
+            const toggleLess = document.getElementById('bioToggleLess');
+            const bioExtended = document.getElementById('bioExtended');
+            const shortBioPara = document.getElementById('aboutShortBioParagraph');
+
+            function collapse() {
+                bioExtended.style.display = 'none';
+                toggleMore.style.display = 'inline';
+                shortBioPara.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+            }
+            function expand() {
+                bioExtended.style.display = 'block';
+                toggleMore.style.display = 'none';
+                bioExtended.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+            }
+
+            collapse();
+            toggleMore.addEventListener('click', expand);
+            toggleLess.addEventListener('click', collapse);
+        }
+
+        // ---------- ORDER PAGE LOGIC ----------
+        function resetOrderForm() {
+            document.getElementById('productOption1').classList.remove('selected');
+            document.getElementById('productOption2').classList.remove('selected');
+            selectedProduct = null;
+            document.getElementById('orderQuantity').value = '';
+            document.getElementById('orderQuantity').disabled = true;
+            document.getElementById('quantityTotalPrice').textContent = '';
+            document.getElementById('formatText').textContent = '';
+            document.getElementById('orderProductType').classList.remove('visible');
+
+            isEmailVerified = false;
+            lastVerifiedEmail = '';
+            document.getElementById('emailVerifyWrapper').style.display = 'flex';
+            document.getElementById('codeInputRow').style.display = 'none';
+            document.getElementById('verifyButtons').style.display = 'none';
+            document.getElementById('orderEmail').value = '';
+            document.getElementById('orderEmail').disabled = false;
+            document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
+            document.getElementById('verifyEmailBtn').disabled = true;
+            document.getElementById('customerDetails').style.display = 'none';
+            document.getElementById('shippingAddressSection').style.display = 'none';
+
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('addressLine1').value = '';
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+
+            for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
+
+            updateOrderSummary();
+        }
+
+        function loadOrderPage() {
+            if (products.length < 2) return;
+            const prod1 = products[0], prod2 = products[1];
+
+            document.getElementById('prod1Img').src = prod1.ImageURL || '';
+            document.getElementById('prod1Img').style.display = prod1.ImageURL ? 'block' : 'none';
+            document.getElementById('prod1Name').textContent = prod1.ProductName;
+            document.getElementById('prod1Price').textContent = formatPrice(prod1.BasePrice);
+            document.getElementById('prod1Price').setAttribute('data-zar', prod1.BasePrice);
+
+            document.getElementById('prod2Img').src = prod2.ImageURL || '';
+            document.getElementById('prod2Img').style.display = prod2.ImageURL ? 'block' : 'none';
+            document.getElementById('prod2Name').textContent = prod2.ProductName;
+            document.getElementById('prod2Price').textContent = formatPrice(prod2.BasePrice);
+            document.getElementById('prod2Price').setAttribute('data-zar', prod2.BasePrice);
+
+            document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
+            document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
+
+            document.getElementById('orderQuantity').addEventListener('input', () => {
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+
+            const emailInput = document.getElementById('orderEmail');
+            const verifyBtn = document.getElementById('verifyEmailBtn');
+
+            emailInput.addEventListener('input', () => {
+                verifyBtn.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+            });
+
+            verifyBtn.addEventListener('click', () => {
+                const email = emailInput.value.trim();
+                if (!email) return;
+                sendVerificationCode(email);
+            });
+
+            const codeInputs = document.querySelectorAll('.code-digit');
+            codeInputs.forEach((input, idx) => {
+                input.addEventListener('input', (e) => {
+                    if (input.value.length === 1 && idx < codeInputs.length - 1) {
+                        codeInputs[idx + 1].focus();
+                    }
+                    const allFilled = Array.from(codeInputs).every(inp => inp.value.length === 1);
+                    document.getElementById('confirmCodeBtn').style.display = allFilled ? 'inline-flex' : 'none';
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+                        codeInputs[idx - 1].focus();
+                    }
+                });
+            });
+
+            document.getElementById('resendBtn').addEventListener('click', () => {
+                sendVerificationCode(lastEmailAttempt);
+            });
+
+            document.getElementById('confirmCodeBtn').addEventListener('click', () => {
+                const code = Array.from(codeInputs).map(inp => inp.value).join('');
+                if (code.length !== 6) return;
+                verifyCode(lastEmailAttempt, code);
+            });
+
+            document.getElementById('locateBtn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        if (window.google && google.maps) {
+                            const geocoder = new google.maps.Geocoder();
+                            const latlng = new google.maps.LatLng(latitude, longitude);
+                            geocoder.geocode({ location: latlng }, (results, status) => {
+                                if (status === 'OK' && results[0]) fillAddressFromPlace(results[0]);
+                                else alert('Geolocation service unavailable.');
+                            });
+                        } else alert('Geolocation service unavailable.');
+                    }, () => alert('Unable to retrieve location.'));
+                } else alert('Geolocation not supported.');
+            });
+
+            buildCountrySelector();
+            buildPhoneCodeSelector();
+
+            if (isEmailVerified && lastVerifiedEmail) {
+                document.getElementById('verifiedEmail').value = lastVerifiedEmail;
+                document.getElementById('customerDetails').style.display = 'block';
+                if (selectedProduct && selectedProduct.Type === 'Physical') {
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                }
+            } else {
+                resetOrderForm();
+            }
+        }
+
+        let lastEmailAttempt = '';
+
+        async function sendVerificationCode(email) {
+            lastEmailAttempt = email;
+            document.getElementById('verifyEmailBtn').style.display = 'none';
+            document.getElementById('orderEmail').disabled = true;
+
+            const params = new URLSearchParams();
+            params.append('action', 'sendVerificationCode');
+            params.append('email', email);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result === 'success') {
+                document.getElementById('codeInputRow').style.display = 'flex';
+                document.getElementById('verifyButtons').style.display = 'flex';
+                document.getElementById('code1').focus();
+                document.getElementById('confirmCodeBtn').style.display = 'none';
+                document.getElementById('confirmCodeBtn').textContent = 'Verify';
+            } else {
+                alert('Failed to send verification code. Please try again.');
+                document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
+                document.getElementById('orderEmail').disabled = false;
+            }
+        }
+
+        async function verifyCode(email, code) {
+            const params = new URLSearchParams();
+            params.append('action', 'verifyCode');
+            params.append('email', email);
+            params.append('code', code);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result === 'verified') {
+                isEmailVerified = true;
+                lastVerifiedEmail = email;
+                document.getElementById('emailVerifyWrapper').style.display = 'none';
+                document.getElementById('codeInputRow').style.display = 'none';
+                document.getElementById('verifyButtons').style.display = 'none';
+                document.getElementById('customerDetails').style.display = 'block';
+                document.getElementById('verifiedEmail').value = email;
+                if (selectedProduct && selectedProduct.Type === 'Physical') {
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                }
+                updateOrderSummary();
+            } else if (data.result === 'expired') {
+                alert('Verification code has expired. Please request a new one.');
+            } else {
+                alert('Invalid verification code. Please try again.');
+            }
+        }
+
+        function selectProduct(index) {
+            const opt1 = document.getElementById('productOption1');
+            const opt2 = document.getElementById('productOption2');
+            opt1.classList.remove('selected');
+            opt2.classList.remove('selected');
+            if (index === 0) { opt1.classList.add('selected'); selectedProduct = products[0]; }
+            else { opt2.classList.add('selected'); selectedProduct = products[1]; }
+            document.getElementById('orderQuantity').disabled = false;
+            if (document.getElementById('orderQuantity').value === '') document.getElementById('orderQuantity').value = 1;
+            document.getElementById('formatText').textContent = selectedProduct.Type;
+            document.getElementById('orderProductType').classList.add('visible');
+            updateQuantityTotal();
+            updateOrderSummary();
+            if (isEmailVerified) {
+                if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
+                else document.getElementById('shippingAddressSection').style.display = 'none';
+            }
+        }
+
+        function updateQuantityTotal() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
+        }
+
+        function getUnitPrice() {
+            if (!selectedProduct) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            return selectedProduct.BasePrice;
+        }
+
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
+            if (!userCountryRegion) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 0;
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
+            return rows[rows.length-1].Cost || 0;
+        }
+
+        function getShippingTime() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 'N/A';
+            if (!userCountryRegion) return 'Please select a shipping address.';
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 'Shipping time unavailable.';
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Time || '';
+            return rows[rows.length-1].Time || '';
+        }
+
+        function updateOrderSummary() {
+            const digitalMsg = document.getElementById('digitalMessage');
+            const deliveryContainer = document.getElementById('deliveryDetailsContainer');
+            const shippingTime = document.getElementById('shippingTimeText');
+            if (!selectedProduct) {
+                shippingTime.textContent = 'Select a product and address to see delivery time.';
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'none';
+                document.getElementById('sumUnitPrice').textContent = '—';
+                document.getElementById('sumQuantity').textContent = '0';
+                document.getElementById('sumSubtotal').textContent = '—';
+                document.getElementById('sumTotal').textContent = '—';
+                document.getElementById('discountRow').style.display = 'none';
+                document.getElementById('shippingRow').style.display = 'none';
+                return;
+            }
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const unitPrice = getUnitPrice();
+            const subtotal = unitPrice * qty;
+            const shipping = getShippingCost();
+            const total = subtotal + shipping;
+            const discountAmount = (selectedProduct.BasePrice - unitPrice) * qty;
+
+            document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
+            document.getElementById('sumQuantity').textContent = qty;
+            document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
+            document.getElementById('sumTotal').textContent = formatPrice(total);
+
+            const discountRow = document.getElementById('discountRow');
+            if (qty >= (selectedProduct.DiscountThreshold || 0)) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountText').textContent = `${selectedProduct.DiscountPercent}% discount for ${selectedProduct.DiscountThreshold} or more items.`;
+                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            const shippingRow = document.getElementById('shippingRow');
+            if (selectedProduct.Type === 'Digital') {
+                shippingRow.style.display = 'none';
+                shippingTime.textContent = 'No shipping required.';
+                digitalMsg.style.display = 'block';
+                deliveryContainer.style.display = 'none';
+            } else {
+                shippingRow.style.display = 'flex';
+                document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
+                shippingTime.textContent = getShippingTime();
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'block';
+            }
+        }
+
+        // ---------- COUNTRY & PHONE SELECTORS ----------
+        function buildCountrySelector() {
+            const dropdown = document.getElementById('countryDropdown');
+            const trigger = document.getElementById('countrySelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const item = document.createElement('div');
+                item.className = 'country-dropdown-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location}</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('countryNameDisplay').textContent = country.Location;
+                    document.getElementById('countryFlag').src = country.FlagURL;
+                    userCountryRegion = country.Region;
+                    dropdown.classList.remove('open');
+                    updateOrderSummary();
+                });
+                return { element: item, text: country.Location };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        function buildPhoneCodeSelector() {
+            const dropdown = document.getElementById('phoneCodeDropdown');
+            const trigger = document.getElementById('phoneCodeSelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const dial = country.PhoneCode || '+1';
+                const item = document.createElement('div');
+                item.className = 'phone-code-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location} (${dial})</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('phoneCodeInput').value = dial;
+                    document.getElementById('phoneFlag').src = country.FlagURL;
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: country.Location + ' ' + dial };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        // ---------- GOOGLE MAPS & ADDRESS ----------
+        function loadGoogleMapsScript(apiKey) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+            script.defer = true;
+            script.onload = initAutocomplete;
+            document.head.appendChild(script);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('addressLine1');
+            if (!input) return;
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['address'] });
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                fillAddressFromPlace(place);
+            });
+        }
+
+        function fillAddressFromPlace(place) {
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+            document.getElementById('countryNameDisplay').textContent = 'Country';
+            document.getElementById('countryFlag').src = '';
+
+            document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
+
+            for (const comp of place.address_components) {
+                const types = comp.types;
+                if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
+                else if (types.includes('sublocality') || types.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name;
+                else if (types.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name;
+                else if (types.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name;
+                else if (types.includes('country')) {
+                    const countryName = comp.long_name;
+                    const regionMatch = shippingRegions.find(r => r.Location === countryName);
+                    if (regionMatch) {
+                        document.getElementById('countryNameDisplay').textContent = regionMatch.Location;
+                        document.getElementById('countryFlag').src = regionMatch.FlagURL;
+                        userCountryRegion = regionMatch.Region;
+                    }
+                }
+            }
+            updateOrderSummary();
+        }
+
+        // ---------- SPA NAVIGATION ----------
+        function showPage(sectionId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
+            updateNavTitle(sectionId);
+
+            const currencyContainer = document.getElementById('currencySelectorContainer');
+            if (sectionId === 'contact-section' || sectionId === 'about-section') {
+                currencyContainer.style.display = 'none';
+            } else {
+                currencyContainer.style.display = 'flex';
+            }
+
+            document.getElementById('navIcons').classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+
+            if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
+            if (sectionId === 'order-section') resetOrderForm();
+        }
+
+        function updateNavTitle(sectionId) {
+            const titles = {
+                'home-section': '',
+                'about-section': appSettings?.AboutPageTitle || 'About',
+                'order-section': appSettings?.OrderPageTitle || 'Order',
+                'contact-section': appSettings?.ContactPageTitle || 'Contact'
+            };
+            const titleEl = document.getElementById('pageTitleDisplay');
+            titleEl.textContent = titles[sectionId] || '';
+            titleEl.style.color = appSettings?.PrimaryColor || '#194373';
+        }
+
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('navIcons');
+            btn.addEventListener('click', () => {
+                const expanded = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', expanded);
+            });
+            menu.addEventListener('click', (e) => {
+                if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you! I\'ll reply soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Error. Please try again.';
+                        resultDiv.style.color = 'red';
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send Message';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error.';
+                    resultDiv.style.color = 'red';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
+            });
+        }
+
+        // ---------- INIT ----------
+        async function init() {
+            try {
+                const allData = await fetchAllSiteData();
+                appSettings = allData.settings || {};
+                applySettingsDirect(appSettings);
+
+                exchangeRates = allData.exchangeRates || [];
+                buildCurrencySelector();
+
+                products = allData.products || [];
+                shippingRegions = allData.shippingRegions || [];
+                regionRates = allData.regionRates || [];
+
+                await detectUserCurrency();
+
+                if (allData.home) loadHomePageDirect(allData.home);
+                if (allData.about) loadAboutSectionDirect(allData.about);
+                loadOrderPage();
+
+                setupHamburger();
+                setupContactForm();
+                equalizeHeights();
+            } catch (err) {
+                console.error('Error initializing:', err);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
