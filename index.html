@@ -1750,11 +1750,16 @@
             if (!userCountryRegion) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
-            const rows = regionRates.filter(r => r.Region.trim() === userCountryRegion.trim());
+        
+            // Only keep rows that have a Region and match the user's region
+            const rows = regionRates.filter(r => r && r.Region && typeof r.Region === 'string' && r.Region.trim() === userCountryRegion.trim());
+        
             if (!rows.length) return 0;
-            rows.sort((a,b) => a.MaxWeight - b.MaxWeight);
-            for (const row of rows) if (totalWeight <= row.MaxWeight) return row.Cost;
-            return rows[rows.length-1].Cost;
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) {
+                if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
+            }
+            return rows[rows.length-1].Cost || 0;
         }
 
         function getShippingTime() {
