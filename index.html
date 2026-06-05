@@ -127,7 +127,7 @@
             font-size: 0.9rem;
         }
         .currency-dropdown-item:hover { background: #f0f0f0; }
-        .currency-dropdown-item img { height: 20px; width: auto; }
+        .currency-dropdown-item img { width: 20px; height: auto; flex-shrink: 0; }
 
         /* Search bar inside dropdowns */
         .dropdown-search {
@@ -149,6 +149,28 @@
         input[type=number]::-webkit-outer-spin-button {
             opacity: 1;
         }
+
+        /* ---------- BUTTONS (consistent) ---------- */
+        .btn, .pay-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+            background-color: var(--cta-color, #f29b2a);
+            color: white;
+            white-space: nowrap;
+            gap: 0.5rem;
+            line-height: 1.2;
+        }
+        .btn:hover, .pay-btn:hover { opacity: 0.9; }
+        .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn img, .pay-btn img { height: 30px; width: auto; max-width: 50%; }
 
         /* ---------- MAIN CONTENT ---------- */
         .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
@@ -290,19 +312,6 @@
             margin: 2rem 0;
             text-align: center;
         }
-        .btn {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: opacity 0.2s;
-            background-color: var(--cta-color, #f29b2a);
-            color: white;
-        }
-        .btn:hover { opacity: 0.9; }
 
         /* ---- About Section ---- */
         .about-img-1 {
@@ -337,26 +346,14 @@
             max-width: 500px;
             margin: 0 auto;
         }
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+        .contact-form .form-group {
+            margin-top: 0.5rem;
         }
-        .form-row .form-group {
-            flex: 1;
-            margin-top: 0;
-        }
-        .form-group { margin-top: 0.5rem; }
-        .form-group:first-child { margin-top: 0; }
-        .contact-form label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-        }
+        .contact-form .form-group:first-child { margin-top: 0; }
         .contact-form input,
         .contact-form textarea {
             width: 100%;
-            padding: 0.6rem;
+            padding: 0.7rem;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-family: inherit;
@@ -370,18 +367,6 @@
             text-align: center;
             margin-top: 1.5rem;
         }
-        .contact-form button {
-            background-color: var(--cta-color, #f29b2a);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .contact-form button:hover { opacity: 0.9; }
-        .contact-form button:disabled { opacity: 0.6; cursor: not-allowed; }
         .contact-result {
             text-align: center;
             margin-top: 2rem;
@@ -537,7 +522,7 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .phone-code-selector img { height: 20px; width: auto; }
+        .phone-code-selector img { width: 20px; height: auto; flex-shrink: 0; }
         .phone-code-dropdown {
             position: absolute;
             top: 100%;
@@ -562,7 +547,7 @@
             white-space: nowrap;
         }
         .phone-code-item:hover { background: #f0f0f0; }
-        .phone-code-item img { height: 20px; width: auto; }
+        .phone-code-item img { width: 20px; height: auto; flex-shrink: 0; }
         .phone-number-input {
             flex: 1;
             min-width: 0;
@@ -641,7 +626,7 @@
             font-size: 1rem;
             height: 100%;
         }
-        .country-selector img { height: 20px; width: auto; }
+        .country-selector img { width: 20px; height: auto; flex-shrink: 0; }
         .country-dropdown {
             position: absolute;
             top: 100%;
@@ -665,7 +650,7 @@
             cursor: pointer;
         }
         .country-dropdown-item:hover { background: #f0f0f0; }
-        .country-dropdown-item img { height: 20px; width: auto; }
+        .country-dropdown-item img { width: 20px; height: auto; flex-shrink: 0; }
 
         /* Summary + Info row */
         .order-bottom-row {
@@ -732,29 +717,9 @@
             display: flex;
             gap: 1rem;
         }
-        .pay-btn {
+        .payment-buttons-row .pay-btn {
             flex: 1;
-            background-color: var(--cta-color, #f29b2a);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            white-space: nowrap;
         }
-        .pay-btn img {
-            height: 30px;
-            width: auto;
-            max-width: 50%;
-        }
-        .pay-btn:hover { opacity: 0.9; }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
@@ -893,7 +858,7 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (fixed top-right image2) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -912,7 +877,7 @@
             </div>
         </div>
 
-        <!-- Order -->
+        <!-- Order (final) -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
                 <!-- Product Selection Box -->
@@ -941,12 +906,12 @@
                 <!-- Email, Name, Phone -->
                 <div class="order-contact-row" id="contactRow">
                     <div class="email-input-wrapper">
-                        <input type="email" id="orderEmail" placeholder="Email address">
+                        <input type="email" id="orderEmail" placeholder="* Email address">
                         <span class="email-checkmark" id="emailCheckmark">✔</span>
                     </div>
-                    <button class="btn" id="verifyEmailBtn" style="flex: 0 0 auto;">Verify Email</button>
+                    <button class="btn" id="verifyEmailBtn">Verify Email</button>
                     <div class="name-input-wrapper" id="nameWrapper" style="display: none;">
-                        <input type="text" id="customerName" placeholder="Full Name">
+                        <input type="text" id="customerName" placeholder="* Full Name">
                     </div>
                     <div class="phone-composite" id="phoneComposite" style="display: none;">
                         <div class="phone-code-selector" id="phoneCodeSelector">
@@ -970,14 +935,14 @@
                     </div>
                     <div class="address-fields-grid">
                         <div class="address-stack">
-                            <input type="text" id="addressLine1" placeholder="Address Line 1" autocomplete="off">
+                            <input type="text" id="addressLine1" placeholder="* Address Line 1" autocomplete="off">
                             <input type="text" id="addressLine2" placeholder="Address Line 2">
                         </div>
                         <div class="address-stack">
                             <input type="text" id="addressSuburb" placeholder="Suburb">
                             <div class="city-postcode-combo">
-                                <input type="text" id="addressCity" placeholder="City">
-                                <input type="text" id="addressPostcode" placeholder="Postcode">
+                                <input type="text" id="addressCity" placeholder="* City">
+                                <input type="text" id="addressPostcode" placeholder="* Postcode">
                             </div>
                         </div>
                         <div class="region-country-stack">
@@ -1029,30 +994,24 @@
             </div>
         </div>
 
-        <!-- Contact -->
+        <!-- Contact (updated inputs) -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
                     <div class="form-group">
-                        <label for="name">Name *</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone">
-                        </div>
+                        <input type="text" id="name" name="name" placeholder="* Name" required>
                     </div>
                     <div class="form-group">
-                        <label for="message">Message *</label>
-                        <textarea id="message" name="message" required></textarea>
+                        <input type="email" id="email" name="email" placeholder="* Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" name="phone" placeholder="Phone">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="* Message" required></textarea>
                     </div>
                     <div class="btn-wrapper">
-                        <button type="submit" id="sendButton">Send Message</button>
+                        <button type="submit" class="btn" id="sendButton">Send Message</button>
                     </div>
                 </form>
                 <div class="contact-result" id="contactResult"></div>
@@ -1155,7 +1114,7 @@
             const items = sorted.map(rate => {
                 const item = document.createElement('div');
                 item.className = 'currency-dropdown-item';
-                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"> <span>${rate.CurrencyCode} – ${rate.CountryName}</span>`;
+                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"><span>${rate.CurrencyCode} – ${rate.CountryName}</span>`;
                 item.addEventListener('click', () => {
                     selectedCurrency = rate;
                     updateCurrencyDisplay();
@@ -1433,7 +1392,7 @@
             startAutoPlay();
         }
 
-        // ---------- DIRECT DATA LOADERS (FULLY IMPLEMENTED) ----------
+        // ---------- DIRECT DATA LOADERS ----------
         function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
@@ -1463,16 +1422,11 @@
             }
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-            if (settings.PayPalLogo) {
-                document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
-            }
-            if (settings.PayfastLogo) {
-                document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
-            }
-            if (settings.LocationIconURL) {
-                document.getElementById('locationIcon').src = settings.LocationIconURL;
-            }
+            if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
+            if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
+            if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
 
+            // Navigation icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -1529,9 +1483,7 @@
                 const url = home['HomePageCarouselImage' + i];
                 if (url) images.push(url);
             }
-            if (images.length) {
-                buildCarousel(images, home.HomePageCarouselInterval || 3000);
-            }
+            if (images.length) buildCarousel(images, home.HomePageCarouselInterval || 3000);
 
             const productColumn = document.getElementById('productCardsColumn');
             productColumn.innerHTML = '';
@@ -1548,11 +1500,7 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const basePrice = product.BasePrice || 0;
-                card.innerHTML = `
-                    <h4>${mainText}</h4>
-                    <p class="sub">${subText}</p>
-                    <p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>
-                `;
+                card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
                 return card;
             }
 
@@ -1562,15 +1510,11 @@
             const orderBtn = document.createElement('div');
             orderBtn.className = 'central-order-btn';
             orderBtn.innerHTML = '<button class="btn">Order Now</button>';
-
             productColumn.appendChild(card1);
             productColumn.appendChild(orderBtn);
             productColumn.appendChild(card2);
 
-            orderBtn.querySelector('.btn').addEventListener('click', () => {
-                showPage('order-section');
-            });
-
+            orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
             refreshAllPrices();
         }
 
@@ -1587,6 +1531,7 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
+                // Desktop: show immediately (float right, already in correct position)
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
@@ -1608,18 +1553,14 @@
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
                 shortBioPara.insertAdjacentElement('afterend', img2);
-                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    img2.style.display = 'block';
-                }
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
             }
 
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
                 bioExtended.insertAdjacentElement('afterend', img2);
-                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    img2.style.display = 'block';
-                }
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
             }
 
             collapse();
@@ -1641,7 +1582,7 @@
             isEmailVerified = false;
             lastVerifiedEmail = '';
             document.getElementById('orderEmail').value = '';
-            document.getElementById('verifyEmailBtn').style.display = 'inline-block';
+            document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
             document.getElementById('verifyEmailBtn').textContent = 'Verify Email';
             document.getElementById('verifyEmailBtn').disabled = false;
             document.getElementById('emailCheckmark').style.display = 'none';
@@ -1695,7 +1636,7 @@
                 if (isEmailVerified && document.getElementById('orderEmail').value.trim() !== lastVerifiedEmail) {
                     isEmailVerified = false;
                     lastVerifiedEmail = '';
-                    document.getElementById('verifyEmailBtn').style.display = 'inline-block';
+                    document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
                     document.getElementById('verifyEmailBtn').textContent = 'Verify Email';
                     document.getElementById('verifyEmailBtn').disabled = false;
                     document.getElementById('emailCheckmark').style.display = 'none';
@@ -1717,13 +1658,9 @@
                                 if (status === 'OK' && results[0]) fillAddressFromPlace(results[0]);
                                 else alert('Geolocation service unavailable.');
                             });
-                        } else {
-                            alert('Geolocation service unavailable.');
-                        }
+                        } else alert('Geolocation service unavailable.');
                     }, () => alert('Unable to retrieve location.'));
-                } else {
-                    alert('Geolocation not supported.');
-                }
+                } else alert('Geolocation not supported.');
             });
 
             buildCountrySelector();
@@ -1746,15 +1683,11 @@
             document.getElementById('phoneComposite').style.display = 'flex';
             if (selectedProduct && selectedProduct.Type === 'Physical') {
                 document.getElementById('shippingAddressSection').style.display = 'block';
-                if (appSettings.GoogleMapsApiKey && !window.google) {
-                    loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
-                }
+                if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
             } else {
                 document.getElementById('shippingAddressSection').style.display = 'none';
             }
-            if (!silent) {
-                updateOrderSummary();
-            }
+            if (!silent) updateOrderSummary();
         }
 
         function selectProduct(index) {
@@ -1762,45 +1695,30 @@
             const opt2 = document.getElementById('productOption2');
             opt1.classList.remove('selected');
             opt2.classList.remove('selected');
-            if (index === 0) {
-                opt1.classList.add('selected');
-                selectedProduct = products[0];
-            } else {
-                opt2.classList.add('selected');
-                selectedProduct = products[1];
-            }
+            if (index === 0) { opt1.classList.add('selected'); selectedProduct = products[0]; }
+            else { opt2.classList.add('selected'); selectedProduct = products[1]; }
             document.getElementById('orderQuantity').disabled = false;
-            if (document.getElementById('orderQuantity').value === '') {
-                document.getElementById('orderQuantity').value = 1;
-            }
+            if (document.getElementById('orderQuantity').value === '') document.getElementById('orderQuantity').value = 1;
             document.getElementById('formatText').textContent = selectedProduct.Type;
             document.getElementById('orderProductType').classList.add('visible');
             updateQuantityTotal();
             updateOrderSummary();
             if (isEmailVerified) {
-                if (selectedProduct.Type === 'Physical') {
-                    document.getElementById('shippingAddressSection').style.display = 'block';
-                } else {
-                    document.getElementById('shippingAddressSection').style.display = 'none';
-                }
+                if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
+                else document.getElementById('shippingAddressSection').style.display = 'none';
             }
         }
 
         function updateQuantityTotal() {
             if (!selectedProduct) return;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const total = selectedProduct.BasePrice * qty;
-            document.getElementById('quantityTotalPrice').textContent = formatPrice(total);
+            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
         }
 
         function getUnitPrice() {
             if (!selectedProduct) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const threshold = selectedProduct.DiscountThreshold || 0;
-            const discountPercent = selectedProduct.DiscountPercent || 0;
-            if (qty >= threshold) {
-                return selectedProduct.BasePrice * (1 - discountPercent / 100);
-            }
+            if (qty >= (selectedProduct.DiscountThreshold || 0)) return selectedProduct.BasePrice * (1 - (selectedProduct.DiscountPercent || 0)/100);
             return selectedProduct.BasePrice;
         }
 
@@ -1809,14 +1727,11 @@
             if (!userCountryRegion) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
-            const regionRows = regionRates.filter(r => r.Region === userCountryRegion);
-            if (!regionRows.length) return 0;
-            regionRows.sort((a,b) => a.MaxWeight - b.MaxWeight);
-            for (const row of regionRows) {
-                if (totalWeight <= row.MaxWeight) return row.Cost;
-            }
-            const last = regionRows[regionRows.length - 1];
-            return last.Cost;
+            const rows = regionRates.filter(r => r.Region.trim() === userCountryRegion.trim());
+            if (!rows.length) return 0;
+            rows.sort((a,b) => a.MaxWeight - b.MaxWeight);
+            for (const row of rows) if (totalWeight <= row.MaxWeight) return row.Cost;
+            return rows[rows.length-1].Cost;
         }
 
         function getShippingTime() {
@@ -1824,17 +1739,14 @@
             if (!userCountryRegion) return 'Please select a shipping address.';
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
-            const regionRows = regionRates.filter(r => r.Region === userCountryRegion);
-            if (!regionRows.length) return 'Shipping time unavailable.';
-            regionRows.sort((a,b) => a.MaxWeight - b.MaxWeight);
-            for (const row of regionRows) {
-                if (totalWeight <= row.MaxWeight) return row.Time;
-            }
-            return regionRows[regionRows.length - 1].Time;
+            const rows = regionRates.filter(r => r.Region.trim() === userCountryRegion.trim());
+            if (!rows.length) return 'Shipping time unavailable.';
+            rows.sort((a,b) => a.MaxWeight - b.MaxWeight);
+            for (const row of rows) if (totalWeight <= row.MaxWeight) return row.Time;
+            return rows[rows.length-1].Time;
         }
 
         function updateOrderSummary() {
-            // Show/hide shipping info extras
             const digitalMsg = document.getElementById('digitalMessage');
             const deliveryContainer = document.getElementById('deliveryDetailsContainer');
             const shippingTime = document.getElementById('shippingTimeText');
@@ -1852,37 +1764,27 @@
             }
 
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const unitPrice = selectedProduct.BasePrice;
-            const discountThreshold = selectedProduct.DiscountThreshold || 0;
-            const discountPercent = selectedProduct.DiscountPercent || 0;
-            let finalUnitPrice = unitPrice;
-            let discountAmount = 0;
-            if (qty >= discountThreshold) {
-                finalUnitPrice = unitPrice * (1 - discountPercent / 100);
-                discountAmount = (unitPrice - finalUnitPrice) * qty;
-            }
-            const subtotal = finalUnitPrice * qty;
+            const unitPrice = getUnitPrice();
+            const subtotal = unitPrice * qty;
             const shipping = getShippingCost();
             const total = subtotal + shipping;
+            const discountAmount = (selectedProduct.BasePrice - unitPrice) * qty;
 
-            document.getElementById('sumUnitPrice').textContent = formatPrice(finalUnitPrice);
+            document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
             document.getElementById('sumQuantity').textContent = qty;
             document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
             document.getElementById('sumTotal').textContent = formatPrice(total);
 
             const discountRow = document.getElementById('discountRow');
-            const discountText = document.getElementById('discountText');
-            const sumDiscount = document.getElementById('sumDiscount');
-            if (qty >= discountThreshold) {
+            if (qty >= (selectedProduct.DiscountThreshold || 0)) {
                 discountRow.style.display = 'flex';
-                discountText.textContent = `${discountPercent}% discount for ${discountThreshold} or more items.`;
-                sumDiscount.textContent = '- ' + formatPrice(discountAmount);
+                document.getElementById('discountText').textContent = `${selectedProduct.DiscountPercent}% discount for ${selectedProduct.DiscountThreshold} or more items.`;
+                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
             } else {
                 discountRow.style.display = 'none';
             }
 
             const shippingRow = document.getElementById('shippingRow');
-            const sumShipping = document.getElementById('sumShipping');
             if (selectedProduct.Type === 'Digital') {
                 shippingRow.style.display = 'none';
                 shippingTime.textContent = 'No shipping required.';
@@ -1890,7 +1792,7 @@
                 deliveryContainer.style.display = 'none';
             } else {
                 shippingRow.style.display = 'flex';
-                sumShipping.textContent = shipping ? formatPrice(shipping) : '—';
+                document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
                 shippingTime.textContent = getShippingTime();
                 digitalMsg.style.display = 'none';
                 deliveryContainer.style.display = 'block';
@@ -1973,15 +1875,11 @@
 
             for (const comp of place.address_components) {
                 const types = comp.types;
-                if (types.includes('locality')) {
-                    document.getElementById('addressCity').value = comp.long_name;
-                } else if (types.includes('sublocality') || types.includes('neighborhood')) {
-                    document.getElementById('addressSuburb').value = comp.long_name;
-                } else if (types.includes('administrative_area_level_1')) {
-                    document.getElementById('addressRegion').value = comp.short_name;
-                } else if (types.includes('postal_code')) {
-                    document.getElementById('addressPostcode').value = comp.long_name;
-                } else if (types.includes('country')) {
+                if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
+                else if (types.includes('sublocality') || types.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name;
+                else if (types.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name;
+                else if (types.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name;
+                else if (types.includes('country')) {
                     const countryName = comp.long_name;
                     const regionMatch = shippingRegions.find(r => r.Location === countryName);
                     if (regionMatch) {
@@ -2012,9 +1910,7 @@
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
 
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
-            if (sectionId === 'order-section') {
-                resetOrderForm();
-            }
+            if (sectionId === 'order-section') resetOrderForm();
         }
 
         function updateNavTitle(sectionId) {
@@ -2029,6 +1925,7 @@
             titleEl.style.color = appSettings?.PrimaryColor || '#194373';
         }
 
+        // Hamburger & Contact Form (unchanged but with updated selectors)
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
