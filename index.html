@@ -235,7 +235,7 @@
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
-        /* ---- Order Form (corrected) ---- */
+        /* ---- Order Form ---- */
         .order-wrapper { max-width: 960px; margin: 0 auto; }
 
         .order-product-box {
@@ -273,26 +273,17 @@
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Email verification block – equal width, stretch height, perfectly aligned */
+        /* Email verification block – equal width, aligned */
         .email-verify-wrapper {
             display: flex; gap: 1rem; margin-bottom: 1.5rem;
-            align-items: stretch;             /* make children equal height */
+            align-items: stretch;
         }
-        .email-verify-wrapper > * {
-            flex: 1;                          /* both take equal width */
-        }
+        .email-verify-wrapper > * { flex: 1; }
         .email-verify-wrapper input {
-            padding: 0.7rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-family: inherit;
-            height: auto;                    /* stretch will handle height */
+            padding: 0.7rem; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 1rem; font-family: inherit;
         }
-        .email-verify-wrapper .btn {
-            padding: 0.7rem 1.8rem;          /* same vertical padding as input */
-            white-space: nowrap;
-        }
+        .email-verify-wrapper .btn { padding: 0.7rem 1.8rem; }
 
         .code-input-row {
             display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;
@@ -394,7 +385,7 @@
         .country-dropdown-item:hover { background: #f0f0f0; }
         .country-dropdown-item img { width: 20px; height: auto; flex-shrink: 0; }
 
-        /* Summary + Info – equal height */
+        /* Summary + Info */
         .order-bottom-row {
             display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch;
         }
@@ -422,7 +413,6 @@
             font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
         }
 
-        /* Pay buttons row – normal size, centred */
         .payment-row {
             display: flex; gap: 1rem; margin-top: 2rem;
             justify-content: center;
@@ -430,7 +420,7 @@
         .payment-row .pay-btn {
             flex: 0 0 auto;
             width: auto;
-            min-width: 160px;   /* sensible minimum */
+            min-width: 160px;
             padding: 0.7rem 2rem;
         }
 
@@ -572,7 +562,7 @@
             </div>
         </div>
 
-        <!-- Order (fully corrected) -->
+        <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
                 <!-- Product Selection Box -->
@@ -598,13 +588,13 @@
                     </div>
                 </div>
 
-                <!-- Email Verification Block (now perfectly aligned) -->
+                <!-- Email Verification Block (state 1: email + verify) -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <input type="email" id="orderEmail" placeholder="* Email address">
                     <button class="btn" id="verifyEmailBtn">Verify Email</button>
                 </div>
 
-                <!-- Code Input Row (appears in place of email) -->
+                <!-- Code Input Row (state 2: code boxes) -->
                 <div class="code-input-row" id="codeInputRow" style="display: none;">
                     <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
                     <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
@@ -614,13 +604,19 @@
                     <input type="text" maxlength="1" class="code-digit" id="code6" pattern="[0-9]" inputmode="numeric" autocomplete="off">
                 </div>
 
-                <!-- Verify / Resend buttons (hidden initially) -->
+                <!-- Verify Buttons (state 2: resend + check email) -->
                 <div class="verify-buttons" id="verifyButtons" style="display: none;">
                     <button class="btn" id="resendBtn">Resend Code</button>
-                    <button class="btn" id="confirmCodeBtn">Check your email for code</button>
+                    <button class="btn" id="checkEmailBtn" disabled>Check your email</button>
                 </div>
 
-                <!-- Customer Details (hidden until email verified) -->
+                <!-- Verifying row (state 3: email + verifying... button) -->
+                <div class="email-verify-wrapper" id="verifyingRow" style="display: none;">
+                    <input type="email" id="verifiedEmailInput" disabled style="background:#f9f9f9;">
+                    <button class="btn" id="verifyingBtn" disabled>Verifying...</button>
+                </div>
+
+                <!-- Customer Details (state 4: shown after success) -->
                 <div id="customerDetails" style="display: none;">
                     <div class="order-contact-row">
                         <div class="email-input-wrapper">
@@ -699,7 +695,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Row (normal buttons, centred) -->
+                <!-- Payment Row -->
                 <div class="payment-row">
                     <button class="pay-btn" id="paypalBtn">
                         <span>Pay with</span>
@@ -1238,6 +1234,7 @@
             document.getElementById('emailVerifyWrapper').style.display = 'flex';
             document.getElementById('codeInputRow').style.display = 'none';
             document.getElementById('verifyButtons').style.display = 'none';
+            document.getElementById('verifyingRow').style.display = 'none';
             document.getElementById('orderEmail').value = '';
             document.getElementById('orderEmail').disabled = false;
             document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
@@ -1302,8 +1299,13 @@
                     if (input.value.length === 1 && idx < codeInputs.length - 1) {
                         codeInputs[idx + 1].focus();
                     }
+                    // Check if all filled
                     const allFilled = Array.from(codeInputs).every(inp => inp.value.length === 1);
-                    document.getElementById('confirmCodeBtn').style.display = allFilled ? 'inline-flex' : 'none';
+                    if (allFilled) {
+                        // Auto-trigger verification
+                        const code = Array.from(codeInputs).map(inp => inp.value).join('');
+                        startVerification(code);
+                    }
                 });
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Backspace' && input.value === '' && idx > 0) {
@@ -1313,13 +1315,10 @@
             });
 
             document.getElementById('resendBtn').addEventListener('click', () => {
-                sendVerificationCode(lastEmailAttempt);
-            });
-
-            document.getElementById('confirmCodeBtn').addEventListener('click', () => {
-                const code = Array.from(codeInputs).map(inp => inp.value).join('');
-                if (code.length !== 6) return;
-                verifyCode(lastEmailAttempt, code);
+                // Clear code boxes and resend
+                for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
+                document.getElementById('code1').focus();
+                sendVerificationCode(lastEmailAttempt, true); // silent resend, keep code boxes
             });
 
             document.getElementById('locateBtn').addEventListener('click', () => {
@@ -1355,11 +1354,13 @@
 
         let lastEmailAttempt = '';
 
-        async function sendVerificationCode(email) {
+        async function sendVerificationCode(email, silentResend = false) {
             lastEmailAttempt = email;
-            // Hide email-verify wrapper, show code row and buttons
-            document.getElementById('emailVerifyWrapper').style.display = 'none';
-            document.getElementById('orderEmail').disabled = true;
+            if (!silentResend) {
+                // First time: hide email-verify, show code boxes
+                document.getElementById('emailVerifyWrapper').style.display = 'none';
+                document.getElementById('orderEmail').disabled = true;
+            }
 
             const params = new URLSearchParams();
             params.append('action', 'sendVerificationCode');
@@ -1367,42 +1368,55 @@
             const res = await fetch(API_URL, { method: 'POST', body: params });
             const data = await res.json();
             if (data.result === 'success') {
-                document.getElementById('codeInputRow').style.display = 'flex';
-                document.getElementById('verifyButtons').style.display = 'flex';
-                document.getElementById('code1').focus();
-                document.getElementById('confirmCodeBtn').style.display = 'none';
-                document.getElementById('confirmCodeBtn').textContent = 'Verify';
+                if (!silentResend) {
+                    document.getElementById('codeInputRow').style.display = 'flex';
+                    document.getElementById('verifyButtons').style.display = 'flex';
+                    document.getElementById('code1').focus();
+                }
             } else {
                 alert('Failed to send verification code. Please try again.');
-                document.getElementById('emailVerifyWrapper').style.display = 'flex';
-                document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
-                document.getElementById('orderEmail').disabled = false;
+                if (!silentResend) {
+                    document.getElementById('emailVerifyWrapper').style.display = 'flex';
+                    document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
+                    document.getElementById('orderEmail').disabled = false;
+                }
             }
         }
 
-        async function verifyCode(email, code) {
+        async function startVerification(code) {
+            // Hide code boxes and buttons, show verifying row
+            document.getElementById('codeInputRow').style.display = 'none';
+            document.getElementById('verifyButtons').style.display = 'none';
+            document.getElementById('verifyingRow').style.display = 'flex';
+            document.getElementById('verifiedEmailInput').value = lastEmailAttempt;
+            document.getElementById('verifyingBtn').disabled = true;
+            document.getElementById('verifyingBtn').textContent = 'Verifying...';
+
             const params = new URLSearchParams();
             params.append('action', 'verifyCode');
-            params.append('email', email);
+            params.append('email', lastEmailAttempt);
             params.append('code', code);
             const res = await fetch(API_URL, { method: 'POST', body: params });
             const data = await res.json();
             if (data.result === 'verified') {
                 isEmailVerified = true;
-                lastVerifiedEmail = email;
-                document.getElementById('codeInputRow').style.display = 'none';
-                document.getElementById('verifyButtons').style.display = 'none';
+                document.getElementById('verifyingRow').style.display = 'none';
                 document.getElementById('customerDetails').style.display = 'block';
-                document.getElementById('verifiedEmail').value = email;
+                document.getElementById('verifiedEmail').value = lastEmailAttempt;
                 if (selectedProduct && selectedProduct.Type === 'Physical') {
                     document.getElementById('shippingAddressSection').style.display = 'block';
                     if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
                 }
                 updateOrderSummary();
-            } else if (data.result === 'expired') {
-                alert('Verification code has expired. Please request a new one.');
             } else {
-                alert('Invalid verification code. Please try again.');
+                // Failed – go back to initial email state
+                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
+                document.getElementById('verifyingRow').style.display = 'none';
+                document.getElementById('emailVerifyWrapper').style.display = 'flex';
+                document.getElementById('orderEmail').disabled = false;
+                document.getElementById('verifyEmailBtn').style.display = 'inline-flex';
+                document.getElementById('verifyEmailBtn').disabled = false;
+                document.getElementById('orderEmail').value = lastEmailAttempt;
             }
         }
 
