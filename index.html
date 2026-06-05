@@ -612,7 +612,7 @@
             flex-direction: column;
             gap: 0.8rem;
         }
-        /* Country selector – match input height */
+        /* Country selector – match input height, flag size consistent */
         .country-selector {
             display: flex;
             align-items: center;
@@ -885,7 +885,7 @@
                     <div class="order-product-option" id="productOption1" data-index="0">
                         <img id="prod1Img" src="" alt="" style="display:none;">
                         <h4 id="prod1Name"></h4>
-                        <p class="product-price" id="prod1Price"></p>
+                        <p class="product-price" id="prod1Price" data-zar="0"></p>
                     </div>
                     <div class="order-quantity-center">
                         <div class="quantity-label">Quantity</div>
@@ -899,7 +899,7 @@
                     <div class="order-product-option" id="productOption2" data-index="1">
                         <img id="prod2Img" src="" alt="" style="display:none;">
                         <h4 id="prod2Name"></h4>
-                        <p class="product-price" id="prod2Price"></p>
+                        <p class="product-price" id="prod2Price" data-zar="0"></p>
                     </div>
                 </div>
 
@@ -1053,6 +1053,12 @@
                 document.querySelectorAll('.currency-dropdown, .phone-code-dropdown, .country-dropdown').forEach(d => d.classList.remove('open'));
                 if (!isOpen) {
                     dropdown.classList.add('open');
+                    // focus and clear search bar if exists
+                    const searchInput = dropdown.querySelector('.dropdown-search');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        searchInput.focus();
+                    }
                 } else {
                     dropdown.classList.remove('open');
                 }
@@ -1213,10 +1219,15 @@
 
         function refreshAllPrices() {
             const alertColor = appSettings.AlertColour || '#dc3c33';
-            document.querySelectorAll('.price[data-zar]').forEach(el => {
+            // Update ALL elements with data-zar attribute
+            document.querySelectorAll('[data-zar]').forEach(el => {
                 const zar = parseFloat(el.getAttribute('data-zar'));
-                el.textContent = formatPrice(zar);
-                el.style.color = alertColor;
+                if (!isNaN(zar)) {
+                    el.textContent = formatPrice(zar);
+                    if (el.classList.contains('product-price') || el.classList.contains('price')) {
+                        el.style.color = alertColor;
+                    }
+                }
             });
             if (document.getElementById('order-section').classList.contains('active')) {
                 updateOrderSummary();
@@ -1531,7 +1542,6 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                // Desktop: show immediately (float right, already in correct position)
                 if (window.innerWidth > 768) {
                     img2.style.display = 'block';
                 } else {
@@ -1681,6 +1691,7 @@
             document.getElementById('emailCheckmark').style.display = 'block';
             document.getElementById('nameWrapper').style.display = 'block';
             document.getElementById('phoneComposite').style.display = 'flex';
+            // Show shipping address if physical product is selected
             if (selectedProduct && selectedProduct.Type === 'Physical') {
                 document.getElementById('shippingAddressSection').style.display = 'block';
                 if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
@@ -1703,22 +1714,31 @@
             document.getElementById('orderProductType').classList.add('visible');
             updateQuantityTotal();
             updateOrderSummary();
+            // Show shipping address if email already verified and physical
             if (isEmailVerified) {
-                if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
-                else document.getElementById('shippingAddressSection').style.display = 'none';
+                if (selectedProduct.Type === 'Physical') {
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                } else {
+                    document.getElementById('shippingAddressSection').style.display = 'none';
+                }
             }
         }
 
         function updateQuantityTotal() {
             if (!selectedProduct) return;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
+            const total = selectedProduct.BasePrice * qty;
+            document.getElementById('quantityTotalPrice').textContent = formatPrice(total);
         }
 
         function getUnitPrice() {
             if (!selectedProduct) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            if (qty >= (selectedProduct.DiscountThreshold || 0)) return selectedProduct.BasePrice * (1 - (selectedProduct.DiscountPercent || 0)/100);
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) {
+                return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            }
             return selectedProduct.BasePrice;
         }
 
@@ -1925,7 +1945,6 @@
             titleEl.style.color = appSettings?.PrimaryColor || '#194373';
         }
 
-        // Hamburger & Contact Form (unchanged but with updated selectors)
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('navIcons');
