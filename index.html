@@ -372,12 +372,12 @@
             margin: 0 auto;
         }
 
-        /* Product Selection Box */
+        /* Product Selection Box – reduced overall padding */
         .order-product-box {
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 1rem;
+            padding: 0.8rem;            /* was 1rem */
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
@@ -386,7 +386,7 @@
         }
         .order-product-option {
             text-align: center;
-            padding: 0.8rem;
+            padding: 0.5rem 0.8rem;    /* slightly smaller */
             border: 2px solid transparent;
             border-radius: 8px;
             cursor: pointer;
@@ -416,27 +416,35 @@
             align-items: center;
             justify-content: center;
         }
+        /* Quantity input – larger */
         .order-quantity-center input {
-            width: 70px;
-            padding: 0.6rem;
-            font-size: 1.4rem;
+            width: 90px;                /* wider */
+            padding: 0.7rem 0.4rem;     /* taller */
+            font-size: 1.6rem;          /* bigger font */
             text-align: center;
             border: 1px solid #ccc;
             border-radius: 8px;
         }
-        .order-product-type {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
+        /* Inline row for quantity and total price */
+        .quantity-price-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
         }
         .order-quantity-total {
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--alert-color, #dc3c33);
-            margin-top: 0.3rem;
+            white-space: nowrap;
+        }
+        .order-product-type {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
         }
 
-        /* Email, Name, Phone row (after verification) */
+        /* Email, Name, Phone row (unchanged) */
         .order-contact-row {
             display: flex;
             gap: 1rem;
@@ -510,7 +518,7 @@
         .phone-code-item:hover { background: #f0f0f0; }
         .phone-code-item img { height: 20px; width: auto; }
 
-        /* Shipping Address header with locate button */
+        /* Shipping Address (unchanged) */
         .shipping-header {
             display: flex;
             align-items: center;
@@ -571,7 +579,7 @@
         .country-dropdown-item:hover { background: #f0f0f0; }
         .country-dropdown-item img { height: 20px; width: auto; }
 
-        /* Summary + Info row */
+        /* Summary + Info row (unchanged) */
         .order-bottom-row {
             display: flex;
             gap: 2rem;
@@ -703,6 +711,15 @@
             .address-fields-grid { grid-template-columns: 1fr; }
             .order-contact-row { flex-direction: column; }
             .order-contact-row > * { flex: auto; }
+
+            .order-product-box {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .quantity-price-row {
+                flex-direction: row;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 600px) {
@@ -788,10 +805,10 @@
             </div>
         </div>
 
-        <!-- Order (new design with PhoneCode from sheet) -->
+        <!-- Order (product selection refined) -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
-                <!-- Product Selection Box -->
+                <!-- Product Selection Box – redesigned -->
                 <div class="order-product-box" id="productSelectionBox">
                     <div class="order-product-option" id="productOption1" data-index="0">
                         <img id="prod1Img" src="" alt="" style="display:none;">
@@ -799,9 +816,11 @@
                         <p class="product-price" id="prod1Price"></p>
                     </div>
                     <div class="order-quantity-center">
-                        <input type="number" id="orderQuantity" value="" min="1" max="100" disabled>
+                        <div class="quantity-price-row">
+                            <input type="number" id="orderQuantity" value="" min="1" max="100" disabled>
+                            <span class="order-quantity-total" id="quantityTotalPrice"></span>
+                        </div>
                         <div class="order-product-type" id="orderProductType"></div>
-                        <div class="order-quantity-total" id="quantityTotalPrice"></div>
                     </div>
                     <div class="order-product-option" id="productOption2" data-index="1">
                         <img id="prod2Img" src="" alt="" style="display:none;">
@@ -1510,7 +1529,7 @@
                 document.getElementById('emailCheckmark').style.display = 'block';
                 document.getElementById('customerDetails').style.display = 'block';
                 document.getElementById('namePhoneRow').style.display = 'flex';
-                if (selectedProduct && selectedProduct.ype === 'Physical') {
+                if (selectedProduct && selectedProduct.Type === 'Physical') {
                     document.getElementById('shippingAddressSection').style.display = 'block';
                     if (appSettings.GoogleMapsApiKey && !window.google) {
                         loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
@@ -1558,11 +1577,11 @@
             if (document.getElementById('orderQuantity').value === '') {
                 document.getElementById('orderQuantity').value = 1;
             }
-            document.getElementById('orderProductType').textContent = 'Type: ' + selectedProduct.ype;
+            document.getElementById('orderProductType').textContent = 'Type: ' + selectedProduct.Type;
             updateQuantityTotal();
             updateOrderSummary();
             if (isEmailVerified) {
-                if (selectedProduct.ype === 'Physical') {
+                if (selectedProduct.Type === 'Physical') {
                     document.getElementById('shippingAddressSection').style.display = 'block';
                 } else {
                     document.getElementById('shippingAddressSection').style.display = 'none';
@@ -1589,7 +1608,7 @@
         }
 
         function getShippingCost() {
-            if (!selectedProduct || selectedProduct.ype === 'Digital') return 0;
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
             if (!userCountryRegion) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
@@ -1604,7 +1623,7 @@
         }
 
         function getShippingTime() {
-            if (!selectedProduct || selectedProduct.ype === 'Digital') return 'N/A';
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 'N/A';
             if (!userCountryRegion) return 'Please select a shipping address.';
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
@@ -1660,7 +1679,7 @@
 
             const shippingRow = document.getElementById('shippingRow');
             const sumShipping = document.getElementById('sumShipping');
-            if (selectedProduct.ype === 'Digital') {
+            if (selectedProduct.Type === 'Digital') {
                 shippingRow.style.display = 'none';
                 document.getElementById('shippingTimeText').textContent = 'No shipping required.';
             } else {
