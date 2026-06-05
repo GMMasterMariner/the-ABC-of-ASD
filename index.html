@@ -13,9 +13,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            scrollbar-gutter: stable;
-        }
+        html { scrollbar-gutter: stable; }
 
         body {
             font-family: 'Nunito Sans', sans-serif;
@@ -531,7 +529,7 @@
             gap: 0.3rem;
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 0.7rem;          /* same as other inputs */
+            padding: 0.7rem;
             cursor: pointer;
             position: relative;
             background: white;
@@ -871,7 +869,7 @@
 
     <!-- ================== PAGE SECTIONS ================== -->
     <div class="content">
-        <!-- Home (unchanged) -->
+        <!-- Home -->
         <div class="page-section active" id="home-section">
             <h2 class="home-headline" id="homeHeadline"></h2>
             <div class="home-columns">
@@ -895,7 +893,7 @@
             </div>
         </div>
 
-        <!-- About (unchanged) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -914,9 +912,10 @@
             </div>
         </div>
 
-        <!-- Order (final) -->
+        <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
+                <!-- Product Selection Box -->
                 <div class="order-product-box" id="productSelectionBox">
                     <div class="order-product-option" id="productOption1" data-index="0">
                         <img id="prod1Img" src="" alt="" style="display:none;">
@@ -939,6 +938,7 @@
                     </div>
                 </div>
 
+                <!-- Email, Name, Phone -->
                 <div class="order-contact-row" id="contactRow">
                     <div class="email-input-wrapper">
                         <input type="email" id="orderEmail" placeholder="Email address">
@@ -960,6 +960,7 @@
                     </div>
                 </div>
 
+                <!-- Shipping Address -->
                 <div class="order-shipping-address" id="shippingAddressSection" style="display: none;">
                     <div class="shipping-header">
                         <h4>Shipping Address</h4>
@@ -990,6 +991,7 @@
                     </div>
                 </div>
 
+                <!-- Summary + Info -->
                 <div class="order-bottom-row">
                     <div class="order-summary" id="orderSummary">
                         <h4>Order Summary</h4>
@@ -1027,7 +1029,7 @@
             </div>
         </div>
 
-        <!-- Contact (unchanged) -->
+        <!-- Contact -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
@@ -1084,13 +1086,11 @@
             return await res.json();
         }
 
-        // ---------- DROPDOWN HELPER (searchable, click‑outside safe) ----------
+        // ---------- DROPDOWN HELPERS ----------
         function setupDropdown(trigger, dropdown) {
-            // Toggle on trigger click
             trigger.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = dropdown.classList.contains('open');
-                // Close all other dropdowns first (optional)
                 document.querySelectorAll('.currency-dropdown, .phone-code-dropdown, .country-dropdown').forEach(d => d.classList.remove('open'));
                 if (!isOpen) {
                     dropdown.classList.add('open');
@@ -1098,13 +1098,11 @@
                     dropdown.classList.remove('open');
                 }
             });
-            // Close when clicking outside
             document.addEventListener('click', (event) => {
                 if (!dropdown.contains(event.target) && !trigger.contains(event.target)) {
                     dropdown.classList.remove('open');
                 }
             });
-            // Prevent dropdown from closing when interacting inside
             dropdown.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
@@ -1122,7 +1120,6 @@
                     item.element.style.display = item.text.toLowerCase().includes(filter) ? '' : 'none';
                 });
             });
-            // Stop propagation on search input so it doesn't close dropdown
             search.addEventListener('click', (e) => e.stopPropagation());
             container.appendChild(search);
             items.forEach(item => {
@@ -1436,7 +1433,7 @@
             startAutoPlay();
         }
 
-        // ---------- DIRECT DATA LOADERS ----------
+        // ---------- DIRECT DATA LOADERS (FULLY IMPLEMENTED) ----------
         function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
@@ -1522,8 +1519,113 @@
             updateNavTitle('home-section');
         }
 
-        function loadHomePageDirect(home) { /* unchanged */ }
-        function loadAboutSectionDirect(about) { /* unchanged */ }
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
+
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) {
+                buildCarousel(images, home.HomePageCarouselInterval || 3000);
+            }
+
+            const productColumn = document.getElementById('productCardsColumn');
+            productColumn.innerHTML = '';
+
+            const item1Main = home.HomePageItem1MainText || '';
+            const item1Sub = home.HomePageItem1SubText || '';
+            const item2Main = home.HomePageItem2MainText || '';
+            const item2Sub = home.HomePageItem2SubText || '';
+
+            const product1 = products[0] || {};
+            const product2 = products[1] || {};
+
+            function createCard(mainText, subText, product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const basePrice = product.BasePrice || 0;
+                card.innerHTML = `
+                    <h4>${mainText}</h4>
+                    <p class="sub">${subText}</p>
+                    <p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>
+                `;
+                return card;
+            }
+
+            const card1 = createCard(item1Main, item1Sub, product1);
+            const card2 = createCard(item2Main, item2Sub, product2);
+
+            const orderBtn = document.createElement('div');
+            orderBtn.className = 'central-order-btn';
+            orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+
+            productColumn.appendChild(card1);
+            productColumn.appendChild(orderBtn);
+            productColumn.appendChild(card2);
+
+            orderBtn.querySelector('.btn').addEventListener('click', () => {
+                showPage('order-section');
+            });
+
+            refreshAllPrices();
+        }
+
+        function loadAboutSectionDirect(about) {
+            aboutData = about || {};
+            const img1 = document.getElementById('aboutImg1');
+            if (about.AuthorImage1URL) {
+                img1.src = about.AuthorImage1URL;
+                img1.style.display = 'block';
+            } else {
+                img1.style.display = 'none';
+            }
+
+            const img2 = document.getElementById('aboutImg2');
+            if (about.AuthorImage2URL) {
+                img2.src = about.AuthorImage2URL;
+                if (window.innerWidth > 768) {
+                    img2.style.display = 'block';
+                } else {
+                    img2.style.display = 'none';
+                }
+            } else {
+                img2.style.display = 'none';
+            }
+
+            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
+            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
+
+            const toggleMore = document.getElementById('bioToggleMore');
+            const toggleLess = document.getElementById('bioToggleLess');
+            const bioExtended = document.getElementById('bioExtended');
+            const shortBioPara = document.getElementById('aboutShortBioParagraph');
+
+            function collapse() {
+                bioExtended.style.display = 'none';
+                toggleMore.style.display = 'inline';
+                shortBioPara.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    img2.style.display = 'block';
+                }
+            }
+
+            function expand() {
+                bioExtended.style.display = 'block';
+                toggleMore.style.display = 'none';
+                bioExtended.insertAdjacentElement('afterend', img2);
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    img2.style.display = 'block';
+                }
+            }
+
+            collapse();
+            toggleMore.addEventListener('click', expand);
+            toggleLess.addEventListener('click', collapse);
+        }
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
@@ -1740,7 +1842,6 @@
                 shippingTime.textContent = 'Select a product and address to see delivery time.';
                 digitalMsg.style.display = 'none';
                 deliveryContainer.style.display = 'none';
-                // also reset summary values
                 document.getElementById('sumUnitPrice').textContent = '—';
                 document.getElementById('sumQuantity').textContent = '0';
                 document.getElementById('sumSubtotal').textContent = '—';
@@ -1796,7 +1897,7 @@
             }
         }
 
-        // ---------- COUNTRY & PHONE SELECTORS (with search, using setupDropdown) ----------
+        // ---------- COUNTRY & PHONE SELECTORS ----------
         function buildCountrySelector() {
             const dropdown = document.getElementById('countryDropdown');
             const trigger = document.getElementById('countrySelector');
