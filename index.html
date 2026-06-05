@@ -22,6 +22,40 @@
             padding-top: 108px;
         }
 
+        /* ---------- SPLASH SCREEN / LOADING OVERLAY ---------- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+            opacity: 1;
+        }
+        #splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .splash-content {
+            text-align: center;
+        }
+        .splash-spinner {
+            width: 50px; height: 50px;
+            border: 6px solid #e0e0e0;
+            border-top-color: var(--primary-color, #194373);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .splash-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color, #194373);
+        }
+
         /* ---------- STICKY HEADER ---------- */
         .sticky-header {
             position: fixed;
@@ -533,6 +567,14 @@
     </style>
 </head>
 <body>
+    <!-- ================== SPLASH SCREEN ================== -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-spinner"></div>
+            <div class="splash-text">Loading...</div>
+        </div>
+    </div>
+
     <!-- ================== STICKY HEADER ================== -->
     <div class="sticky-header" id="stickyHeader">
         <div class="banner" id="banner">
@@ -626,16 +668,14 @@
                     </div>
                 </div>
 
-                <!-- Email Verification (two‑column / three‑column dynamic) -->
+                <!-- Email Verification (dynamic layout) -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
-                    <!-- Initial two‑column layout -->
                     <div class="verify-left" id="verifyLeft">
                         <input type="email" id="orderEmail" placeholder="* Email address">
                     </div>
                     <div class="verify-right" id="verifyRight">
                         <button class="btn" id="verifyEmailBtn">Verify Email</button>
                     </div>
-                    <!-- Code entry three‑column layout (hidden) -->
                     <div class="verify-three-col" id="codeEntryThreeCol" style="display: none;">
                         <div class="code-col">
                             <div class="code-input-row" id="codeInputRow">
@@ -656,13 +696,12 @@
                             <button class="btn" id="resendBtn">Resend Code</button>
                         </div>
                     </div>
-                    <!-- Verifying message (hidden) -->
                     <div class="verify-message" id="verifyingMessageRow" style="display: none;">
                         <span id="verifyingText">Verifying...</span>
                     </div>
                 </div>
 
-                <!-- Customer Details (hidden until verified) -->
+                <!-- Customer Details -->
                 <div id="customerDetails" style="display: none;">
                     <div class="order-contact-row">
                         <div class="email-input-wrapper">
@@ -784,7 +823,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
+        const API_URL = 'YOUR_WEB_APP_URL';
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -1278,7 +1317,6 @@
             isEmailVerified = false;
             lastVerifiedEmail = '';
 
-            // Reset email verification UI completely
             document.getElementById('emailVerifyWrapper').style.display = 'flex';
             document.getElementById('verifyLeft').style.display = 'block';
             document.getElementById('verifyRight').style.display = 'flex';
@@ -1302,7 +1340,6 @@
 
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
 
-            // Reset resend cooldown if any
             if (window.resendTimer) clearInterval(window.resendTimer);
             document.getElementById('resendBtn').disabled = false;
             document.getElementById('resendBtn').textContent = 'Resend Code';
@@ -1410,7 +1447,6 @@
         async function sendVerificationCode(email, silentResend = false) {
             lastEmailAttempt = email;
             if (!silentResend) {
-                // Switch to three‑column layout
                 document.getElementById('verifyLeft').style.display = 'none';
                 document.getElementById('verifyRight').style.display = 'none';
                 document.getElementById('codeEntryThreeCol').style.display = 'flex';
@@ -1605,19 +1641,209 @@
         }
 
         // ---------- COUNTRY & PHONE SELECTORS ----------
-        function buildCountrySelector() { /* unchanged */ }
-        function buildPhoneCodeSelector() { /* unchanged */ }
+        function buildCountrySelector() {
+            const dropdown = document.getElementById('countryDropdown');
+            const trigger = document.getElementById('countrySelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const item = document.createElement('div');
+                item.className = 'country-dropdown-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location}</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('countryNameDisplay').textContent = country.Location;
+                    document.getElementById('countryFlag').src = country.FlagURL;
+                    userCountryRegion = country.Region;
+                    dropdown.classList.remove('open');
+                    updateOrderSummary();
+                });
+                return { element: item, text: country.Location };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        function buildPhoneCodeSelector() {
+            const dropdown = document.getElementById('phoneCodeDropdown');
+            const trigger = document.getElementById('phoneCodeSelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const dial = country.PhoneCode || '+1';
+                const item = document.createElement('div');
+                item.className = 'phone-code-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location} (${dial})</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('phoneCodeInput').value = dial;
+                    document.getElementById('phoneFlag').src = country.FlagURL;
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: country.Location + ' ' + dial };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
 
         // ---------- GOOGLE MAPS & ADDRESS ----------
-        function loadGoogleMapsScript(apiKey) { /* unchanged */ }
-        function initAutocomplete() { /* unchanged */ }
-        function fillAddressFromPlace(place) { /* unchanged */ }
+        function loadGoogleMapsScript(apiKey) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+            script.defer = true;
+            script.onload = initAutocomplete;
+            document.head.appendChild(script);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('addressLine1');
+            if (!input) return;
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['address'] });
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                fillAddressFromPlace(place);
+            });
+        }
+
+        function fillAddressFromPlace(place) {
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+            document.getElementById('countryNameDisplay').textContent = 'Country';
+            document.getElementById('countryFlag').src = '';
+
+            document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
+
+            for (const comp of place.address_components) {
+                const types = comp.types;
+                if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
+                else if (types.includes('sublocality') || types.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name;
+                else if (types.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name;
+                else if (types.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name;
+                else if (types.includes('country')) {
+                    const countryName = comp.long_name;
+                    const regionMatch = shippingRegions.find(r => r.Location === countryName);
+                    if (regionMatch) {
+                        document.getElementById('countryNameDisplay').textContent = regionMatch.Location;
+                        document.getElementById('countryFlag').src = regionMatch.FlagURL;
+                        userCountryRegion = regionMatch.Region;
+                    }
+                }
+            }
+            updateOrderSummary();
+        }
 
         // ---------- SPA NAVIGATION ----------
-        function showPage(sectionId) { /* unchanged */ }
-        function updateNavTitle(sectionId) { /* unchanged */ }
-        function setupHamburger() { /* unchanged */ }
-        function setupContactForm() { /* unchanged */ }
+        function showPage(sectionId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
+            updateNavTitle(sectionId);
+
+            const currencyContainer = document.getElementById('currencySelectorContainer');
+            if (sectionId === 'contact-section' || sectionId === 'about-section') {
+                currencyContainer.style.display = 'none';
+            } else {
+                currencyContainer.style.display = 'flex';
+            }
+
+            document.getElementById('navIcons').classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+
+            if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
+            if (sectionId === 'order-section') resetOrderForm();
+        }
+
+        function updateNavTitle(sectionId) {
+            const titles = {
+                'home-section': '',
+                'about-section': appSettings?.AboutPageTitle || 'About',
+                'order-section': appSettings?.OrderPageTitle || 'Order',
+                'contact-section': appSettings?.ContactPageTitle || 'Contact'
+            };
+            const titleEl = document.getElementById('pageTitleDisplay');
+            titleEl.textContent = titles[sectionId] || '';
+            titleEl.style.color = appSettings?.PrimaryColor || '#194373';
+        }
+
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('navIcons');
+            btn.addEventListener('click', () => {
+                const expanded = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', expanded);
+            });
+            menu.addEventListener('click', (e) => {
+                if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you! I\'ll reply soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Error. Please try again.';
+                        resultDiv.style.color = 'red';
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send Message';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error.';
+                    resultDiv.style.color = 'red';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
+            });
+        }
+
+        // ---------- SPLASH SCREEN ----------
+        function hideSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('hidden');
+                setTimeout(() => { splash.style.display = 'none'; }, 400);
+            }
+        }
 
         // ---------- INIT ----------
         async function init() {
@@ -1642,8 +1868,12 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
+
+                // Hide splash once everything is ready
+                hideSplashScreen();
             } catch (err) {
                 console.error('Error initializing:', err);
+                hideSplashScreen(); // hide even on error so user sees the page
             }
         }
 
