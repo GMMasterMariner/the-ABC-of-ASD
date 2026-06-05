@@ -1751,7 +1751,14 @@
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
         
-            const rows = regionRates.filter(r => r && r.Region && typeof r.Region === 'string' && r.Region.trim() === userCountryRegion.trim());
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+        
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+        
             if (!rows.length) return 0;
             rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
             for (const row of rows) {
@@ -1766,7 +1773,14 @@
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
         
-            const rows = regionRates.filter(r => r && r.Region && typeof r.Region === 'string' && r.Region.trim() === userCountryRegion.trim());
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+        
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+        
             if (!rows.length) return 'Shipping time unavailable.';
             rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
             for (const row of rows) {
