@@ -22,11 +22,11 @@
             padding-top: 108px;
         }
 
-        /* ---------- SPLASH SCREEN – semi-transparent, logo pulsing ---------- */
+        /* ---------- SPLASH SCREEN – semi‑transparent brand colour, logo pulsing ---------- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(25, 67, 115, 0.85);   /* brand colour, semi-transparent */
+            background: rgba(25, 67, 115, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -481,6 +481,12 @@
             min-width: 160px; padding: 0.7rem 2rem;
         }
 
+        /* ---------- REQUIRED FIELD RED BORDER ---------- */
+        input:required:invalid, textarea:required:invalid {
+            border-color: var(--alert-color, #dc3c33);
+            box-shadow: 0 0 0 1px var(--alert-color, #dc3c33);
+        }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
             body { padding-top: 94px; }
@@ -613,7 +619,7 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (image2 stays top‑right on desktop) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -661,7 +667,7 @@
                 <!-- Email Verification -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <div class="verify-left" id="verifyLeft">
-                        <input type="email" id="orderEmail" placeholder="* Email address">
+                        <input type="email" id="orderEmail" placeholder="* Email address" required>
                     </div>
                     <div class="verify-right" id="verifyRight">
                         <button class="btn" id="verifyEmailBtn">Verify Email</button>
@@ -678,9 +684,7 @@
                             </div>
                         </div>
                         <div class="message-col" id="emailMessageContainer">
-                            <span>An email has been sent to <strong id="emailSentTo"></strong> with a verification code.</span>
-                            <br>
-                            <span>Please enter the code in the input boxes.</span>
+                            <span>An email has been sent to <strong id="emailSentTo"></strong> with a verification code. Please enter the code in the input boxes.</span>
                         </div>
                         <div class="resend-col">
                             <button class="btn" id="resendBtn">Resend Code</button>
@@ -691,7 +695,7 @@
                     </div>
                 </div>
 
-                <!-- Customer Details -->
+                <!-- Customer Details (hidden until verified) -->
                 <div id="customerDetails" style="display: none;">
                     <div class="order-contact-row">
                         <div class="email-input-wrapper">
@@ -699,7 +703,7 @@
                             <span class="email-checkmark" style="display:block;">✔</span>
                         </div>
                         <div class="name-input-wrapper">
-                            <input type="text" id="customerName" placeholder="* Full Name">
+                            <input type="text" id="customerName" placeholder="* Full Name" required>
                         </div>
                         <div class="phone-composite">
                             <div class="phone-code-selector" id="phoneCodeSelector">
@@ -722,14 +726,14 @@
                         </div>
                         <div class="address-fields-grid">
                             <div class="address-stack">
-                                <input type="text" id="addressLine1" placeholder="* Address Line 1" autocomplete="off">
+                                <input type="text" id="addressLine1" placeholder="* Address Line 1" required autocomplete="off">
                                 <input type="text" id="addressLine2" placeholder="Address Line 2">
                             </div>
                             <div class="address-stack">
                                 <input type="text" id="addressSuburb" placeholder="Suburb">
                                 <div class="city-postcode-combo">
-                                    <input type="text" id="addressCity" placeholder="* City">
-                                    <input type="text" id="addressPostcode" placeholder="* Postcode">
+                                    <input type="text" id="addressCity" placeholder="* City" required>
+                                    <input type="text" id="addressPostcode" placeholder="* Postcode" required>
                                 </div>
                             </div>
                             <div class="region-country-stack">
@@ -1260,6 +1264,7 @@
             refreshAllPrices();
         }
 
+        // ---------- ABOUT SECTION (image2 stays top‑right on desktop) ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1268,9 +1273,15 @@
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
-                if (window.innerWidth > 768) img2.style.display = 'block';
-                else img2.style.display = 'none';
-            } else img2.style.display = 'none';
+                // Desktop: always visible (float right)
+                if (window.innerWidth > 768) {
+                    img2.style.display = 'block';
+                } else {
+                    img2.style.display = 'none';
+                }
+            } else {
+                img2.style.display = 'none';
+            }
 
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
             document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
@@ -1280,20 +1291,31 @@
             const bioExtended = document.getElementById('bioExtended');
             const shortBioPara = document.getElementById('aboutShortBioParagraph');
 
+            // On desktop, just toggle bioExtended – never move img2.
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
-                shortBioPara.insertAdjacentElement('afterend', img2);
-                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    shortBioPara.insertAdjacentElement('afterend', img2);
+                    img2.style.display = 'block';
+                }
             }
+
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
-                bioExtended.insertAdjacentElement('afterend', img2);
-                if (window.innerWidth <= 768 && about.AuthorImage2URL) img2.style.display = 'block';
+                if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                    bioExtended.insertAdjacentElement('afterend', img2);
+                    img2.style.display = 'block';
+                }
             }
 
-            collapse();
+            // Initial state: collapsed, and img2 in correct position.
+            if (window.innerWidth <= 768) {
+                shortBioPara.insertAdjacentElement('afterend', img2);
+            }
+            collapse();   // sets initial toggle state
+
             toggleMore.addEventListener('click', expand);
             toggleLess.addEventListener('click', collapse);
         }
@@ -1864,7 +1886,6 @@
                 setupContactForm();
                 equalizeHeights();
 
-                // Give the browser a moment to render, then hide splash
                 setTimeout(hideSplashScreen, 200);
             } catch (err) {
                 console.error('Error initializing:', err);
