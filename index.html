@@ -143,11 +143,7 @@
         }
         .btn:hover, .pay-btn:hover { opacity: 0.9; }
         .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn img, .pay-btn img {
-            height: 28px;
-            width: auto;
-            max-width: 50%;
-        }
+        .btn img, .pay-btn img { height: 28px; width: auto; max-width: 50%; }
 
         /* ---------- MAIN CONTENT ---------- */
         .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
@@ -277,27 +273,25 @@
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Email verification block – equal width, stretch height */
+        /* Email verification block – equal width, stretch height, perfectly aligned */
         .email-verify-wrapper {
             display: flex; gap: 1rem; margin-bottom: 1.5rem;
             align-items: stretch;             /* make children equal height */
         }
         .email-verify-wrapper > * {
-            flex: 1;                          /* both input and button take half */
+            flex: 1;                          /* both take equal width */
         }
-        /* Ensure input inside email-wrapper uses full height */
         .email-verify-wrapper input {
             padding: 0.7rem;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 1rem;
             font-family: inherit;
+            height: auto;                    /* stretch will handle height */
         }
         .email-verify-wrapper .btn {
+            padding: 0.7rem 1.8rem;          /* same vertical padding as input */
             white-space: nowrap;
-            /* remove any max/min width */
-            max-width: none;
-            min-width: 0;
         }
 
         .code-input-row {
@@ -428,14 +422,16 @@
             font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
         }
 
-        /* Pay buttons row – full width, properly sized */
+        /* Pay buttons row – normal size, centred */
         .payment-row {
             display: flex; gap: 1rem; margin-top: 2rem;
+            justify-content: center;
         }
         .payment-row .pay-btn {
-            flex: 1;
-            max-width: 100%;
-            height: auto;
+            flex: 0 0 auto;
+            width: auto;
+            min-width: 160px;   /* sensible minimum */
+            padding: 0.7rem 2rem;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -490,6 +486,7 @@
             .phone-code-selector { width: 100%; }
             .address-stack, .region-country-stack { gap: 0.5rem; }
             .city-postcode-combo { flex-direction: row; }
+            .payment-row { flex-direction: column; align-items: center; }
         }
 
         @media (max-width: 600px) {
@@ -575,7 +572,7 @@
             </div>
         </div>
 
-        <!-- Order (corrected) -->
+        <!-- Order (fully corrected) -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
                 <!-- Product Selection Box -->
@@ -601,13 +598,13 @@
                     </div>
                 </div>
 
-                <!-- Email Verification Block (hidden after verification code sent) -->
+                <!-- Email Verification Block (now perfectly aligned) -->
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <input type="email" id="orderEmail" placeholder="* Email address">
                     <button class="btn" id="verifyEmailBtn">Verify Email</button>
                 </div>
 
-                <!-- Code Input Row (hidden initially, appears after email sent) -->
+                <!-- Code Input Row (appears in place of email) -->
                 <div class="code-input-row" id="codeInputRow" style="display: none;">
                     <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
                     <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
@@ -702,7 +699,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Row -->
+                <!-- Payment Row (normal buttons, centred) -->
                 <div class="payment-row">
                     <button class="pay-btn" id="paypalBtn">
                         <span>Pay with</span>
@@ -1360,9 +1357,8 @@
 
         async function sendVerificationCode(email) {
             lastEmailAttempt = email;
-            // Hide the email-verify wrapper, show code row and buttons
+            // Hide email-verify wrapper, show code row and buttons
             document.getElementById('emailVerifyWrapper').style.display = 'none';
-            document.getElementById('verifyEmailBtn').style.display = 'none';
             document.getElementById('orderEmail').disabled = true;
 
             const params = new URLSearchParams();
@@ -1394,7 +1390,6 @@
             if (data.result === 'verified') {
                 isEmailVerified = true;
                 lastVerifiedEmail = email;
-                document.getElementById('emailVerifyWrapper').style.display = 'none';
                 document.getElementById('codeInputRow').style.display = 'none';
                 document.getElementById('verifyButtons').style.display = 'none';
                 document.getElementById('customerDetails').style.display = 'block';
