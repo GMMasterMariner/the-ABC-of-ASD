@@ -1792,6 +1792,9 @@
                 return;
             }
 
+            // temporary debug
+            console.log('User region:', userCountryRegion);
+            console.log('Region rates:', regionRates);
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const unitPrice = getUnitPrice();
             const subtotal = unitPrice * qty;
