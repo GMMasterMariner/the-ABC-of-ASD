@@ -2061,7 +2061,7 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                setTimeout(hideSplashScreen, 5000);
+                setTimeout(hideSplashScreen, 1500);
             } catch (err) {
                 console.error('Error initializing:', err);
                 hideSplashScreen();
