@@ -1617,34 +1617,46 @@
             document.getElementById('verifyingMessageRow').style.display = 'flex';
             document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
             document.getElementById('verifyingText').classList.add('pulse-message');
-
-            const params = new URLSearchParams();
-            params.append('action', 'verifyCode');
-            params.append('email', lastEmailAttempt);
-            params.append('code', code);
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result === 'verified') {
-                isEmailVerified = true;
-                document.getElementById('emailVerifyWrapper').style.display = 'none';
-                document.getElementById('customerDetails').style.display = 'block';
-                document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                if (selectedProduct) {
-                    updateInstructionMessage();
-                    if (selectedProduct.Type === 'Physical') {
-                        document.getElementById('shippingAddressSection').style.display = 'block';
-                        if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+        
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'verifyCode');
+                params.append('email', lastEmailAttempt);
+                params.append('code', code);
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                if (!res.ok) throw new Error('Network response was not ok');
+                const data = await res.json();
+        
+                if (data.result === 'verified') {
+                    isEmailVerified = true;
+                    document.getElementById('emailVerifyWrapper').style.display = 'none';
+                    document.getElementById('customerDetails').style.display = 'block';
+                    document.getElementById('verifiedEmail').value = lastEmailAttempt;
+                    if (selectedProduct) {
+                        updateInstructionMessage();
+                        if (selectedProduct.Type === 'Physical') {
+                            document.getElementById('shippingAddressSection').style.display = 'block';
+                            if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                        }
                     }
+                    updateOrderSummary();
+                } else {
+                    alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
+                    // Reset UI to allow new attempt
+                    document.getElementById('verifyLeft').style.display = 'block';
+                    document.getElementById('verifyRight').style.display = 'flex';
+                    document.getElementById('codeEntryThreeCol').style.display = 'none';
+                    document.getElementById('verifyingMessageRow').style.display = 'none';
+                    document.getElementById('orderEmail').value = lastEmailAttempt;
+                    document.getElementById('verifyEmailBtn').disabled = false;
                 }
-                updateOrderSummary();
-            } else {
-                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
+            } catch (err) {
+                console.error(err);
+                alert('Verification failed. Please check your connection and try again.');
                 document.getElementById('verifyLeft').style.display = 'block';
                 document.getElementById('verifyRight').style.display = 'flex';
                 document.getElementById('codeEntryThreeCol').style.display = 'none';
                 document.getElementById('verifyingMessageRow').style.display = 'none';
-                document.getElementById('orderEmail').value = lastEmailAttempt;
-                document.getElementById('verifyEmailBtn').disabled = false;
             }
         }
 
