@@ -148,6 +148,30 @@
             /* Carousel dots spacing */
             .carousel-wrapper { padding-bottom: 1.2rem; }
 
+            /* Stack home columns vertically */
+            .home-columns {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .home-col-left-box,
+            .carousel-wrapper {
+                height: auto !important;
+            }
+            .carousel-slide img {
+                width: 60%;
+            }
+            
+            /* Ensure hamburger stays visible */
+            .top-bar {
+                flex-wrap: nowrap;
+                overflow: hidden;
+            }
+            .banner-text {
+                max-width: calc(100% - 80px);  /* leave room for hamburger */
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
             /* Keep phone composite side by side */
             .phone-composite { flex-direction: row; }
 
