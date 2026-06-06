@@ -1783,7 +1783,7 @@
                 document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
                 shippingTime.textContent = getShippingTime();
                 digitalMsg.style.display = 'none';
-                deliveryContainer.style.display = (isEmailVerified && userCountryRegion) ? 'block' : 'none';
+                deliveryContainer.style.display = (isEmailVerified && userCountryRegion) ? 'flex' : 'none';
             }
         }
 
