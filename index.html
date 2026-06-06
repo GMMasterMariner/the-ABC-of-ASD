@@ -246,7 +246,7 @@
         .form-row {
             display: flex;
             gap: 0.8rem;
-            margin-top: 0.8rem;   /* spacing between rows, matching address fields */
+            margin-top: 0.8rem;
         }
         .form-row .form-group { flex: 1; }
         .contact-form input, .contact-form textarea {
@@ -273,7 +273,7 @@
         .phone-code-selector img { height: 20px; width: auto; }
         .phone-code-selector input.phone-code-input {
             border: none; background: transparent; font-family: inherit;
-            font-size: inherit; color: #194373; width: auto; min-width: 40px;
+            font-size: inherit; color: #194373; width: auto; min-width: 0;
             padding: 0; outline: none;
         }
         .phone-code-selector::after {
@@ -399,9 +399,16 @@
         .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
         .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
 
-        .verify-message.pulse-message {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        /* Fix verifying message centering */
+        .verify-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
+            margin-top: 1rem;
+        }
+        .verify-message .pulse-message {
+            display: inline; /* pulse effect applies to inline text */
         }
 
         /* Customer details row */
@@ -431,7 +438,7 @@
         .address-stack { display: flex; flex-direction: column; gap: 0.8rem; }
         .city-postcode-combo { display: flex; gap: 0.4rem; }
         .city-postcode-combo input:first-child { flex: 1; }
-        .city-postcode-combo input:last-child { width: 80px; }
+        .city-postcode-combo input:last-child { width: 100px; }   /* wider for placeholder */
         .region-country-stack { display: flex; flex-direction: column; gap: 0.8rem; }
         .country-selector {
             display: flex; align-items: center; gap: 0.3rem;
@@ -464,6 +471,7 @@
         .shipping-info-box {
             background: #f9f9f9; border: 1px solid #e0e0e0;
             border-radius: 8px; padding: 1.5rem; flex: 1;
+            height: 100%;   /* ensure it stretches */
         }
         .shipping-info-box h4 { margin-bottom: 0.5rem; }
         .shipping-info-box textarea {
@@ -592,6 +600,7 @@
         <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
+                <!-- Product Selection Box -->
                 <div class="order-product-box" id="productSelectionBox">
                     <div class="order-product-option" id="productOption1" data-index="0">
                         <span class="selected-checkmark">✓</span>
@@ -710,7 +719,7 @@
                     </div>
                 </div>
 
-                <!-- Bottom Row -->
+                <!-- Bottom Row: Summary + Info -->
                 <div class="order-bottom-row">
                     <div class="order-summary" id="orderSummary">
                         <h4>Order Summary</h4>
@@ -718,8 +727,7 @@
                         <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
                         <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
                         <div class="summary-row" id="discountRow" style="display: none;">
-                            <span>Discount</span>
-                            <span class="discount-detail" id="discountDetail"></span>
+                            <span>Discount <span class="discount-detail" id="discountDetail"></span></span>
                             <span id="sumDiscount">—</span>
                         </div>
                         <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
@@ -795,7 +803,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR ACTUAL URL HERE
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR URL HERE
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -808,7 +816,7 @@
         let regionRates = [];
         let selectedProduct = null;
         let userCountryRegion = null;
-        let selectedShippingCountry = ''; // country name from dropdown
+        let selectedShippingCountry = '';
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
 
@@ -861,7 +869,6 @@
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
             container.innerHTML = '';
-
             if (!exchangeRates.length) return;
 
             const btn = document.createElement('div');
@@ -893,11 +900,9 @@
                 return { element: item, text: rate.CurrencyCode + ' ' + rate.CountryName };
             });
             buildSearchableDropdown(dropdown, items, 'Search currency...');
-
             container.appendChild(btn);
             container.appendChild(dropdown);
             setupDropdown(btn, dropdown);
-
             if (selectedCurrency) { updateCurrencyDisplay(); } else { selectedCurrency = exchangeRates[0]; updateCurrencyDisplay(); }
         }
 
@@ -941,7 +946,6 @@
             }
         }
 
-        // ---------- SET USER COUNTRY ----------
         function setUserCountryFromName(countryName) {
             const match = shippingRegions.find(r => r.Location === countryName);
             if (match) setUserCountry(match);
@@ -1179,7 +1183,6 @@
                 const img = document.createElement('img');
                 img.src = iconUrl;
                 img.alt = item.label;
-                // Fallback for about icon if image fails
                 if (item.iconSetting === 'NavIconURLAbout') {
                     img.onerror = function() {
                         this.onerror = null;
@@ -1468,6 +1471,12 @@
             buildPhoneCodeSelector();
             buildContactPhoneCodeSelector();
 
+            // Auto‑resize phone code inputs on load and on input
+            autoResizePhoneCodeInput('phoneCodeInput');
+            autoResizePhoneCodeInput('contactPhoneCodeInput');
+            document.getElementById('phoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('phoneCodeInput'));
+            document.getElementById('contactPhoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('contactPhoneCodeInput'));
+
             if (isEmailVerified && lastVerifiedEmail) {
                 document.getElementById('verifiedEmail').value = lastVerifiedEmail;
                 document.getElementById('customerDetails').style.display = 'block';
@@ -1478,6 +1487,23 @@
             } else {
                 resetOrderForm();
             }
+        }
+
+        // ---------- AUTO RESIZE PHONE CODE INPUT ----------
+        function autoResizePhoneCodeInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            // Create a hidden span with the same styling as the input
+            const span = document.createElement('span');
+            span.style.font = window.getComputedStyle(input).font;
+            span.style.visibility = 'hidden';
+            span.style.position = 'absolute';
+            span.style.whiteSpace = 'nowrap';
+            document.body.appendChild(span);
+            span.textContent = input.value || input.placeholder || '+1';
+            const width = span.offsetWidth + 4; // small extra space
+            input.style.width = width + 'px';
+            document.body.removeChild(span);
         }
 
         let lastEmailAttempt = '';
@@ -1690,8 +1716,9 @@
             const discountRow = document.getElementById('discountRow');
             if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
                 discountRow.style.display = 'flex';
+                // Format: "Discount (X% off for Y+ items):"
                 document.getElementById('discountDetail').textContent =
-                    `${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items`;
+                    ` (${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items):`;
                 document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
             } else {
                 discountRow.style.display = 'none';
@@ -1749,6 +1776,7 @@
                 item.addEventListener('click', () => {
                     document.getElementById('phoneCodeInput').value = dial;
                     document.getElementById('phoneFlag').src = country.FlagURL;
+                    autoResizePhoneCodeInput('phoneCodeInput');
                     dropdown.classList.remove('open');
                 });
                 return { element: item, text: country.Location + ' ' + dial };
@@ -1771,6 +1799,7 @@
                 item.addEventListener('click', () => {
                     document.getElementById('contactPhoneCodeInput').value = dial;
                     document.getElementById('contactPhoneFlag').src = country.FlagURL;
+                    autoResizePhoneCodeInput('contactPhoneCodeInput');
                     dropdown.classList.remove('open');
                 });
                 return { element: item, text: country.Location + ' ' + dial };
@@ -1781,6 +1810,7 @@
                 const defaultRegion = shippingRegions[0];
                 document.getElementById('contactPhoneCodeInput').value = defaultRegion.PhoneCode || '+1';
                 document.getElementById('contactPhoneFlag').src = defaultRegion.FlagURL;
+                autoResizePhoneCodeInput('contactPhoneCodeInput');
             }
         }
 
