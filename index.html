@@ -42,7 +42,7 @@
         .spinner-row {
             display: flex;
             align-items: center;
-            gap: 0.4rem;          /* tight, equal spacing */
+            gap: 0.4rem;
             color: #ffffff;
             font-size: 1rem;
             font-weight: 500;
@@ -117,103 +117,6 @@
             position: sticky; top: 0; background: white; z-index: 2;
         }
 
-        /* Mobile menu – overhauled */
-        .hamburger {
-            display: block;
-            position: relative;
-            z-index: 5;                /* ensure it’s above banner text */
-            margin-left: 0.5rem;
-        }
-        .top-bar {
-            padding: 0.4rem 0.6rem;    /* reduced left/right padding */
-            min-height: 56px;
-        }
-        .top-bar-left .banner-logo img {
-            max-height: 30px;           /* slightly smaller logo */
-        }
-        .top-bar-right {
-            display: none;
-            position: absolute; top: 100%; right: 0;
-            background: #194373; flex-direction: column; align-items: flex-start;
-            width: auto; min-width: 200px; padding: 0.8rem; gap: 0.6rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 0 0 4px 4px; z-index: 10;
-        }
-        .top-bar-right.open { display: flex; }
-        .nav-icons { flex-direction: column; gap: 0.4rem; width: 100%; }
-        .nav-icons a { padding: 0.3rem 0; width: 100%; display: flex; align-items: center; gap: 0.5rem; color: #ffffff; }
-        .nav-label { display: inline; }
-        .currency-selector { width: 100%; justify-content: flex-start; }
-        
-        /* Banner title: wrap to 3 lines, give hamburger space */
-        .banner-text {
-            position: static;
-            transform: none;
-            flex: 1;
-            text-align: center;
-            white-space: normal;
-            margin: 0 0.5rem;
-            max-width: calc(100% - 60px);   /* leave room for hamburger */
-            overflow: hidden;
-        }
-        .banner-text h1 { font-size: 0.95rem; }
-        .banner-text h2 { font-size: 0.75rem; }
-        
-        /* Carousel dots spacing */
-        .carousel-wrapper { padding-bottom: 1.2rem; }
-        
-        /* Keep phone composite side by side */
-        .phone-composite { flex-direction: row; }
-        
-        /* Stack home columns */
-        .home-columns {
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        .home-col-left-box,
-        .carousel-wrapper {
-            height: auto !important;
-        }
-        .carousel-slide img { width: 60%; }
-        
-        /* Order form mobile grid */
-        .order-product-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            align-items: start;
-        }
-        .order-product-option { grid-row: 1; }
-        #productOption1 { grid-column: 1; }
-        #productOption2 { grid-column: 2; }
-        .order-quantity-center {
-            grid-column: 1 / 3;
-            grid-row: 2;
-            width: 100%;
-        }
-        
-        /* Stack summary and shipping */
-        .order-bottom-row { flex-direction: column; }
-        
-        /* Payment buttons centered and stacked */
-        .payment-row {
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-        .payment-col { justify-content: center; width: 100%; }
-        .pay-btn { width: 200px; }
-        
-        /* Email & verify button stacked */
-        .email-verify-wrapper {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        .verify-left, .verify-right {
-            width: 100%;
-        }
-        .verify-right .btn {
-            width: 100%;
-        }
         /* ---------- BUTTONS ---------- */
         .btn, .pay-btn {
             display: inline-flex; align-items: center; justify-content: center;
@@ -514,7 +417,104 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* ---------- RESPONSIVE general (already included in media query) ---------- */
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            .content { padding: 1.5rem; }
+
+            .top-bar { padding: 0.4rem 0.6rem; min-height: 56px; }
+            .top-bar-left .banner-logo img { max-height: 30px; }
+
+            .hamburger {
+                display: block;
+                position: relative;
+                z-index: 5;
+                margin-left: 0.5rem;
+                pointer-events: auto;
+            }
+
+            .top-bar-right {
+                display: none;
+                position: absolute; top: 100%; right: 0;
+                background: #194373; flex-direction: column; align-items: flex-start;
+                width: auto; min-width: 200px; padding: 0.8rem; gap: 0.6rem;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 0 0 4px 4px; z-index: 10;
+            }
+            .top-bar-right.open { display: flex; }
+            .nav-icons { flex-direction: column; gap: 0.4rem; width: 100%; }
+            .nav-icons a { padding: 0.3rem 0; width: 100%; display: flex; align-items: center; gap: 0.5rem; color: #ffffff; }
+            .nav-label { display: inline; }
+            .currency-selector { width: 100%; justify-content: flex-start; }
+
+            .banner-text {
+                position: static;
+                transform: none;
+                flex: 1;
+                text-align: center;
+                white-space: normal;
+                margin: 0 0.5rem;
+                max-width: calc(100% - 60px);
+                overflow: hidden;
+            }
+            .banner-text h1 { font-size: 0.95rem; }
+            .banner-text h2 { font-size: 0.75rem; }
+
+            .carousel-wrapper { padding-bottom: 1.2rem; }
+            .phone-composite { flex-direction: row; }
+
+            .home-columns {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .home-col-left-box,
+            .carousel-wrapper {
+                height: auto !important;
+            }
+            .carousel-slide img { width: 60%; }
+
+            .order-product-box {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                align-items: start;
+            }
+            .order-product-option { grid-row: 1; }
+            #productOption1 { grid-column: 1; }
+            #productOption2 { grid-column: 2; }
+            .order-quantity-center {
+                grid-column: 1 / 3;
+                grid-row: 2;
+                width: 100%;
+            }
+
+            .order-bottom-row { flex-direction: column; }
+
+            .payment-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .payment-col { justify-content: center; width: 100%; }
+            .pay-btn { width: 200px; }
+
+            .email-verify-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .verify-left, .verify-right {
+                width: 100%;
+            }
+            .verify-right .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .banner-text h1 { font-size: 0.8rem; }
+            .banner-text h2 { font-size: 0.7rem; }
+            .top-bar { min-height: 54px; }
+            .banner-logo img { max-height: 28px; }
+        }
     </style>
 </head>
 <body>
@@ -802,18 +802,18 @@
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
         let paymentKeys = {};
-    
+
         // ---------- SINGLE FETCH ----------
         async function fetchAllSiteData() {
             const res = await fetch(API_URL + '?combined=true');
             return await res.json();
         }
-    
+
         async function fetchPaymentKeys() {
             const res = await fetch(API_URL + '?action=getPaymentKeys');
             return await res.json();
         }
-    
+
         async function initPayments() {
             if (paymentKeys.paypalClientId && document.getElementById('paypalBtn')) {
                 const script = document.createElement('script');
@@ -837,7 +837,7 @@
                 };
                 document.head.appendChild(script);
             }
-    
+
             const payfastBtn = document.getElementById('payfastBtn');
             if (payfastBtn) {
                 payfastBtn.addEventListener('click', async () => {
@@ -847,7 +847,7 @@
                     const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
                     const itemName = selectedProduct.ProductName;
                     const description = selectedProduct.Type + ' book';
-    
+
                     const formFields = {
                         merchant_id: paymentKeys.payfastMerchantId,
                         merchant_key: paymentKeys.payfastMerchantKey,
@@ -862,11 +862,11 @@
                         item_name: itemName,
                         item_description: description
                     };
-    
+
                     const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
                     const sigData = await sigRes.json();
                     formFields.signature = sigData.signature;
-    
+
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = 'https://sandbox.payfast.co.za/eng/process';
@@ -884,7 +884,7 @@
                 });
             }
         }
-    
+
         // ---------- DROPDOWN HELPERS ----------
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
@@ -906,7 +906,7 @@
             });
             dropdown.addEventListener('click', (e) => e.stopPropagation());
         }
-    
+
         function buildSearchableDropdown(container, items, placeholder = 'Search...') {
             container.innerHTML = '';
             const search = document.createElement('input');
@@ -923,13 +923,13 @@
             container.appendChild(search);
             items.forEach(item => container.appendChild(item.element));
         }
-    
+
         // ---------- CURRENCY FUNCTIONS ----------
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
             container.innerHTML = '';
             if (!exchangeRates.length) return;
-    
+
             const btn = document.createElement('div');
             btn.className = 'currency-selector';
             btn.id = 'currencyBtn';
@@ -939,11 +939,11 @@
             codeSpan.id = 'currencyCodeDisplay';
             btn.appendChild(flagImg);
             btn.appendChild(codeSpan);
-    
+
             const dropdown = document.createElement('div');
             dropdown.className = 'currency-dropdown';
             dropdown.id = 'currencyDropdown';
-    
+
             const sorted = [...exchangeRates].sort((a, b) => a.CountryName.localeCompare(b.CountryName));
             const items = sorted.map(rate => {
                 const item = document.createElement('div');
@@ -964,7 +964,7 @@
             setupDropdown(btn, dropdown);
             if (selectedCurrency) { updateCurrencyDisplay(); } else { selectedCurrency = exchangeRates[0]; updateCurrencyDisplay(); }
         }
-    
+
         function updateCurrencyDisplay() {
             const flag = document.getElementById('currencyFlag');
             const codeDisplay = document.getElementById('currencyCodeDisplay');
@@ -973,7 +973,7 @@
                 codeDisplay.textContent = selectedCurrency.CurrencyCode;
             }
         }
-    
+
         async function detectUserCurrency() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
@@ -1004,12 +1004,12 @@
                 setUserCountry(shippingRegions[0]);
             }
         }
-    
+
         function setUserCountryFromName(countryName) {
             const match = shippingRegions.find(r => r.Location === countryName);
             if (match) setUserCountry(match);
         }
-    
+
         function setUserCountry(regionObj) {
             document.getElementById('countryNameDisplay').textContent = regionObj.Location;
             document.getElementById('countryFlag').src = regionObj.FlagURL;
@@ -1020,12 +1020,12 @@
             document.getElementById('phoneFlag').src = regionObj.FlagURL;
             updateOrderSummary();
         }
-    
+
         function convertPrice(zarAmount) {
             if (!selectedCurrency || selectedCurrency.CurrencyCode === 'ZAR') return zarAmount;
             return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
-    
+
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
@@ -1033,7 +1033,7 @@
             const symbol = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code;
             return symbol + ' ' + formattedNumber;
         }
-    
+
         function refreshAllPrices() {
             const alertColor = appSettings.AlertColour || '#dc3c33';
             document.querySelectorAll('[data-zar]').forEach(el => {
@@ -1048,7 +1048,7 @@
                 updateOrderSummary();
             }
         }
-    
+
         // ---------- HEIGHT EQUALISATION ----------
         function equalizeHeights() {
             const rightCol = document.getElementById('productCardsColumn');
@@ -1070,11 +1070,11 @@
                 }
             });
         }
-    
+
         window.addEventListener('resize', () => {
             if (document.getElementById('home-section')?.classList.contains('active')) equalizeHeights();
         });
-    
+
         // ---------- INFINITE LOOP CAROUSEL ----------
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
@@ -1107,7 +1107,7 @@
             let currentIndex = 1;
             const totalSlides = imageUrls.length;
             let isTransitioning = false;
-    
+
             function updateCarousel(animate = true) {
                 if (!animate) track.style.transition = 'none';
                 else track.style.transition = 'transform 0.5s ease';
@@ -1115,13 +1115,13 @@
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
             }
-    
+
             function goToSlide(realIndex) {
                 currentIndex = realIndex + 1;
                 updateCarousel();
                 resetAutoPlay();
             }
-    
+
             function nextSlide() {
                 if (isTransitioning) return;
                 isTransitioning = true;
@@ -1137,7 +1137,7 @@
                     }, 500);
                 } else { setTimeout(() => isTransitioning = false, 500); }
             }
-    
+
             function prevSlide() {
                 if (isTransitioning) return;
                 isTransitioning = true;
@@ -1153,12 +1153,12 @@
                     }, 500);
                 } else { setTimeout(() => isTransitioning = false, 500); }
             }
-    
+
             function updateDots() {
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
             }
-    
+
             function startAutoPlay() {
                 if (carouselIntervalId) clearInterval(carouselIntervalId);
                 carouselIntervalId = setInterval(nextSlide, interval);
@@ -1167,35 +1167,35 @@
                 if (carouselIntervalId) { clearInterval(carouselIntervalId); carouselIntervalId = null; }
             }
             function resetAutoPlay() { stopAutoPlay(); startAutoPlay(); }
-    
+
             nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
             prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
-    
+
             const wrapper = document.getElementById('carouselWrapper');
             wrapper.addEventListener('mouseenter', stopAutoPlay);
             wrapper.addEventListener('mouseleave', startAutoPlay);
             wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
             wrapper.addEventListener('touchend', startAutoPlay);
-    
+
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); }
                 if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); }
             });
-    
+
             updateCarousel(false);
             startAutoPlay();
         }
-    
+
         // ---------- DIRECT DATA LOADERS ----------
         function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('topBar').style.backgroundColor = settings.PrimaryColor || '#194373';
-        
+
             document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
             document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
-        
+
             const logo = document.getElementById('bannerLogo');
             if (settings.BannerLogo) {
                 logo.src = settings.BannerLogo;
@@ -1203,7 +1203,7 @@
             } else {
                 logo.style.display = 'none';
             }
-        
+
             const titleEl = document.getElementById('bannerTitle');
             const mainTitle = settings.BannerBookTitle || '';
             const abbrev = settings.BannerBookTitleAbbreviation || '';
@@ -1211,11 +1211,11 @@
             else if (mainTitle) titleEl.textContent = mainTitle;
             else titleEl.textContent = '';
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
-        
+
             if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
             if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
             if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
-        
+
             // Navigation icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
@@ -1266,30 +1266,30 @@
                 if (section) showPage(section);
             });
         }
-    
+
         function loadHomePageDirect(home) {
             document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
-    
+
             const images = [];
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
                 if (url) images.push(url);
             }
             if (images.length) buildCarousel(images, home.HomePageCarouselInterval || 3000);
-    
+
             const productColumn = document.getElementById('productCardsColumn');
             productColumn.innerHTML = '';
-    
+
             const item1Main = home.HomePageItem1MainText || '';
             const item1Sub = home.HomePageItem1SubText || '';
             const item2Main = home.HomePageItem2MainText || '';
             const item2Sub = home.HomePageItem2SubText || '';
-    
+
             const product1 = products[0] || {};
             const product2 = products[1] || {};
-    
+
             function createCard(mainText, subText, product) {
                 const card = document.createElement('div');
                 card.className = 'product-card';
@@ -1297,17 +1297,17 @@
                 card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
                 return card;
             }
-    
+
             const card1 = createCard(item1Main, item1Sub, product1);
             const card2 = createCard(item2Main, item2Sub, product2);
-    
+
             const orderBtn = document.createElement('div');
             orderBtn.className = 'central-order-btn';
             orderBtn.innerHTML = '<button class="btn">Order Now</button>';
             productColumn.appendChild(card1);
             productColumn.appendChild(orderBtn);
             productColumn.appendChild(card2);
-    
+
             orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
             refreshAllPrices();
         }
@@ -1938,14 +1938,14 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
-        
+
             document.getElementById('topBarRight').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
-        
+
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
             if (sectionId === 'order-section') resetOrderForm();
-        
-            window.scrollTo(0, 0);   // <-- add this line
+
+            window.scrollTo(0, 0);
         }
 
         function setupHamburger() {
@@ -2031,7 +2031,7 @@
             }
         }
 
-        // ---------- ANIMATED LOADING DOTS (no shift) ----------
+        // ---------- ANIMATED LOADING DOTS ----------
         (function() {
             const dotsEl = document.getElementById('loadingDots');
             if (!dotsEl) return;
@@ -2073,7 +2073,7 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                // Hide splash after a tiny delay to let the dots animation be seen
+                // Hide splash after a tiny delay
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
                 console.error('Error initializing:', err);
