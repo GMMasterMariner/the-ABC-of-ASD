@@ -12,9 +12,7 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         html { scrollbar-gutter: stable; }
-
         body {
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
@@ -116,10 +114,12 @@
         }
         .currency-selector img { height: 20px; width: auto; }
         .currency-selector::after { content: '▾'; margin-left: 0.3rem; font-size: 0.8rem; }
+
+        /* Uniform dropdown widths */
         .currency-dropdown,
         .phone-code-dropdown,
         .country-dropdown {
-            min-width: 260px;                /* uniform width for all three */
+            min-width: 260px;
         }
         .currency-dropdown {
             position: absolute; top: 100%; right: 0; background: white;
@@ -257,7 +257,7 @@
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
-        /* Phone composite (used in contact & order) */
+        /* Phone composite */
         .phone-composite { display: flex; gap: 0.4rem; width: 100%; }
         .phone-code-selector {
             display: flex; align-items: center; gap: 0.3rem;
@@ -279,13 +279,14 @@
             border: 1px solid #ddd; border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
             display: none; max-height: 250px; overflow-y: auto;
-            min-width: 220px;   /* will be overridden by the unified min-width above */
+            min-width: 260px;
         }
         .phone-code-dropdown.open { display: block; }
         .phone-code-item {
             display: flex; align-items: center; gap: 0.5rem;
             padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap;
         }
+        .phone-code-item img { width: 20px; height: auto; }
         .phone-code-item:hover { background: #f0f0f0; }
         .phone-number-input { flex: 1; }
         .phone-number-input input {
@@ -328,7 +329,6 @@
         }
         .order-product-option.selected .selected-checkmark { display: block; }
 
-        /* Quantity with external buttons */
         .order-quantity-center .quantity-label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
         .quantity-input-group {
             display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 0.5rem;
@@ -339,9 +339,7 @@
             -moz-appearance: textfield; appearance: textfield;
         }
         .quantity-input-group input::-webkit-outer-spin-button,
-        .quantity-input-group input::-webkit-inner-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
+        .quantity-input-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .quantity-buttons { display: flex; flex-direction: column; gap: 2px; }
         .qty-btn {
             background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px;
@@ -352,32 +350,20 @@
         .qty-btn:hover { background: #e0e0e0; }
 
         .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; margin-top: 0.5rem; }
-        .order-product-type {
-            font-size: 0.85rem; color: #666; margin: 0.5rem 0;
-            display: none; flex-direction: column; align-items: center;
-        }
+        .order-product-type { font-size: 0.85rem; color: #666; margin: 0.5rem 0; display: none; flex-direction: column; align-items: center; }
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Instruction & verification messages – bold, red, pulsing */
         .pulse-message {
             font-weight: 700; color: var(--alert-color, #dc3c33);
             animation: pulse-text 2s infinite; text-align: center;
         }
-        @keyframes pulse-text {
-            0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; }
-        }
-        .instruction-wrapper {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            margin-top: 0.5rem;
-        }
+        @keyframes pulse-text { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+        .instruction-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; margin-top: 0.5rem; }
 
-        /* Email verification rows */
         .email-verify-wrapper { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; align-items: stretch; }
         .verify-left, .verify-right { flex: 1; }
-        .verify-left input[type="email"] {
-            width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
-        }
+        .verify-left input[type="email"] { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
         .verify-right { display: flex; align-items: center; justify-content: center; }
         .verify-right .btn { width: 100%; }
 
@@ -395,33 +381,15 @@
         .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
         .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
 
-        /* Verifying message – centred */
-        .verify-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .verify-message .pulse-message {
-            display: inline;
-        }
+        .verify-message { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 1rem; }
 
-        /* Customer details row */
         .order-contact-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; }
         .order-contact-row > * { flex: 1; min-width: 0; }
         .email-input-wrapper { position: relative; }
-        .email-input-wrapper input {
-            width: 100%; padding: 0.8rem 2rem 0.8rem 0.8rem;
-            border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
-        }
-        .email-checkmark {
-            position: absolute; right: 0.8rem; top: 50%;
-            transform: translateY(-50%); color: #2e7d32; font-size: 1.2rem; display: none;
-        }
+        .email-input-wrapper input { width: 100%; padding: 0.8rem 2rem 0.8rem 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+        .email-checkmark { position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%); color: #2e7d32; font-size: 1.2rem; display: none; }
         .name-input-wrapper input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
 
-        /* Shipping address */
         .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
         .shipping-header h4 { margin: 0; }
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
@@ -442,19 +410,21 @@
             padding: 0.8rem; cursor: pointer; background: white;
             position: relative; font-size: 1rem;
         }
+        .country-selector img { height: 20px; width: auto; }
         .country-selector::after { content: '▾'; margin-left: auto; font-size: 0.8rem; color: #888; }
         .country-dropdown {
             position: absolute; top: 100%; left: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
             display: none; max-height: 250px; overflow-y: auto;
-            min-width: 220px;
+            min-width: 260px;
         }
         .country-dropdown.open { display: block; }
         .country-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; }
+        .country-dropdown-item img { width: 20px; height: auto; }
         .country-dropdown-item:hover { background: #f0f0f0; }
 
-        /* Order summary */
+        /* Order summary + sidebar stretch */
         .order-bottom-row { display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch; }
         .order-summary, .order-sidebar {
             flex: 1; background: #ffffff; border: 1px solid #e0e0e0;
@@ -470,15 +440,24 @@
             flex: 1;
             min-height: 0;
         }
+        .order-summary h4 { margin-bottom: 1rem; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        /* Payment row – equal button widths */
+        /* Discount detail red text */
+        .discount-detail {
+            color: var(--alert-color, #dc3c33);
+            font-weight: 600;
+        }
+
+        /* Payment row */
         .payment-row { display: flex; gap: 2rem; margin-top: 2rem; }
         .payment-col { flex: 1; display: flex; }
         .payment-col:first-child { justify-content: flex-end; }
         .payment-col:last-child { justify-content: flex-start; }
         .pay-btn {
-            width: 200px;   /* both buttons get exactly this width */
-            min-width: 0;   /* remove min‑width to allow exact sizing */
+            width: 200px;
+            min-width: 0;
         }
 
         /* Uniform flag sizes */
@@ -488,18 +467,11 @@
             height: 20px;
             width: auto;
         }
-        
         .currency-dropdown-item img,
         .phone-code-item img,
         .country-dropdown-item img {
             width: 20px;
             height: auto;
-        }
-
-        .currency-dropdown,
-        .phone-code-dropdown,
-        .country-dropdown {
-            min-width: 260px;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -553,18 +525,11 @@
 
     <!-- ================== COMBINED TOP BAR ================== -->
     <header class="top-bar" id="topBar">
-        <div class="top-bar-left">
-            <div class="banner-logo">
-                <img id="bannerLogo" src="" alt="Logo">
-            </div>
-        </div>
-        <div class="banner-text">
-            <h1 id="bannerTitle"></h1>
-            <h2 id="bannerSubtitle"></h2>
-        </div>
+        <div class="top-bar-left"><div class="banner-logo"><img id="bannerLogo" src="" alt="Logo"></div></div>
+        <div class="banner-text"><h1 id="bannerTitle"></h1><h2 id="bannerSubtitle"></h2></div>
         <div class="top-bar-right" id="topBarRight">
             <div class="nav-icons" id="navIcons"></div>
-            <div id="currencySelectorContainer" class="currency-selector-container"></div>
+            <div id="currencySelectorContainer"></div>
         </div>
         <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
     </header>
@@ -818,7 +783,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR ACTUAL URL HERE
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';   // ← PUT YOUR REAL WEB APP URL HERE
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -846,75 +811,82 @@
             const res = await fetch(API_URL + '?action=getPaymentKeys');
             return await res.json();
         }
-        
+
         async function initPayments() {
-            if (paymentKeys.paypalClientId) {
+            // Only load PayPal if the button exists and we have a client ID
+            if (paymentKeys.paypalClientId && document.getElementById('paypalBtn')) {
                 const script = document.createElement('script');
                 script.src = `https://www.paypal.com/sdk/js?client-id=${paymentKeys.paypalClientId}&currency=ZAR`;
                 script.onload = () => {
-                    paypal.Buttons({
-                        createOrder: function(data, actions) {
-                            const total = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                            return actions.order.create({
-                                purchase_units: [{
-                                    amount: { value: total }
-                                }]
-                            });
-                        },
-                        onApprove: function(data, actions) {
-                            return actions.order.capture().then(function(details) {
-                                alert('Transaction completed by ' + details.payer.name.given_name);
-                            });
-                        }
-                    }).render('#paypalBtn');
+                    if (typeof paypal !== 'undefined') {
+                        paypal.Buttons({
+                            createOrder: function(data, actions) {
+                                const total = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
+                                return actions.order.create({
+                                    purchase_units: [{
+                                        amount: { value: total }
+                                    }]
+                                });
+                            },
+                            onApprove: function(data, actions) {
+                                return actions.order.capture().then(function(details) {
+                                    alert('Transaction completed by ' + details.payer.name.given_name);
+                                });
+                            }
+                        }).render('#paypalBtn');
+                    }
                 };
                 document.head.appendChild(script);
             }
-        
-            document.getElementById('payfastBtn').addEventListener('click', async () => {
-                if (!selectedProduct || !isEmailVerified) return;
-                const email = document.getElementById('verifiedEmail').value;
-                const name = document.getElementById('customerName').value;
-                const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                const itemName = selectedProduct.ProductName;
-                const description = selectedProduct.Type + ' book';
-        
-                const formFields = {
-                    merchant_id: paymentKeys.payfastMerchantId,
-                    merchant_key: paymentKeys.payfastMerchantKey,
-                    return_url: window.location.origin + '/success',
-                    cancel_url: window.location.origin + '/cancel',
-                    notify_url: API_URL + '?action=notify',
-                    name_first: name.split(' ')[0] || '',
-                    name_last: name.split(' ').slice(1).join(' ') || '',
-                    email_address: email,
-                    m_payment_id: Date.now().toString(),
-                    amount: amount,
-                    item_name: itemName,
-                    item_description: description
-                };
-        
-                const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
-                const sigData = await sigRes.json();
-                formFields.signature = sigData.signature;
-        
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'https://sandbox.payfast.co.za/eng/process';
-                form.style.display = 'none';
-                for (const [key, value] of Object.entries(formFields)) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = value;
-                    form.appendChild(input);
-                }
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            });
+
+            // Payfast button click handler
+            const payfastBtn = document.getElementById('payfastBtn');
+            if (payfastBtn) {
+                payfastBtn.addEventListener('click', async () => {
+                    if (!selectedProduct || !isEmailVerified) return;
+                    const email = document.getElementById('verifiedEmail').value;
+                    const name = document.getElementById('customerName').value;
+                    const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
+                    const itemName = selectedProduct.ProductName;
+                    const description = selectedProduct.Type + ' book';
+
+                    const formFields = {
+                        merchant_id: paymentKeys.payfastMerchantId,
+                        merchant_key: paymentKeys.payfastMerchantKey,
+                        return_url: window.location.origin + '/success',
+                        cancel_url: window.location.origin + '/cancel',
+                        notify_url: API_URL + '?action=notify',
+                        name_first: name.split(' ')[0] || '',
+                        name_last: name.split(' ').slice(1).join(' ') || '',
+                        email_address: email,
+                        m_payment_id: Date.now().toString(),
+                        amount: amount,
+                        item_name: itemName,
+                        item_description: description
+                    };
+
+                    const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
+                    const sigData = await sigRes.json();
+                    formFields.signature = sigData.signature;
+
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://sandbox.payfast.co.za/eng/process';
+                    form.style.display = 'none';
+                    for (const [key, value] of Object.entries(formFields)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                });
+            }
         }
-        
+
         // ---------- DROPDOWN HELPERS ----------
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
@@ -1073,7 +1045,6 @@
                     if (el.classList.contains('product-price') || el.classList.contains('price')) el.style.color = alertColor;
                 }
             });
-            // also update quantity total and order summary immediately
             if (document.getElementById('order-section').classList.contains('active')) {
                 updateQuantityTotal();
                 updateOrderSummary();
@@ -2066,11 +2037,11 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
-        
+
                 // Fetch payment keys and initialize gateways
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
-        
+
                 const progressFill = document.getElementById('progressFill');
                 if (progressFill) setTimeout(() => progressFill.classList.add('full'), 100);
                 setTimeout(hideSplashScreen, 800);
