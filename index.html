@@ -20,7 +20,7 @@
             padding-top: 68px;
         }
 
-        /* ---------- SPLASH SCREEN (animated dots) ---------- */
+        /* ---------- SPLASH SCREEN (animated dots, no shift) ---------- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(25, 67, 115, 0.9);
@@ -55,6 +55,11 @@
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-dots {
+            display: inline-block;
+            width: 1.5em;            /* fixed width so text doesn't jump */
+            text-align: left;
+        }
 
         /* ---------- COMBINED TOP BAR ---------- */
         .top-bar {
@@ -416,10 +421,21 @@
         }
         .order-sidebar h4 { margin-bottom: 0.5rem; }
         .order-sidebar p { margin: 0; line-height: 1.5; }
+        /* make the delivery details container grow and the textarea fill it */
+        #deliveryDetailsContainer {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-top: 0.5rem;
+        }
         .order-sidebar textarea {
-            width: 100%; margin-top: 0.5rem; padding: 0.6rem;
+            width: 100%;
+            padding: 0.6rem;
             border: 1px solid #ccc; border-radius: 4px;
-            font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
+            font-family: inherit; font-size: 0.9rem;
+            flex: 1;                /* fills available space */
+            min-height: 60px;
+            resize: vertical;
         }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
@@ -486,7 +502,7 @@
         <img id="splash-logo" src="https://i.ibb.co/DHhZNgL0/Logo-White-Trimmed.png" alt="Logo">
         <div class="spinner-row">
             <div class="spinner"></div>
-            <span id="loadingText">Loading</span>
+            <span>Loading</span><span class="loading-dots" id="loadingDots"></span>
         </div>
     </div>
 
@@ -666,7 +682,7 @@
                     </div>
                 </div>
 
-                <!-- Bottom Row: Summary + Info (NO inner grey box) -->
+                <!-- Bottom Row: Summary + Info (textarea now fills space) -->
                 <div class="order-bottom-row">
                     <div class="order-summary" id="orderSummary">
                         <h4>Order Summary</h4>
@@ -1991,17 +2007,16 @@
             }
         }
 
-        // ---------- ANIMATED LOADING DOTS ----------
+        // ---------- ANIMATED LOADING DOTS (no shift) ----------
         (function() {
-            const el = document.getElementById('loadingText');
-            if (!el) return;
-            const frames = ['Loading', 'Loading.', 'Loading..', 'Loading...'];
+            const dotsEl = document.getElementById('loadingDots');
+            if (!dotsEl) return;
+            const frames = ['', '.', '..', '...'];
             let i = 0;
             const interval = setInterval(() => {
-                el.textContent = frames[i % frames.length];
+                dotsEl.textContent = frames[i % frames.length];
                 i++;
             }, 500);
-            // Stop when splash is hidden
             const observer = new MutationObserver(() => {
                 if (document.getElementById('splash-screen').classList.contains('hidden')) {
                     clearInterval(interval);
@@ -2034,7 +2049,7 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                // Hide splash after everything is ready (with a tiny delay for smoothness)
+                // Hide splash after a tiny delay to let the dots animation be seen
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
                 console.error('Error initializing:', err);
