@@ -79,6 +79,7 @@
             color: #ffffff;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0.5rem 1.2rem;
             min-height: 68px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -86,25 +87,25 @@
         .top-bar-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            flex: 1;
-            min-width: 0;
+            flex: 0 0 auto;
         }
         .top-bar-left .banner-logo img {
             max-height: 45px;
             display: block;
         }
+        /* Centered title */
         .banner-text {
-            min-width: 0;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
         }
         .banner-text h1 {
             font-size: 1.3rem;
             font-weight: 700;
             line-height: 1.2;
             margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         .banner-text h1 .abbreviation {
             font-weight: 200;
@@ -118,16 +119,13 @@
             line-height: 1.3;
             margin: 0.15rem 0 0 0;
             opacity: 0.9;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .top-bar-right {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            flex-shrink: 0;
+            flex: 0 0 auto;
         }
 
         /* Hamburger */
@@ -269,6 +267,13 @@
                 width: 100%;
                 justify-content: flex-start;
             }
+            .banner-text {
+                position: static;
+                transform: none;
+                flex: 1;
+                text-align: left;
+                margin-left: 1rem;
+            }
         }
 
         /* ---------- BUTTONS ---------- */
@@ -306,7 +311,6 @@
             height: 24px;
             width: auto;
         }
-        /* Slight resize for smaller screens */
         @media (max-width: 400px) {
             .btn, .pay-btn { height: 44px; padding: 0 1.2rem; font-size: 0.95rem; }
         }
@@ -343,7 +347,7 @@
         .home-col-left-box h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
         .home-col-left-box p { line-height: 1.6; }
 
-        /* Carousel */
+        /* Carousel (no background circles on arrows) */
         .carousel-wrapper {
             position: relative;
             width: 100%;
@@ -366,22 +370,21 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
+            background: none;
             border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.8rem;
+            font-size: 3rem;
+            line-height: 1;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #194373;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            color: white;
+            text-shadow: 0 0 8px rgba(0,0,0,0.6);
             z-index: 3;
-            transition: background 0.2s;
+            padding: 0.5rem;
+            transition: transform 0.2s, text-shadow 0.2s;
         }
-        .carousel-arrow:hover { background: white; }
+        .carousel-arrow:hover {
+            text-shadow: 0 0 12px rgba(0,0,0,0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
         .carousel-arrow.prev { left: 0.5rem; }
         .carousel-arrow.next { right: 0.5rem; }
         .carousel-dots {
@@ -437,9 +440,14 @@
         #aboutShortBioParagraph, #aboutExtendedBioText { text-align: justify; }
 
         /* ---- Contact Form ---- */
-        .contact-form { max-width: 500px; margin: 0 auto; }
-        .contact-form .form-group { margin-top: 0.5rem; }
-        .contact-form .form-group:first-child { margin-top: 0; }
+        .contact-form { max-width: 700px; margin: 0 auto; }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .form-row:first-child { margin-top: 0; }
+        .form-row .form-group { flex: 1; }
         .contact-form input, .contact-form textarea {
             width: 100%;
             padding: 0.8rem;
@@ -458,6 +466,67 @@
         .contact-form textarea { resize: vertical; min-height: 120px; }
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
+
+        /* Phone composite (used in contact & order) */
+        .phone-composite {
+            display: flex;
+            gap: 0.4rem;
+            width: 100%;
+        }
+        .phone-code-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 0.8rem;
+            cursor: pointer;
+            position: relative;
+            background: white;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .phone-code-selector img { height: 20px; width: auto; }
+        .phone-code-selector input.phone-code-input {
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            color: #194373;
+            width: 60px;
+            padding: 0;
+            outline: none;
+            min-width: 40px;
+        }
+        .phone-code-selector::after {
+            content: '▾';
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .phone-code-dropdown {
+            position: absolute; top: 100%; left: 0; background: white;
+            border: 1px solid #ddd; border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
+            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
+        }
+        .phone-code-dropdown.open { display: block; }
+        .phone-code-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap;
+        }
+        .phone-code-item:hover { background: #f0f0f0; }
+        .phone-number-input {
+            flex: 1;
+        }
+        .phone-number-input input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
 
         /* ---- Order Form ---- */
         .order-wrapper { max-width: 960px; margin: 0 auto; }
@@ -522,15 +591,52 @@
             display: block;
         }
 
+        /* Quantity with external buttons */
         .order-quantity-center .quantity-label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
-        .order-quantity-center input {
-            width: 90px;
+        .quantity-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 0.5rem;
+        }
+        .quantity-input-group input {
+            width: 80px;
             padding: 0.7rem 0.4rem;
             font-size: 1.6rem;
             text-align: center;
             border: 1px solid #ccc;
             border-radius: 8px;
+            -moz-appearance: textfield;
+            appearance: textfield;
         }
+        .quantity-input-group input::-webkit-outer-spin-button,
+        .quantity-input-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .quantity-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .qty-btn {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 30px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            color: #333;
+            transition: background 0.2s;
+        }
+        .qty-btn:hover { background: #e0e0e0; }
+
         .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; }
         .order-product-type {
             font-size: 0.85rem;
@@ -543,7 +649,21 @@
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Email verification */
+        /* Instruction message */
+        .instruction-message {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--alert-color, #dc3c33);
+            margin-top: 0.5rem;
+            animation: pulse-text 2s infinite;
+        }
+        @keyframes pulse-text {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Email verification (unchanged) */
         .email-verify-wrapper {
             display: flex;
             gap: 1.5rem;
@@ -571,11 +691,7 @@
         .message-col { flex: 1; font-size: 0.9rem; color: #333; font-weight: 500; text-align: center; }
         .resend-col { flex: 0 0 auto; margin-left: auto; }
 
-        .code-input-row {
-            display: flex;
-            gap: 8px;
-            justify-content: space-between;
-        }
+        .code-input-row { display: flex; gap: 8px; justify-content: space-between; }
         .code-input-row input {
             width: 44px;
             height: 52px;
@@ -587,19 +703,8 @@
             line-height: 1;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .code-input-row input:focus {
-            border-color: var(--primary-color, #194373);
-            box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2);
-        }
-        .code-input-row input.filled {
-            border-color: var(--primary-color, #194373);
-            background: #f0f7ff;
-        }
-
-        .verify-message {
-            font-size: 0.85rem; color: #333; font-weight: 500;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
+        .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
+        .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
 
         /* Customer details row */
         .order-contact-row {
@@ -620,51 +725,13 @@
             width: 100%; padding: 0.8rem; border: 1px solid #ccc;
             border-radius: 6px; font-size: 1rem;
         }
-        .phone-composite { display: flex; gap: 0.4rem; }
-        .phone-code-selector {
-            display: flex; align-items: center; gap: 0.3rem;
-            border: 1px solid #ccc; border-radius: 6px;
-            padding: 0.8rem; cursor: pointer; position: relative;
-            background: white; font-size: 0.9rem; white-space: nowrap; flex-shrink: 0;
-        }
-        .phone-code-selector img { height: 20px; width: auto; }
-        .phone-code-selector input.phone-code-input {
-            border: none; background: transparent; font-family: inherit;
-            font-size: inherit; color: #194373; width: 60px; padding: 0; outline: none;
-        }
-        .phone-code-selector::after {
-            content: '▾';
-            margin-left: auto;
-            font-size: 0.8rem;
-            color: #888;
-        }
-        .phone-code-dropdown {
-            position: absolute; top: 100%; left: 0; background: white;
-            border: 1px solid #ddd; border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
-            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
-        }
-        .phone-code-dropdown.open { display: block; }
-        .phone-code-item {
-            display: flex; align-items: center; gap: 0.5rem;
-            padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap;
-        }
-        .phone-code-item:hover { background: #f0f0f0; }
-        .phone-number-input input {
-            width: 100%; padding: 0.8rem; border: 1px solid #ccc;
-            border-radius: 6px; font-size: 1rem;
-        }
 
-        /* Shipping address */
+        /* Shipping address (unchanged) */
         .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
         .shipping-header h4 { margin: 0; }
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
         .shipping-header .locate-btn img { height: 24px; }
-        .address-fields-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.8rem;
-        }
+        .address-fields-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
         .address-fields-grid input, .address-fields-grid .country-selector {
             padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px;
             font-size: 1rem; width: 100%; font-family: inherit;
@@ -681,10 +748,7 @@
             position: relative; font-size: 1rem;
         }
         .country-selector::after {
-            content: '▾';
-            margin-left: auto;
-            font-size: 0.8rem;
-            color: #888;
+            content: '▾'; margin-left: auto; font-size: 0.8rem; color: #888;
         }
         .country-dropdown {
             position: absolute; top: 100%; left: 0; background: white;
@@ -693,16 +757,11 @@
             display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
         }
         .country-dropdown.open { display: block; }
-        .country-dropdown-item {
-            display: flex; align-items: center; gap: 0.5rem;
-            padding: 0.4rem 0.8rem; cursor: pointer;
-        }
+        .country-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; }
         .country-dropdown-item:hover { background: #f0f0f0; }
 
-        /* Order summary */
-        .order-bottom-row {
-            display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch;
-        }
+        /* Order summary (unchanged) */
+        .order-bottom-row { display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch; }
         .order-summary, .order-sidebar {
             flex: 1; background: #ffffff; border: 1px solid #e0e0e0;
             border-radius: 12px; padding: 1.5rem;
@@ -710,10 +769,7 @@
         }
         .order-summary h4 { margin-bottom: 1rem; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
-        .summary-row.total {
-            font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd;
-            padding-top: 0.5rem; margin-top: 0.5rem;
-        }
+        .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
         .discount-text { color: var(--alert-color, #dc3c33); font-size: 0.9rem; margin-left: 0.5rem; }
         .order-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
         .shipping-info-box {
@@ -727,12 +783,24 @@
             font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
         }
 
+        /* Payment row alignment */
         .payment-row {
-            display: flex; gap: 1rem; margin-top: 2rem;
-            justify-content: center;
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
         }
-        .payment-row .pay-btn {
-            flex: 0 0 auto; min-width: 160px;
+        .payment-col {
+            flex: 1;
+            display: flex;
+        }
+        .payment-col:first-child {
+            justify-content: flex-end; /* right‑align the PayPal button */
+        }
+        .payment-col:last-child {
+            justify-content: flex-start; /* left‑align the Payfast button */
+        }
+        .payment-col .pay-btn {
+            min-width: 160px;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -741,6 +809,7 @@
             .content { padding: 1.5rem; }
 
             .top-bar { padding: 0.4rem 0.8rem; min-height: 60px; }
+            .banner-text { position: static; transform: none; flex: 1; text-align: left; margin-left: 0.5rem; }
             .banner-text h1 { font-size: 1rem; }
             .banner-text h2 { font-size: 0.8rem; }
             .banner-logo img { max-height: 35px; }
@@ -749,25 +818,19 @@
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
 
-            .about-img-1, .about-img-2 {
-                float: none; display: block; margin: 1rem auto;
-                width: 80%; max-width: 250px;
-            }
+            .about-img-1, .about-img-2 { float: none; display: block; margin: 1rem auto; width: 80%; max-width: 250px; }
 
             .order-product-box { flex-direction: column; align-items: center; gap: 1rem; }
             .order-quantity-center { width: 100%; }
             .address-fields-grid { grid-template-columns: 1fr; }
             .order-contact-row, .email-verify-wrapper { flex-direction: column; align-items: stretch; }
             .phone-composite { flex-direction: column; }
-            .payment-row { flex-direction: column; align-items: center; }
-
-            .verify-three-col {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .code-col, .message-col, .resend-col {
-                width: 100%;
-            }
+            .payment-row { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .payment-col { justify-content: center; }
+            .verify-three-col { flex-direction: column; align-items: stretch; }
+            .code-col, .message-col, .resend-col { width: 100%; }
+            .form-row { flex-direction: column; gap: 0; }
+            .form-row .form-group:last-child { margin-top: 0.5rem; }
         }
 
         @media (max-width: 400px) {
@@ -776,10 +839,6 @@
             .top-bar { min-height: 54px; }
             .banner-logo img { max-height: 28px; }
         }
-
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button { opacity: 1; }
-
     </style>
 </head>
 <body>
@@ -798,17 +857,15 @@
             <div class="banner-logo">
                 <img id="bannerLogo" src="" alt="Logo">
             </div>
-            <div class="banner-text">
-                <h1 id="bannerTitle"></h1>
-                <h2 id="bannerSubtitle"></h2>
-            </div>
         </div>
-
+        <div class="banner-text">
+            <h1 id="bannerTitle"></h1>
+            <h2 id="bannerSubtitle"></h2>
+        </div>
         <div class="top-bar-right" id="topBarRight">
             <div class="nav-icons" id="navIcons"></div>
             <div id="currencySelectorContainer" class="currency-selector-container"></div>
         </div>
-
         <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
     </header>
 
@@ -868,12 +925,19 @@
                     </div>
                     <div class="order-quantity-center">
                         <div class="quantity-label">Quantity</div>
-                        <input type="number" id="orderQuantity" value="" min="1" max="100" disabled>
+                        <div class="quantity-input-group">
+                            <input type="text" id="orderQuantity" value="1" min="1" max="100" pattern="[0-9]*" inputmode="numeric" disabled>
+                            <div class="quantity-buttons">
+                                <button class="qty-btn" id="qtyUp" disabled>+</button>
+                                <button class="qty-btn" id="qtyDown" disabled>-</button>
+                            </div>
+                        </div>
                         <div class="order-product-type" id="orderProductType">
                             <span>Format</span>
                             <span class="format-type-value" id="formatText"></span>
                         </div>
                         <span class="order-quantity-total" id="quantityTotalPrice"></span>
+                        <div class="instruction-message" id="instructionMessage">Please select a book format, and verify your email to continue ordering.</div>
                     </div>
                     <div class="order-product-option" id="productOption2" data-index="1">
                         <span class="selected-checkmark">✓</span>
@@ -924,7 +988,7 @@
                         <div class="name-input-wrapper">
                             <input type="text" id="customerName" placeholder="Full Name *" required>
                         </div>
-                        <div class="phone-composite">
+                        <div class="phone-composite" id="orderPhoneComposite">
                             <div class="phone-code-selector" id="phoneCodeSelector">
                                 <img id="phoneFlag" src="" alt="">
                                 <input type="text" class="phone-code-input" id="phoneCodeInput" value="+1" placeholder="+1">
@@ -984,7 +1048,7 @@
                     <div class="order-sidebar">
                         <div class="shipping-info-box" id="shippingInfoBox">
                             <h4>Shipping Information</h4>
-                            <p id="shippingTimeText">Select a product and address to see delivery time.</p>
+                            <p id="shippingTimeText"></p> <!-- initially empty -->
                             <p id="digitalMessage" style="display: none;">A download link will be emailed once payment is completed.</p>
                             <div id="deliveryDetailsContainer" style="display: none;">
                                 <textarea id="deliveryDetails" placeholder="Add any delivery details…"></textarea>
@@ -993,32 +1057,47 @@
                     </div>
                 </div>
 
-                <!-- Payment Row -->
+                <!-- Payment Row (aligned edges) -->
                 <div class="payment-row">
-                    <button class="pay-btn" id="paypalBtn">
-                        <span>Pay with</span>
-                        <img id="paypalLogoImg" src="" alt="PayPal">
-                    </button>
-                    <button class="pay-btn" id="payfastBtn">
-                        <span>Pay with</span>
-                        <img id="payfastLogoImg" src="" alt="Payfast">
-                    </button>
+                    <div class="payment-col">
+                        <button class="pay-btn" id="paypalBtn">
+                            <span>Pay with</span>
+                            <img id="paypalLogoImg" src="" alt="PayPal">
+                        </button>
+                    </div>
+                    <div class="payment-col">
+                        <button class="pay-btn" id="payfastBtn">
+                            <span>Pay with</span>
+                            <img id="payfastLogoImg" src="" alt="Payfast">
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Contact -->
+        <!-- Contact (with phone composite) -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
                     <div class="form-group">
                         <input type="text" id="name" name="name" placeholder="Name *" required>
                     </div>
-                    <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Email *" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" id="phone" name="phone" placeholder="Phone">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Email *" required>
+                        </div>
+                        <div class="form-group">
+                            <div class="phone-composite" id="contactPhoneComposite">
+                                <div class="phone-code-selector" id="contactPhoneCodeSelector">
+                                    <img id="contactPhoneFlag" src="" alt="">
+                                    <input type="text" class="phone-code-input" id="contactPhoneCodeInput" value="+1" placeholder="+1">
+                                    <div class="phone-code-dropdown" id="contactPhoneCodeDropdown"></div>
+                                </div>
+                                <div class="phone-number-input">
+                                    <input type="tel" id="phone" name="phone" placeholder="Phone number">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <textarea id="message" name="message" placeholder="Message *" required></textarea>
@@ -1193,6 +1272,7 @@
             const code = regionObj.PhoneCode || '+1';
             document.getElementById('phoneCodeInput').value = code;
             document.getElementById('phoneFlag').src = regionObj.FlagURL;
+            // also set contact phone if on page?
             updateOrderSummary();
         }
 
@@ -1417,6 +1497,13 @@
                 const img = document.createElement('img');
                 img.src = iconUrl;
                 img.alt = item.label;
+                // Fallback for about icon if image fails
+                if (item.iconSetting === 'NavIconURLAbout') {
+                    img.onerror = function() {
+                        this.onerror = null;
+                        this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"%3E%3Cpath d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
+                    };
+                }
                 a.appendChild(img);
                 const span = document.createElement('span');
                 span.className = 'nav-label';
@@ -1536,11 +1623,15 @@
             document.getElementById('productOption1').classList.remove('selected');
             document.getElementById('productOption2').classList.remove('selected');
             selectedProduct = null;
-            document.getElementById('orderQuantity').value = '';
+            document.getElementById('orderQuantity').value = '1';
             document.getElementById('orderQuantity').disabled = true;
+            document.getElementById('qtyUp').disabled = true;
+            document.getElementById('qtyDown').disabled = true;
             document.getElementById('quantityTotalPrice').textContent = '';
             document.getElementById('formatText').textContent = '';
             document.getElementById('orderProductType').classList.remove('visible');
+            document.getElementById('instructionMessage').style.display = 'block';
+            document.getElementById('instructionMessage').textContent = 'Please select a book format, and verify your email to continue ordering.';
 
             isEmailVerified = false;
             lastVerifiedEmail = '';
@@ -1572,6 +1663,7 @@
             document.getElementById('resendBtn').disabled = false;
             document.getElementById('resendBtn').textContent = 'Resend Code';
 
+            document.getElementById('shippingTimeText').textContent = '';
             updateOrderSummary();
         }
 
@@ -1594,18 +1686,48 @@
             document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
             document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
 
-            document.getElementById('orderQuantity').addEventListener('input', () => {
+            const qtyInput = document.getElementById('orderQuantity');
+            const qtyUp = document.getElementById('qtyUp');
+            const qtyDown = document.getElementById('qtyDown');
+
+            function updateQtyButtons() {
+                let val = parseInt(qtyInput.value) || 1;
+                qtyUp.disabled = !selectedProduct;
+                qtyDown.disabled = !selectedProduct || val <= 1;
+            }
+
+            qtyUp.addEventListener('click', () => {
+                if (!selectedProduct) return;
+                let val = parseInt(qtyInput.value) || 1;
+                val = Math.min(val + 1, 100);
+                qtyInput.value = val;
+                updateQtyButtons();
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+            qtyDown.addEventListener('click', () => {
+                if (!selectedProduct) return;
+                let val = parseInt(qtyInput.value) || 1;
+                val = Math.max(val - 1, 1);
+                qtyInput.value = val;
+                updateQtyButtons();
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+            qtyInput.addEventListener('input', () => {
+                let val = parseInt(qtyInput.value);
+                if (isNaN(val) || val < 1) qtyInput.value = 1;
+                if (val > 100) qtyInput.value = 100;
+                updateQtyButtons();
                 updateQuantityTotal();
                 updateOrderSummary();
             });
 
             const emailInput = document.getElementById('orderEmail');
             const verifyBtn = document.getElementById('verifyEmailBtn');
-
             emailInput.addEventListener('input', () => {
                 verifyBtn.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
             });
-
             verifyBtn.addEventListener('click', () => {
                 const email = emailInput.value.trim();
                 if (!email) return;
@@ -1660,6 +1782,8 @@
 
             buildCountrySelector();
             buildPhoneCodeSelector();
+            // Build contact phone selector separately
+            buildContactPhoneCodeSelector();
 
             if (isEmailVerified && lastVerifiedEmail) {
                 document.getElementById('verifiedEmail').value = lastVerifiedEmail;
@@ -1737,6 +1861,7 @@
                     document.getElementById('shippingAddressSection').style.display = 'block';
                     if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
                 }
+                updateInstructionMessage();
                 updateOrderSummary();
             } else {
                 alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
@@ -1757,14 +1882,30 @@
             if (index === 0) { opt1.classList.add('selected'); selectedProduct = products[0]; }
             else { opt2.classList.add('selected'); selectedProduct = products[1]; }
             document.getElementById('orderQuantity').disabled = false;
+            document.getElementById('qtyUp').disabled = false;
+            document.getElementById('qtyDown').disabled = false;
             if (document.getElementById('orderQuantity').value === '') document.getElementById('orderQuantity').value = 1;
             document.getElementById('formatText').textContent = selectedProduct.Type;
             document.getElementById('orderProductType').classList.add('visible');
             updateQuantityTotal();
             updateOrderSummary();
+            updateInstructionMessage();
             if (isEmailVerified) {
                 if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
                 else document.getElementById('shippingAddressSection').style.display = 'none';
+            }
+        }
+
+        function updateInstructionMessage() {
+            const msgEl = document.getElementById('instructionMessage');
+            if (!selectedProduct) {
+                msgEl.style.display = 'block';
+                msgEl.textContent = 'Please select a book format, and verify your email to continue ordering.';
+            } else if (!isEmailVerified) {
+                msgEl.style.display = 'block';
+                msgEl.textContent = 'Please verify your email to continue ordering.';
+            } else {
+                msgEl.style.display = 'none';
             }
         }
 
@@ -1801,8 +1942,8 @@
         }
 
         function getShippingTime() {
-            if (!selectedProduct || selectedProduct.Type === 'Digital') return 'N/A';
-            if (!userCountryRegion) return 'Please select a shipping address.';
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return '';
+            if (!userCountryRegion) return '';
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
             const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
@@ -1811,7 +1952,7 @@
                 const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
                 return rowRegion === cleanRegion;
             });
-            if (!rows.length) return 'Shipping time unavailable.';
+            if (!rows.length) return '';
             rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
             for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Time || '';
             return rows[rows.length-1].Time || '';
@@ -1822,7 +1963,7 @@
             const deliveryContainer = document.getElementById('deliveryDetailsContainer');
             const shippingTime = document.getElementById('shippingTimeText');
             if (!selectedProduct) {
-                shippingTime.textContent = 'Select a product and address to see delivery time.';
+                shippingTime.textContent = '';
                 digitalMsg.style.display = 'none';
                 deliveryContainer.style.display = 'none';
                 document.getElementById('sumUnitPrice').textContent = '—';
@@ -1857,15 +1998,19 @@
             const shippingRow = document.getElementById('shippingRow');
             if (selectedProduct.Type === 'Digital') {
                 shippingRow.style.display = 'none';
-                shippingTime.textContent = 'No shipping required.';
+                shippingTime.textContent = '';
                 digitalMsg.style.display = 'block';
                 deliveryContainer.style.display = 'none';
             } else {
                 shippingRow.style.display = 'flex';
                 document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
-                shippingTime.textContent = getShippingTime();
+                if (isEmailVerified && userCountryRegion) {
+                    shippingTime.textContent = getShippingTime();
+                } else {
+                    shippingTime.textContent = '';
+                }
                 digitalMsg.style.display = 'none';
-                deliveryContainer.style.display = 'block';
+                deliveryContainer.style.display = (isEmailVerified && userCountryRegion) ? 'block' : 'none';
             }
         }
 
@@ -1911,6 +2056,34 @@
             });
             buildSearchableDropdown(dropdown, items, 'Search country...');
             setupDropdown(trigger, dropdown);
+        }
+
+        function buildContactPhoneCodeSelector() {
+            const dropdown = document.getElementById('contactPhoneCodeDropdown');
+            const trigger = document.getElementById('contactPhoneCodeSelector');
+            if (!dropdown || !trigger) return;
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const dial = country.PhoneCode || '+1';
+                const item = document.createElement('div');
+                item.className = 'phone-code-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location} (${dial})</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('contactPhoneCodeInput').value = dial;
+                    document.getElementById('contactPhoneFlag').src = country.FlagURL;
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: country.Location + ' ' + dial };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+            // Set default to the same as order default
+            if (shippingRegions.length) {
+                const defaultRegion = shippingRegions[0];
+                document.getElementById('contactPhoneCodeInput').value = defaultRegion.PhoneCode || '+1';
+                document.getElementById('contactPhoneFlag').src = defaultRegion.FlagURL;
+            }
         }
 
         // ---------- GOOGLE MAPS & ADDRESS ----------
@@ -1968,7 +2141,6 @@
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
 
-            // Close mobile menu if open
             document.getElementById('topBarRight').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
 
@@ -2001,7 +2173,7 @@
                 e.preventDefault();
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
-                const phone = document.getElementById('phone').value.trim();
+                const phone = document.getElementById('phone').value.trim(); // this is now the phone number only
                 const message = document.getElementById('message').value.trim();
 
                 if (!name || !email || !message) {
@@ -2014,11 +2186,15 @@
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Sending...';
 
+                // Optionally include the country code from the contact phone selector
+                const phoneCode = document.getElementById('contactPhoneCodeInput').value;
+                const fullPhone = phoneCode ? phoneCode + ' ' + phone : phone;
+
                 const params = new URLSearchParams();
                 params.append('action', 'sendContact');
                 params.append('name', name);
                 params.append('email', email);
-                params.append('phone', phone);
+                params.append('phone', fullPhone);
                 params.append('message', message);
 
                 try {
