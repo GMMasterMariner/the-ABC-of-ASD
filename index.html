@@ -126,11 +126,16 @@
         }
         .currency-selector img { height: 20px; width: auto; }
         .currency-selector::after { content: '▾'; margin-left: 0.3rem; font-size: 0.8rem; }
+        .currency-dropdown,
+        .phone-code-dropdown,
+        .country-dropdown {
+            min-width: 260px;                /* uniform width for all three */
+        }
         .currency-dropdown {
             position: absolute; top: 100%; right: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 20;
-            display: none; min-width: 220px; max-height: 250px; overflow-y: auto; color: #333;
+            display: none; max-height: 250px; overflow-y: auto; color: #333;
         }
         .currency-dropdown.open { display: block; }
         .currency-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap; }
@@ -283,7 +288,8 @@
             position: absolute; top: 100%; left: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
-            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
+            display: none; max-height: 250px; overflow-y: auto;
+            min-width: 220px;   /* will be overridden by the unified min-width above */
         }
         .phone-code-dropdown.open { display: block; }
         .phone-code-item {
@@ -399,7 +405,7 @@
         .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
         .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
 
-        /* Fix verifying message centering */
+        /* Verifying message – centred */
         .verify-message {
             display: flex;
             align-items: center;
@@ -408,7 +414,7 @@
             margin-top: 1rem;
         }
         .verify-message .pulse-message {
-            display: inline; /* pulse effect applies to inline text */
+            display: inline;
         }
 
         /* Customer details row */
@@ -438,7 +444,7 @@
         .address-stack { display: flex; flex-direction: column; gap: 0.8rem; }
         .city-postcode-combo { display: flex; gap: 0.4rem; }
         .city-postcode-combo input:first-child { flex: 1; }
-        .city-postcode-combo input:last-child { width: 100px; }   /* wider for placeholder */
+        .city-postcode-combo input:last-child { width: 100px; }
         .region-country-stack { display: flex; flex-direction: column; gap: 0.8rem; }
         .country-selector {
             display: flex; align-items: center; gap: 0.3rem;
@@ -451,7 +457,8 @@
             position: absolute; top: 100%; left: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 20;
-            display: none; max-height: 250px; overflow-y: auto; min-width: 220px;
+            display: none; max-height: 250px; overflow-y: auto;
+            min-width: 220px;
         }
         .country-dropdown.open { display: block; }
         .country-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; }
@@ -470,8 +477,10 @@
         .order-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
         .shipping-info-box {
             background: #f9f9f9; border: 1px solid #e0e0e0;
-            border-radius: 8px; padding: 1.5rem; flex: 1;
-            height: 100%;   /* ensure it stretches */
+            border-radius: 8px; padding: 1.5rem;
+            display: flex; flex-direction: column;   /* allow it to stretch */
+            flex: 1;
+            height: 100%;
         }
         .shipping-info-box h4 { margin-bottom: 0.5rem; }
         .shipping-info-box textarea {
@@ -480,12 +489,15 @@
             font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
         }
 
-        /* Payment row alignment */
+        /* Payment row – equal button widths */
         .payment-row { display: flex; gap: 2rem; margin-top: 2rem; }
         .payment-col { flex: 1; display: flex; }
         .payment-col:first-child { justify-content: flex-end; }
         .payment-col:last-child { justify-content: flex-start; }
-        .payment-col .pay-btn { min-width: 160px; }
+        .pay-btn {
+            width: 200px;   /* both buttons get exactly this width */
+            min-width: 0;   /* remove min‑width to allow exact sizing */
+        }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
@@ -803,7 +815,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR URL HERE
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR ACTUAL URL HERE
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -885,11 +897,11 @@
             dropdown.className = 'currency-dropdown';
             dropdown.id = 'currencyDropdown';
 
-            const sorted = [...exchangeRates].sort((a, b) => a.CurrencyCode.localeCompare(b.CurrencyCode));
+            const sorted = [...exchangeRates].sort((a, b) => a.CountryName.localeCompare(b.CountryName));
             const items = sorted.map(rate => {
                 const item = document.createElement('div');
                 item.className = 'currency-dropdown-item';
-                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"><span>${rate.CurrencyCode} – ${rate.CountryName}</span>`;
+                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"><span>${rate.CountryName} (${rate.CurrencyCode})</span>`;
                 item.addEventListener('click', () => {
                     selectedCurrency = rate;
                     updateCurrencyDisplay();
@@ -897,7 +909,7 @@
                     localStorage.setItem('selectedCurrency', rate.CurrencyCode);
                     dropdown.classList.remove('open');
                 });
-                return { element: item, text: rate.CurrencyCode + ' ' + rate.CountryName };
+                return { element: item, text: rate.CountryName + ' ' + rate.CurrencyCode };
             });
             buildSearchableDropdown(dropdown, items, 'Search currency...');
             container.appendChild(btn);
@@ -984,7 +996,11 @@
                     if (el.classList.contains('product-price') || el.classList.contains('price')) el.style.color = alertColor;
                 }
             });
-            if (document.getElementById('order-section').classList.contains('active')) updateOrderSummary();
+            // also update quantity total and order summary immediately
+            if (document.getElementById('order-section').classList.contains('active')) {
+                updateQuantityTotal();
+                updateOrderSummary();
+            }
         }
 
         // ---------- HEIGHT EQUALISATION ----------
@@ -1471,7 +1487,6 @@
             buildPhoneCodeSelector();
             buildContactPhoneCodeSelector();
 
-            // Auto‑resize phone code inputs on load and on input
             autoResizePhoneCodeInput('phoneCodeInput');
             autoResizePhoneCodeInput('contactPhoneCodeInput');
             document.getElementById('phoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('phoneCodeInput'));
@@ -1489,11 +1504,9 @@
             }
         }
 
-        // ---------- AUTO RESIZE PHONE CODE INPUT ----------
         function autoResizePhoneCodeInput(inputId) {
             const input = document.getElementById(inputId);
             if (!input) return;
-            // Create a hidden span with the same styling as the input
             const span = document.createElement('span');
             span.style.font = window.getComputedStyle(input).font;
             span.style.visibility = 'hidden';
@@ -1501,7 +1514,7 @@
             span.style.whiteSpace = 'nowrap';
             document.body.appendChild(span);
             span.textContent = input.value || input.placeholder || '+1';
-            const width = span.offsetWidth + 4; // small extra space
+            const width = span.offsetWidth + 4;
             input.style.width = width + 'px';
             document.body.removeChild(span);
         }
@@ -1716,7 +1729,6 @@
             const discountRow = document.getElementById('discountRow');
             if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
                 discountRow.style.display = 'flex';
-                // Format: "Discount (X% off for Y+ items):"
                 document.getElementById('discountDetail').textContent =
                     ` (${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items):`;
                 document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
