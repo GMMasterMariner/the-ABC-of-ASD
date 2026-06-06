@@ -22,23 +22,17 @@
             padding-top: 68px;
         }
 
-        /* ---------- SPLASH SCREEN ---------- */
+        /* ---------- SPLASH SCREEN (inline progress bar) ---------- */
         #splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(25, 67, 115, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-            opacity: 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease; opacity: 1;
         }
         #splash-screen.hidden { opacity: 0; pointer-events: none; }
         #splash-logo {
-            max-width: 200px;
-            height: auto;
+            max-width: 200px; height: auto;
             animation: pulse 1.5s ease-in-out infinite;
             margin-bottom: 1.5rem;
         }
@@ -64,8 +58,7 @@
             justify-content: flex-start;
         }
         .spinner {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             border: 3px solid rgba(255,255,255,0.3);
             border-top-color: #ffffff;
             border-radius: 50%;
@@ -73,18 +66,15 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .progress-bar {
-            width: 100%;
+            flex: 1;
             height: 4px;
             background: rgba(255,255,255,0.2);
             border-radius: 2px;
-            margin-top: 0.5rem;
             overflow: hidden;
         }
         .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 2px;
+            width: 0%; height: 100%;
+            background: #ffffff; border-radius: 2px;
             transition: width 2s ease;
         }
         .progress-fill.full { width: 100%; }
@@ -470,23 +460,15 @@
             flex: 1; background: #ffffff; border: 1px solid #e0e0e0;
             border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .order-summary h4 { margin-bottom: 1rem; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
-        .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
-        .discount-detail { color: var(--alert-color, #dc3c33); font-size: 0.9rem; margin-left: 0.5rem; font-weight: 600; }
-        .order-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+        .order-sidebar {
+            display: flex;
+            flex-direction: column;
+        }
         .shipping-info-box {
             background: #f9f9f9; border: 1px solid #e0e0e0;
             border-radius: 8px; padding: 1.5rem;
-            display: flex; flex-direction: column;   /* allow it to stretch */
             flex: 1;
-            height: 100%;
-        }
-        .shipping-info-box h4 { margin-bottom: 0.5rem; }
-        .shipping-info-box textarea {
-            width: 100%; margin-top: 0.5rem; padding: 0.6rem;
-            border: 1px solid #ccc; border-radius: 4px;
-            font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 60px;
+            min-height: 0;
         }
 
         /* Payment row – equal button widths */
@@ -497,6 +479,27 @@
         .pay-btn {
             width: 200px;   /* both buttons get exactly this width */
             min-width: 0;   /* remove min‑width to allow exact sizing */
+        }
+
+        /* Uniform flag sizes */
+        .currency-selector img,
+        .phone-code-selector img,
+        .country-selector img {
+            height: 20px;
+            width: auto;
+        }
+        
+        .currency-dropdown-item img,
+        .phone-code-item img,
+        .country-dropdown-item img {
+            width: 20px;
+            height: auto;
+        }
+
+        .currency-dropdown,
+        .phone-code-dropdown,
+        .country-dropdown {
+            min-width: 260px;
         }
 
         /* ---------- RESPONSIVE ---------- */
@@ -541,9 +544,9 @@
             <div class="spinner-row">
                 <div class="spinner"></div>
                 <span>Loading…</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -739,7 +742,7 @@
                         <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
                         <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
                         <div class="summary-row" id="discountRow" style="display: none;">
-                            <span>Discount <span class="discount-detail" id="discountDetail"></span></span>
+                            <span>Discount<span class="discount-detail" id="discountDetail"></span></span>
                             <span id="sumDiscount">—</span>
                         </div>
                         <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
@@ -831,6 +834,7 @@
         let selectedShippingCountry = '';
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
+        let paymentKeys = {};
 
         // ---------- SINGLE FETCH ----------
         async function fetchAllSiteData() {
@@ -838,6 +842,79 @@
             return await res.json();
         }
 
+        async function fetchPaymentKeys() {
+            const res = await fetch(API_URL + '?action=getPaymentKeys');
+            return await res.json();
+        }
+        
+        async function initPayments() {
+            if (paymentKeys.paypalClientId) {
+                const script = document.createElement('script');
+                script.src = `https://www.paypal.com/sdk/js?client-id=${paymentKeys.paypalClientId}&currency=ZAR`;
+                script.onload = () => {
+                    paypal.Buttons({
+                        createOrder: function(data, actions) {
+                            const total = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
+                            return actions.order.create({
+                                purchase_units: [{
+                                    amount: { value: total }
+                                }]
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            return actions.order.capture().then(function(details) {
+                                alert('Transaction completed by ' + details.payer.name.given_name);
+                            });
+                        }
+                    }).render('#paypalBtn');
+                };
+                document.head.appendChild(script);
+            }
+        
+            document.getElementById('payfastBtn').addEventListener('click', async () => {
+                if (!selectedProduct || !isEmailVerified) return;
+                const email = document.getElementById('verifiedEmail').value;
+                const name = document.getElementById('customerName').value;
+                const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
+                const itemName = selectedProduct.ProductName;
+                const description = selectedProduct.Type + ' book';
+        
+                const formFields = {
+                    merchant_id: paymentKeys.payfastMerchantId,
+                    merchant_key: paymentKeys.payfastMerchantKey,
+                    return_url: window.location.origin + '/success',
+                    cancel_url: window.location.origin + '/cancel',
+                    notify_url: API_URL + '?action=notify',
+                    name_first: name.split(' ')[0] || '',
+                    name_last: name.split(' ').slice(1).join(' ') || '',
+                    email_address: email,
+                    m_payment_id: Date.now().toString(),
+                    amount: amount,
+                    item_name: itemName,
+                    item_description: description
+                };
+        
+                const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
+                const sigData = await sigRes.json();
+                formFields.signature = sigData.signature;
+        
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://sandbox.payfast.co.za/eng/process';
+                form.style.display = 'none';
+                for (const [key, value] of Object.entries(formFields)) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            });
+        }
+        
         // ---------- DROPDOWN HELPERS ----------
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
@@ -1989,6 +2066,11 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
+        
+                // Fetch payment keys and initialize gateways
+                paymentKeys = await fetchPaymentKeys();
+                initPayments();
+        
                 const progressFill = document.getElementById('progressFill');
                 if (progressFill) setTimeout(() => progressFill.classList.add('full'), 100);
                 setTimeout(hideSplashScreen, 800);
