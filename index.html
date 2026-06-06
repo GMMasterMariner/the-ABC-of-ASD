@@ -149,6 +149,12 @@
         .page-section { display: none; }
         .page-section.active { display: block; }
 
+        /* ---- Page Headings (like home headline) ---- */
+        .page-heading {
+            text-align: center; font-size: 1.4rem; letter-spacing: 0.5px;
+            margin-bottom: 2rem; font-weight: 600; color: var(--primary-color, #194373);
+        }
+
         /* ---- Home Page ---- */
         .home-headline {
             text-align: center; font-size: 1.4rem; letter-spacing: 0.5px;
@@ -162,6 +168,11 @@
         }
         .home-col-left-box h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
         .home-col-left-box p { line-height: 1.6; }
+
+        /* Center‑justify home descriptions */
+        #homeDesc1, #homeDesc2 {
+            text-align: center;
+        }
 
         .carousel-wrapper {
             position: relative; width: 100%; height: 100%;
@@ -191,15 +202,24 @@
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
 
+        /* Product cards – equal height with 3‑line title space */
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .product-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .product-card h4 {
+            font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;
+            line-height: 1.4;
+            height: 4.2em;          /* space for exactly 3 lines */
+            overflow: hidden;
+        }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
-        .product-card .price { font-weight: 700; font-size: 1.2rem; }
+        .product-card .price { font-weight: 700; font-size: 1.2rem; margin-top: auto; }
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
@@ -467,6 +487,7 @@
 
             /* Smaller home headline on mobile */
             .home-headline { font-size: 0.95rem; }
+            .page-heading { font-size: 0.95rem; }
 
             .top-bar { padding: 0.4rem 0.6rem; min-height: 56px; }
             .top-bar-left .banner-logo img { max-height: 30px; }
@@ -566,7 +587,12 @@
                 align-items: center;
                 gap: 1rem;
             }
-            .payment-col { justify-content: center; width: 100%; }
+            .payment-col,
+            .payment-col:first-child,
+            .payment-col:last-child {
+                justify-content: center !important;
+                width: 100%;
+            }
             .pay-btn { width: 200px; }
 
             .email-verify-wrapper {
@@ -634,8 +660,9 @@
             </div>
         </div>
 
-        <!-- About (image2 after text) -->
+        <!-- About -->
         <div class="page-section" id="about-section">
+            <h2 class="page-heading">About me</h2>
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text">
@@ -819,6 +846,7 @@
 
         <!-- Contact -->
         <div class="page-section" id="contact-section">
+            <h2 class="page-heading">Get in touch</h2>
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
                     <div class="form-group">
