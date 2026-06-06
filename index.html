@@ -73,7 +73,7 @@
         .progress-fill {
             width: 0%; height: 100%;
             background: #ffffff; border-radius: 2px;
-            animation: progressAnim 3s ease-out forwards;
+            animation: progressAnim 5s ease-out forwards;
         }
         @keyframes progressAnim {
             0% { width: 0%; }
@@ -437,15 +437,13 @@
         .order-sidebar {
             display: flex;
             flex-direction: column;
-            height: 100%;               /* take full height of the row */
         }
         .shipping-info-box {
             background: #f9f9f9; border: 1px solid #e0e0e0;
             border-radius: 8px; padding: 1.5rem;
             flex: 1;
-            min-height: 0;
             display: flex;
-            flex-direction: column;    /* allow internal content to stack */
+            flex-direction: column;
         }
         .order-summary h4 { margin-bottom: 1rem; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
@@ -2061,7 +2059,7 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                setTimeout(hideSplashScreen, 1500);
+                setTimeout(hideSplashScreen, 5500);
             } catch (err) {
                 console.error('Error initializing:', err);
                 hideSplashScreen();
