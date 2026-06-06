@@ -378,12 +378,19 @@
         .verify-right { display: flex; align-items: center; justify-content: center; }
         .verify-right .btn { width: 100%; }
 
-        .verify-three-col { display: flex; gap: 1rem; width: 100%; align-items: center; }
-        .code-col { flex: 0 0 auto; width: 30%; }
-        .message-col { flex: 1; font-size: 0.95rem; text-align: center; }
-        .resend-col { flex: 0 0 auto; margin-left: auto; }
-
-        .code-input-row { display: flex; gap: 8px; justify-content: space-between; }
+        /* Verification code UI – stacked */
+        .verify-code-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        .code-input-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
         .code-input-row input {
             width: 44px; height: 52px; text-align: center; font-size: 1.4rem;
             border: 1px solid #ccc; border-radius: 8px; font-family: inherit;
@@ -391,6 +398,12 @@
         }
         .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
         .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
+
+        .verify-message-row {
+            width: 100%;
+            text-align: center;
+            font-size: 0.95rem;
+        }
 
         .verify-message { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 1rem; }
 
@@ -725,23 +738,19 @@
                     <div class="verify-right" id="verifyRight">
                         <button class="btn" id="verifyEmailBtn">Verify Email</button>
                     </div>
-                    <div class="verify-three-col" id="codeEntryThreeCol" style="display: none;">
-                        <div class="code-col">
-                            <div class="code-input-row" id="codeInputRow">
-                                <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                                <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                                <input type="text" maxlength="1" class="code-digit" id="code3" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                                <input type="text" maxlength="1" class="code-digit" id="code4" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                                <input type="text" maxlength="1" class="code-digit" id="code5" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                                <input type="text" maxlength="1" class="code-digit" id="code6" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-                            </div>
+                    <div class="verify-code-stack" id="codeEntryStack" style="display: none;">
+                        <div class="code-input-row" id="codeInputRow">
+                            <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code3" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code4" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code5" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code6" pattern="[0-9]" inputmode="numeric" autocomplete="off">
                         </div>
-                        <div class="message-col" id="emailMessageContainer">
+                        <div class="verify-message-row" id="emailMessageContainer">
                             <span class="pulse-message" id="emailSentMessage">An email has been sent to <strong id="emailSentTo"></strong> with a verification code. Please enter the code in the input boxes.</span>
                         </div>
-                        <div class="resend-col">
-                            <button class="btn" id="resendBtn">Resend Code</button>
-                        </div>
+                        <button class="btn" id="resendBtn">Resend Code</button>
                     </div>
                     <div class="verify-message" id="verifyingMessageRow" style="display: none;">
                         <span class="pulse-message" id="verifyingText">Verifying...</span>
@@ -1490,7 +1499,7 @@
             document.getElementById('emailVerifyWrapper').style.display = 'flex';
             document.getElementById('verifyLeft').style.display = 'block';
             document.getElementById('verifyRight').style.display = 'flex';
-            document.getElementById('codeEntryThreeCol').style.display = 'none';
+            document.getElementById('codeEntryStack').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'none';
             document.getElementById('customerDetails').style.display = 'none';
             document.getElementById('shippingAddressSection').style.display = 'none';
@@ -1673,7 +1682,7 @@
             if (!silentResend) {
                 document.getElementById('verifyLeft').style.display = 'none';
                 document.getElementById('verifyRight').style.display = 'none';
-                document.getElementById('codeEntryThreeCol').style.display = 'flex';
+                document.getElementById('codeEntryStack').style.display = 'flex';
                 document.getElementById('emailSentTo').textContent = email;
                 document.getElementById('emailSentMessage').classList.add('pulse-message');
                 document.getElementById('code1').focus();
@@ -1688,7 +1697,7 @@
                 if (!silentResend) {
                     document.getElementById('verifyLeft').style.display = 'block';
                     document.getElementById('verifyRight').style.display = 'flex';
-                    document.getElementById('codeEntryThreeCol').style.display = 'none';
+                    document.getElementById('codeEntryStack').style.display = 'none';
                 }
             }
         }
@@ -1712,7 +1721,7 @@
         }
 
         async function startVerification(code) {
-            document.getElementById('codeEntryThreeCol').style.display = 'none';
+            document.getElementById('codeEntryStack').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'flex';
             document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
             document.getElementById('verifyingText').classList.add('pulse-message');
@@ -1743,7 +1752,7 @@
                     alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
                     document.getElementById('verifyLeft').style.display = 'block';
                     document.getElementById('verifyRight').style.display = 'flex';
-                    document.getElementById('codeEntryThreeCol').style.display = 'none';
+                    document.getElementById('codeEntryStack').style.display = 'none';
                     document.getElementById('verifyingMessageRow').style.display = 'none';
                     document.getElementById('orderEmail').value = lastEmailAttempt;
                     document.getElementById('verifyEmailBtn').disabled = false;
@@ -1753,7 +1762,7 @@
                 alert('Verification failed. Please check your connection and try again.');
                 document.getElementById('verifyLeft').style.display = 'block';
                 document.getElementById('verifyRight').style.display = 'flex';
-                document.getElementById('codeEntryThreeCol').style.display = 'none';
+                document.getElementById('codeEntryStack').style.display = 'none';
                 document.getElementById('verifyingMessageRow').style.display = 'none';
             }
         }
