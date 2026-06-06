@@ -61,7 +61,7 @@
             text-align: left;
         }
 
-        /* ---------- COMBINED TOP BAR (desktop three‑line) ---------- */
+        /* ---------- COMBINED TOP BAR ---------- */
         .top-bar {
             position: fixed; top: 0; left: 0; width: 100%;
             z-index: 1000; background-color: #194373; color: #ffffff;
@@ -72,12 +72,13 @@
         .top-bar-left { display: flex; align-items: center; flex: 0 0 auto; }
         .top-bar-left .banner-logo img { max-height: 45px; display: block; }
 
-        /* Banner title – centered, wraps to three lines */
+        /* Banner title – centered across full screen on desktop */
         .banner-text {
-            flex: 1;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            white-space: normal;
-            margin: 0 1rem;
+            white-space: nowrap;
         }
         .banner-text h1 { font-size: 1.3rem; font-weight: 700; line-height: 1.2; margin: 0; }
         .banner-text h1 .abbreviation {
@@ -202,7 +203,7 @@
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
-        /* ---- About ---- */
+        /* ---- About (image2 after text) ---- */
         .about-section-content {
             display: flex;
             flex-wrap: wrap;
@@ -488,14 +489,19 @@
             .nav-label { display: inline; }
             .currency-selector { width: 100%; justify-content: flex-start; }
 
+            /* Banner title mobile: flexible centering */
             .banner-text {
+                position: static;
+                transform: none;
+                flex: 1;
+                white-space: normal;
                 margin: 0 0.5rem;
                 max-width: calc(100% - 60px);
                 overflow: hidden;
             }
             .banner-text h1 { font-size: 0.95rem; }
             .banner-text h1 .abbreviation {
-                font-size: 0.75rem;   /* smaller on mobile */
+                font-size: 0.75rem;
             }
             .banner-text h2 { font-size: 0.75rem; }
 
@@ -514,7 +520,6 @@
 
             /* About page mobile stacking */
             .about-section-content {
-                display: flex;
                 flex-direction: column;
                 align-items: center;
             }
@@ -527,6 +532,12 @@
             }
             .about-text {
                 width: 100%;
+            }
+
+            /* Contact form stacking */
+            .form-row {
+                flex-direction: column;
+                gap: 0.8rem;
             }
 
             .order-product-box {
@@ -619,7 +630,7 @@
             </div>
         </div>
 
-        <!-- About (image2 moved after text) -->
+        <!-- About (image2 after text) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
@@ -637,7 +648,7 @@
                 <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
             </div>
         </div>
-        
+
         <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
@@ -1399,7 +1410,7 @@
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    shortBioPara.insertAdjacentElement('afterend', img2);
+                    document.querySelector('.about-section-content').appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
@@ -1408,13 +1419,14 @@
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    bioExtended.insertAdjacentElement('afterend', img2);
+                    document.querySelector('.about-section-content').appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
 
-            if (window.innerWidth <= 768) {
-                shortBioPara.insertAdjacentElement('afterend', img2);
+            // On mobile, image2 should be at the bottom initially
+            if (window.innerWidth <= 768 && about.AuthorImage2URL) {
+                document.querySelector('.about-section-content').appendChild(img2);
             }
             collapse();
 
