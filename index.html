@@ -141,7 +141,7 @@
             position: sticky; top: 0; background: white; z-index: 2;
         }
 
-        /* ---------- Mobile menu ---------- */
+        /* Mobile menu */
         @media (max-width: 768px) {
             .hamburger { display: block; }
             .top-bar-right {
@@ -243,8 +243,11 @@
 
         /* ---- Contact Form ---- */
         .contact-form { max-width: 700px; margin: 0 auto; }
-        .form-row { display: flex; gap: 0.8rem; margin-bottom: 0.8rem; }
-        .form-row:first-child { margin-top: 0; }
+        .form-row {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.8rem;   /* spacing between rows, matching address fields */
+        }
         .form-row .form-group { flex: 1; }
         .contact-form input, .contact-form textarea {
             width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px;
@@ -255,7 +258,7 @@
             outline: none; border-color: var(--primary-color, #194373);
             box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2);
         }
-        .contact-form textarea { resize: vertical; min-height: 120px; margin-bottom: 0.8rem; }
+        .contact-form textarea { resize: vertical; min-height: 120px; margin-top: 0.8rem; }
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
@@ -589,7 +592,6 @@
         <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
-                <!-- Product Selection Box -->
                 <div class="order-product-box" id="productSelectionBox">
                     <div class="order-product-option" id="productOption1" data-index="0">
                         <span class="selected-checkmark">✓</span>
@@ -790,11 +792,10 @@
     </div>
 
     <script>
-
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';  // <-- PUT YOUR ACTUAL URL HERE
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -940,7 +941,7 @@
             }
         }
 
-        // ---------- SET USER COUNTRY (now also stores name) ----------
+        // ---------- SET USER COUNTRY ----------
         function setUserCountryFromName(countryName) {
             const match = shippingRegions.find(r => r.Location === countryName);
             if (match) setUserCountry(match);
@@ -950,7 +951,7 @@
             document.getElementById('countryNameDisplay').textContent = regionObj.Location;
             document.getElementById('countryFlag').src = regionObj.FlagURL;
             userCountryRegion = regionObj.Region;
-            selectedShippingCountry = regionObj.Location; // store country name
+            selectedShippingCountry = regionObj.Location;
             const code = regionObj.PhoneCode || '+1';
             document.getElementById('phoneCodeInput').value = code;
             document.getElementById('phoneFlag').src = regionObj.FlagURL;
@@ -1299,7 +1300,7 @@
             toggleLess.addEventListener('click', collapse);
         }
 
-        // ---------- ORDER PAGE LOGIC (adjusted for empty qty, messaging, discount) ----------
+        // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
             document.getElementById('productOption1').classList.remove('selected');
             document.getElementById('productOption2').classList.remove('selected');
@@ -1350,6 +1351,216 @@
             updateOrderSummary();
         }
 
+        function loadOrderPage() {
+            if (products.length < 2) return;
+            const prod1 = products[0], prod2 = products[1];
+
+            document.getElementById('prod1Img').src = prod1.ImageURL || '';
+            document.getElementById('prod1Img').style.display = prod1.ImageURL ? 'block' : 'none';
+            document.getElementById('prod1Name').textContent = prod1.ProductName;
+            document.getElementById('prod1Price').textContent = formatPrice(prod1.BasePrice);
+            document.getElementById('prod1Price').setAttribute('data-zar', prod1.BasePrice);
+
+            document.getElementById('prod2Img').src = prod2.ImageURL || '';
+            document.getElementById('prod2Img').style.display = prod2.ImageURL ? 'block' : 'none';
+            document.getElementById('prod2Name').textContent = prod2.ProductName;
+            document.getElementById('prod2Price').textContent = formatPrice(prod2.BasePrice);
+            document.getElementById('prod2Price').setAttribute('data-zar', prod2.BasePrice);
+
+            document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
+            document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
+
+            const qtyInput = document.getElementById('orderQuantity');
+            const qtyUp = document.getElementById('qtyUp');
+            const qtyDown = document.getElementById('qtyDown');
+
+            function updateQtyButtons() {
+                let val = parseInt(qtyInput.value) || 1;
+                qtyUp.disabled = !selectedProduct;
+                qtyDown.disabled = !selectedProduct || val <= 1;
+            }
+
+            qtyUp.addEventListener('click', () => {
+                if (!selectedProduct) return;
+                let val = parseInt(qtyInput.value) || 1;
+                val = Math.min(val + 1, 100);
+                qtyInput.value = val;
+                updateQtyButtons();
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+            qtyDown.addEventListener('click', () => {
+                if (!selectedProduct) return;
+                let val = parseInt(qtyInput.value) || 1;
+                val = Math.max(val - 1, 1);
+                qtyInput.value = val;
+                updateQtyButtons();
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+            qtyInput.addEventListener('input', () => {
+                let val = parseInt(qtyInput.value);
+                if (isNaN(val) || val < 1) qtyInput.value = 1;
+                if (val > 100) qtyInput.value = 100;
+                updateQtyButtons();
+                updateQuantityTotal();
+                updateOrderSummary();
+            });
+
+            const emailInput = document.getElementById('orderEmail');
+            const verifyBtn = document.getElementById('verifyEmailBtn');
+            emailInput.addEventListener('input', () => {
+                verifyBtn.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+            });
+            verifyBtn.addEventListener('click', () => {
+                const email = emailInput.value.trim();
+                if (!email) return;
+                sendVerificationCode(email);
+            });
+
+            const codeInputs = document.querySelectorAll('.code-digit');
+            codeInputs.forEach((input, idx) => {
+                input.addEventListener('input', (e) => {
+                    if (input.value.length === 1) {
+                        input.classList.add('filled');
+                        if (idx < codeInputs.length - 1) codeInputs[idx + 1].focus();
+                    } else {
+                        input.classList.remove('filled');
+                    }
+                    const allFilled = Array.from(codeInputs).every(inp => inp.value.length === 1);
+                    if (allFilled) {
+                        const code = Array.from(codeInputs).map(inp => inp.value).join('');
+                        startVerification(code);
+                    }
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+                        codeInputs[idx - 1].focus();
+                    }
+                });
+            });
+
+            document.getElementById('resendBtn').addEventListener('click', () => {
+                if (document.getElementById('resendBtn').disabled) return;
+                for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
+                document.getElementById('code1').focus();
+                sendVerificationCode(lastEmailAttempt, true);
+                startResendCooldown();
+            });
+
+            document.getElementById('locateBtn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        if (window.google && google.maps) {
+                            const geocoder = new google.maps.Geocoder();
+                            const latlng = new google.maps.LatLng(latitude, longitude);
+                            geocoder.geocode({ location: latlng }, (results, status) => {
+                                if (status === 'OK' && results[0]) fillAddressFromPlace(results[0]);
+                                else alert('Geolocation service unavailable.');
+                            });
+                        } else alert('Geolocation service unavailable.');
+                    }, () => alert('Unable to retrieve location.'));
+                } else alert('Geolocation not supported.');
+            });
+
+            buildCountrySelector();
+            buildPhoneCodeSelector();
+            buildContactPhoneCodeSelector();
+
+            if (isEmailVerified && lastVerifiedEmail) {
+                document.getElementById('verifiedEmail').value = lastVerifiedEmail;
+                document.getElementById('customerDetails').style.display = 'block';
+                if (selectedProduct && selectedProduct.Type === 'Physical') {
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                }
+            } else {
+                resetOrderForm();
+            }
+        }
+
+        let lastEmailAttempt = '';
+
+        async function sendVerificationCode(email, silentResend = false) {
+            lastEmailAttempt = email;
+            if (!silentResend) {
+                document.getElementById('verifyLeft').style.display = 'none';
+                document.getElementById('verifyRight').style.display = 'none';
+                document.getElementById('codeEntryThreeCol').style.display = 'flex';
+                document.getElementById('emailSentTo').textContent = email;
+                document.getElementById('emailSentMessage').classList.add('pulse-message');
+                document.getElementById('code1').focus();
+            }
+            const params = new URLSearchParams();
+            params.append('action', 'sendVerificationCode');
+            params.append('email', email);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result !== 'success') {
+                alert('Failed to send verification code. Please try again.');
+                if (!silentResend) {
+                    document.getElementById('verifyLeft').style.display = 'block';
+                    document.getElementById('verifyRight').style.display = 'flex';
+                    document.getElementById('codeEntryThreeCol').style.display = 'none';
+                }
+            }
+        }
+
+        function startResendCooldown() {
+            const btn = document.getElementById('resendBtn');
+            let seconds = 30;
+            btn.disabled = true;
+            btn.textContent = `Resend Code (${seconds}s)`;
+            if (window.resendTimer) clearInterval(window.resendTimer);
+            window.resendTimer = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(window.resendTimer);
+                    btn.disabled = false;
+                    btn.textContent = 'Resend Code';
+                } else {
+                    btn.textContent = `Resend Code (${seconds}s)`;
+                }
+            }, 1000);
+        }
+
+        async function startVerification(code) {
+            document.getElementById('codeEntryThreeCol').style.display = 'none';
+            document.getElementById('verifyingMessageRow').style.display = 'flex';
+            document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
+            document.getElementById('verifyingText').classList.add('pulse-message');
+
+            const params = new URLSearchParams();
+            params.append('action', 'verifyCode');
+            params.append('email', lastEmailAttempt);
+            params.append('code', code);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result === 'verified') {
+                isEmailVerified = true;
+                document.getElementById('emailVerifyWrapper').style.display = 'none';
+                document.getElementById('customerDetails').style.display = 'block';
+                document.getElementById('verifiedEmail').value = lastEmailAttempt;
+                if (selectedProduct) {
+                    updateInstructionMessage();
+                    if (selectedProduct.Type === 'Physical') {
+                        document.getElementById('shippingAddressSection').style.display = 'block';
+                        if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                    }
+                }
+                updateOrderSummary();
+            } else {
+                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
+                document.getElementById('verifyLeft').style.display = 'block';
+                document.getElementById('verifyRight').style.display = 'flex';
+                document.getElementById('codeEntryThreeCol').style.display = 'none';
+                document.getElementById('verifyingMessageRow').style.display = 'none';
+                document.getElementById('orderEmail').value = lastEmailAttempt;
+                document.getElementById('verifyEmailBtn').disabled = false;
+            }
+        }
+
         function selectProduct(index) {
             const opt1 = document.getElementById('productOption1');
             const opt2 = document.getElementById('productOption2');
@@ -1392,10 +1603,37 @@
             }
         }
 
-        function updateQuantityTotal() { /* same but uses parse int from input, defaults 0 if empty */ }
+        function updateQuantityTotal() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
+        }
 
-        function getUnitPrice() { /* same */ }
-        function getShippingCost() { /* same */ }
+        function getUnitPrice() {
+            if (!selectedProduct) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            return selectedProduct.BasePrice;
+        }
+
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
+            if (!userCountryRegion) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 0;
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
+            return rows[rows.length-1].Cost || 0;
+        }
 
         function getShippingTime() {
             if (!selectedProduct || selectedProduct.Type === 'Digital') return '';
@@ -1474,68 +1712,6 @@
             }
         }
 
-        // ---------- EMAIL VERIFICATION (adjusted messaging) ----------
-        async function sendVerificationCode(email, silentResend = false) {
-            lastEmailAttempt = email;
-            if (!silentResend) {
-                document.getElementById('verifyLeft').style.display = 'none';
-                document.getElementById('verifyRight').style.display = 'none';
-                document.getElementById('codeEntryThreeCol').style.display = 'flex';
-                document.getElementById('emailSentTo').textContent = email;
-                document.getElementById('emailSentMessage').classList.add('pulse-message');
-                document.getElementById('code1').focus();
-            }
-            const params = new URLSearchParams();
-            params.append('action', 'sendVerificationCode');
-            params.append('email', email);
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result !== 'success') {
-                alert('Failed to send verification code. Please try again.');
-                if (!silentResend) {
-                    document.getElementById('verifyLeft').style.display = 'block';
-                    document.getElementById('verifyRight').style.display = 'flex';
-                    document.getElementById('codeEntryThreeCol').style.display = 'none';
-                }
-            }
-        }
-
-        async function startVerification(code) {
-            document.getElementById('codeEntryThreeCol').style.display = 'none';
-            document.getElementById('verifyingMessageRow').style.display = 'flex';
-            document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
-            document.getElementById('verifyingText').classList.add('pulse-message');
-
-            const params = new URLSearchParams();
-            params.append('action', 'verifyCode');
-            params.append('email', lastEmailAttempt);
-            params.append('code', code);
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result === 'verified') {
-                isEmailVerified = true;
-                document.getElementById('emailVerifyWrapper').style.display = 'none';
-                document.getElementById('customerDetails').style.display = 'block';
-                document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                if (selectedProduct) {
-                    updateInstructionMessage(); // shows format & price
-                    if (selectedProduct.Type === 'Physical') {
-                        document.getElementById('shippingAddressSection').style.display = 'block';
-                        if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
-                    }
-                }
-                updateOrderSummary();
-            } else {
-                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
-                document.getElementById('verifyLeft').style.display = 'block';
-                document.getElementById('verifyRight').style.display = 'flex';
-                document.getElementById('codeEntryThreeCol').style.display = 'none';
-                document.getElementById('verifyingMessageRow').style.display = 'none';
-                document.getElementById('orderEmail').value = lastEmailAttempt;
-                document.getElementById('verifyEmailBtn').disabled = false;
-            }
-        }
-
         // ---------- COUNTRY & PHONE SELECTORS ----------
         function buildCountrySelector() {
             const dropdown = document.getElementById('countryDropdown');
@@ -1550,6 +1726,7 @@
                     document.getElementById('countryNameDisplay').textContent = country.Location;
                     document.getElementById('countryFlag').src = country.FlagURL;
                     userCountryRegion = country.Region;
+                    selectedShippingCountry = country.Location;
                     dropdown.classList.remove('open');
                     updateOrderSummary();
                 });
@@ -1600,7 +1777,6 @@
             });
             buildSearchableDropdown(dropdown, items, 'Search country...');
             setupDropdown(trigger, dropdown);
-            // Set default to the same as order default
             if (shippingRegions.length) {
                 const defaultRegion = shippingRegions[0];
                 document.getElementById('contactPhoneCodeInput').value = defaultRegion.PhoneCode || '+1';
@@ -1651,6 +1827,7 @@
                         document.getElementById('countryNameDisplay').textContent = regionMatch.Location;
                         document.getElementById('countryFlag').src = regionMatch.FlagURL;
                         userCountryRegion = regionMatch.Region;
+                        selectedShippingCountry = regionMatch.Location;
                     }
                 }
             }
@@ -1695,7 +1872,7 @@
                 e.preventDefault();
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
-                const phone = document.getElementById('phone').value.trim(); // this is now the phone number only
+                const phone = document.getElementById('phone').value.trim();
                 const message = document.getElementById('message').value.trim();
 
                 if (!name || !email || !message) {
@@ -1708,7 +1885,6 @@
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Sending...';
 
-                // Optionally include the country code from the contact phone selector
                 const phoneCode = document.getElementById('contactPhoneCodeInput').value;
                 const fullPhone = phoneCode ? phoneCode + ' ' + phone : phone;
 
@@ -1771,11 +1947,8 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
-                // Animate progress bar
                 const progressFill = document.getElementById('progressFill');
-                if (progressFill) {
-                    setTimeout(() => progressFill.classList.add('full'), 100);
-                }
+                if (progressFill) setTimeout(() => progressFill.classList.add('full'), 100);
                 setTimeout(hideSplashScreen, 800);
             } catch (err) {
                 console.error('Error initializing:', err);
