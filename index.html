@@ -187,6 +187,11 @@
             height: 20px;
             width: auto;
         }
+        .currency-selector::after {
+            content: '▾';
+            margin-left: 0.3rem;
+            font-size: 0.8rem;
+        }
         .currency-dropdown {
             position: absolute;
             top: 100%;
@@ -454,11 +459,6 @@
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
-        /* Placeholder asterisk */
-        input::placeholder, textarea::placeholder {
-            color: #888;
-        }
-
         /* ---- Order Form ---- */
         .order-wrapper { max-width: 960px; margin: 0 auto; }
 
@@ -632,6 +632,12 @@
             border: none; background: transparent; font-family: inherit;
             font-size: inherit; color: #194373; width: 60px; padding: 0; outline: none;
         }
+        .phone-code-selector::after {
+            content: '▾';
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: #888;
+        }
         .phone-code-dropdown {
             position: absolute; top: 100%; left: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
@@ -675,17 +681,6 @@
             position: relative; font-size: 1rem;
         }
         .country-selector::after {
-            content: '▾';
-            margin-left: auto;
-            font-size: 0.8rem;
-            color: #888;
-        }
-        .currency-selector::after {
-            content: '▾';
-            margin-left: 0.3rem;
-            font-size: 0.8rem;
-        }
-        .phone-code-selector::after {
             content: '▾';
             margin-left: auto;
             font-size: 0.8rem;
@@ -1105,7 +1100,7 @@
         // ---------- CURRENCY FUNCTIONS ----------
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
-            container.innerHTML = ''; // clear previous
+            container.innerHTML = '';
 
             if (!exchangeRates.length) return;
 
@@ -1436,8 +1431,6 @@
                 const section = link.dataset.section;
                 if (section) showPage(section);
             });
-
-            // No dynamic page title needed anymore – removed updateNavTitle calls.
         }
 
         function loadHomePageDirect(home) {
@@ -1781,15 +1774,319 @@
             document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
         }
 
-        // ... (remaining order logic, shipping, summary, etc. – unchanged)
-        // Included the same functions as before, just adapted to new IDs if needed.
-        // For brevity, the rest of the script is identical to the previous version.
-        // Please copy the full JS from the original file; the only changes are in CSS/HTML above.
+        function getUnitPrice() {
+            if (!selectedProduct) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const threshold = selectedProduct.DiscountThreshold || 0;
+            const discountPercent = selectedProduct.DiscountPercent || 0;
+            if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
+            return selectedProduct.BasePrice;
+        }
 
-        // The full JS from the original is continued below...
-        // [Due to length, I'm indicating that the rest of the script remains exactly as provided, with the exception of any references to old navbar elements removed.]
-        // In the final file you must include the complete JS after this point.
-        // End of file.
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
+            if (!userCountryRegion) return 0;
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 0;
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
+            return rows[rows.length-1].Cost || 0;
+        }
+
+        function getShippingTime() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 'N/A';
+            if (!userCountryRegion) return 'Please select a shipping address.';
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalWeight = selectedProduct.Weight * qty;
+            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => {
+                if (!r || !r.Region) return false;
+                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+                return rowRegion === cleanRegion;
+            });
+            if (!rows.length) return 'Shipping time unavailable.';
+            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Time || '';
+            return rows[rows.length-1].Time || '';
+        }
+
+        function updateOrderSummary() {
+            const digitalMsg = document.getElementById('digitalMessage');
+            const deliveryContainer = document.getElementById('deliveryDetailsContainer');
+            const shippingTime = document.getElementById('shippingTimeText');
+            if (!selectedProduct) {
+                shippingTime.textContent = 'Select a product and address to see delivery time.';
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'none';
+                document.getElementById('sumUnitPrice').textContent = '—';
+                document.getElementById('sumQuantity').textContent = '0';
+                document.getElementById('sumSubtotal').textContent = '—';
+                document.getElementById('sumTotal').textContent = '—';
+                document.getElementById('discountRow').style.display = 'none';
+                document.getElementById('shippingRow').style.display = 'none';
+                return;
+            }
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const unitPrice = getUnitPrice();
+            const subtotal = unitPrice * qty;
+            const shipping = getShippingCost();
+            const total = subtotal + shipping;
+            const discountAmount = (selectedProduct.BasePrice - unitPrice) * qty;
+
+            document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
+            document.getElementById('sumQuantity').textContent = qty;
+            document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
+            document.getElementById('sumTotal').textContent = formatPrice(total);
+
+            const discountRow = document.getElementById('discountRow');
+            if (qty >= (selectedProduct.DiscountThreshold || 0)) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountText').textContent = `${selectedProduct.DiscountPercent}% discount for ${selectedProduct.DiscountThreshold} or more items.`;
+                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            const shippingRow = document.getElementById('shippingRow');
+            if (selectedProduct.Type === 'Digital') {
+                shippingRow.style.display = 'none';
+                shippingTime.textContent = 'No shipping required.';
+                digitalMsg.style.display = 'block';
+                deliveryContainer.style.display = 'none';
+            } else {
+                shippingRow.style.display = 'flex';
+                document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
+                shippingTime.textContent = getShippingTime();
+                digitalMsg.style.display = 'none';
+                deliveryContainer.style.display = 'block';
+            }
+        }
+
+        // ---------- COUNTRY & PHONE SELECTORS ----------
+        function buildCountrySelector() {
+            const dropdown = document.getElementById('countryDropdown');
+            const trigger = document.getElementById('countrySelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const item = document.createElement('div');
+                item.className = 'country-dropdown-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location}</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('countryNameDisplay').textContent = country.Location;
+                    document.getElementById('countryFlag').src = country.FlagURL;
+                    userCountryRegion = country.Region;
+                    dropdown.classList.remove('open');
+                    updateOrderSummary();
+                });
+                return { element: item, text: country.Location };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        function buildPhoneCodeSelector() {
+            const dropdown = document.getElementById('phoneCodeDropdown');
+            const trigger = document.getElementById('phoneCodeSelector');
+            dropdown.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a, b) => a.Location.localeCompare(b.Location));
+            const items = sorted.map(country => {
+                const dial = country.PhoneCode || '+1';
+                const item = document.createElement('div');
+                item.className = 'phone-code-item';
+                item.innerHTML = `<img src="${country.FlagURL}" alt=""><span>${country.Location} (${dial})</span>`;
+                item.addEventListener('click', () => {
+                    document.getElementById('phoneCodeInput').value = dial;
+                    document.getElementById('phoneFlag').src = country.FlagURL;
+                    dropdown.classList.remove('open');
+                });
+                return { element: item, text: country.Location + ' ' + dial };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search country...');
+            setupDropdown(trigger, dropdown);
+        }
+
+        // ---------- GOOGLE MAPS & ADDRESS ----------
+        function loadGoogleMapsScript(apiKey) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+            script.defer = true;
+            script.onload = initAutocomplete;
+            document.head.appendChild(script);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('addressLine1');
+            if (!input) return;
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['address'] });
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                fillAddressFromPlace(place);
+            });
+        }
+
+        function fillAddressFromPlace(place) {
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+            document.getElementById('countryNameDisplay').textContent = 'Country';
+            document.getElementById('countryFlag').src = '';
+
+            document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
+
+            for (const comp of place.address_components) {
+                const types = comp.types;
+                if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
+                else if (types.includes('sublocality') || types.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name;
+                else if (types.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name;
+                else if (types.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name;
+                else if (types.includes('country')) {
+                    const countryName = comp.long_name;
+                    const regionMatch = shippingRegions.find(r => r.Location === countryName);
+                    if (regionMatch) {
+                        document.getElementById('countryNameDisplay').textContent = regionMatch.Location;
+                        document.getElementById('countryFlag').src = regionMatch.FlagURL;
+                        userCountryRegion = regionMatch.Region;
+                    }
+                }
+            }
+            updateOrderSummary();
+        }
+
+        // ---------- SPA NAVIGATION ----------
+        function showPage(sectionId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
+
+            // Close mobile menu if open
+            document.getElementById('topBarRight').classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+
+            if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
+            if (sectionId === 'order-section') resetOrderForm();
+        }
+
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('topBarRight');
+            btn.addEventListener('click', () => {
+                const expanded = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', expanded);
+            });
+            menu.addEventListener('click', (e) => {
+                if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        function setupContactForm() {
+            const form = document.getElementById('contactForm');
+            const resultDiv = document.getElementById('contactResult');
+            const sendBtn = document.getElementById('sendButton');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Please fill in all required fields.';
+                    resultDiv.style.color = 'red';
+                    return;
+                }
+
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
+                const params = new URLSearchParams();
+                params.append('action', 'sendContact');
+                params.append('name', name);
+                params.append('email', email);
+                params.append('phone', phone);
+                params.append('message', message);
+
+                try {
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        form.style.display = 'none';
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = '✅ Thank you! I\'ll reply soon.';
+                        resultDiv.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        resultDiv.style.display = 'block';
+                        resultDiv.textContent = 'Error. Please try again.';
+                        resultDiv.style.color = 'red';
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send Message';
+                    }
+                } catch (err) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.textContent = 'Network error.';
+                    resultDiv.style.color = 'red';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Message';
+                }
+            });
+        }
+
+        // ---------- SPLASH SCREEN ----------
+        function hideSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('hidden');
+                setTimeout(() => { splash.style.display = 'none'; }, 500);
+            }
+        }
+
+        // ---------- INIT ----------
+        async function init() {
+            try {
+                const allData = await fetchAllSiteData();
+                appSettings = allData.settings || {};
+                applySettingsDirect(appSettings);
+
+                exchangeRates = allData.exchangeRates || [];
+                buildCurrencySelector();
+
+                products = allData.products || [];
+                shippingRegions = allData.shippingRegions || [];
+                regionRates = allData.regionRates || [];
+
+                await detectUserCurrency();
+
+                if (allData.home) loadHomePageDirect(allData.home);
+                if (allData.about) loadAboutSectionDirect(allData.about);
+                loadOrderPage();
+
+                setupHamburger();
+                setupContactForm();
+                equalizeHeights();
+
+                setTimeout(hideSplashScreen, 200);
+            } catch (err) {
+                console.error('Error initializing:', err);
+                hideSplashScreen();
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
