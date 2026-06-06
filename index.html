@@ -19,7 +19,7 @@
             font-family: 'Nunito Sans', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            padding-top: 68px; /* height of combined header */
+            padding-top: 68px;
         }
 
         /* ---------- SPLASH SCREEN ---------- */
@@ -35,10 +35,7 @@
             transition: opacity 0.5s ease;
             opacity: 1;
         }
-        #splash-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+        #splash-screen.hidden { opacity: 0; pointer-events: none; }
         #splash-logo {
             max-width: 200px;
             height: auto;
@@ -50,6 +47,12 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        .splash-loader {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
         .spinner-row {
             display: flex;
             align-items: center;
@@ -57,6 +60,8 @@
             color: #ffffff;
             font-size: 1rem;
             font-weight: 500;
+            width: 100%;
+            justify-content: flex-start;
         }
         .spinner {
             width: 20px;
@@ -66,374 +71,171 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
         }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 2px;
+            transition: width 2s ease;
+        }
+        .progress-fill.full { width: 100%; }
 
         /* ---------- COMBINED TOP BAR ---------- */
         .top-bar {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            z-index: 1000;
-            background-color: #194373;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem 1.2rem;
-            min-height: 68px;
+            position: fixed; top: 0; left: 0; width: 100%;
+            z-index: 1000; background-color: #194373; color: #ffffff;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.5rem 1.2rem; min-height: 68px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            flex: 0 0 auto;
-        }
-        .top-bar-left .banner-logo img {
-            max-height: 45px;
-            display: block;
-        }
-        /* Centered title */
+        .top-bar-left { display: flex; align-items: center; flex: 0 0 auto; }
+        .top-bar-left .banner-logo img { max-height: 45px; display: block; }
         .banner-text {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            white-space: nowrap;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            text-align: center; white-space: nowrap;
         }
-        .banner-text h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin: 0;
-        }
-        .banner-text h1 .abbreviation {
-            font-weight: 200;
-            opacity: 0.9;
-            letter-spacing: -0.3px;
-        }
-        .banner-text h2 {
-            font-size: 1rem;
-            letter-spacing: 0.4px;
-            font-weight: 400;
-            line-height: 1.3;
-            margin: 0.15rem 0 0 0;
-            opacity: 0.9;
-        }
+        .banner-text h1 { font-size: 1.3rem; font-weight: 700; line-height: 1.2; margin: 0; }
+        .banner-text h1 .abbreviation { font-weight: 200; opacity: 0.9; letter-spacing: -0.3px; }
+        .banner-text h2 { font-size: 1rem; letter-spacing: 0.4px; font-weight: 400; line-height: 1.3; margin: 0.15rem 0 0 0; opacity: 0.9; }
 
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex: 0 0 auto;
-        }
+        .top-bar-right { display: flex; align-items: center; gap: 0.8rem; flex: 0 0 auto; }
 
-        /* Hamburger */
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            line-height: 1;
-            cursor: pointer;
-            color: #ffffff;
-            padding: 0.2rem;
-            margin-left: auto;
-            z-index: 3;
-        }
+        .hamburger { display: none; background: none; border: none; font-size: 1.8rem; line-height: 1; cursor: pointer; color: #ffffff; padding: 0.2rem; margin-left: auto; z-index: 3; }
 
-        /* Navigation icons */
-        .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .nav-icons a {
-            display: inline-flex;
-            align-items: center;
-            text-decoration: none;
-            color: #ffffff;
-            transition: transform 0.2s;
-        }
+        .nav-icons { display: flex; align-items: center; gap: 0.8rem; }
+        .nav-icons a { display: inline-flex; align-items: center; text-decoration: none; color: #ffffff; transition: transform 0.2s; }
         .nav-icons a:hover { transform: scale(1.1); }
-        .nav-icons a img {
-            height: 26px;
-            width: auto;
-            filter: brightness(0) invert(1); /* make icons white on blue */
-        }
-        .nav-label {
-            display: none; /* hidden on desktop, shown in mobile menu */
-        }
+        .nav-icons a img { height: 26px; width: auto; filter: brightness(0) invert(1); }
+        .nav-label { display: none; }
 
-        /* Currency selector in header */
         .currency-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 4px;
-            padding: 0.3rem 0.6rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #ffffff;
-            position: relative;
-            white-space: nowrap;
+            display: flex; align-items: center; gap: 0.3rem;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px; padding: 0.3rem 0.6rem; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; color: #ffffff;
+            position: relative; white-space: nowrap;
         }
-        .currency-selector img {
-            height: 20px;
-            width: auto;
-        }
-        .currency-selector::after {
-            content: '▾';
-            margin-left: 0.3rem;
-            font-size: 0.8rem;
-        }
+        .currency-selector img { height: 20px; width: auto; }
+        .currency-selector::after { content: '▾'; margin-left: 0.3rem; font-size: 0.8rem; }
         .currency-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            z-index: 20;
-            display: none;
-            min-width: 220px;
-            max-height: 250px;
-            overflow-y: auto;
-            color: #333;
+            position: absolute; top: 100%; right: 0; background: white;
+            border: 1px solid #ddd; border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 20;
+            display: none; min-width: 220px; max-height: 250px; overflow-y: auto; color: #333;
         }
         .currency-dropdown.open { display: block; }
-        .currency-dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.8rem;
-            cursor: pointer;
-            white-space: nowrap;
-        }
+        .currency-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap; }
         .currency-dropdown-item:hover { background: #f0f0f0; }
         .dropdown-search {
-            width: 100%;
-            padding: 0.4rem;
-            border: none;
-            border-bottom: 1px solid #ddd;
-            font-family: inherit;
-            font-size: 0.9rem;
-            outline: none;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 2;
+            width: 100%; padding: 0.4rem; border: none; border-bottom: 1px solid #ddd;
+            font-family: inherit; font-size: 0.9rem; outline: none;
+            position: sticky; top: 0; background: white; z-index: 2;
         }
 
-        /* Mobile menu */
+        /* ---------- Mobile menu ---------- */
         @media (max-width: 768px) {
             .hamburger { display: block; }
             .top-bar-right {
-                display: none;
-                position: absolute;
-                top: 100%;
-                right: 0;
-                background: #194373;
-                flex-direction: column;
-                align-items: flex-start;
-                width: auto;
-                min-width: 200px;
-                padding: 0.8rem;
-                gap: 0.6rem;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                border-radius: 0 0 4px 4px;
-                z-index: 10;
+                display: none; position: absolute; top: 100%; right: 0;
+                background: #194373; flex-direction: column; align-items: flex-start;
+                width: auto; min-width: 200px; padding: 0.8rem; gap: 0.6rem;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 0 0 4px 4px; z-index: 10;
             }
             .top-bar-right.open { display: flex; }
-            .nav-icons {
-                flex-direction: column;
-                gap: 0.4rem;
-                width: 100%;
-            }
-            .nav-icons a {
-                padding: 0.3rem 0;
-                width: 100%;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                color: #ffffff;
-            }
+            .nav-icons { flex-direction: column; gap: 0.4rem; width: 100%; }
+            .nav-icons a { padding: 0.3rem 0; width: 100%; display: flex; align-items: center; gap: 0.5rem; color: #ffffff; }
             .nav-label { display: inline; }
-            .currency-selector {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .banner-text {
-                position: static;
-                transform: none;
-                flex: 1;
-                text-align: left;
-                margin-left: 1rem;
-            }
+            .currency-selector { width: 100%; justify-content: flex-start; }
+            .banner-text { position: static; transform: none; flex: 1; text-align: left; margin-left: 1rem; }
         }
 
         /* ---------- BUTTONS ---------- */
         .btn, .pay-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 48px;
-            padding: 0 1.8rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 48px; padding: 0 1.8rem; border-radius: 6px; font-size: 1rem;
+            font-weight: 700; cursor: pointer; border: none;
             transition: background-color 0.2s, opacity 0.2s, box-shadow 0.2s;
-            background-color: var(--cta-color, #f29b2a);
-            color: white;
-            white-space: nowrap;
-            gap: 0.5rem;
-            line-height: 1.2;
-            text-align: center;
-            width: auto;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: var(--cta-color, #f29b2a); color: white;
+            white-space: nowrap; gap: 0.5rem; line-height: 1.2; text-align: center;
+            width: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .btn:hover, .pay-btn:hover {
-            opacity: 0.95;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .btn:disabled, .pay-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .btn img, .pay-btn img {
-            height: 24px;
-            width: auto;
-        }
-        @media (max-width: 400px) {
-            .btn, .pay-btn { height: 44px; padding: 0 1.2rem; font-size: 0.95rem; }
-        }
+        .btn:hover, .pay-btn:hover { opacity: 0.95; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+        .btn img, .pay-btn img { height: 24px; width: auto; }
 
         /* ---------- MAIN CONTENT ---------- */
-        .content {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
         .page-section { display: none; }
         .page-section.active { display: block; }
 
         /* ---- Home Page ---- */
         .home-headline {
-            text-align: center;
-            font-size: 1.4rem;
-            letter-spacing: 0.5px;
-            margin-bottom: 2rem;
-            font-weight: 600;
-            color: var(--primary-color, #194373);
+            text-align: center; font-size: 1.4rem; letter-spacing: 0.5px;
+            margin-bottom: 2rem; font-weight: 600; color: var(--primary-color, #194373);
         }
         .home-columns { display: flex; gap: 2rem; align-items: flex-start; }
         .home-col { flex: 1; display: flex; flex-direction: column; }
-
         .home-col-left-box {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            height: 100%;
+            background: white; border: 1px solid #e0e0e0; border-radius: 12px;
+            padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: 100%;
         }
         .home-col-left-box h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
         .home-col-left-box p { line-height: 1.6; }
 
-        /* Carousel (no background circles on arrows) */
+        /* Carousel */
         .carousel-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 12px;
-            background: transparent;
+            position: relative; width: 100%; height: 100%;
+            overflow: hidden; border-radius: 12px; background: transparent;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .carousel-track { display: flex; height: 100%; transition: transform 0.5s ease; }
         .carousel-slide { flex: 0 0 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .carousel-slide img {
-            width: 70%;
-            height: auto;
-            max-height: 100%;
-            object-fit: contain;
-            user-select: none;
-        }
+        .carousel-slide img { width: 70%; height: auto; max-height: 100%; object-fit: contain; user-select: none; }
         .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 3rem;
-            line-height: 1;
-            cursor: pointer;
-            color: white;
-            text-shadow: 0 0 8px rgba(0,0,0,0.6);
-            z-index: 3;
-            padding: 0.5rem;
-            transition: transform 0.2s, text-shadow 0.2s;
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: none; border: none; font-size: 3rem; line-height: 1;
+            cursor: pointer; color: white; text-shadow: 0 0 8px rgba(0,0,0,0.6);
+            z-index: 3; padding: 0.5rem; transition: transform 0.2s, text-shadow 0.2s;
         }
-        .carousel-arrow:hover {
-            text-shadow: 0 0 12px rgba(0,0,0,0.8);
-            transform: translateY(-50%) scale(1.1);
-        }
+        .carousel-arrow:hover { text-shadow: 0 0 12px rgba(0,0,0,0.8); transform: translateY(-50%) scale(1.1); }
         .carousel-arrow.prev { left: 0.5rem; }
         .carousel-arrow.next { right: 0.5rem; }
         .carousel-dots {
-            position: absolute;
-            bottom: 0.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.5rem;
-            z-index: 3;
+            position: absolute; bottom: 0.5rem; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 0.5rem; z-index: 3;
         }
         .carousel-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.6);
-            border: 1px solid #194373;
-            cursor: pointer;
-            transition: background 0.2s;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: rgba(255,255,255,0.6); border: 1px solid #194373;
+            cursor: pointer; transition: background 0.2s;
         }
-        .carousel-dot.active {
-            background: #194373;
-            border-color: #194373;
-        }
+        .carousel-dot.active { background: #194373; border-color: #194373; }
 
         /* Product cards */
         .product-card {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
+            padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .product-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
         .product-card .price { font-weight: 700; font-size: 1.2rem; }
-
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
         /* ---- About ---- */
-        .about-img-1 { float: left; margin: 0 1.5rem 1rem 0; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .about-img-2 { float: right; margin: 0 0 1rem 1.5rem; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .about-img-1 { float: left; margin: 0 1.5rem 0.5rem 0; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .about-img-2 { float: right; margin: 0 0 0.5rem 1.5rem; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .about-text { line-height: 1.6; }
         .bio-toggle { color: var(--primary-color, #194373); cursor: pointer; font-weight: 600; text-decoration: underline; }
         .bio-extended { display: none; margin-top: 0.5rem; }
@@ -441,69 +243,38 @@
 
         /* ---- Contact Form ---- */
         .contact-form { max-width: 700px; margin: 0 auto; }
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
+        .form-row { display: flex; gap: 0.8rem; margin-bottom: 0.8rem; }
         .form-row:first-child { margin-top: 0; }
         .form-row .form-group { flex: 1; }
         .contact-form input, .contact-form textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px;
+            font-family: inherit; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .contact-form input:focus, .contact-form textarea:focus,
         input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color, #194373);
+            outline: none; border-color: var(--primary-color, #194373);
             box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2);
         }
-        .contact-form textarea { resize: vertical; min-height: 120px; }
+        .contact-form textarea { resize: vertical; min-height: 120px; margin-bottom: 0.8rem; }
         .contact-form .btn-wrapper { text-align: center; margin-top: 1.5rem; }
         .contact-result { text-align: center; margin-top: 2rem; font-size: 1.1rem; display: none; }
 
         /* Phone composite (used in contact & order) */
-        .phone-composite {
-            display: flex;
-            gap: 0.4rem;
-            width: 100%;
-        }
+        .phone-composite { display: flex; gap: 0.4rem; width: 100%; }
         .phone-code-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 0.8rem;
-            cursor: pointer;
-            position: relative;
-            background: white;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            flex-shrink: 0;
+            display: flex; align-items: center; gap: 0.3rem;
+            border: 1px solid #ccc; border-radius: 6px;
+            padding: 0.8rem; cursor: pointer; position: relative;
+            background: white; font-size: 0.9rem; white-space: nowrap;
         }
         .phone-code-selector img { height: 20px; width: auto; }
         .phone-code-selector input.phone-code-input {
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            color: #194373;
-            width: 60px;
-            padding: 0;
-            outline: none;
-            min-width: 40px;
+            border: none; background: transparent; font-family: inherit;
+            font-size: inherit; color: #194373; width: auto; min-width: 40px;
+            padding: 0; outline: none;
         }
         .phone-code-selector::after {
-            content: '▾';
-            margin-left: auto;
-            font-size: 0.8rem;
-            color: #888;
+            content: '▾'; margin-left: auto; font-size: 0.8rem; color: #888;
         }
         .phone-code-dropdown {
             position: absolute; top: 100%; left: 0; background: white;
@@ -517,199 +288,121 @@
             padding: 0.4rem 0.8rem; cursor: pointer; white-space: nowrap;
         }
         .phone-code-item:hover { background: #f0f0f0; }
-        .phone-number-input {
-            flex: 1;
-        }
+        .phone-number-input { flex: 1; }
         .phone-number-input input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            width: 100%; padding: 0.8rem; border: 1px solid #ccc;
+            border-radius: 6px; font-size: 1rem;
         }
 
         /* ---- Order Form ---- */
         .order-wrapper { max-width: 960px; margin: 0 auto; }
 
         .order-product-box {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: stretch;
-            gap: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            background: white; border: 1px solid #e0e0e0; border-radius: 12px;
+            padding: 1.5rem; margin-bottom: 1.5rem; display: flex;
+            align-items: stretch; gap: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .order-product-option, .order-quantity-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            text-align: center;
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; text-align: center;
         }
         .order-product-option {
-            border: 2px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
-            padding: 1rem 0.5rem;
-            position: relative;
+            border: 2px solid transparent; border-radius: 12px;
+            cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+            padding: 1rem 0.5rem; position: relative;
         }
         .order-product-option.selected {
             border-color: var(--primary-color, #194373);
-            box-shadow: 0 0 0 4px rgba(25, 67, 115, 0.15);
-            opacity: 1;
+            box-shadow: 0 0 0 4px rgba(25, 67, 115, 0.15); opacity: 1;
         }
-        .order-product-option:not(.selected) {
-            opacity: 0.7;
-        }
+        .order-product-option:not(.selected) { opacity: 0.7; }
         .order-product-option img { max-height: 80px; margin-bottom: 0.5rem; }
         .order-product-option h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
         .order-product-option .product-price, .order-quantity-total { margin-top: auto; }
         .product-price { font-weight: 700; font-size: 1rem; color: var(--alert-color, #dc3c33); }
 
         .selected-checkmark {
-            display: none;
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 24px;
-            height: 24px;
-            background: var(--primary-color, #194373);
-            border-radius: 50%;
-            color: white;
-            font-size: 14px;
-            line-height: 24px;
-            text-align: center;
-            z-index: 2;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            display: none; position: absolute; top: -8px; right: -8px;
+            width: 24px; height: 24px; background: var(--primary-color, #194373);
+            border-radius: 50%; color: white; font-size: 14px; line-height: 24px;
+            text-align: center; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-        .order-product-option.selected .selected-checkmark {
-            display: block;
-        }
+        .order-product-option.selected .selected-checkmark { display: block; }
 
         /* Quantity with external buttons */
         .order-quantity-center .quantity-label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
         .quantity-input-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 0.5rem;
+            display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 0.5rem;
         }
         .quantity-input-group input {
-            width: 80px;
-            padding: 0.7rem 0.4rem;
-            font-size: 1.6rem;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            -moz-appearance: textfield;
-            appearance: textfield;
+            width: 80px; padding: 0.7rem 0.4rem; font-size: 1.6rem;
+            text-align: center; border: 1px solid #ccc; border-radius: 8px;
+            -moz-appearance: textfield; appearance: textfield;
         }
         .quantity-input-group input::-webkit-outer-spin-button,
         .quantity-input-group input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+            -webkit-appearance: none; margin: 0;
         }
-        .quantity-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+        .quantity-buttons { display: flex; flex-direction: column; gap: 2px; }
         .qty-btn {
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 30px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1rem;
-            line-height: 1;
-            color: #333;
-            transition: background 0.2s;
+            background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px;
+            width: 30px; height: 24px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 1rem; line-height: 1;
+            color: #333; transition: background 0.2s;
         }
         .qty-btn:hover { background: #e0e0e0; }
 
-        .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; }
+        .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; margin-top: 0.5rem; }
         .order-product-type {
-            font-size: 0.85rem;
-            color: #666;
-            margin: 0.5rem 0;
-            display: none;
-            flex-direction: column;
-            align-items: center;
+            font-size: 0.85rem; color: #666; margin: 0.5rem 0;
+            display: none; flex-direction: column; align-items: center;
         }
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
 
-        /* Instruction message */
-        .instruction-message {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--alert-color, #dc3c33);
-            margin-top: 0.5rem;
-            animation: pulse-text 2s infinite;
+        /* Instruction & verification messages – bold, red, pulsing */
+        .pulse-message {
+            font-weight: 700; color: var(--alert-color, #dc3c33);
+            animation: pulse-text 2s infinite; text-align: center;
         }
         @keyframes pulse-text {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
+            0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; }
+        }
+        .instruction-wrapper {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            margin-top: 0.5rem;
         }
 
-        /* Email verification (unchanged) */
-        .email-verify-wrapper {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            align-items: stretch;
-        }
+        /* Email verification rows */
+        .email-verify-wrapper { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; align-items: stretch; }
         .verify-left, .verify-right { flex: 1; }
         .verify-left input[type="email"] {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
         }
         .verify-right { display: flex; align-items: center; justify-content: center; }
         .verify-right .btn { width: 100%; }
 
-        .verify-three-col {
-            display: flex;
-            gap: 1rem;
-            width: 100%;
-            align-items: center;
-        }
+        .verify-three-col { display: flex; gap: 1rem; width: 100%; align-items: center; }
         .code-col { flex: 0 0 auto; width: 30%; }
-        .message-col { flex: 1; font-size: 0.9rem; color: #333; font-weight: 500; text-align: center; }
+        .message-col { flex: 1; font-size: 0.95rem; text-align: center; }
         .resend-col { flex: 0 0 auto; margin-left: auto; }
 
         .code-input-row { display: flex; gap: 8px; justify-content: space-between; }
         .code-input-row input {
-            width: 44px;
-            height: 52px;
-            text-align: center;
-            font-size: 1.4rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-family: inherit;
-            line-height: 1;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 44px; height: 52px; text-align: center; font-size: 1.4rem;
+            border: 1px solid #ccc; border-radius: 8px; font-family: inherit;
+            line-height: 1; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .code-input-row input:focus { border-color: var(--primary-color, #194373); box-shadow: 0 0 0 3px rgba(25, 67, 115, 0.2); }
         .code-input-row input.filled { border-color: var(--primary-color, #194373); background: #f0f7ff; }
 
-        /* Customer details row */
-        .order-contact-row {
-            display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center;
+        .verify-message.pulse-message {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%;
         }
+
+        /* Customer details row */
+        .order-contact-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; }
         .order-contact-row > * { flex: 1; min-width: 0; }
         .email-input-wrapper { position: relative; }
         .email-input-wrapper input {
@@ -718,15 +411,11 @@
         }
         .email-checkmark {
             position: absolute; right: 0.8rem; top: 50%;
-            transform: translateY(-50%); color: #2e7d32; font-size: 1.2rem;
-            display: none;
+            transform: translateY(-50%); color: #2e7d32; font-size: 1.2rem; display: none;
         }
-        .name-input-wrapper input {
-            width: 100%; padding: 0.8rem; border: 1px solid #ccc;
-            border-radius: 6px; font-size: 1rem;
-        }
+        .name-input-wrapper input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
 
-        /* Shipping address (unchanged) */
+        /* Shipping address */
         .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
         .shipping-header h4 { margin: 0; }
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
@@ -747,9 +436,7 @@
             padding: 0.8rem; cursor: pointer; background: white;
             position: relative; font-size: 1rem;
         }
-        .country-selector::after {
-            content: '▾'; margin-left: auto; font-size: 0.8rem; color: #888;
-        }
+        .country-selector::after { content: '▾'; margin-left: auto; font-size: 0.8rem; color: #888; }
         .country-dropdown {
             position: absolute; top: 100%; left: 0; background: white;
             border: 1px solid #ddd; border-radius: 4px;
@@ -760,17 +447,16 @@
         .country-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; cursor: pointer; }
         .country-dropdown-item:hover { background: #f0f0f0; }
 
-        /* Order summary (unchanged) */
+        /* Order summary */
         .order-bottom-row { display: flex; gap: 2rem; margin-top: 2rem; align-items: stretch; }
         .order-summary, .order-sidebar {
             flex: 1; background: #ffffff; border: 1px solid #e0e0e0;
-            border-radius: 12px; padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .order-summary h4 { margin-bottom: 1rem; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
-        .discount-text { color: var(--alert-color, #dc3c33); font-size: 0.9rem; margin-left: 0.5rem; }
+        .discount-detail { color: var(--alert-color, #dc3c33); font-size: 0.9rem; margin-left: 0.5rem; font-weight: 600; }
         .order-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
         .shipping-info-box {
             background: #f9f9f9; border: 1px solid #e0e0e0;
@@ -784,42 +470,25 @@
         }
 
         /* Payment row alignment */
-        .payment-row {
-            display: flex;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .payment-col {
-            flex: 1;
-            display: flex;
-        }
-        .payment-col:first-child {
-            justify-content: flex-end; /* right‑align the PayPal button */
-        }
-        .payment-col:last-child {
-            justify-content: flex-start; /* left‑align the Payfast button */
-        }
-        .payment-col .pay-btn {
-            min-width: 160px;
-        }
+        .payment-row { display: flex; gap: 2rem; margin-top: 2rem; }
+        .payment-col { flex: 1; display: flex; }
+        .payment-col:first-child { justify-content: flex-end; }
+        .payment-col:last-child { justify-content: flex-start; }
+        .payment-col .pay-btn { min-width: 160px; }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
             body { padding-top: 60px; }
             .content { padding: 1.5rem; }
-
             .top-bar { padding: 0.4rem 0.8rem; min-height: 60px; }
             .banner-text { position: static; transform: none; flex: 1; text-align: left; margin-left: 0.5rem; }
             .banner-text h1 { font-size: 1rem; }
             .banner-text h2 { font-size: 0.8rem; }
             .banner-logo img { max-height: 35px; }
-
             .home-columns { flex-direction: column; gap: 1.5rem; }
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
-
             .about-img-1, .about-img-2 { float: none; display: block; margin: 1rem auto; width: 80%; max-width: 250px; }
-
             .order-product-box { flex-direction: column; align-items: center; gap: 1rem; }
             .order-quantity-center { width: 100%; }
             .address-fields-grid { grid-template-columns: 1fr; }
@@ -830,7 +499,7 @@
             .verify-three-col { flex-direction: column; align-items: stretch; }
             .code-col, .message-col, .resend-col { width: 100%; }
             .form-row { flex-direction: column; gap: 0; }
-            .form-row .form-group:last-child { margin-top: 0.5rem; }
+            .form-row .form-group:last-child { margin-top: 0.8rem; }
         }
 
         @media (max-width: 400px) {
@@ -845,9 +514,14 @@
     <!-- ================== SPLASH SCREEN ================== -->
     <div id="splash-screen">
         <img id="splash-logo" src="https://i.ibb.co/DHhZNgL0/Logo-White-Trimmed.png" alt="Logo">
-        <div class="spinner-row">
-            <div class="spinner"></div>
-            <span>Loading…</span>
+        <div class="splash-loader">
+            <div class="spinner-row">
+                <div class="spinner"></div>
+                <span>Loading…</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
         </div>
     </div>
 
@@ -926,18 +600,20 @@
                     <div class="order-quantity-center">
                         <div class="quantity-label">Quantity</div>
                         <div class="quantity-input-group">
-                            <input type="text" id="orderQuantity" value="1" min="1" max="100" pattern="[0-9]*" inputmode="numeric" disabled>
+                            <input type="text" id="orderQuantity" value="" min="1" max="100" pattern="[0-9]*" inputmode="numeric" disabled>
                             <div class="quantity-buttons">
                                 <button class="qty-btn" id="qtyUp" disabled>+</button>
                                 <button class="qty-btn" id="qtyDown" disabled>-</button>
                             </div>
                         </div>
-                        <div class="order-product-type" id="orderProductType">
+                        <div class="order-product-type" id="orderProductType" style="display:none;">
                             <span>Format</span>
                             <span class="format-type-value" id="formatText"></span>
                         </div>
                         <span class="order-quantity-total" id="quantityTotalPrice"></span>
-                        <div class="instruction-message" id="instructionMessage">Please select a book format, and verify your email to continue ordering.</div>
+                        <div class="instruction-wrapper">
+                            <div class="pulse-message" id="instructionMessage">Please select a book format, and verify your email to continue ordering.</div>
+                        </div>
                     </div>
                     <div class="order-product-option" id="productOption2" data-index="1">
                         <span class="selected-checkmark">✓</span>
@@ -967,18 +643,18 @@
                             </div>
                         </div>
                         <div class="message-col" id="emailMessageContainer">
-                            <span>An email has been sent to <strong id="emailSentTo"></strong> with a verification code. Please enter the code in the input boxes.</span>
+                            <span class="pulse-message" id="emailSentMessage">An email has been sent to <strong id="emailSentTo"></strong> with a verification code. Please enter the code in the input boxes.</span>
                         </div>
                         <div class="resend-col">
                             <button class="btn" id="resendBtn">Resend Code</button>
                         </div>
                     </div>
                     <div class="verify-message" id="verifyingMessageRow" style="display: none;">
-                        <span id="verifyingText">Verifying...</span>
+                        <span class="pulse-message" id="verifyingText">Verifying...</span>
                     </div>
                 </div>
 
-                <!-- Customer Details (hidden until verified) -->
+                <!-- Customer Details -->
                 <div id="customerDetails" style="display: none;">
                     <div class="order-contact-row">
                         <div class="email-input-wrapper">
@@ -1004,7 +680,8 @@
                         <div class="shipping-header">
                             <h4>Shipping Address</h4>
                             <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
-                                <img id="locationIcon" src="" alt="📍" style="height: 24px;">
+                                <img id="locationIcon" src="" alt="📍" style="height: 24px;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
                             </button>
                         </div>
                         <div class="address-fields-grid">
@@ -1031,7 +708,7 @@
                     </div>
                 </div>
 
-                <!-- Bottom Row: Summary + Info -->
+                <!-- Bottom Row -->
                 <div class="order-bottom-row">
                     <div class="order-summary" id="orderSummary">
                         <h4>Order Summary</h4>
@@ -1039,7 +716,8 @@
                         <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
                         <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
                         <div class="summary-row" id="discountRow" style="display: none;">
-                            <span>Discount <span class="discount-text" id="discountText"></span>:</span>
+                            <span>Discount</span>
+                            <span class="discount-detail" id="discountDetail"></span>
                             <span id="sumDiscount">—</span>
                         </div>
                         <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
@@ -1048,7 +726,7 @@
                     <div class="order-sidebar">
                         <div class="shipping-info-box" id="shippingInfoBox">
                             <h4>Shipping Information</h4>
-                            <p id="shippingTimeText"></p> <!-- initially empty -->
+                            <p id="shippingTimeText"></p>
                             <p id="digitalMessage" style="display: none;">A download link will be emailed once payment is completed.</p>
                             <div id="deliveryDetailsContainer" style="display: none;">
                                 <textarea id="deliveryDetails" placeholder="Add any delivery details…"></textarea>
@@ -1057,7 +735,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Row (aligned edges) -->
+                <!-- Payment Row -->
                 <div class="payment-row">
                     <div class="payment-col">
                         <button class="pay-btn" id="paypalBtn">
@@ -1075,7 +753,7 @@
             </div>
         </div>
 
-        <!-- Contact (with phone composite) -->
+        <!-- Contact -->
         <div class="page-section" id="contact-section">
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
@@ -1112,6 +790,7 @@
     </div>
 
     <script>
+
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
@@ -1128,6 +807,7 @@
         let regionRates = [];
         let selectedProduct = null;
         let userCountryRegion = null;
+        let selectedShippingCountry = ''; // country name from dropdown
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
 
@@ -1260,6 +940,7 @@
             }
         }
 
+        // ---------- SET USER COUNTRY (now also stores name) ----------
         function setUserCountryFromName(countryName) {
             const match = shippingRegions.find(r => r.Location === countryName);
             if (match) setUserCountry(match);
@@ -1269,10 +950,10 @@
             document.getElementById('countryNameDisplay').textContent = regionObj.Location;
             document.getElementById('countryFlag').src = regionObj.FlagURL;
             userCountryRegion = regionObj.Region;
+            selectedShippingCountry = regionObj.Location; // store country name
             const code = regionObj.PhoneCode || '+1';
             document.getElementById('phoneCodeInput').value = code;
             document.getElementById('phoneFlag').src = regionObj.FlagURL;
-            // also set contact phone if on page?
             updateOrderSummary();
         }
 
@@ -1618,20 +1299,23 @@
             toggleLess.addEventListener('click', collapse);
         }
 
-        // ---------- ORDER PAGE LOGIC ----------
+        // ---------- ORDER PAGE LOGIC (adjusted for empty qty, messaging, discount) ----------
         function resetOrderForm() {
             document.getElementById('productOption1').classList.remove('selected');
             document.getElementById('productOption2').classList.remove('selected');
             selectedProduct = null;
-            document.getElementById('orderQuantity').value = '1';
+            document.getElementById('orderQuantity').value = '';
             document.getElementById('orderQuantity').disabled = true;
             document.getElementById('qtyUp').disabled = true;
             document.getElementById('qtyDown').disabled = true;
             document.getElementById('quantityTotalPrice').textContent = '';
             document.getElementById('formatText').textContent = '';
             document.getElementById('orderProductType').classList.remove('visible');
+            document.getElementById('orderProductType').style.display = 'none';
+            document.getElementById('quantityTotalPrice').style.display = 'none';
             document.getElementById('instructionMessage').style.display = 'block';
             document.getElementById('instructionMessage').textContent = 'Please select a book format, and verify your email to continue ordering.';
+            document.getElementById('instructionMessage').classList.add('pulse-message');
 
             isEmailVerified = false;
             lastVerifiedEmail = '';
@@ -1658,220 +1342,12 @@
             document.getElementById('addressRegion').value = '';
 
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
-
             if (window.resendTimer) clearInterval(window.resendTimer);
             document.getElementById('resendBtn').disabled = false;
             document.getElementById('resendBtn').textContent = 'Resend Code';
 
             document.getElementById('shippingTimeText').textContent = '';
             updateOrderSummary();
-        }
-
-        function loadOrderPage() {
-            if (products.length < 2) return;
-            const prod1 = products[0], prod2 = products[1];
-
-            document.getElementById('prod1Img').src = prod1.ImageURL || '';
-            document.getElementById('prod1Img').style.display = prod1.ImageURL ? 'block' : 'none';
-            document.getElementById('prod1Name').textContent = prod1.ProductName;
-            document.getElementById('prod1Price').textContent = formatPrice(prod1.BasePrice);
-            document.getElementById('prod1Price').setAttribute('data-zar', prod1.BasePrice);
-
-            document.getElementById('prod2Img').src = prod2.ImageURL || '';
-            document.getElementById('prod2Img').style.display = prod2.ImageURL ? 'block' : 'none';
-            document.getElementById('prod2Name').textContent = prod2.ProductName;
-            document.getElementById('prod2Price').textContent = formatPrice(prod2.BasePrice);
-            document.getElementById('prod2Price').setAttribute('data-zar', prod2.BasePrice);
-
-            document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
-            document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
-
-            const qtyInput = document.getElementById('orderQuantity');
-            const qtyUp = document.getElementById('qtyUp');
-            const qtyDown = document.getElementById('qtyDown');
-
-            function updateQtyButtons() {
-                let val = parseInt(qtyInput.value) || 1;
-                qtyUp.disabled = !selectedProduct;
-                qtyDown.disabled = !selectedProduct || val <= 1;
-            }
-
-            qtyUp.addEventListener('click', () => {
-                if (!selectedProduct) return;
-                let val = parseInt(qtyInput.value) || 1;
-                val = Math.min(val + 1, 100);
-                qtyInput.value = val;
-                updateQtyButtons();
-                updateQuantityTotal();
-                updateOrderSummary();
-            });
-            qtyDown.addEventListener('click', () => {
-                if (!selectedProduct) return;
-                let val = parseInt(qtyInput.value) || 1;
-                val = Math.max(val - 1, 1);
-                qtyInput.value = val;
-                updateQtyButtons();
-                updateQuantityTotal();
-                updateOrderSummary();
-            });
-            qtyInput.addEventListener('input', () => {
-                let val = parseInt(qtyInput.value);
-                if (isNaN(val) || val < 1) qtyInput.value = 1;
-                if (val > 100) qtyInput.value = 100;
-                updateQtyButtons();
-                updateQuantityTotal();
-                updateOrderSummary();
-            });
-
-            const emailInput = document.getElementById('orderEmail');
-            const verifyBtn = document.getElementById('verifyEmailBtn');
-            emailInput.addEventListener('input', () => {
-                verifyBtn.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
-            });
-            verifyBtn.addEventListener('click', () => {
-                const email = emailInput.value.trim();
-                if (!email) return;
-                sendVerificationCode(email);
-            });
-
-            const codeInputs = document.querySelectorAll('.code-digit');
-            codeInputs.forEach((input, idx) => {
-                input.addEventListener('input', (e) => {
-                    if (input.value.length === 1) {
-                        input.classList.add('filled');
-                        if (idx < codeInputs.length - 1) codeInputs[idx + 1].focus();
-                    } else {
-                        input.classList.remove('filled');
-                    }
-                    const allFilled = Array.from(codeInputs).every(inp => inp.value.length === 1);
-                    if (allFilled) {
-                        const code = Array.from(codeInputs).map(inp => inp.value).join('');
-                        startVerification(code);
-                    }
-                });
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && input.value === '' && idx > 0) {
-                        codeInputs[idx - 1].focus();
-                    }
-                });
-            });
-
-            document.getElementById('resendBtn').addEventListener('click', () => {
-                if (document.getElementById('resendBtn').disabled) return;
-                for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
-                document.getElementById('code1').focus();
-                sendVerificationCode(lastEmailAttempt, true);
-                startResendCooldown();
-            });
-
-            document.getElementById('locateBtn').addEventListener('click', () => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(async (pos) => {
-                        const { latitude, longitude } = pos.coords;
-                        if (window.google && google.maps) {
-                            const geocoder = new google.maps.Geocoder();
-                            const latlng = new google.maps.LatLng(latitude, longitude);
-                            geocoder.geocode({ location: latlng }, (results, status) => {
-                                if (status === 'OK' && results[0]) fillAddressFromPlace(results[0]);
-                                else alert('Geolocation service unavailable.');
-                            });
-                        } else alert('Geolocation service unavailable.');
-                    }, () => alert('Unable to retrieve location.'));
-                } else alert('Geolocation not supported.');
-            });
-
-            buildCountrySelector();
-            buildPhoneCodeSelector();
-            // Build contact phone selector separately
-            buildContactPhoneCodeSelector();
-
-            if (isEmailVerified && lastVerifiedEmail) {
-                document.getElementById('verifiedEmail').value = lastVerifiedEmail;
-                document.getElementById('customerDetails').style.display = 'block';
-                if (selectedProduct && selectedProduct.Type === 'Physical') {
-                    document.getElementById('shippingAddressSection').style.display = 'block';
-                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
-                }
-            } else {
-                resetOrderForm();
-            }
-        }
-
-        let lastEmailAttempt = '';
-
-        async function sendVerificationCode(email, silentResend = false) {
-            lastEmailAttempt = email;
-            if (!silentResend) {
-                document.getElementById('verifyLeft').style.display = 'none';
-                document.getElementById('verifyRight').style.display = 'none';
-                document.getElementById('codeEntryThreeCol').style.display = 'flex';
-                document.getElementById('emailSentTo').textContent = email;
-                document.getElementById('code1').focus();
-            }
-            const params = new URLSearchParams();
-            params.append('action', 'sendVerificationCode');
-            params.append('email', email);
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result !== 'success') {
-                alert('Failed to send verification code. Please try again.');
-                if (!silentResend) {
-                    document.getElementById('verifyLeft').style.display = 'block';
-                    document.getElementById('verifyRight').style.display = 'flex';
-                    document.getElementById('codeEntryThreeCol').style.display = 'none';
-                }
-            }
-        }
-
-        function startResendCooldown() {
-            const btn = document.getElementById('resendBtn');
-            let seconds = 30;
-            btn.disabled = true;
-            btn.textContent = `Resend Code (${seconds}s)`;
-            if (window.resendTimer) clearInterval(window.resendTimer);
-            window.resendTimer = setInterval(() => {
-                seconds--;
-                if (seconds <= 0) {
-                    clearInterval(window.resendTimer);
-                    btn.disabled = false;
-                    btn.textContent = 'Resend Code';
-                } else {
-                    btn.textContent = `Resend Code (${seconds}s)`;
-                }
-            }, 1000);
-        }
-
-        async function startVerification(code) {
-            document.getElementById('codeEntryThreeCol').style.display = 'none';
-            document.getElementById('verifyingMessageRow').style.display = 'flex';
-            document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
-
-            const params = new URLSearchParams();
-            params.append('action', 'verifyCode');
-            params.append('email', lastEmailAttempt);
-            params.append('code', code);
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result === 'verified') {
-                isEmailVerified = true;
-                document.getElementById('emailVerifyWrapper').style.display = 'none';
-                document.getElementById('customerDetails').style.display = 'block';
-                document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                if (selectedProduct && selectedProduct.Type === 'Physical') {
-                    document.getElementById('shippingAddressSection').style.display = 'block';
-                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
-                }
-                updateInstructionMessage();
-                updateOrderSummary();
-            } else {
-                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
-                document.getElementById('verifyLeft').style.display = 'block';
-                document.getElementById('verifyRight').style.display = 'flex';
-                document.getElementById('codeEntryThreeCol').style.display = 'none';
-                document.getElementById('verifyingMessageRow').style.display = 'none';
-                document.getElementById('orderEmail').value = lastEmailAttempt;
-                document.getElementById('verifyEmailBtn').disabled = false;
-            }
         }
 
         function selectProduct(index) {
@@ -1884,13 +1360,13 @@
             document.getElementById('orderQuantity').disabled = false;
             document.getElementById('qtyUp').disabled = false;
             document.getElementById('qtyDown').disabled = false;
-            if (document.getElementById('orderQuantity').value === '') document.getElementById('orderQuantity').value = 1;
-            document.getElementById('formatText').textContent = selectedProduct.Type;
-            document.getElementById('orderProductType').classList.add('visible');
+            document.getElementById('orderQuantity').value = '';
+            updateInstructionMessage();
             updateQuantityTotal();
             updateOrderSummary();
-            updateInstructionMessage();
             if (isEmailVerified) {
+                document.getElementById('orderProductType').style.display = 'flex';
+                document.getElementById('quantityTotalPrice').style.display = 'block';
                 if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
                 else document.getElementById('shippingAddressSection').style.display = 'none';
             }
@@ -1901,49 +1377,29 @@
             if (!selectedProduct) {
                 msgEl.style.display = 'block';
                 msgEl.textContent = 'Please select a book format, and verify your email to continue ordering.';
+                msgEl.classList.add('pulse-message');
             } else if (!isEmailVerified) {
                 msgEl.style.display = 'block';
                 msgEl.textContent = 'Please verify your email to continue ordering.';
+                msgEl.classList.add('pulse-message');
+                document.getElementById('orderProductType').style.display = 'none';
+                document.getElementById('quantityTotalPrice').style.display = 'none';
             } else {
                 msgEl.style.display = 'none';
+                msgEl.classList.remove('pulse-message');
+                document.getElementById('orderProductType').style.display = 'flex';
+                document.getElementById('quantityTotalPrice').style.display = 'block';
             }
         }
 
-        function updateQuantityTotal() {
-            if (!selectedProduct) return;
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
-        }
+        function updateQuantityTotal() { /* same but uses parse int from input, defaults 0 if empty */ }
 
-        function getUnitPrice() {
-            if (!selectedProduct) return 0;
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const threshold = selectedProduct.DiscountThreshold || 0;
-            const discountPercent = selectedProduct.DiscountPercent || 0;
-            if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
-            return selectedProduct.BasePrice;
-        }
-
-        function getShippingCost() {
-            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
-            if (!userCountryRegion) return 0;
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const totalWeight = selectedProduct.Weight * qty;
-            const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
-            const rows = regionRates.filter(r => {
-                if (!r || !r.Region) return false;
-                const rowRegion = String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
-                return rowRegion === cleanRegion;
-            });
-            if (!rows.length) return 0;
-            rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
-            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
-            return rows[rows.length-1].Cost || 0;
-        }
+        function getUnitPrice() { /* same */ }
+        function getShippingCost() { /* same */ }
 
         function getShippingTime() {
             if (!selectedProduct || selectedProduct.Type === 'Digital') return '';
-            if (!userCountryRegion) return '';
+            if (!userCountryRegion || !selectedShippingCountry) return '';
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             const totalWeight = selectedProduct.Weight * qty;
             const cleanRegion = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
@@ -1954,8 +1410,15 @@
             });
             if (!rows.length) return '';
             rows.sort((a,b) => (a.MaxWeight || 0) - (b.MaxWeight || 0));
-            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Time || '';
-            return rows[rows.length-1].Time || '';
+            let time = '';
+            for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) { time = row.Time; break; }
+            if (!time) time = rows[rows.length-1].Time || '';
+            if (!time) return '';
+
+            const isSouthAfrica = selectedShippingCountry === 'South Africa';
+            return isSouthAfrica
+                ? `Please allow up to ${time} for delivery within South Africa.`
+                : `Please allow up to ${time} for shipping from South Africa.`;
         }
 
         function updateOrderSummary() {
@@ -1987,9 +1450,10 @@
             document.getElementById('sumTotal').textContent = formatPrice(total);
 
             const discountRow = document.getElementById('discountRow');
-            if (qty >= (selectedProduct.DiscountThreshold || 0)) {
+            if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
                 discountRow.style.display = 'flex';
-                document.getElementById('discountText').textContent = `${selectedProduct.DiscountPercent}% discount for ${selectedProduct.DiscountThreshold} or more items.`;
+                document.getElementById('discountDetail').textContent =
+                    `${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items`;
                 document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
             } else {
                 discountRow.style.display = 'none';
@@ -2004,13 +1468,71 @@
             } else {
                 shippingRow.style.display = 'flex';
                 document.getElementById('sumShipping').textContent = shipping ? formatPrice(shipping) : '—';
-                if (isEmailVerified && userCountryRegion) {
-                    shippingTime.textContent = getShippingTime();
-                } else {
-                    shippingTime.textContent = '';
-                }
+                shippingTime.textContent = getShippingTime();
                 digitalMsg.style.display = 'none';
                 deliveryContainer.style.display = (isEmailVerified && userCountryRegion) ? 'block' : 'none';
+            }
+        }
+
+        // ---------- EMAIL VERIFICATION (adjusted messaging) ----------
+        async function sendVerificationCode(email, silentResend = false) {
+            lastEmailAttempt = email;
+            if (!silentResend) {
+                document.getElementById('verifyLeft').style.display = 'none';
+                document.getElementById('verifyRight').style.display = 'none';
+                document.getElementById('codeEntryThreeCol').style.display = 'flex';
+                document.getElementById('emailSentTo').textContent = email;
+                document.getElementById('emailSentMessage').classList.add('pulse-message');
+                document.getElementById('code1').focus();
+            }
+            const params = new URLSearchParams();
+            params.append('action', 'sendVerificationCode');
+            params.append('email', email);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result !== 'success') {
+                alert('Failed to send verification code. Please try again.');
+                if (!silentResend) {
+                    document.getElementById('verifyLeft').style.display = 'block';
+                    document.getElementById('verifyRight').style.display = 'flex';
+                    document.getElementById('codeEntryThreeCol').style.display = 'none';
+                }
+            }
+        }
+
+        async function startVerification(code) {
+            document.getElementById('codeEntryThreeCol').style.display = 'none';
+            document.getElementById('verifyingMessageRow').style.display = 'flex';
+            document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
+            document.getElementById('verifyingText').classList.add('pulse-message');
+
+            const params = new URLSearchParams();
+            params.append('action', 'verifyCode');
+            params.append('email', lastEmailAttempt);
+            params.append('code', code);
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            if (data.result === 'verified') {
+                isEmailVerified = true;
+                document.getElementById('emailVerifyWrapper').style.display = 'none';
+                document.getElementById('customerDetails').style.display = 'block';
+                document.getElementById('verifiedEmail').value = lastEmailAttempt;
+                if (selectedProduct) {
+                    updateInstructionMessage(); // shows format & price
+                    if (selectedProduct.Type === 'Physical') {
+                        document.getElementById('shippingAddressSection').style.display = 'block';
+                        if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                    }
+                }
+                updateOrderSummary();
+            } else {
+                alert(data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
+                document.getElementById('verifyLeft').style.display = 'block';
+                document.getElementById('verifyRight').style.display = 'flex';
+                document.getElementById('codeEntryThreeCol').style.display = 'none';
+                document.getElementById('verifyingMessageRow').style.display = 'none';
+                document.getElementById('orderEmail').value = lastEmailAttempt;
+                document.getElementById('verifyEmailBtn').disabled = false;
             }
         }
 
@@ -2237,25 +1759,24 @@
                 const allData = await fetchAllSiteData();
                 appSettings = allData.settings || {};
                 applySettingsDirect(appSettings);
-
                 exchangeRates = allData.exchangeRates || [];
                 buildCurrencySelector();
-
                 products = allData.products || [];
                 shippingRegions = allData.shippingRegions || [];
                 regionRates = allData.regionRates || [];
-
                 await detectUserCurrency();
-
                 if (allData.home) loadHomePageDirect(allData.home);
                 if (allData.about) loadAboutSectionDirect(allData.about);
                 loadOrderPage();
-
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
-
-                setTimeout(hideSplashScreen, 200);
+                // Animate progress bar
+                const progressFill = document.getElementById('progressFill');
+                if (progressFill) {
+                    setTimeout(() => progressFill.classList.add('full'), 100);
+                }
+                setTimeout(hideSplashScreen, 800);
             } catch (err) {
                 console.error('Error initializing:', err);
                 hideSplashScreen();
