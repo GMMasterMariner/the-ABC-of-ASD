@@ -707,7 +707,7 @@
                         <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
                         <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
                         <div class="summary-row" id="discountRow" style="display: none;">
-                            <span>Discount<span class="discount-detail" id="discountDetail"></span></span>
+                            <span>Discount (<span class="discount-detail" id="discountDetail"></span>):</span>
                             <span id="sumDiscount">—</span>
                         </div>
                         <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
@@ -1778,7 +1778,7 @@
             if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
                 discountRow.style.display = 'flex';
                 document.getElementById('discountDetail').textContent =
-                    ` (${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items):`;
+                    `${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items`;
                 document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
             } else {
                 discountRow.style.display = 'none';
