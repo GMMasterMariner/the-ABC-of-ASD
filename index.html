@@ -202,24 +202,16 @@
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
 
-        /* Product cards – equal height with 3‑line title space */
+        /* Home‑page product cards (no forced height) */
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .product-card h4 {
-            font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;
-            line-height: 1.4;
-            height: 4.2em;          /* space for exactly 3 lines */
-            overflow: hidden;
-        }
+        .product-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
-        .product-card .price { font-weight: 700; font-size: 1.2rem; margin-top: auto; }
+        .product-card .price { font-weight: 700; font-size: 1.2rem; }
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
@@ -328,7 +320,15 @@
         }
         .order-product-option:not(.selected) { opacity: 0.7; }
         .order-product-option img { max-height: 80px; margin-bottom: 0.5rem; }
-        .order-product-option h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+        .order-product-option h4 {
+            font-size: 0.95rem; margin-bottom: 0.3rem;
+            line-height: 1.4;
+            height: 4.2em;          /* exactly 3 lines */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .order-product-option .product-price, .order-quantity-total { margin-top: auto; }
         .product-price { font-weight: 700; font-size: 1rem; color: var(--alert-color, #dc3c33); }
 
