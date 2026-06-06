@@ -61,7 +61,7 @@
             text-align: left;
         }
 
-        /* ---------- COMBINED TOP BAR ---------- */
+        /* ---------- COMBINED TOP BAR (desktop three‑line) ---------- */
         .top-bar {
             position: fixed; top: 0; left: 0; width: 100%;
             z-index: 1000; background-color: #194373; color: #ffffff;
@@ -71,16 +71,25 @@
         }
         .top-bar-left { display: flex; align-items: center; flex: 0 0 auto; }
         .top-bar-left .banner-logo img { max-height: 45px; display: block; }
+
+        /* Banner title – centered, wraps to three lines */
         .banner-text {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            text-align: center; white-space: nowrap;
+            flex: 1;
+            text-align: center;
+            white-space: normal;
+            margin: 0 1rem;
         }
         .banner-text h1 { font-size: 1.3rem; font-weight: 700; line-height: 1.2; margin: 0; }
         .banner-text h1 .abbreviation {
+            display: block;                     /* own line */
             font-weight: 200; opacity: 0.9; letter-spacing: -0.3px;
-            font-size: 1rem;          /* ← DESKTOP: smaller abbreviation */
+            font-size: 0.85rem;
         }
-        .banner-text h2 { font-size: 1rem; letter-spacing: 0.4px; font-weight: 400; line-height: 1.3; margin: 0.15rem 0 0 0; opacity: 0.9; }
+        .banner-text h2 {
+            display: block;                     /* own line */
+            font-size: 1rem; letter-spacing: 0.4px; font-weight: 400;
+            line-height: 1.3; margin: 0.15rem 0 0 0; opacity: 0.9;
+        }
 
         .top-bar-right { display: flex; align-items: center; gap: 0.8rem; flex: 0 0 auto; }
 
@@ -194,12 +203,42 @@
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
         /* ---- About ---- */
-        .about-img-1 { float: left; margin: 0 1.5rem 0.5rem 0; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .about-img-2 { float: right; margin: 0 0 0.5rem 1.5rem; max-width: 300px; width: 40%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .about-text { line-height: 1.6; }
+        .about-section-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        .about-img-1 {
+            flex: 0 0 auto;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .about-img-2 {
+            flex: 0 0 auto;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .about-text {
+            flex: 1;
+            line-height: 1.6;
+        }
         .bio-toggle { color: var(--primary-color, #194373); cursor: pointer; font-weight: 600; text-decoration: underline; }
         .bio-extended { display: none; margin-top: 0.5rem; }
         #aboutShortBioParagraph, #aboutExtendedBioText { text-align: justify; }
+
+        /* Desktop: image2 floats right within the text */
+        @media (min-width: 769px) {
+            .about-img-2 {
+                float: right;
+                margin: 0 0 0.5rem 1.5rem;
+            }
+            .about-text { display: block; }
+        }
 
         /* ---- Contact Form ---- */
         .contact-form { max-width: 700px; margin: 0 auto; }
@@ -450,25 +489,15 @@
             .currency-selector { width: 100%; justify-content: flex-start; }
 
             .banner-text {
-                position: static;
-                transform: none;
-                flex: 1;
-                text-align: center;
-                white-space: normal;
                 margin: 0 0.5rem;
                 max-width: calc(100% - 60px);
                 overflow: hidden;
             }
             .banner-text h1 { font-size: 0.95rem; }
             .banner-text h1 .abbreviation {
-            font-weight: 200; opacity: 0.9; letter-spacing: -0.3px;
-            font-size: 0.75rem; }
-            .banner-text h2 { font-size: 0.75rem; }
-
-            /* Phone: three‑line banner */
-            .banner-text h1 .abbreviation {
-                display: block;          /* force abbreviation onto its own line */
+                font-size: 0.75rem;   /* smaller on mobile */
             }
+            .banner-text h2 { font-size: 0.75rem; }
 
             .carousel-wrapper { padding-bottom: 1.2rem; }
             .phone-composite { flex-direction: row; }
@@ -482,6 +511,23 @@
                 height: auto !important;
             }
             .carousel-slide img { width: 60%; }
+
+            /* About page mobile stacking */
+            .about-section-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .about-img-1,
+            .about-img-2 {
+                width: 100%;
+                max-width: 100%;
+                margin: 0 0 1rem 0;
+                float: none;
+            }
+            .about-text {
+                width: 100%;
+            }
 
             .order-product-box {
                 display: grid;
@@ -573,12 +619,11 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (image2 moved after text) -->
         <div class="page-section" id="about-section">
             <div class="about-section-content">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
-                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
-                <div class="about-text clearfix">
+                <div class="about-text">
                     <p id="aboutShortBioParagraph">
                         <span id="aboutShortBioText"></span>
                         <span class="bio-toggle" id="bioToggleMore"> read more...</span>
@@ -589,9 +634,10 @@
                         </p>
                     </div>
                 </div>
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
             </div>
         </div>
-
+        
         <!-- Order -->
         <div class="page-section" id="order-section">
             <div class="order-wrapper" id="orderFormContainer">
