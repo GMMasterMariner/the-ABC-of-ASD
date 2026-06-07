@@ -564,7 +564,7 @@
 
         /* ---------- FOOTER ---------- */
         .site-footer {
-            background: #0f2b4a;
+            background: var(--primary-color, #194373);
             color: #ffffff;
             padding: 2rem 1.5rem;
             margin-top: 3rem;
@@ -1004,15 +1004,15 @@
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <a href="#" id="privacyPolicyLink">Privacy Policy</a>
+                <a href="#" id="termsOfServiceLink">Terms of Service</a>
             </div>
             <div class="footer-col">
                 <h4>Connect</h4>
                 <a href="#" class="social-icon" id="footerLinkedIn">
                     <img src="" alt="LinkedIn"> LinkedIn
                 </a>
-                <a href="mailto:gm.mastermariner@gmail.com">gm.mastermariner@gmail.com</a>
+                <a href="#" data-section="contact-section">Get in touch</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -1583,101 +1583,102 @@
         }
 
         // ---------- DIRECT DATA LOADERS ----------
-function applySettingsDirect(settings) {
-    document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
-    document.body.style.color = settings.TextColor || '#000000';
-    document.getElementById('topBar').style.backgroundColor = settings.PrimaryColor || '#194373';
+        function applySettingsDirect(settings) {
+            document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
+            document.body.style.color = settings.TextColor || '#000000';
+            document.getElementById('topBar').style.backgroundColor = settings.PrimaryColor || '#194373';
 
-    document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
-    document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
-    document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
-    document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
+            document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
+            document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
+            document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
+            document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
 
-    const logo = document.getElementById('bannerLogo');
-    if (settings.BannerLogo) {
-        logo.src = settings.BannerLogo;
-        logo.style.display = 'block';
-    } else {
-        logo.style.display = 'none';
-    }
+            const logo = document.getElementById('bannerLogo');
+            if (settings.BannerLogo) {
+                logo.src = settings.BannerLogo;
+                logo.style.display = 'block';
+            } else {
+                logo.style.display = 'none';
+            }
 
-    const titleEl = document.getElementById('bannerTitle');
-    const mainTitle = settings.BannerBookTitle || '';
-    const abbrev = settings.BannerBookTitleAbbreviation || '';
-    if (mainTitle && abbrev) titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
-    else if (mainTitle) titleEl.textContent = mainTitle;
-    else titleEl.textContent = '';
-    document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
+            const titleEl = document.getElementById('bannerTitle');
+            const mainTitle = settings.BannerBookTitle || '';
+            const abbrev = settings.BannerBookTitleAbbreviation || '';
+            if (mainTitle && abbrev) titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
+            else if (mainTitle) titleEl.textContent = mainTitle;
+            else titleEl.textContent = '';
+            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
 
-    if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
-    if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
-    if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
+            if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
+            if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
+            if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
 
-    // Navigation icons
-    const navContainer = document.getElementById('navIcons');
-    navContainer.innerHTML = '';
-    const navItems = [
-        { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
-        { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
-        { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
-        { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
-        { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
-    ];
-    navItems.forEach(item => {
-        const iconUrl = settings[item.iconSetting];
-        if (!iconUrl || iconUrl.trim() === '') return;
-        const a = document.createElement('a');
-        a.title = item.label;
-        if (item.externalLinkSetting) {
-            let linkUrl = settings[item.externalLinkSetting];
-            if (linkUrl && linkUrl.trim() !== '') {
-                if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
-                a.href = linkUrl;
-                a.target = '_blank';
-            } else return;
-        } else if (item.section) {
-            a.href = '#';
-            a.dataset.section = item.section;
-        }
-        const img = document.createElement('img');
-        img.src = iconUrl;
-        img.alt = item.label;
-        if (item.iconSetting === 'NavIconURLAbout') {
-            img.onerror = function() {
-                this.onerror = null;
-                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"%3E%3Cpath d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
-            };
-        }
-        a.appendChild(img);
-        const span = document.createElement('span');
-        span.className = 'nav-label';
-        span.textContent = item.label;
-        a.appendChild(span);
-        navContainer.appendChild(a);
-
-        // Footer LinkedIn icon update
-        if (item.iconSetting === 'NavIconURLLinkedIn') {
-            const footerLinkedIn = document.getElementById('footerLinkedIn');
-            if (footerLinkedIn) {
+            // Navigation icons
+            const navContainer = document.getElementById('navIcons');
+            navContainer.innerHTML = '';
+            const navItems = [
+                { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
+                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
+                { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
+                { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
+                { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
+            ];
+            navItems.forEach(item => {
+                const iconUrl = settings[item.iconSetting];
+                if (!iconUrl || iconUrl.trim() === '') return;
+                const a = document.createElement('a');
+                a.title = item.label;
                 if (item.externalLinkSetting) {
                     let linkUrl = settings[item.externalLinkSetting];
                     if (linkUrl && linkUrl.trim() !== '') {
                         if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
-                        footerLinkedIn.href = linkUrl;
-                        footerLinkedIn.querySelector('img').src = iconUrl;
+                        a.href = linkUrl;
+                        a.target = '_blank';
+                    } else return;
+                } else if (item.section) {
+                    a.href = '#';
+                    a.dataset.section = item.section;
+                }
+                const img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = item.label;
+                if (item.iconSetting === 'NavIconURLAbout') {
+                    img.onerror = function() {
+                        this.onerror = null;
+                        this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"%3E%3Cpath d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
+                    };
+                }
+                a.appendChild(img);
+                const span = document.createElement('span');
+                span.className = 'nav-label';
+                span.textContent = item.label;
+                a.appendChild(span);
+                navContainer.appendChild(a);
+
+                // Footer LinkedIn icon update
+                if (item.iconSetting === 'NavIconURLLinkedIn') {
+                    const footerLinkedIn = document.getElementById('footerLinkedIn');
+                    if (footerLinkedIn) {
+                        if (item.externalLinkSetting) {
+                            let linkUrl = settings[item.externalLinkSetting];
+                            if (linkUrl && linkUrl.trim() !== '') {
+                                if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
+                                footerLinkedIn.href = linkUrl;
+                                footerLinkedIn.querySelector('img').src = iconUrl;
+                            }
+                        }
                     }
                 }
-            }
+            });
+            navContainer.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (!link || link.target === '_blank') return;
+                e.preventDefault();
+                const section = link.dataset.section;
+                if (section) showPage(section);
+            });
         }
-    });
-    navContainer.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (!link || link.target === '_blank') return;
-        e.preventDefault();
-        const section = link.dataset.section;
-        if (section) showPage(section);
-    });
-}
+
         function loadHomePageDirect(home) {
             document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
