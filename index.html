@@ -72,7 +72,6 @@
         .top-bar-left { display: flex; align-items: center; flex: 0 0 auto; }
         .top-bar-left .banner-logo img { max-height: 45px; display: block; }
 
-        /* Banner title – centered across full screen on desktop */
         .banner-text {
             position: absolute;
             left: 50%;
@@ -199,7 +198,6 @@
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
 
-        /* Product cards (home page) – price in primary colour */
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -210,14 +208,14 @@
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
         .product-card .price {
             font-weight: 700; font-size: 1.2rem;
-            color: var(--primary-color, #194373);       /* ← brand blue */
+            color: var(--primary-color, #194373);
         }
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
-        /* ---- About (desktop: float layout, mobile: stacked) ---- */
+        /* ---- About (floats) ---- */
         .about-section-content {
-            overflow: hidden;  /* clearfix for floats */
+            overflow: hidden;  /* clearfix */
         }
         .about-img-1 {
             float: left;
@@ -305,7 +303,7 @@
         }
         .order-product-option.selected {
             border-color: var(--primary-color, #194373);
-            box-shadow: 0 0 0 4px var(--secondary-color, #f29b2a);   /* glow with secondary */
+            box-shadow: 0 0 15px var(--secondary-color, #f29b2a);   /* stronger glow */
             opacity: 1;
         }
         .order-product-option:not(.selected) { opacity: 0.7; }
@@ -318,7 +316,7 @@
         .order-product-option .product-price, .order-quantity-total { margin-top: auto; }
         .product-price {
             font-weight: 700; font-size: 1rem;
-            color: var(--primary-color, #194373);          /* ← brand blue */
+            color: var(--primary-color, #194373);
         }
 
         .selected-checkmark {
@@ -349,11 +347,15 @@
         }
         .qty-btn:hover { background: #e0e0e0; }
 
-        /* Quantity total – brand blue, with glow when visible */
         .order-quantity-total {
             font-size: 1.2rem; font-weight: 700;
-            color: var(--primary-color, #194373);          /* ← brand blue */
+            color: var(--primary-color, #194373);
             white-space: nowrap; margin-top: 0.5rem;
+        }
+        .order-quantity-total.price-glow {
+            box-shadow: 0 0 12px var(--secondary-color, #f29b2a);
+            border-radius: 4px;
+            padding: 0.2rem 0.5rem;
         }
 
         .order-product-type { font-size: 0.85rem; color: #666; margin: 0.5rem 0; display: none; flex-direction: column; align-items: center; }
@@ -388,7 +390,13 @@
         .verify-message-row { width: 100%; text-align: center; font-size: 0.95rem; }
         .verify-message { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 1rem; }
 
-        /* Customer details – stacked */
+        /* ---------- CUSTOMER DETAILS (desktop: centered, narrower) ---------- */
+        .order-contact-row,
+        .address-fields-grid {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .order-contact-row {
             display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;
         }
@@ -406,7 +414,7 @@
 
         .name-input-wrapper input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
 
-        /* Shipping address – stacked */
+        /* Shipping address – stacked, narrower on desktop */
         .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
         .shipping-header h4 { margin: 0; }
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
@@ -468,35 +476,24 @@
             flex: 1; min-height: 60px; resize: vertical;
         }
 
-        /* Summary rows */
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        /* Discount row */
         .discount-summary-row {
             display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 0.5rem;
         }
         .discount-amount {
-            color: var(--alert-color, #dc3c33);        /* red for negative */
-            font-weight: 600;
+            color: var(--alert-color, #dc3c33); font-weight: 600;
         }
         .discount-detail {
             color: var(--alert-color, #dc3c33); font-weight: 600;
-            width: 100%;               /* force full width so it wraps below on mobile */
-            text-align: left;          /* left aligned on mobile */
-            margin-top: 0.2rem;
+            width: 100%; text-align: left; margin-top: 0.2rem;
         }
-        /* Desktop: keep everything on one line */
         @media (min-width: 769px) {
             .discount-detail {
-                width: auto;
-                margin-top: 0;
-                text-align: left;
-                display: inline;
+                width: auto; margin-top: 0; text-align: left; display: inline;
             }
-            .discount-summary-row {
-                flex-wrap: nowrap;
-            }
+            .discount-summary-row { flex-wrap: nowrap; }
         }
 
         .payment-row { display: flex; gap: 2rem; margin-top: 2rem; }
@@ -557,7 +554,6 @@
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
 
-            /* About page stacking */
             .about-img-1, .about-img-2 {
                 float: none;
                 display: block;
@@ -654,11 +650,12 @@
             </div>
         </div>
 
-        <!-- About (desktop: float layout restored) -->
+        <!-- About (images before text for proper float) -->
         <div class="page-section" id="about-section">
             <h2 class="page-heading">About me</h2>
             <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
                 <div class="about-text">
                     <p id="aboutShortBioParagraph">
                         <span id="aboutShortBioText"></span>
@@ -670,7 +667,6 @@
                         </p>
                     </div>
                 </div>
-                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
             </div>
         </div>
 
@@ -1125,7 +1121,6 @@
                 const zar = parseFloat(el.getAttribute('data-zar'));
                 if (!isNaN(zar)) {
                     el.textContent = formatPrice(zar);
-                    // Brand blue for product-card prices and quantity total
                     if (el.classList.contains('product-price') || el.classList.contains('price') || el.id === 'quantityTotalPrice') {
                         el.style.color = 'var(--primary-color, #194373)';
                     } else {
@@ -1432,8 +1427,7 @@
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    const container = document.querySelector('.about-section-content');
-                    container.appendChild(img2);
+                    document.querySelector('.about-section-content').appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
@@ -1442,8 +1436,7 @@
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    const container = document.querySelector('.about-section-content');
-                    container.appendChild(img2);
+                    document.querySelector('.about-section-content').appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
@@ -1467,6 +1460,7 @@
             document.getElementById('qtyUp').disabled = true;
             document.getElementById('qtyDown').disabled = true;
             document.getElementById('quantityTotalPrice').textContent = '';
+            document.getElementById('quantityTotalPrice').classList.remove('price-glow');
             document.getElementById('formatText').textContent = '';
             document.getElementById('orderProductType').classList.remove('visible');
             document.getElementById('orderProductType').style.display = 'none';
@@ -1765,7 +1759,9 @@
             updateOrderSummary();
             if (isEmailVerified) {
                 document.getElementById('orderProductType').style.display = 'flex';
-                document.getElementById('quantityTotalPrice').style.display = 'block';
+                const totalEl = document.getElementById('quantityTotalPrice');
+                totalEl.style.display = 'block';
+                totalEl.classList.add('price-glow');
                 if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
                 else document.getElementById('shippingAddressSection').style.display = 'none';
             }
@@ -1783,11 +1779,14 @@
                 msgEl.classList.add('pulse-message');
                 document.getElementById('orderProductType').style.display = 'none';
                 document.getElementById('quantityTotalPrice').style.display = 'none';
+                document.getElementById('quantityTotalPrice').classList.remove('price-glow');
             } else {
                 msgEl.style.display = 'none';
                 msgEl.classList.remove('pulse-message');
                 document.getElementById('orderProductType').style.display = 'flex';
-                document.getElementById('quantityTotalPrice').style.display = 'block';
+                const totalEl = document.getElementById('quantityTotalPrice');
+                totalEl.style.display = 'block';
+                totalEl.classList.add('price-glow');
             }
         }
 
