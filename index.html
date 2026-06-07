@@ -580,12 +580,12 @@
         .site-footer {
             background: var(--primary-color, #194373);
             color: #ffffff;
-            margin-top: 2rem;                /* reduced from 3rem */
+            margin-top: 2rem;
         }
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;            /* reduced from 2rem top/bottom */
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -622,7 +622,7 @@
         }
         .footer-bottom {
             text-align: center;
-            padding: 0 2rem 1.5rem;         /* reduced bottom padding */
+            padding: 0 2rem 1.5rem;
             font-size: 0.85rem;
             color: #aaa;
         }
@@ -1069,7 +1069,7 @@
         let paymentKeys = {};
         let legalPages = {};
 
-        // ---------- SESSION STORAGE HELPERS (only for non‑personal data) ----------
+        // ---------- SESSION STORAGE HELPERS ----------
         function saveToSession(key, value) {
             try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
         }
@@ -1122,39 +1122,57 @@
             }
         });
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (robust) ----------
+        // ---------- PHONE COUNTRY CODE EXTRACTOR (uses known codes) ----------
+        function getKnownPhoneCodes() {
+            if (!shippingRegions || !shippingRegions.length) return [];
+            return shippingRegions
+                .map(r => r.PhoneCode)
+                .filter(Boolean)
+                .sort((a,b) => b.length - a.length); // longest first
+        }
+
+        function extractCountryCode(fullNumber) {
+            if (!fullNumber.startsWith('+')) return null;
+            const codes = getKnownPhoneCodes();
+            for (const code of codes) {
+                if (fullNumber.startsWith('+' + code)) {
+                    const rest = fullNumber.slice(('+' + code).length).trim();
+                    return { code: '+' + code, number: rest };
+                }
+            }
+            // fallback: use simple 1-4 digit rule
+            const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
+            if (match) {
+                return { code: '+' + match[1], number: match[2] || '' };
+            }
+            return null;
+        }
+
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (country‑code‑aware) ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
             if (!numInput || !codeInput) return;
 
             function splitNumberField() {
-                let val = numInput.value.trim();
-                if (val.startsWith('+')) {
-                    const match = val.match(/^\+(\d{1,4})\s?(.*)/);
-                    if (match) {
-                        const code = '+' + match[1];
-                        const rest = match[2] || '';
-                        codeInput.value = code;
-                        autoResizePhoneCodeInput(codeInput.id);
-                        numInput.value = rest;
-                        return true;
-                    }
+                const val = numInput.value.trim();
+                const extracted = extractCountryCode(val);
+                if (extracted) {
+                    codeInput.value = extracted.code;
+                    autoResizePhoneCodeInput(codeInput.id);
+                    numInput.value = extracted.number;
                 }
-                return false;
             }
 
             function splitCodeField() {
-                let val = codeInput.value.trim();
+                const val = codeInput.value.trim();
                 if (val.startsWith('+') && val.length > 5) {
-                    const match = val.match(/^\+(\d{1,4})\s?(.*)/);
-                    if (match) {
-                        const code = '+' + match[1];
-                        const rest = match[2] || '';
-                        codeInput.value = code;
+                    const extracted = extractCountryCode(val);
+                    if (extracted) {
+                        codeInput.value = extracted.code;
                         autoResizePhoneCodeInput(codeInput.id);
-                        if (rest && !numInput.value.trim()) {
-                            numInput.value = rest;
+                        if (extracted.number && !numInput.value.trim()) {
+                            numInput.value = extracted.number;
                         }
                     }
                 }
@@ -1755,6 +1773,68 @@
             toggleLess.addEventListener('click', collapse);
         }
 
+        // ---------- ORDER SESSION STATE ----------
+        function saveOrderState() {
+            if (!document.getElementById('order-section')) return;
+            const state = {
+                selectedProductIndex: selectedProduct ? products.indexOf(selectedProduct) : -1,
+                quantity: document.getElementById('orderQuantity').value,
+                isEmailVerified: isEmailVerified,
+                verifiedEmail: document.getElementById('verifiedEmail').value,
+                customerName: document.getElementById('customerName').value,
+                phoneCode: document.getElementById('phoneCodeInput').value,
+                phoneNumber: document.getElementById('customerPhone').value,
+                addressLine1: document.getElementById('addressLine1').value,
+                addressLine2: document.getElementById('addressLine2').value,
+                addressSuburb: document.getElementById('addressSuburb').value,
+                addressCity: document.getElementById('addressCity').value,
+                addressPostcode: document.getElementById('addressPostcode').value,
+                addressRegion: document.getElementById('addressRegion').value,
+                selectedShippingCountry: selectedShippingCountry,
+                userCountryRegion: userCountryRegion
+            };
+            saveToSession('orderState', state);
+        }
+
+        function loadOrderState() {
+            const state = loadFromSession('orderState');
+            if (!state) return false;
+            if (state.selectedProductIndex >= 0 && state.selectedProductIndex < products.length) {
+                selectProduct(state.selectedProductIndex, true);
+            }
+            if (state.quantity) document.getElementById('orderQuantity').value = state.quantity;
+            isEmailVerified = state.isEmailVerified || false;
+            if (isEmailVerified) {
+                document.getElementById('emailVerifyWrapper').style.display = 'none';
+                document.getElementById('customerDetails').style.display = 'block';
+                document.getElementById('verifiedEmail').value = state.verifiedEmail || '';
+                document.getElementById('customerName').value = state.customerName || '';
+                document.getElementById('phoneCodeInput').value = state.phoneCode || '+1';
+                document.getElementById('customerPhone').value = state.phoneNumber || '';
+                document.getElementById('addressLine1').value = state.addressLine1 || '';
+                document.getElementById('addressLine2').value = state.addressLine2 || '';
+                document.getElementById('addressSuburb').value = state.addressSuburb || '';
+                document.getElementById('addressCity').value = state.addressCity || '';
+                document.getElementById('addressPostcode').value = state.addressPostcode || '';
+                document.getElementById('addressRegion').value = state.addressRegion || '';
+                if (state.selectedShippingCountry) {
+                    selectedShippingCountry = state.selectedShippingCountry;
+                }
+                if (state.userCountryRegion) {
+                    userCountryRegion = state.userCountryRegion;
+                }
+                updateOrderSummary();
+                if (selectedProduct && selectedProduct.Type === 'Physical') {
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                }
+            } else {
+                document.getElementById('emailVerifyWrapper').style.display = 'flex';
+                document.getElementById('customerDetails').style.display = 'none';
+                document.getElementById('shippingAddressSection').style.display = 'none';
+            }
+            return true;
+        }
+
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
             isEmailVerified = false;
@@ -1933,7 +2013,10 @@
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
 
-            resetOrderForm();
+            // Try to restore previous session state; if not, start fresh
+            if (!loadOrderState()) {
+                resetOrderForm();
+            }
         }
 
         function autoResizePhoneCodeInput(inputId) {
@@ -2024,6 +2107,7 @@
                         }
                     }
                     updateOrderSummary();
+                    saveOrderState(); // persist immediately after verification
                 } else {
                     showAlertModal('Verification Failed', data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
                     document.getElementById('verifyLeft').style.display = 'block';
@@ -2043,7 +2127,7 @@
             }
         }
 
-        function selectProduct(index) {
+        function selectProduct(index, isRestore = false) {
             const opt1 = document.getElementById('productOption1');
             const opt2 = document.getElementById('productOption2');
             opt1.classList.remove('selected');
@@ -2054,10 +2138,10 @@
             document.getElementById('qtyUp').disabled = false;
             document.getElementById('qtyDown').disabled = false;
 
-            const qtyInput = document.getElementById('orderQuantity');
-            let currentVal = parseInt(qtyInput.value);
-            if (isNaN(currentVal) || currentVal < 1) {
-                qtyInput.value = '1';
+            if (!isRestore) {
+                const qtyInput = document.getElementById('orderQuantity');
+                let currentVal = parseInt(qtyInput.value);
+                if (isNaN(currentVal) || currentVal < 1) qtyInput.value = '1';
             }
             document.getElementById('formatText').textContent = selectedProduct.Type || 'Physical';
             updateInstructionMessage();
@@ -2330,8 +2414,12 @@
             updateOrderSummary();
         }
 
-        // ---------- SPA NAVIGATION ----------
+        // ---------- SPA NAVIGATION (with order state save/restore) ----------
         function showPage(sectionId) {
+            // Save current order state if leaving order page
+            if (document.getElementById('order-section').classList.contains('active') && sectionId !== 'order-section') {
+                saveOrderState();
+            }
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
@@ -2340,7 +2428,9 @@
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
 
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
-            if (sectionId === 'order-section') resetOrderForm();
+            if (sectionId === 'order-section') {
+                loadOrderState();
+            }
 
             window.scrollTo(0, 0);
         }
@@ -2471,6 +2561,7 @@
 
         // ---------- INIT ----------
         async function init() {
+            // Clear any leftover personal data from previous sessions
             sessionStorage.removeItem('userDetails');
             sessionStorage.removeItem('verifiedEmail');
 
