@@ -594,6 +594,7 @@
         .footer-col {
             flex: 1;
             min-width: 150px;
+            text-align: center;                  /* <-- centred text */
         }
         .footer-col h4 {
             font-size: 1rem;
@@ -612,14 +613,13 @@
         .footer-col .social-icon {
             display: inline-flex;
             align-items: center;
+            justify-content: center;             /* <-- centre the icon+text */
             gap: 0.4rem;
         }
         .footer-col .social-icon img {
             height: 20px;
             filter: brightness(0) invert(1);
         }
-        .footer-col { text-align: center; }
-        .footer-col .social-icon { justify-content: center; }  /* Keep LinkedIn aligned */
         .footer-bottom {
             text-align: center;
             padding: 0 2rem 2rem;
@@ -1067,18 +1067,16 @@
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
         let paymentKeys = {};
-        let legalPages = {};          // <-- new
+        let legalPages = {};
 
-        // ---------- SESSION STORAGE HELPERS ----------
+        // ---------- SESSION STORAGE HELPERS (only used for non‑personal data) ----------
         function saveToSession(key, value) {
             try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
         }
         function loadFromSession(key) {
             try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; }
         }
-        function removeFromSession(key) {
-            try { sessionStorage.removeItem(key); } catch(e) {}
-        }
+        // We no longer load user details – every refresh is a clean slate.
 
         // ---------- CUSTOM MODAL ----------
         function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
@@ -1109,7 +1107,7 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- LEGAL MODAL (wider, scrollable) ----------
+        // ---------- LEGAL MODAL ----------
         function showLegalModal(title, content) {
             document.getElementById('legalModalTitle').textContent = title;
             document.getElementById('legalModalContent').textContent = content;
@@ -1119,101 +1117,18 @@
         document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
             document.getElementById('legalModalOverlay').classList.remove('active');
         });
-        // Close legal modal on overlay click
         document.getElementById('legalModalOverlay').addEventListener('click', (e) => {
             if (e.target === document.getElementById('legalModalOverlay')) {
                 document.getElementById('legalModalOverlay').classList.remove('active');
             }
         });
 
-        // ---------- SAVE / LOAD USER DETAILS (session only) ----------
-        function saveUserDetails() {
-            const details = {};
-            const nameOrder = document.getElementById('customerName')?.value.trim();
-            const nameContact = document.getElementById('name')?.value.trim();
-            details.name = nameOrder || nameContact || '';
-
-            const emailOrder = document.getElementById('verifiedEmail')?.value.trim() ||
-                               document.getElementById('orderEmail')?.value.trim();
-            const emailContact = document.getElementById('email')?.value.trim();
-            details.email = emailOrder || emailContact || '';
-
-            const phoneCodeOrder = document.getElementById('phoneCodeInput')?.value.trim();
-            const phoneCodeContact = document.getElementById('contactPhoneCodeInput')?.value.trim();
-            details.phoneCode = phoneCodeOrder || phoneCodeContact || '';
-
-            const phoneNumOrder = document.getElementById('customerPhone')?.value.trim();
-            const phoneNumContact = document.getElementById('phone')?.value.trim();
-            details.phoneNumber = phoneNumOrder || phoneNumContact || '';
-
-            details.addressLine1 = document.getElementById('addressLine1')?.value.trim() || '';
-            details.addressLine2 = document.getElementById('addressLine2')?.value.trim() || '';
-            details.suburb = document.getElementById('addressSuburb')?.value.trim() || '';
-            details.city = document.getElementById('addressCity')?.value.trim() || '';
-            details.postcode = document.getElementById('addressPostcode')?.value.trim() || '';
-            details.region = document.getElementById('addressRegion')?.value.trim() || '';
-
-            saveToSession('userDetails', details);
-        }
-
-        function loadUserDetails() {
-            const saved = loadFromSession('userDetails');
-            if (!saved) return;
-
-            if (document.getElementById('customerName')) {
-                document.getElementById('customerName').value = saved.name || '';
-                if (!isEmailVerified && saved.email) {
-                    document.getElementById('orderEmail').value = saved.email;
-                }
-                document.getElementById('customerPhone').value = saved.phoneNumber || '';
-                document.getElementById('phoneCodeInput').value = saved.phoneCode || '+1';
-                if (saved.addressLine1) document.getElementById('addressLine1').value = saved.addressLine1;
-                if (saved.addressLine2) document.getElementById('addressLine2').value = saved.addressLine2;
-                if (saved.suburb) document.getElementById('addressSuburb').value = saved.suburb;
-                if (saved.city) document.getElementById('addressCity').value = saved.city;
-                if (saved.postcode) document.getElementById('addressPostcode').value = saved.postcode;
-                if (saved.region) document.getElementById('addressRegion').value = saved.region;
-            }
-
-            if (document.getElementById('name')) {
-                document.getElementById('name').value = saved.name || '';
-                document.getElementById('email').value = saved.email || '';
-                document.getElementById('phone').value = saved.phoneNumber || '';
-                document.getElementById('contactPhoneCodeInput').value = saved.phoneCode || '+1';
-            }
-        }
-
-        function debounce(func, delay) {
-            let timeout;
-            return function(...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), delay);
-            };
-        }
-
-        const debouncedSave = debounce(saveUserDetails, 500);
-
-        function attachAutoSaveListeners() {
-            const fields = [
-                'customerName', 'orderEmail', 'verifiedEmail', 'phoneCodeInput', 'customerPhone',
-                'addressLine1', 'addressLine2', 'addressSuburb', 'addressCity', 'addressPostcode', 'addressRegion',
-                'name', 'email', 'contactPhoneCodeInput', 'phone'
-            ];
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', debouncedSave);
-                    el.addEventListener('change', debouncedSave);
-                }
-            });
-        }
-
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (handles both fields) ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (robust) ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
             if (!numInput || !codeInput) return;
-        
+
             function splitNumberField() {
                 let val = numInput.value.trim();
                 if (val.startsWith('+')) {
@@ -1229,42 +1144,36 @@
                 }
                 return false;
             }
-        
+
             function splitCodeField() {
-                // If the code field accidentally receives the full number, fix it
                 let val = codeInput.value.trim();
-                if (val.startsWith('+') && val.length > 5) {   // e.g. "+1234567890"
+                if (val.startsWith('+') && val.length > 5) {
                     const match = val.match(/^\+(\d{1,4})\s?(.*)/);
                     if (match) {
                         const code = '+' + match[1];
                         const rest = match[2] || '';
                         codeInput.value = code;
                         autoResizePhoneCodeInput(codeInput.id);
-                        if (rest) {
-                            // Only overwrite the number field if it doesn’t already have a value
-                            if (!numInput.value.trim()) {
-                                numInput.value = rest;
-                            }
+                        if (rest && !numInput.value.trim()) {
+                            numInput.value = rest;
                         }
                     }
                 }
             }
-        
+
             function handleChange() {
                 splitNumberField();
                 splitCodeField();
             }
-        
-            // Listen on both fields – input covers autofill, change as fallback
+
             numInput.addEventListener('input', splitNumberField);
             numInput.addEventListener('change', handleChange);
             numInput.addEventListener('blur', handleChange);
-        
+
             codeInput.addEventListener('input', splitCodeField);
             codeInput.addEventListener('change', handleChange);
             codeInput.addEventListener('blur', handleChange);
-        
-            // Initial split in case fields were pre‑filled (e.g. session storage)
+
             handleChange();
         }
 
@@ -1686,7 +1595,6 @@
             if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
             if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
 
-            // Navigation icons
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -1728,7 +1636,6 @@
                 a.appendChild(span);
                 navContainer.appendChild(a);
 
-                // Footer LinkedIn icon update
                 if (item.iconSetting === 'NavIconURLLinkedIn') {
                     const footerLinkedIn = document.getElementById('footerLinkedIn');
                     if (footerLinkedIn) {
@@ -1737,7 +1644,7 @@
                             if (linkUrl && linkUrl.trim() !== '') {
                                 if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
                                 footerLinkedIn.href = linkUrl;
-                                footerLinkedIn.target = '_blank';   // <-- new tab
+                                footerLinkedIn.target = '_blank';
                                 footerLinkedIn.querySelector('img').src = iconUrl;
                             }
                         }
@@ -1798,7 +1705,6 @@
             refreshAllPrices();
         }
 
-        // ---------- ABOUT SECTION ----------
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
@@ -1852,13 +1758,8 @@
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
-            if (loadFromSession('verifiedEmail')) {
-                isEmailVerified = true;
-                lastVerifiedEmail = loadFromSession('verifiedEmail');
-            } else {
-                isEmailVerified = false;
-                lastVerifiedEmail = '';
-            }
+            isEmailVerified = false;                     // fresh session – never keep verification
+            lastVerifiedEmail = '';
 
             document.getElementById('productOption1').classList.remove('selected');
             document.getElementById('productOption2').classList.remove('selected');
@@ -1877,26 +1778,29 @@
             document.getElementById('instructionMessage').textContent = 'Please select a book format, and verify your email to continue ordering.';
             document.getElementById('instructionMessage').classList.add('pulse-message');
 
-            document.getElementById('emailVerifyWrapper').style.display = isEmailVerified ? 'none' : 'flex';
+            document.getElementById('emailVerifyWrapper').style.display = 'flex';
             document.getElementById('verifyLeft').style.display = 'block';
             document.getElementById('verifyRight').style.display = 'flex';
             document.getElementById('codeEntryStack').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'none';
-            document.getElementById('customerDetails').style.display = isEmailVerified ? 'block' : 'none';
+            document.getElementById('customerDetails').style.display = 'none';
             document.getElementById('shippingAddressSection').style.display = 'none';
 
-            if (isEmailVerified) {
-                document.getElementById('verifiedEmail').value = lastVerifiedEmail;
-                document.getElementById('orderEmail').value = lastVerifiedEmail;
-                document.getElementById('orderEmail').disabled = false;
-                document.getElementById('verifyEmailBtn').disabled = true;
-            } else {
-                document.getElementById('orderEmail').value = '';
-                document.getElementById('orderEmail').disabled = false;
-                document.getElementById('verifyEmailBtn').disabled = true;
-            }
+            document.getElementById('orderEmail').value = '';
+            document.getElementById('orderEmail').disabled = false;
+            document.getElementById('verifyEmailBtn').disabled = true;
 
-            loadUserDetails();
+            // Clear all fields (fresh start)
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('phoneCodeInput').value = '+1';
+            document.getElementById('addressLine1').value = '';
+            document.getElementById('addressLine2').value = '';
+            document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = '';
+            document.getElementById('addressPostcode').value = '';
+            document.getElementById('addressRegion').value = '';
+            // Country will be set by geo detection
 
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
             if (window.resendTimer) clearInterval(window.resendTimer);
@@ -2032,25 +1936,7 @@
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
 
-            const sessionEmail = loadFromSession('verifiedEmail');
-            if (sessionEmail) {
-                isEmailVerified = true;
-                lastVerifiedEmail = sessionEmail;
-                document.getElementById('verifiedEmail').value = sessionEmail;
-                document.getElementById('customerDetails').style.display = 'block';
-                if (selectedProduct && selectedProduct.Type === 'Physical') {
-                    document.getElementById('shippingAddressSection').style.display = 'block';
-                    if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
-                }
-                document.getElementById('emailVerifyWrapper').style.display = 'none';
-                updateInstructionMessage();
-                updateOrderSummary();
-            } else {
-                resetOrderForm();
-            }
-
-            loadUserDetails();
-            attachAutoSaveListeners();
+            resetOrderForm();   // always start fresh
         }
 
         function autoResizePhoneCodeInput(inputId) {
@@ -2130,8 +2016,6 @@
 
                 if (data.result === 'verified') {
                     isEmailVerified = true;
-                    saveToSession('verifiedEmail', lastEmailAttempt);
-                    saveUserDetails();
                     document.getElementById('emailVerifyWrapper').style.display = 'none';
                     document.getElementById('customerDetails').style.display = 'block';
                     document.getElementById('verifiedEmail').value = lastEmailAttempt;
@@ -2528,11 +2412,9 @@
                     sendBtn.textContent = 'Send Message';
                 }
             });
-
-            loadUserDetails();
         }
 
-        // ---------- LEGAL PAGES (from sheet) ----------
+        // ---------- LEGAL PAGES ----------
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
             if (legalPages.PrivacyPolicy) {
@@ -2592,6 +2474,10 @@
 
         // ---------- INIT ----------
         async function init() {
+            // Clear any leftover personal data from previous sessions
+            sessionStorage.removeItem('userDetails');
+            sessionStorage.removeItem('verifiedEmail');
+
             try {
                 const allData = await fetchAllSiteData();
                 appSettings = allData.settings || {};
@@ -2601,7 +2487,7 @@
                 products = allData.products || [];
                 shippingRegions = allData.shippingRegions || [];
                 regionRates = allData.regionRates || [];
-                legalPages = allData.legal || {};   // <-- store legal content
+                legalPages = allData.legal || {};
                 await detectUserCurrency();
                 if (allData.home) loadHomePageDirect(allData.home);
                 if (allData.about) loadAboutSectionDirect(allData.about);
