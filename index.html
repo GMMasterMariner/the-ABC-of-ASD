@@ -199,6 +199,7 @@
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
 
+        /* Product cards (home page) – price in primary colour */
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -207,34 +208,39 @@
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .product-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
-        .product-card .price { font-weight: 700; font-size: 1.2rem; }
+        .product-card .price {
+            font-weight: 700; font-size: 1.2rem;
+            color: var(--primary-color, #194373);       /* ← brand blue */
+        }
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
-        /* ---- About ---- */
+        /* ---- About (desktop: float layout, mobile: stacked) ---- */
         .about-section-content {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            gap: 1.5rem;
+            overflow: hidden;  /* clearfix for floats */
         }
         .about-img-1 {
-            flex: 0 0 auto; max-width: 300px; width: 40%;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            float: left;
+            margin: 0 1.5rem 0.5rem 0;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .about-img-2 {
-            flex: 0 0 auto; max-width: 300px; width: 40%;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            float: right;
+            margin: 0 0 0.5rem 1.5rem;
+            max-width: 300px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .about-text { flex: 1; line-height: 1.6; }
+        .about-text {
+            line-height: 1.6;
+        }
         .bio-toggle { color: var(--primary-color, #194373); cursor: pointer; font-weight: 600; text-decoration: underline; }
         .bio-extended { display: none; margin-top: 0.5rem; }
         #aboutShortBioParagraph, #aboutExtendedBioText { text-align: justify; }
-
-        @media (min-width: 769px) {
-            .about-img-2 { float: right; margin: 0 0 0.5rem 1.5rem; }
-            .about-text { display: block; }
-        }
 
         /* ---- Contact Form ---- */
         .contact-form { max-width: 700px; margin: 0 auto; }
@@ -299,7 +305,8 @@
         }
         .order-product-option.selected {
             border-color: var(--primary-color, #194373);
-            box-shadow: 0 0 0 4px rgba(25, 67, 115, 0.15); opacity: 1;
+            box-shadow: 0 0 0 4px var(--secondary-color, #f29b2a);   /* glow with secondary */
+            opacity: 1;
         }
         .order-product-option:not(.selected) { opacity: 0.7; }
         .order-product-option img { max-height: 80px; margin-bottom: 0.5rem; }
@@ -309,7 +316,10 @@
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
         .order-product-option .product-price, .order-quantity-total { margin-top: auto; }
-        .product-price { font-weight: 700; font-size: 1rem; color: var(--alert-color, #dc3c33); }
+        .product-price {
+            font-weight: 700; font-size: 1rem;
+            color: var(--primary-color, #194373);          /* ← brand blue */
+        }
 
         .selected-checkmark {
             display: none; position: absolute; top: -8px; right: -8px;
@@ -339,7 +349,13 @@
         }
         .qty-btn:hover { background: #e0e0e0; }
 
-        .order-quantity-total { font-size: 1.2rem; font-weight: 700; color: var(--alert-color, #dc3c33); white-space: nowrap; margin-top: 0.5rem; }
+        /* Quantity total – brand blue, with glow when visible */
+        .order-quantity-total {
+            font-size: 1.2rem; font-weight: 700;
+            color: var(--primary-color, #194373);          /* ← brand blue */
+            white-space: nowrap; margin-top: 0.5rem;
+        }
+
         .order-product-type { font-size: 0.85rem; color: #666; margin: 0.5rem 0; display: none; flex-direction: column; align-items: center; }
         .order-product-type.visible { display: flex; }
         .order-product-type .format-type-value { font-size: 0.9rem; font-weight: 700; color: #333; }
@@ -456,16 +472,18 @@
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .summary-row.total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        /* Discount row – two lines on mobile, one on desktop */
+        /* Discount row */
         .discount-summary-row {
             display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 0.5rem;
         }
-        .discount-label { }
-        .discount-amount { }
+        .discount-amount {
+            color: var(--alert-color, #dc3c33);        /* red for negative */
+            font-weight: 600;
+        }
         .discount-detail {
             color: var(--alert-color, #dc3c33); font-weight: 600;
-            width: 100%;               /* force full width so it wraps below */
-            text-align: right;
+            width: 100%;               /* force full width so it wraps below on mobile */
+            text-align: left;          /* left aligned on mobile */
             margin-top: 0.2rem;
         }
         /* Desktop: keep everything on one line */
@@ -539,9 +557,22 @@
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
 
-            .about-section-content { flex-direction: column; align-items: center; }
-            .about-img-1, .about-img-2 { width: 100%; max-width: 100%; margin: 0 0 1rem 0; float: none; }
-            .about-text { width: 100%; }
+            /* About page stacking */
+            .about-img-1, .about-img-2 {
+                float: none;
+                display: block;
+                margin: 1rem auto;
+                width: 80%;
+                max-width: 250px;
+            }
+            .about-section-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .about-img-1 { order: 1; }
+            .about-text   { order: 2; width: 100%; }
+            .about-img-2 { order: 3; }
 
             .form-row { flex-direction: column; gap: 0.8rem; }
 
@@ -568,11 +599,6 @@
             }
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
-
-            /* City & postcode side by side */
-            .city-postcode-combo {
-                flex-direction: row;
-            }
         }
 
         @media (max-width: 400px) {
@@ -628,10 +654,10 @@
             </div>
         </div>
 
-        <!-- About -->
+        <!-- About (desktop: float layout restored) -->
         <div class="page-section" id="about-section">
             <h2 class="page-heading">About me</h2>
-            <div class="about-section-content">
+            <div class="about-section-content clearfix">
                 <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
                 <div class="about-text">
                     <p id="aboutShortBioParagraph">
@@ -768,7 +794,7 @@
                         <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
                         <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
                         <div class="discount-summary-row" id="discountRow" style="display: none;">
-                            <span class="discount-label">Discount:</span>
+                            <span>Discount:</span>
                             <span class="discount-amount" id="sumDiscount">—</span>
                             <span class="discount-detail" id="discountDetail"></span>
                         </div>
@@ -1099,7 +1125,12 @@
                 const zar = parseFloat(el.getAttribute('data-zar'));
                 if (!isNaN(zar)) {
                     el.textContent = formatPrice(zar);
-                    if (el.classList.contains('product-price') || el.classList.contains('price')) el.style.color = alertColor;
+                    // Brand blue for product-card prices and quantity total
+                    if (el.classList.contains('product-price') || el.classList.contains('price') || el.id === 'quantityTotalPrice') {
+                        el.style.color = 'var(--primary-color, #194373)';
+                    } else {
+                        el.style.color = alertColor;
+                    }
                 }
             });
             if (document.getElementById('order-section').classList.contains('active')) {
@@ -1254,6 +1285,7 @@
             document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
             document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
+            document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
 
             const logo = document.getElementById('bannerLogo');
             if (settings.BannerLogo) {
@@ -1395,13 +1427,13 @@
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
-            const shortBioPara = document.getElementById('aboutShortBioParagraph');
 
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    document.querySelector('.about-section-content').appendChild(img2);
+                    const container = document.querySelector('.about-section-content');
+                    container.appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
@@ -1410,12 +1442,12 @@
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
                 if (window.innerWidth <= 768 && about.AuthorImage2URL) {
-                    document.querySelector('.about-section-content').appendChild(img2);
+                    const container = document.querySelector('.about-section-content');
+                    container.appendChild(img2);
                     img2.style.display = 'block';
                 }
             }
 
-            // On mobile, image2 should be at the bottom initially
             if (window.innerWidth <= 768 && about.AuthorImage2URL) {
                 document.querySelector('.about-section-content').appendChild(img2);
             }
@@ -1846,9 +1878,9 @@
             const discountRow = document.getElementById('discountRow');
             if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
                 discountRow.style.display = 'flex';
+                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
                 document.getElementById('discountDetail').textContent =
                     `${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items`;
-                document.getElementById('sumDiscount').textContent = '- ' + formatPrice(discountAmount);
             } else {
                 discountRow.style.display = 'none';
             }
