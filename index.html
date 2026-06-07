@@ -1134,13 +1134,15 @@
         function extractCountryCode(fullNumber) {
             if (!fullNumber.startsWith('+')) return null;
             const codes = getKnownPhoneCodes();
+            // Do nothing if codes are not yet loaded (prevents wrong split)
+            if (codes.length === 0) return null;
             for (const code of codes) {
                 if (fullNumber.startsWith('+' + code)) {
                     const rest = fullNumber.slice(('+' + code).length).trim();
                     return { code: '+' + code, number: rest };
                 }
             }
-            // fallback: use simple 1-4 digit rule
+            // fallback (only if codes exist but none matched) – simple 1-4 digit rule
             const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
             if (match) {
                 return { code: '+' + match[1], number: match[2] || '' };
@@ -1148,7 +1150,7 @@
             return null;
         }
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (country‑code‑aware) ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
@@ -1192,6 +1194,32 @@
             codeInput.addEventListener('blur', handleChange);
 
             handleChange();
+        }
+
+        // Force split after shippingRegions are loaded
+        function splitAllPhoneFields() {
+            // Order phone
+            if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
+                const numInput = document.getElementById('customerPhone');
+                const codeInput = document.getElementById('phoneCodeInput');
+                const extracted = extractCountryCode(numInput.value.trim());
+                if (extracted) {
+                    codeInput.value = extracted.code;
+                    autoResizePhoneCodeInput('phoneCodeInput');
+                    numInput.value = extracted.number;
+                }
+            }
+            // Contact phone
+            if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
+                const numInput = document.getElementById('phone');
+                const codeInput = document.getElementById('contactPhoneCodeInput');
+                const extracted = extractCountryCode(numInput.value.trim());
+                if (extracted) {
+                    codeInput.value = extracted.code;
+                    autoResizePhoneCodeInput('contactPhoneCodeInput');
+                    numInput.value = extracted.number;
+                }
+            }
         }
 
         // ---------- SINGLE FETCH ----------
@@ -1827,6 +1855,8 @@
                 if (selectedProduct && selectedProduct.Type === 'Physical') {
                     document.getElementById('shippingAddressSection').style.display = 'block';
                 }
+                // Re-split phone after restore
+                splitAllPhoneFields();
             } else {
                 document.getElementById('emailVerifyWrapper').style.display = 'flex';
                 document.getElementById('customerDetails').style.display = 'none';
@@ -2017,6 +2047,8 @@
             if (!loadOrderState()) {
                 resetOrderForm();
             }
+            // Ensure phone fields are clean after any autofill
+            splitAllPhoneFields();
         }
 
         function autoResizePhoneCodeInput(inputId) {
@@ -2430,6 +2462,7 @@
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
             if (sectionId === 'order-section') {
                 loadOrderState();
+                splitAllPhoneFields(); // clean up after page restore
             }
 
             window.scrollTo(0, 0);
@@ -2559,9 +2592,10 @@
             });
         });
 
-        // ---------- INIT ----------
+        // ---------- INIT (clear all on refresh) ----------
         async function init() {
             // Clear any leftover personal data from previous sessions
+            sessionStorage.removeItem('orderState');
             sessionStorage.removeItem('userDetails');
             sessionStorage.removeItem('verifiedEmail');
 
@@ -2582,6 +2616,9 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
+
+                // Now that shipping regions are loaded, clean any autofilled phone numbers
+                splitAllPhoneFields();
 
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
