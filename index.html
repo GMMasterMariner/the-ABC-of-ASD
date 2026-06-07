@@ -407,27 +407,54 @@
 
         .verify-message { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 1rem; }
 
-        .order-contact-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; }
-        .order-contact-row > * { flex: 1; min-width: 0; }
-        .email-input-wrapper { position: relative; }
-        .email-input-wrapper input { width: 100%; padding: 0.8rem 2rem 0.8rem 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
-        .email-checkmark { position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%); color: #2e7d32; font-size: 1.2rem; display: none; }
-        .name-input-wrapper input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+        /* ---------- CUSTOMER DETAILS (stacked vertically) ---------- */
+        .order-contact-row {
+            display: flex;
+            flex-direction: column;          /* stack children vertically */
+            gap: 0.8rem;                     /* matching address field spacing */
+            margin-bottom: 1.5rem;
+        }
+        .order-contact-row > * {
+            width: 100%;                     /* full width */
+        }
+        .phone-composite {
+            /* keep code + number side by side inside the row */
+        }
 
+        /* ---------- SHIPPING ADDRESS (stacked vertically) ---------- */
         .shipping-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
         .shipping-header h4 { margin: 0; }
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
         .shipping-header .locate-btn img { height: 24px; }
-        .address-fields-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
-        .address-fields-grid input, .address-fields-grid .country-selector {
+
+        .address-fields-grid {
+            display: flex;
+            flex-direction: column;          /* single column */
+            gap: 0.8rem;
+        }
+        .address-fields-grid input,
+        .address-fields-grid .country-selector {
             padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px;
             font-size: 1rem; width: 100%; font-family: inherit;
         }
-        .address-stack { display: flex; flex-direction: column; gap: 0.8rem; }
-        .city-postcode-combo { display: flex; gap: 0.4rem; }
-        .city-postcode-combo input:first-child { flex: 1; }
-        .city-postcode-combo input:last-child { width: 100px; }
-        .region-country-stack { display: flex; flex-direction: column; gap: 0.8rem; }
+        .address-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .city-postcode-combo {
+            display: flex;
+            flex-direction: column;          /* stack city and postcode */
+            gap: 0.8rem;
+        }
+        .city-postcode-combo input {
+            width: 100% !important;           /* override fixed width */
+        }
+        .region-country-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
         .country-selector {
             display: flex; align-items: center; gap: 0.3rem;
             border: 1px solid #ccc; border-radius: 6px;
@@ -757,7 +784,7 @@
                     </div>
                 </div>
 
-                <!-- Customer Details -->
+                <!-- Customer Details (stacked) -->
                 <div id="customerDetails" style="display: none;">
                     <div class="order-contact-row">
                         <div class="email-input-wrapper">
@@ -788,24 +815,18 @@
                             </button>
                         </div>
                         <div class="address-fields-grid">
-                            <div class="address-stack">
-                                <input type="text" id="addressLine1" placeholder="Address Line 1 *" required autocomplete="off">
-                                <input type="text" id="addressLine2" placeholder="Address Line 2">
+                            <input type="text" id="addressLine1" placeholder="Address Line 1 *" required autocomplete="off">
+                            <input type="text" id="addressLine2" placeholder="Address Line 2">
+                            <input type="text" id="addressSuburb" placeholder="Suburb">
+                            <div class="city-postcode-combo">
+                                <input type="text" id="addressCity" placeholder="City *" required>
+                                <input type="text" id="addressPostcode" placeholder="Postcode *" required>
                             </div>
-                            <div class="address-stack">
-                                <input type="text" id="addressSuburb" placeholder="Suburb">
-                                <div class="city-postcode-combo">
-                                    <input type="text" id="addressCity" placeholder="City *" required>
-                                    <input type="text" id="addressPostcode" placeholder="Postcode *" required>
-                                </div>
-                            </div>
-                            <div class="region-country-stack">
-                                <input type="text" id="addressRegion" placeholder="Region / State">
-                                <div class="country-selector" id="countrySelector">
-                                    <img id="countryFlag" src="" alt="">
-                                    <span id="countryNameDisplay">Country</span>
-                                    <div class="country-dropdown" id="countryDropdown"></div>
-                                </div>
+                            <input type="text" id="addressRegion" placeholder="Region / State">
+                            <div class="country-selector" id="countrySelector">
+                                <img id="countryFlag" src="" alt="">
+                                <span id="countryNameDisplay">Country</span>
+                                <div class="country-dropdown" id="countryDropdown"></div>
                             </div>
                         </div>
                     </div>
