@@ -108,6 +108,20 @@
             background: #888;
         }
 
+        /* Legal modal – wider */
+        .legal-modal-box {
+            max-width: 700px;
+            text-align: left;
+        }
+        .legal-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            white-space: pre-line;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
         /* ---------- COMBINED TOP BAR ---------- */
         .top-bar {
             position: fixed; top: 0; left: 0; width: 100%;
@@ -566,12 +580,12 @@
         .site-footer {
             background: var(--primary-color, #194373);
             color: #ffffff;
-            padding: 2rem 1.5rem;
             margin-top: 3rem;
         }
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 2rem;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -606,7 +620,7 @@
         }
         .footer-bottom {
             text-align: center;
-            margin-top: 1.5rem;
+            padding: 0 2rem 2rem;
             font-size: 0.85rem;
             color: #aaa;
         }
@@ -706,7 +720,8 @@
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
 
-            .footer-inner { flex-direction: column; }
+            .footer-inner { flex-direction: column; padding: 1.5rem; }
+            .footer-bottom { padding: 0 1.5rem 1.5rem; }
         }
 
         @media (max-width: 400px) {
@@ -736,6 +751,15 @@
                 <button class="btn" id="modalConfirmBtn">OK</button>
                 <button class="btn btn-secondary" id="modalCancelBtn" style="display:none;">Cancel</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ================== LEGAL MODAL (wider, scrollable) ================== -->
+    <div class="modal-overlay" id="legalModalOverlay">
+        <div class="modal-box legal-modal-box">
+            <h3 id="legalModalTitle"></h3>
+            <div class="legal-content" id="legalModalContent"></div>
+            <button class="btn" id="legalModalCloseBtn">Close</button>
         </div>
     </div>
 
@@ -1041,6 +1065,7 @@
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
         let paymentKeys = {};
+        let legalPages = {};          // <-- new
 
         // ---------- SESSION STORAGE HELPERS ----------
         function saveToSession(key, value) {
@@ -1081,6 +1106,23 @@
         function showAlertModal(title, message) {
             showModal(title, message, 'OK', null, null, null);
         }
+
+        // ---------- LEGAL MODAL (wider, scrollable) ----------
+        function showLegalModal(title, content) {
+            document.getElementById('legalModalTitle').textContent = title;
+            document.getElementById('legalModalContent').textContent = content;
+            document.getElementById('legalModalOverlay').classList.add('active');
+        }
+
+        document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
+            document.getElementById('legalModalOverlay').classList.remove('active');
+        });
+        // Close legal modal on overlay click
+        document.getElementById('legalModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('legalModalOverlay')) {
+                document.getElementById('legalModalOverlay').classList.remove('active');
+            }
+        });
 
         // ---------- SAVE / LOAD USER DETAILS (session only) ----------
         function saveUserDetails() {
@@ -1664,6 +1706,7 @@
                             if (linkUrl && linkUrl.trim() !== '') {
                                 if (!/^https?:\/\//i.test(linkUrl)) linkUrl = 'https://' + linkUrl;
                                 footerLinkedIn.href = linkUrl;
+                                footerLinkedIn.target = '_blank';   // <-- new tab
                                 footerLinkedIn.querySelector('img').src = iconUrl;
                             }
                         }
@@ -2458,6 +2501,24 @@
             loadUserDetails();
         }
 
+        // ---------- LEGAL PAGES (from sheet) ----------
+        document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (legalPages.PrivacyPolicy) {
+                showLegalModal('Privacy Policy', legalPages.PrivacyPolicy);
+            } else {
+                showAlertModal('Privacy Policy', 'Policy text not available yet.');
+            }
+        });
+        document.getElementById('termsOfServiceLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (legalPages.TermsOfService) {
+                showLegalModal('Terms of Service', legalPages.TermsOfService);
+            } else {
+                showAlertModal('Terms of Service', 'Terms text not available yet.');
+            }
+        });
+
         // ---------- SPLASH SCREEN ----------
         function hideSplashScreen() {
             const splash = document.getElementById('splash-screen');
@@ -2509,6 +2570,7 @@
                 products = allData.products || [];
                 shippingRegions = allData.shippingRegions || [];
                 regionRates = allData.regionRates || [];
+                legalPages = allData.legal || {};   // <-- store legal content
                 await detectUserCurrency();
                 if (allData.home) loadHomePageDirect(allData.home);
                 if (allData.about) loadAboutSectionDirect(allData.about);
