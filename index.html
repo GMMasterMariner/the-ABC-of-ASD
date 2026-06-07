@@ -61,42 +61,6 @@
             text-align: left;
         }
 
-        /* ---------- WELCOME BACK BAR ---------- */
-        .welcome-bar {
-            display: none;
-            background: var(--primary-color, #194373);
-            color: #ffffff;
-            text-align: center;
-            padding: 0.6rem 1rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            position: relative;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .welcome-bar .dismiss-btn {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-        .welcome-bar .dismiss-btn:hover { opacity: 1; }
-        .welcome-bar .not-you {
-            color: #ffffff;
-            text-decoration: underline;
-            cursor: pointer;
-            margin-left: 1rem;
-            font-weight: 400;
-            font-size: 0.85rem;
-        }
-
         /* ---------- CUSTOM MODAL ---------- */
         .modal-overlay {
             display: none;
@@ -284,6 +248,17 @@
             cursor: pointer; transition: background 0.2s;
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
+
+        /* Product cards wrapper */
+        .product-cards-wrapper {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .product-cards-wrapper .product-card {
+            flex: 1 1 0;
+            min-width: 0;
+        }
 
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
@@ -639,20 +614,18 @@
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
 
-            /* Product cards side by side, order button above them */
+            /* Product cards side by side, button above */
             #productCardsColumn {
                 display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
+                flex-direction: column;
             }
             #productCardsColumn .central-order-btn {
-                width: 100%;
                 order: 1;
-                margin-bottom: 0; /* no extra bottom margin */
+                margin-bottom: 1rem;
             }
-            #productCardsColumn .product-card {
-                flex: 1 1 45%;
+            #productCardsColumn .product-cards-wrapper {
                 order: 2;
+                flex-wrap: wrap;
             }
 
             .about-img-1, .about-img-2 {
@@ -723,13 +696,6 @@
             <div class="spinner"></div>
             <span>Loading</span><span class="loading-dots" id="loadingDots"></span>
         </div>
-    </div>
-
-    <!-- ================== WELCOME BACK BAR ================== -->
-    <div class="welcome-bar" id="welcomeBar">
-        <span id="welcomeMessage"></span>
-        <span class="not-you" id="clearLocalData">Not you? Clear saved data.</span>
-        <button class="dismiss-btn" id="dismissWelcome">&times;</button>
     </div>
 
     <!-- ================== CUSTOM MODAL ================== -->
@@ -880,7 +846,7 @@
                                 <div class="phone-code-dropdown" id="phoneCodeDropdown"></div>
                             </div>
                             <div class="phone-number-input">
-                                <input type="tel" id="customerPhone" placeholder="Phone number" autocomplete="tel-national">
+                                <input type="tel" id="customerPhone" placeholder="Phone number" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -980,7 +946,7 @@
                                     <div class="phone-code-dropdown" id="contactPhoneCodeDropdown"></div>
                                 </div>
                                 <div class="phone-number-input">
-                                    <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="tel-national">
+                                    <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -1019,26 +985,15 @@
         let lastVerifiedEmail = '';
         let paymentKeys = {};
 
-        // ---------- LOCAL STORAGE HELPERS ----------
-        function saveToLocal(key, value) {
-            try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+        // ---------- SESSION STORAGE HELPERS ----------
+        function saveToSession(key, value) {
+            try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
         }
-        function loadFromLocal(key) {
-            try { return JSON.parse(localStorage.getItem(key)); } catch(e) { return null; }
+        function loadFromSession(key) {
+            try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; }
         }
-        function removeLocal(key) {
-            try { localStorage.removeItem(key); } catch(e) {}
-        }
-
-        // ---------- SESSION STORAGE (same-tab persistence) ----------
-        function saveVerificationToSession(email) {
-            try { sessionStorage.setItem('verifiedEmail', email); } catch(e) {}
-        }
-        function loadVerificationFromSession() {
-            try { return sessionStorage.getItem('verifiedEmail'); } catch(e) { return null; }
-        }
-        function clearVerificationSession() {
-            try { sessionStorage.removeItem('verifiedEmail'); } catch(e) {}
+        function removeFromSession(key) {
+            try { sessionStorage.removeItem(key); } catch(e) {}
         }
 
         // ---------- CUSTOM MODAL ----------
@@ -1070,7 +1025,7 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- SAVE / LOAD USER DETAILS (cross‑form) ----------
+        // ---------- SAVE / LOAD USER DETAILS (session only) ----------
         function saveUserDetails() {
             const details = {};
             const nameOrder = document.getElementById('customerName')?.value.trim();
@@ -1097,11 +1052,11 @@
             details.postcode = document.getElementById('addressPostcode')?.value.trim() || '';
             details.region = document.getElementById('addressRegion')?.value.trim() || '';
 
-            saveToLocal('userDetails', details);
+            saveToSession('userDetails', details);
         }
 
         function loadUserDetails() {
-            const saved = loadFromLocal('userDetails');
+            const saved = loadFromSession('userDetails');
             if (!saved) return;
 
             if (document.getElementById('customerName')) {
@@ -1175,9 +1130,10 @@
             }
 
             numInput.addEventListener('input', splitValue);
-            numInput.addEventListener('change', splitValue);   // catches browser autofill
+            numInput.addEventListener('change', splitValue);
+            numInput.addEventListener('blur', splitValue);   // catch browser autofill
 
-            // initial check in case the field was pre‑filled (e.g., from localStorage)
+            // initial check in case the field was pre‑filled (e.g., from sessionStorage)
             if (numInput.value) {
                 splitValue();
             }
@@ -1333,7 +1289,7 @@
                     selectedCurrency = rate;
                     updateCurrencyDisplay();
                     refreshAllPrices();
-                    localStorage.setItem('selectedCurrency', rate.CurrencyCode);
+                    sessionStorage.setItem('selectedCurrency', rate.CurrencyCode);
                     dropdown.classList.remove('open');
                 });
                 return { element: item, text: rate.CountryName + ' ' + rate.CurrencyCode };
@@ -1365,13 +1321,13 @@
                         selectedCurrency = match;
                         updateCurrencyDisplay();
                         refreshAllPrices();
-                        localStorage.setItem('selectedCurrency', match.CurrencyCode);
+                        sessionStorage.setItem('selectedCurrency', match.CurrencyCode);
                     }
                 }
                 if (geo?.country_name) { setUserCountryFromName(geo.country_name); }
             } catch (e) {}
             if (!selectedCurrency) {
-                const saved = localStorage.getItem('selectedCurrency');
+                const saved = sessionStorage.getItem('selectedCurrency');
                 if (saved && exchangeRates.find(r => r.CurrencyCode === saved)) {
                     selectedCurrency = exchangeRates.find(r => r.CurrencyCode === saved);
                 } else {
@@ -1689,9 +1645,14 @@
             const orderBtn = document.createElement('div');
             orderBtn.className = 'central-order-btn';
             orderBtn.innerHTML = '<button class="btn">Order Now</button>';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'product-cards-wrapper';
+            wrapper.appendChild(card1);
+            wrapper.appendChild(card2);
+
             productColumn.appendChild(orderBtn);
-            productColumn.appendChild(card1);
-            productColumn.appendChild(card2);
+            productColumn.appendChild(wrapper);
 
             orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
             refreshAllPrices();
@@ -1751,9 +1712,9 @@
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
-            if (loadVerificationFromSession()) {
+            if (loadFromSession('verifiedEmail')) {
                 isEmailVerified = true;
-                lastVerifiedEmail = loadVerificationFromSession();
+                lastVerifiedEmail = loadFromSession('verifiedEmail');
             } else {
                 isEmailVerified = false;
                 lastVerifiedEmail = '';
@@ -1931,7 +1892,7 @@
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
 
-            const sessionEmail = loadVerificationFromSession();
+            const sessionEmail = loadFromSession('verifiedEmail');
             if (sessionEmail) {
                 isEmailVerified = true;
                 lastVerifiedEmail = sessionEmail;
@@ -2029,7 +1990,7 @@
 
                 if (data.result === 'verified') {
                     isEmailVerified = true;
-                    saveVerificationToSession(lastEmailAttempt);
+                    saveToSession('verifiedEmail', lastEmailAttempt);
                     saveUserDetails();
                     document.getElementById('emailVerifyWrapper').style.display = 'none';
                     document.getElementById('customerDetails').style.display = 'block';
@@ -2459,34 +2420,6 @@
             observer.observe(document.getElementById('splash-screen'), { attributes: true, attributeFilter: ['class'] });
         })();
 
-        // ---------- WELCOME BACK LOGIC ----------
-        function checkWelcomeBack() {
-            const saved = loadFromLocal('userDetails');
-            if (saved && saved.name) {
-                document.getElementById('welcomeMessage').textContent = `Welcome back, ${saved.name}!`;
-                document.getElementById('welcomeBar').style.display = 'block';
-            }
-            document.getElementById('clearLocalData').addEventListener('click', () => {
-                showModal(
-                    'Clear Saved Data',
-                    'Are you sure you want to remove your saved information?',
-                    'Yes, clear it',
-                    'Cancel',
-                    () => {
-                        localStorage.removeItem('userDetails');
-                        sessionStorage.removeItem('verifiedEmail');
-                        document.getElementById('welcomeBar').style.display = 'none';
-                        if (document.getElementById('order-section').classList.contains('active')) {
-                            resetOrderForm();
-                        }
-                    }
-                );
-            });
-            document.getElementById('dismissWelcome').addEventListener('click', () => {
-                document.getElementById('welcomeBar').style.display = 'none';
-            });
-        }
-
         // ---------- INIT ----------
         async function init() {
             try {
@@ -2509,7 +2442,6 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                checkWelcomeBack();
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
                 console.error('Error initializing:', err);
