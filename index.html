@@ -618,6 +618,8 @@
             height: 20px;
             filter: brightness(0) invert(1);
         }
+        .footer-col { text-align: center; }
+        .footer-col .social-icon { justify-content: center; }  /* Keep LinkedIn aligned */
         .footer-bottom {
             text-align: center;
             padding: 0 2rem 2rem;
@@ -1206,35 +1208,64 @@
             });
         }
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (handles both fields) ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
             if (!numInput || !codeInput) return;
-
-            function splitValue() {
+        
+            function splitNumberField() {
                 let val = numInput.value.trim();
                 if (val.startsWith('+')) {
                     const match = val.match(/^\+(\d{1,4})\s?(.*)/);
                     if (match) {
                         const code = '+' + match[1];
                         const rest = match[2] || '';
-                        if (codeInput.value !== code) {
-                            codeInput.value = code;
-                            autoResizePhoneCodeInput(codeInput.id);
-                        }
+                        codeInput.value = code;
+                        autoResizePhoneCodeInput(codeInput.id);
                         numInput.value = rest;
+                        return true;
+                    }
+                }
+                return false;
+            }
+        
+            function splitCodeField() {
+                // If the code field accidentally receives the full number, fix it
+                let val = codeInput.value.trim();
+                if (val.startsWith('+') && val.length > 5) {   // e.g. "+1234567890"
+                    const match = val.match(/^\+(\d{1,4})\s?(.*)/);
+                    if (match) {
+                        const code = '+' + match[1];
+                        const rest = match[2] || '';
+                        codeInput.value = code;
+                        autoResizePhoneCodeInput(codeInput.id);
+                        if (rest) {
+                            // Only overwrite the number field if it doesn’t already have a value
+                            if (!numInput.value.trim()) {
+                                numInput.value = rest;
+                            }
+                        }
                     }
                 }
             }
-
-            numInput.addEventListener('input', splitValue);
-            numInput.addEventListener('change', splitValue);
-            numInput.addEventListener('blur', splitValue);
-
-            if (numInput.value) {
-                splitValue();
+        
+            function handleChange() {
+                splitNumberField();
+                splitCodeField();
             }
+        
+            // Listen on both fields – input covers autofill, change as fallback
+            numInput.addEventListener('input', splitNumberField);
+            numInput.addEventListener('change', handleChange);
+            numInput.addEventListener('blur', handleChange);
+        
+            codeInput.addEventListener('input', splitCodeField);
+            codeInput.addEventListener('change', handleChange);
+            codeInput.addEventListener('blur', handleChange);
+        
+            // Initial split in case fields were pre‑filled (e.g. session storage)
+            handleChange();
         }
 
         // ---------- SINGLE FETCH ----------
