@@ -1771,6 +1771,7 @@
             document.getElementById('qtyUp').disabled = false;
             document.getElementById('qtyDown').disabled = false;
             document.getElementById('orderQuantity').value = '';
+            document.getElementById('formatText').textContent = selectedProduct.Type || 'Physical'; // ensure format appears
             updateInstructionMessage();
             updateQuantityTotal();
             updateOrderSummary();
