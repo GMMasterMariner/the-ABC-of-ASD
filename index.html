@@ -18,6 +18,9 @@
             background-color: #ffffff;
             color: #000000;
             padding-top: 68px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* ---------- SPLASH SCREEN ---------- */
@@ -195,7 +198,7 @@
         }
 
         /* ---------- MAIN CONTENT ---------- */
-        .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .content { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
         .page-section { display: none; }
         .page-section.active { display: block; }
 
@@ -249,17 +252,6 @@
         }
         .carousel-dot.active { background: #194373; border-color: #194373; }
 
-        /* Product cards wrapper */
-        .product-cards-wrapper {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .product-cards-wrapper .product-card {
-            flex: 1 1 0;
-            min-width: 0;
-        }
-
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -272,7 +264,7 @@
             font-weight: 700; font-size: 1.2rem;
             color: var(--primary-color, #194373);
         }
-        .central-order-btn { margin: 0 0 1rem 0; text-align: center; }
+        .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
         /* ---- About (floats) ---- */
@@ -570,6 +562,55 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
+        /* ---------- FOOTER ---------- */
+        .site-footer {
+            background: #0f2b4a;
+            color: #ffffff;
+            padding: 2rem 1.5rem;
+            margin-top: 3rem;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .footer-col {
+            flex: 1;
+            min-width: 150px;
+        }
+        .footer-col h4 {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer-col a {
+            color: #ddd;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.4rem;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: #ffffff; }
+        .footer-col .social-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .footer-col .social-icon img {
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
             body { padding-top: 60px; }
@@ -613,20 +654,6 @@
             .home-columns { flex-direction: column; gap: 1.5rem; }
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
-
-            /* Product cards side by side, button above */
-            #productCardsColumn {
-                display: flex;
-                flex-direction: column;
-            }
-            #productCardsColumn .central-order-btn {
-                order: 1;
-                margin-bottom: 1rem;
-            }
-            #productCardsColumn .product-cards-wrapper {
-                order: 2;
-                flex-wrap: wrap;
-            }
 
             .about-img-1, .about-img-2 {
                 float: none;
@@ -678,6 +705,8 @@
             }
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
+
+            .footer-inner { flex-direction: column; }
         }
 
         @media (max-width: 400px) {
@@ -963,6 +992,34 @@
         </div>
     </div>
 
+    <!-- ================== FOOTER ================== -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="#" data-section="home-section">Home</a>
+                <a href="#" data-section="order-section">Order</a>
+                <a href="#" data-section="about-section">About</a>
+                <a href="#" data-section="contact-section">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <a href="#" class="social-icon" id="footerLinkedIn">
+                    <img src="" alt="LinkedIn"> LinkedIn
+                </a>
+                <a href="mailto:gm.mastermariner@gmail.com">gm.mastermariner@gmail.com</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; <span id="currentYear"></span> GM Master Mariner. All rights reserved.
+        </div>
+    </footer>
+
     <script>
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
@@ -1107,7 +1164,7 @@
             });
         }
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (improved) ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
@@ -1131,9 +1188,8 @@
 
             numInput.addEventListener('input', splitValue);
             numInput.addEventListener('change', splitValue);
-            numInput.addEventListener('blur', splitValue);   // catch browser autofill
+            numInput.addEventListener('blur', splitValue);
 
-            // initial check in case the field was pre‑filled (e.g., from sessionStorage)
             if (numInput.value) {
                 splitValue();
             }
@@ -1598,6 +1654,15 @@
                 span.textContent = item.label;
                 a.appendChild(span);
                 navContainer.appendChild(a);
+
+                // Footer LinkedIn icon update
+                if (item.iconSetting === 'NavIconURLLinkedIn') {
+                    const footerLinkedIn = document.getElementById('footerLinkedIn');
+                    if (footerLinkedIn && linkUrl) {
+                        footerLinkedIn.href = linkUrl;
+                        footerLinkedIn.querySelector('img').src = iconUrl;
+                    }
+                }
             });
             navContainer.addEventListener('click', (e) => {
                 const link = e.target.closest('a');
@@ -1645,14 +1710,9 @@
             const orderBtn = document.createElement('div');
             orderBtn.className = 'central-order-btn';
             orderBtn.innerHTML = '<button class="btn">Order Now</button>';
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'product-cards-wrapper';
-            wrapper.appendChild(card1);
-            wrapper.appendChild(card2);
-
+            productColumn.appendChild(card1);
             productColumn.appendChild(orderBtn);
-            productColumn.appendChild(wrapper);
+            productColumn.appendChild(card2);
 
             orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
             refreshAllPrices();
@@ -2419,6 +2479,18 @@
             });
             observer.observe(document.getElementById('splash-screen'), { attributes: true, attributeFilter: ['class'] });
         })();
+
+        // ---------- FOOTER YEAR ----------
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // ---------- FOOTER NAVIGATION ----------
+        document.querySelectorAll('.footer-col a[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                if (section) showPage(section);
+            });
+        });
 
         // ---------- INIT ----------
         async function init() {
