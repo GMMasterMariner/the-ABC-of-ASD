@@ -576,16 +576,16 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* ---------- FOOTER ---------- */
+        /* ---------- FOOTER (tighter spacing) ---------- */
         .site-footer {
             background: var(--primary-color, #194373);
             color: #ffffff;
-            margin-top: 3rem;
+            margin-top: 2rem;                /* reduced from 3rem */
         }
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem 2rem;            /* reduced from 2rem top/bottom */
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -594,7 +594,7 @@
         .footer-col {
             flex: 1;
             min-width: 150px;
-            text-align: center;                  /* <-- centred text */
+            text-align: center;
         }
         .footer-col h4 {
             font-size: 1rem;
@@ -613,7 +613,7 @@
         .footer-col .social-icon {
             display: inline-flex;
             align-items: center;
-            justify-content: center;             /* <-- centre the icon+text */
+            justify-content: center;
             gap: 0.4rem;
         }
         .footer-col .social-icon img {
@@ -622,7 +622,7 @@
         }
         .footer-bottom {
             text-align: center;
-            padding: 0 2rem 2rem;
+            padding: 0 2rem 1.5rem;         /* reduced bottom padding */
             font-size: 0.85rem;
             color: #aaa;
         }
@@ -1069,14 +1069,13 @@
         let paymentKeys = {};
         let legalPages = {};
 
-        // ---------- SESSION STORAGE HELPERS (only used for non‑personal data) ----------
+        // ---------- SESSION STORAGE HELPERS (only for non‑personal data) ----------
         function saveToSession(key, value) {
             try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
         }
         function loadFromSession(key) {
             try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; }
         }
-        // We no longer load user details – every refresh is a clean slate.
 
         // ---------- CUSTOM MODAL ----------
         function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
@@ -1758,7 +1757,7 @@
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
-            isEmailVerified = false;                     // fresh session – never keep verification
+            isEmailVerified = false;
             lastVerifiedEmail = '';
 
             document.getElementById('productOption1').classList.remove('selected');
@@ -1790,7 +1789,6 @@
             document.getElementById('orderEmail').disabled = false;
             document.getElementById('verifyEmailBtn').disabled = true;
 
-            // Clear all fields (fresh start)
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
             document.getElementById('phoneCodeInput').value = '+1';
@@ -1800,7 +1798,6 @@
             document.getElementById('addressCity').value = '';
             document.getElementById('addressPostcode').value = '';
             document.getElementById('addressRegion').value = '';
-            // Country will be set by geo detection
 
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
             if (window.resendTimer) clearInterval(window.resendTimer);
@@ -1936,7 +1933,7 @@
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
 
-            resetOrderForm();   // always start fresh
+            resetOrderForm();
         }
 
         function autoResizePhoneCodeInput(inputId) {
@@ -2474,7 +2471,6 @@
 
         // ---------- INIT ----------
         async function init() {
-            // Clear any leftover personal data from previous sessions
             sessionStorage.removeItem('userDetails');
             sessionStorage.removeItem('verifiedEmail');
 
