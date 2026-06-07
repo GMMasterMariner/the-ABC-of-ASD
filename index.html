@@ -105,9 +105,7 @@
             z-index: 10000;
             align-items: center; justify-content: center;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
         .modal-box {
             background: white;
             border-radius: 12px;
@@ -154,7 +152,6 @@
         .top-bar-left { display: flex; align-items: center; flex: 0 0 auto; }
         .top-bar-left .banner-logo img { max-height: 45px; display: block; }
 
-        /* Banner title – centered across full screen on desktop */
         .banner-text {
             position: absolute;
             left: 50%;
@@ -642,6 +639,21 @@
             .home-col-left-box, .carousel-wrapper { height: auto !important; }
             .carousel-slide img { width: 60%; }
 
+            /* Product cards side by side, order button below */
+            #productCardsColumn {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            #productCardsColumn .product-card {
+                flex: 1 1 45%;
+                order: 1;
+            }
+            #productCardsColumn .central-order-btn {
+                width: 100%;
+                order: 2;
+            }
+
             .about-img-1, .about-img-2 {
                 float: none;
                 display: block;
@@ -863,11 +875,11 @@
                         <div class="phone-composite" id="orderPhoneComposite">
                             <div class="phone-code-selector" id="phoneCodeSelector">
                                 <img id="phoneFlag" src="" alt="">
-                                <input type="text" class="phone-code-input" id="phoneCodeInput" value="+1" placeholder="+1">
+                                <input type="text" class="phone-code-input" id="phoneCodeInput" value="+1" placeholder="+1" autocomplete="off">
                                 <div class="phone-code-dropdown" id="phoneCodeDropdown"></div>
                             </div>
                             <div class="phone-number-input">
-                                <input type="tel" id="customerPhone" placeholder="Phone number">
+                                <input type="tel" id="customerPhone" placeholder="Phone number" autocomplete="tel-national">
                             </div>
                         </div>
                     </div>
@@ -963,11 +975,11 @@
                             <div class="phone-composite" id="contactPhoneComposite">
                                 <div class="phone-code-selector" id="contactPhoneCodeSelector">
                                     <img id="contactPhoneFlag" src="" alt="">
-                                    <input type="text" class="phone-code-input" id="contactPhoneCodeInput" value="+1" placeholder="+1">
+                                    <input type="text" class="phone-code-input" id="contactPhoneCodeInput" value="+1" placeholder="+1" autocomplete="off">
                                     <div class="phone-code-dropdown" id="contactPhoneCodeDropdown"></div>
                                 </div>
                                 <div class="phone-number-input">
-                                    <input type="tel" id="phone" name="phone" placeholder="Phone number">
+                                    <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="tel-national">
                                 </div>
                             </div>
                         </div>
@@ -1055,6 +1067,120 @@
 
         function showAlertModal(title, message) {
             showModal(title, message, 'OK', null, null, null);
+        }
+
+        // ---------- SAVE / LOAD USER DETAILS (cross‑form) ----------
+        function saveUserDetails() {
+            const details = {};
+            // try to get from whichever form is visible, fallback to any available
+            const nameOrder = document.getElementById('customerName')?.value.trim();
+            const nameContact = document.getElementById('name')?.value.trim();
+            details.name = nameOrder || nameContact || '';
+
+            const emailOrder = document.getElementById('verifiedEmail')?.value.trim() ||
+                               document.getElementById('orderEmail')?.value.trim();
+            const emailContact = document.getElementById('email')?.value.trim();
+            details.email = emailOrder || emailContact || '';
+
+            const phoneCodeOrder = document.getElementById('phoneCodeInput')?.value.trim();
+            const phoneCodeContact = document.getElementById('contactPhoneCodeInput')?.value.trim();
+            details.phoneCode = phoneCodeOrder || phoneCodeContact || '';
+
+            const phoneNumOrder = document.getElementById('customerPhone')?.value.trim();
+            const phoneNumContact = document.getElementById('phone')?.value.trim();
+            details.phoneNumber = phoneNumOrder || phoneNumContact || '';
+
+            // address fields only exist on order form
+            details.addressLine1 = document.getElementById('addressLine1')?.value.trim() || '';
+            details.addressLine2 = document.getElementById('addressLine2')?.value.trim() || '';
+            details.suburb = document.getElementById('addressSuburb')?.value.trim() || '';
+            details.city = document.getElementById('addressCity')?.value.trim() || '';
+            details.postcode = document.getElementById('addressPostcode')?.value.trim() || '';
+            details.region = document.getElementById('addressRegion')?.value.trim() || '';
+
+            saveToLocal('userDetails', details);
+        }
+
+        function loadUserDetails() {
+            const saved = loadFromLocal('userDetails');
+            if (!saved) return;
+
+            // Fill order form if present
+            if (document.getElementById('customerName')) {
+                document.getElementById('customerName').value = saved.name || '';
+                // email handled by verification, but we can prefill orderEmail if not verified
+                if (!isEmailVerified && saved.email) {
+                    document.getElementById('orderEmail').value = saved.email;
+                }
+                document.getElementById('customerPhone').value = saved.phoneNumber || '';
+                document.getElementById('phoneCodeInput').value = saved.phoneCode || '+1';
+                if (saved.addressLine1) document.getElementById('addressLine1').value = saved.addressLine1;
+                if (saved.addressLine2) document.getElementById('addressLine2').value = saved.addressLine2;
+                if (saved.suburb) document.getElementById('addressSuburb').value = saved.suburb;
+                if (saved.city) document.getElementById('addressCity').value = saved.city;
+                if (saved.postcode) document.getElementById('addressPostcode').value = saved.postcode;
+                if (saved.region) document.getElementById('addressRegion').value = saved.region;
+            }
+
+            // Fill contact form if present
+            if (document.getElementById('name')) {
+                document.getElementById('name').value = saved.name || '';
+                document.getElementById('email').value = saved.email || '';
+                document.getElementById('phone').value = saved.phoneNumber || '';
+                document.getElementById('contactPhoneCodeInput').value = saved.phoneCode || '+1';
+            }
+        }
+
+        // Debounce helper
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        const debouncedSave = debounce(saveUserDetails, 500);
+
+        function attachAutoSaveListeners() {
+            const fields = [
+                'customerName', 'orderEmail', 'verifiedEmail', 'phoneCodeInput', 'customerPhone',
+                'addressLine1', 'addressLine2', 'addressSuburb', 'addressCity', 'addressPostcode', 'addressRegion',
+                'name', 'email', 'contactPhoneCodeInput', 'phone'
+            ];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', debouncedSave);
+                    el.addEventListener('change', debouncedSave); // for dropdowns etc.
+                }
+            });
+        }
+
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
+        function setupPhoneSplitter(numberInputId, codeInputId) {
+            const numInput = document.getElementById(numberInputId);
+            const codeInput = document.getElementById(codeInputId);
+            if (!numInput || !codeInput) return;
+
+            numInput.addEventListener('input', function() {
+                let val = this.value.trim();
+                // If value starts with '+' followed by digits, try to extract country code
+                if (val.startsWith('+')) {
+                    const match = val.match(/^\+(\d{1,4})\s?(.*)/);
+                    if (match) {
+                        const code = '+' + match[1];
+                        const rest = match[2] || '';
+                        // Set the code input if it's different
+                        if (codeInput.value !== code) {
+                            codeInput.value = code;
+                            // resize if needed
+                            autoResizePhoneCodeInput(codeInput.id);
+                        }
+                        this.value = rest;
+                    }
+                }
+            });
         }
 
         // ---------- SINGLE FETCH ----------
@@ -1625,7 +1751,6 @@
 
         // ---------- ORDER PAGE LOGIC ----------
         function resetOrderForm() {
-            // Keep verification if session says so
             if (loadVerificationFromSession()) {
                 isEmailVerified = true;
                 lastVerifiedEmail = loadVerificationFromSession();
@@ -1670,27 +1795,8 @@
                 document.getElementById('verifyEmailBtn').disabled = true;
             }
 
-            document.getElementById('customerName').value = '';
-            document.getElementById('customerPhone').value = '';
-            document.getElementById('addressLine1').value = '';
-            document.getElementById('addressLine2').value = '';
-            document.getElementById('addressSuburb').value = '';
-            document.getElementById('addressCity').value = '';
-            document.getElementById('addressPostcode').value = '';
-            document.getElementById('addressRegion').value = '';
-
             // Restore saved data from previous session if available
-            const saved = loadFromLocal('userDetails');
-            if (saved) {
-                if (saved.name) document.getElementById('customerName').value = saved.name;
-                if (saved.phone) document.getElementById('customerPhone').value = saved.phone;
-                if (saved.addressLine1) document.getElementById('addressLine1').value = saved.addressLine1;
-                if (saved.addressLine2) document.getElementById('addressLine2').value = saved.addressLine2;
-                if (saved.suburb) document.getElementById('addressSuburb').value = saved.suburb;
-                if (saved.city) document.getElementById('addressCity').value = saved.city;
-                if (saved.postcode) document.getElementById('addressPostcode').value = saved.postcode;
-                if (saved.region) document.getElementById('addressRegion').value = saved.region;
-            }
+            loadUserDetails();
 
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
             if (window.resendTimer) clearInterval(window.resendTimer);
@@ -1823,6 +1929,10 @@
             document.getElementById('phoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('phoneCodeInput'));
             document.getElementById('contactPhoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('contactPhoneCodeInput'));
 
+            // Setup phone number splitter
+            setupPhoneSplitter('customerPhone', 'phoneCodeInput');
+            setupPhoneSplitter('phone', 'contactPhoneCodeInput');
+
             // Restore verification from session
             const sessionEmail = loadVerificationFromSession();
             if (sessionEmail) {
@@ -1840,6 +1950,10 @@
             } else {
                 resetOrderForm();
             }
+
+            // Pre‑fill forms from stored data
+            loadUserDetails();
+            attachAutoSaveListeners();
         }
 
         function autoResizePhoneCodeInput(inputId) {
@@ -1920,11 +2034,8 @@
                 if (data.result === 'verified') {
                     isEmailVerified = true;
                     saveVerificationToSession(lastEmailAttempt);
-                    // Save to localStorage for future visits
-                    const currentName = document.getElementById('customerName').value.trim();
-                    if (currentName) {
-                        saveToLocal('userDetails', { name: currentName, email: lastEmailAttempt });
-                    }
+                    // Save user details immediately
+                    saveUserDetails();
                     document.getElementById('emailVerifyWrapper').style.display = 'none';
                     document.getElementById('customerDetails').style.display = 'block';
                     document.getElementById('verifiedEmail').value = lastEmailAttempt;
@@ -1965,7 +2076,13 @@
             document.getElementById('orderQuantity').disabled = false;
             document.getElementById('qtyUp').disabled = false;
             document.getElementById('qtyDown').disabled = false;
-            document.getElementById('orderQuantity').value = '';
+
+            // Keep existing quantity if valid, otherwise set to 1
+            const qtyInput = document.getElementById('orderQuantity');
+            let currentVal = parseInt(qtyInput.value);
+            if (isNaN(currentVal) || currentVal < 1) {
+                qtyInput.value = '1';
+            }
             document.getElementById('formatText').textContent = selectedProduct.Type || 'Physical';
             updateInstructionMessage();
             updateQuantityTotal();
@@ -2316,6 +2433,9 @@
                     sendBtn.textContent = 'Send Message';
                 }
             });
+
+            // Pre‑fill contact form on load
+            loadUserDetails();
         }
 
         // ---------- SPLASH SCREEN ----------
@@ -2397,9 +2517,7 @@
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
 
-                checkWelcomeBack();   // show welcome bar if data exists
-
-                // Hide splash after a tiny delay
+                checkWelcomeBack();
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
                 console.error('Error initializing:', err);
