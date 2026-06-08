@@ -256,11 +256,11 @@
         .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
         .btn img, .pay-btn img { height: 24px; width: auto; }
         .btn-secondary {
-            background-color: #aaa;
+            background-color: var(--secondary-color, #f29b2a);   /* brand secondary */
             color: white;
         }
         .btn-secondary:hover {
-            background-color: #888;
+            opacity: 0.85;
         }
 
         /* ---------- MAIN CONTENT ---------- */
@@ -1799,10 +1799,9 @@
                 if (data.result === 'verified') {
                     isEmailVerified = true; document.getElementById('emailVerifyWrapper').style.display = 'none'; document.getElementById('customerDetails').style.display = 'block';
                     document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                    if (selectedProduct) {
-                        updateInstructionMessage();
-                        if (selectedProduct.Type === 'Physical') { document.getElementById('shippingAddressSection').style.display = 'block'; if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey); }
-                    }
+                    // ✅ call updateInstructionMessage unconditionally
+                    updateInstructionMessage();
+                    if (selectedProduct && selectedProduct.Type === 'Physical') { document.getElementById('shippingAddressSection').style.display = 'block'; if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey); }
                     updateOrderSummary(); saveOrderState(); window.dispatchEvent(new Event('paymentStateChange'));
                 } else {
                     showAlertModal('Verification Failed', data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
