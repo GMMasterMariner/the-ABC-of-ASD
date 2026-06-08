@@ -18,7 +18,7 @@
             background-color: #ffffff;
             color: #000000;
             padding-top: 68px;
-            padding-bottom: 4rem;           /* space for sticky footer */
+            padding-bottom: 4rem;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -118,9 +118,27 @@
             max-height: 60vh;
             overflow-y: auto;
             margin-bottom: 1.5rem;
-            white-space: pre-line;
             font-size: 0.95rem;
             line-height: 1.6;
+        }
+        .legal-content h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-color, #194373);
+            margin: 1rem 0 0.4rem;
+        }
+        .legal-content h4:first-child {
+            margin-top: 0;
+        }
+        .legal-content p {
+            margin-bottom: 0.8rem;
+        }
+        .legal-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .legal-content ul li {
+            margin-bottom: 0.3rem;
         }
 
         /* ---------- COMBINED TOP BAR ---------- */
@@ -610,7 +628,7 @@
             transition: padding 0.3s;
         }
         .site-footer.collapsed .footer-inner {
-            padding: 0.375rem 2rem;      /* equal top/bottom to copyright bottom edge */
+            padding: 0.375rem 2rem;
         }
         .footer-col {
             flex: 1;
@@ -624,7 +642,7 @@
             letter-spacing: 0.5px;
         }
         .site-footer.collapsed .footer-col h4 {
-            margin-bottom: 0;             /* no extra gap below heading */
+            margin-bottom: 0;
         }
         .footer-col a {
             color: #ddd;
@@ -646,8 +664,8 @@
         }
         .footer-bottom {
             text-align: center;
-            padding: 0 2rem 0.375rem;    /* bottom edge = 0.375rem */
-            font-size: 0.85rem;
+            padding: 0 2rem 0.375rem;
+            font-size: 0.75rem;            /* smaller copyright */
             color: #aaa;
         }
 
@@ -675,8 +693,8 @@
                 padding: 0.375rem 0.5rem;
             }
             .site-footer.collapsed .footer-col {
-                min-width: 0;               /* allow columns to shrink */
-                flex: 0 1 auto;             /* don't force equal width */
+                min-width: 0;
+                flex: 0 1 auto;
             }
             .site-footer.collapsed .footer-col h4 {
                 font-size: 0.7rem;
@@ -1163,9 +1181,9 @@
         }
 
         // ---------- LEGAL MODAL ----------
-        function showLegalModal(title, content) {
+        function showLegalModal(title, htmlContent) {
             document.getElementById('legalModalTitle').textContent = title;
-            document.getElementById('legalModalContent').textContent = content;
+            document.getElementById('legalModalContent').innerHTML = htmlContent;
             document.getElementById('legalModalOverlay').classList.add('active');
         }
 
@@ -1178,31 +1196,69 @@
             }
         });
 
+        // ---------- BUILD LEGAL HTML FROM STRUCTURED DATA ----------
+        function buildLegalHTML(prefix) {
+            const keys = Object.keys(legalPages)
+                .filter(k => k.startsWith(prefix))
+                .sort(); // alphabetical order will keep headings together
+
+            let html = '';
+            for (const key of keys) {
+                const value = legalPages[key] || '';
+                // Determine if this is a heading (ends with 'Heading')
+                if (key.endsWith('Heading')) {
+                    html += `<h4>${escapeHtml(value)}</h4>`;
+                } else {
+                    // Handle markdown-like **bold** and bullet points
+                    let formatted = escapeHtml(value)
+                        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // bold
+                        .replace(/\*(.+?)\*/g, '<em>$1</em>');             // italic
+
+                    // If text contains bullet characters, turn into <ul>
+                    if (formatted.includes('•')) {
+                        const items = formatted.split('\n')
+                            .filter(line => line.trim().length > 0)
+                            .map(line => line.trim().replace(/^•\s*/, ''));
+                        if (items.length) {
+                            html += '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+                        }
+                    } else {
+                        html += `<p>${formatted}</p>`;
+                    }
+                }
+            }
+            return html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // ---------- PHONE COUNTRY CODE EXTRACTOR (strips leading '+' from sheet codes, then matches) ----------
         function getKnownPhoneCodes() {
             if (!shippingRegions || !shippingRegions.length) return [];
             return shippingRegions
-                .map(r => (r.PhoneCode || '').replace(/^\+/, ''))   // remove any existing '+'
+                .map(r => (r.PhoneCode || '').replace(/^\+/, ''))
                 .filter(code => code.length > 0)
-                .sort((a,b) => b.length - a.length); // longest first (e.g. 1242 before 1)
+                .sort((a,b) => b.length - a.length);
         }
 
         function extractCountryCode(fullNumber) {
             if (!fullNumber.startsWith('+')) return null;
             const codes = getKnownPhoneCodes();
-            if (codes.length === 0) return null;   // wait for data
+            if (codes.length === 0) return null;
 
             for (const code of codes) {
                 if (fullNumber.startsWith('+' + code)) {
                     let rest = fullNumber.slice(('+' + code).length).trim();
-                    // Remove leading zero from local number (common autofill quirk)
                     if (rest.length > 1 && rest.startsWith('0')) {
                         rest = rest.slice(1).trim();
                     }
                     return { code: '+' + code, number: rest };
                 }
             }
-            // fallback: generic 1-4 digit rule (should rarely be needed now)
             const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
             if (match) {
                 let rest = (match[2] || '').trim();
@@ -1214,7 +1270,7 @@
             return null;
         }
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (with leading‑zero stripping) ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
@@ -1271,7 +1327,6 @@
         }
 
         function splitAllPhoneFields() {
-            // Order phone
             if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
                 const numInput = document.getElementById('customerPhone');
                 const codeInput = document.getElementById('phoneCodeInput');
@@ -1285,7 +1340,6 @@
                     numInput.value = numInput.value.slice(1).trim();
                 }
             }
-            // Contact phone
             if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
                 const numInput = document.getElementById('phone');
                 const codeInput = document.getElementById('contactPhoneCodeInput');
@@ -2125,7 +2179,6 @@
                 resetOrderForm();
             }
 
-            // Ensure the phone code matches the detected country
             if (userCountryRegion && shippingRegions.length) {
                 const region = shippingRegions.find(r => r.Region === userCountryRegion);
                 if (region) {
@@ -2617,11 +2670,17 @@
             });
         }
 
-        // ---------- LEGAL PAGES ----------
+        // ---------- LEGAL PAGES (click handlers) ----------
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
+            // Old flat-text fallback
             if (legalPages.PrivacyPolicy) {
-                showLegalModal('Privacy Policy', legalPages.PrivacyPolicy);
+                showLegalModal('Privacy Policy', `<p>${escapeHtml(legalPages.PrivacyPolicy)}</p>`);
+                return;
+            }
+            const html = buildLegalHTML('Privacy');
+            if (html) {
+                showLegalModal('Privacy Policy', html);
             } else {
                 showAlertModal('Privacy Policy', 'Policy text not available yet.');
             }
@@ -2629,7 +2688,12 @@
         document.getElementById('termsOfServiceLink').addEventListener('click', (e) => {
             e.preventDefault();
             if (legalPages.TermsOfService) {
-                showLegalModal('Terms of Service', legalPages.TermsOfService);
+                showLegalModal('Terms of Service', `<p>${escapeHtml(legalPages.TermsOfService)}</p>`);
+                return;
+            }
+            const html = buildLegalHTML('Terms');
+            if (html) {
+                showLegalModal('Terms of Service', html);
             } else {
                 showAlertModal('Terms of Service', 'Terms text not available yet.');
             }
@@ -2650,7 +2714,6 @@
                 if (pinned) expand();
                 else collapse();
             });
-            // initial state – collapsed
             collapse();
         })();
 
