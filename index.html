@@ -2751,31 +2751,37 @@
         // ---------- LEGAL PAGES ASSEMBLY ----------
         function buildLegalTexts(legalObj) {
             function buildHTML(prefix) {
-                // Get all keys in the order they appear in the sheet (no sort)
                 let keys = Object.keys(legalObj);
-                // Also include keys starting with "Pricacy" (typo) for Privacy
+                // Include the sheet typo "Pricacy…" for Privacy keys
                 if (prefix === 'Privacy') {
                     keys = keys.filter(k => k.startsWith('Privacy') || k.startsWith('Pricacy'));
                 } else {
                     keys = keys.filter(k => k.startsWith(prefix));
                 }
-                // The first key ending with "Heading" is the pop‑up title
                 const titleKey = keys.find(k => k.endsWith('Heading'));
-                // Remove the title from the content list
                 const contentKeys = keys.filter(k => k !== titleKey);
 
                 let html = '';
                 for (const key of contentKeys) {
                     const value = (legalObj[key] || '').trim();
                     if (!value) continue;
+                    // Replace newlines with <br> so bullets appear on separate lines
+                    const formatted = value.replace(/\n/g, '<br>');
                     if (key.endsWith('Heading')) {
-                        html += `<strong>${value}</strong>`;
+                        html += `<strong>${formatted}</strong>`;
                     } else {
-                        html += `<p>${value}</p>`;
+                        html += `<p>${formatted}</p>`;
                     }
                 }
                 return { title: titleKey ? (legalObj[titleKey] || '').trim() : '', html };
             }
+
+            const privacy = buildHTML('Privacy');
+            const terms = buildHTML('Terms');
+
+            legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
+            legalPages.TermsOfService = { title: terms.title, html: terms.html };
+        }
 
             const privacy = buildHTML('Privacy');   // also catches "Pricacy…"
             const terms = buildHTML('Terms');
