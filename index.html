@@ -18,6 +18,7 @@
             background-color: #ffffff;
             color: #000000;
             padding-top: 68px;
+            padding-bottom: 4rem;           /* space for sticky footer */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -576,20 +577,37 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* ---------- FOOTER (tighter spacing) ---------- */
+        /* ---------- STICKY FOOTER (collapsed by default) ---------- */
         .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
             background: var(--primary-color, #194373);
             color: #ffffff;
-            margin-top: 2rem;
+            transition: box-shadow 0.3s, padding 0.3s;
+            animation: footerPulse 3s infinite ease-in-out;
+            box-shadow: 0 -2px 8px var(--secondary-color, #f29b2a);
+        }
+        .site-footer.expanded {
+            box-shadow: 0 -4px 16px var(--secondary-color, #f29b2a);
+            animation: none;
+        }
+        @keyframes footerPulse {
+            0% { box-shadow: 0 -2px 8px var(--secondary-color, #f29b2a); }
+            50% { box-shadow: 0 -2px 18px var(--secondary-color, #f29b2a); }
+            100% { box-shadow: 0 -2px 8px var(--secondary-color, #f29b2a); }
         }
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;
+            padding: 0.75rem 2rem;               /* half of previous */
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 2rem;
+            transition: padding 0.3s;
         }
         .footer-col {
             flex: 1;
@@ -622,14 +640,25 @@
         }
         .footer-bottom {
             text-align: center;
-            padding: 0 2rem 1.5rem;
+            padding: 0 2rem 0.75rem;            /* reduced bottom padding */
             font-size: 0.85rem;
             color: #aaa;
         }
 
-        /* ---------- RESPONSIVE ---------- */
+        /* Collapsed state – hide links, show only headings */
+        .site-footer.collapsed .footer-col a,
+        .site-footer.collapsed .footer-col .social-icon {
+            display: none;
+        }
+        /* When expanded, show links */
+        .site-footer:not(.collapsed) .footer-col a,
+        .site-footer:not(.collapsed) .footer-col .social-icon {
+            display: block;
+        }
+
+        /* ---------- RESPONSIVE (mobile adjustments) ---------- */
         @media (max-width: 768px) {
-            body { padding-top: 60px; }
+            body { padding-top: 60px; padding-bottom: 4rem; }
             .content { padding: 1.5rem; }
 
             .home-headline { font-size: 0.95rem; }
@@ -722,8 +751,8 @@
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
 
-            .footer-inner { flex-direction: column; padding: 1.5rem; }
-            .footer-bottom { padding: 0 1.5rem 1.5rem; }
+            .footer-inner { flex-direction: column; padding: 0.75rem 1.5rem; }
+            .footer-bottom { padding: 0 1.5rem 0.75rem; }
         }
 
         @media (max-width: 400px) {
@@ -1018,8 +1047,8 @@
         </div>
     </div>
 
-    <!-- ================== FOOTER ================== -->
-    <footer class="site-footer">
+    <!-- ================== FOOTER (sticky, collapsed) ================== -->
+    <footer class="site-footer collapsed" id="siteFooter">
         <div class="footer-inner">
             <div class="footer-col">
                 <h4>Quick Links</h4>
@@ -1165,7 +1194,6 @@
             if (!numInput || !codeInput) return;
 
             function stripLeadingZeroIfNeeded() {
-                // If number starts with '0' and a code is present, remove the zero
                 const numVal = numInput.value.trim();
                 const codeVal = codeInput.value.trim();
                 if (numVal.startsWith('0') && codeVal.startsWith('+') && codeVal.length > 1) {
@@ -1215,7 +1243,6 @@
             handleChange();
         }
 
-        // Force split after shippingRegions are loaded (and again after a short delay)
         function splitAllPhoneFields() {
             // Order phone
             if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
@@ -1227,7 +1254,6 @@
                     autoResizePhoneCodeInput('phoneCodeInput');
                     numInput.value = extracted.number;
                 }
-                // strip leading zero if code is set
                 if (numInput.value.startsWith('0') && codeInput.value.startsWith('+')) {
                     numInput.value = numInput.value.slice(1).trim();
                 }
@@ -2072,7 +2098,7 @@
                 resetOrderForm();
             }
 
-            // Ensure the phone code matches the detected country (overrides reset default)
+            // Ensure the phone code matches the detected country
             if (userCountryRegion && shippingRegions.length) {
                 const region = shippingRegions.find(r => r.Region === userCountryRegion);
                 if (region) {
@@ -2582,6 +2608,25 @@
             }
         });
 
+        // ---------- STICKY FOOTER INTERACTIVITY ----------
+        (function() {
+            const footer = document.getElementById('siteFooter');
+            let pinned = false;
+
+            function expand() { footer.classList.remove('collapsed'); }
+            function collapse() { footer.classList.add('collapsed'); }
+
+            footer.addEventListener('mouseenter', () => { if (!pinned) expand(); });
+            footer.addEventListener('mouseleave', () => { if (!pinned) collapse(); });
+            footer.addEventListener('click', () => {
+                pinned = !pinned;
+                if (pinned) expand();
+                else collapse();
+            });
+            // initial state – collapsed
+            collapse();
+        })();
+
         // ---------- SPLASH SCREEN ----------
         function hideSplashScreen() {
             const splash = document.getElementById('splash-screen');
@@ -2646,7 +2691,6 @@
                 setupContactForm();
                 equalizeHeights();
 
-                // Split after data is fully loaded + again after a short delay for autofill
                 splitAllPhoneFields();
                 setTimeout(splitAllPhoneFields, 800);
 
