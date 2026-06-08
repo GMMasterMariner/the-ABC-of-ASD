@@ -1218,9 +1218,9 @@
         }
 
         // ---------- LEGAL MODAL ----------
-        function showLegalModal(title, content) {
+        function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
-            document.getElementById('legalModalContent').textContent = content;
+            document.getElementById('legalModalContent').innerHTML = contentObj.html;
             document.getElementById('legalModalOverlay').classList.add('active');
         }
 
