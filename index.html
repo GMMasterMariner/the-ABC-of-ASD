@@ -1217,12 +1217,12 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- LEGAL MODAL ----------
+        // ---------- LEGAL MODAL (opens at top) ----------
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
             const contentDiv = document.getElementById('legalModalContent');
             contentDiv.innerHTML = contentObj.html;
-            contentDiv.scrollTop = 0;   // reset scroll position
+            contentDiv.scrollTop = 0;
             document.getElementById('legalModalOverlay').classList.add('active');
         }
 
@@ -2750,11 +2750,10 @@
             });
         }
 
-        // ---------- LEGAL PAGES ASSEMBLY ----------
+        // ---------- LEGAL PAGES ASSEMBLY (order preserved, bullets on new lines) ----------
         function buildLegalTexts(legalObj) {
             function buildHTML(prefix) {
                 let keys = Object.keys(legalObj);
-                // Include the sheet typo "Pricacy…" for Privacy keys
                 if (prefix === 'Privacy') {
                     keys = keys.filter(k => k.startsWith('Privacy') || k.startsWith('Pricacy'));
                 } else {
@@ -2767,7 +2766,6 @@
                 for (const key of contentKeys) {
                     const value = (legalObj[key] || '').trim();
                     if (!value) continue;
-                    // Replace newlines with <br> so bullets appear on separate lines
                     const formatted = value.replace(/\n/g, '<br>');
                     if (key.endsWith('Heading')) {
                         html += `<strong>${formatted}</strong>`;
@@ -2779,13 +2777,6 @@
             }
 
             const privacy = buildHTML('Privacy');
-            const terms = buildHTML('Terms');
-
-            legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
-            legalPages.TermsOfService = { title: terms.title, html: terms.html };
-        }
-
-            const privacy = buildHTML('Privacy');   // also catches "Pricacy…"
             const terms = buildHTML('Terms');
 
             legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
@@ -2882,7 +2873,6 @@
                 products = allData.products || [];
                 shippingRegions = allData.shippingRegions || [];
                 regionRates = allData.regionRates || [];
-                // Build legal texts from the raw legal key‑value object
                 const rawLegal = allData.legal || {};
                 buildLegalTexts(rawLegal);
                 await detectUserCurrency();
