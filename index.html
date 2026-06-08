@@ -118,16 +118,18 @@
             max-height: 60vh;
             overflow-y: auto;
             margin-bottom: 1.5rem;
-            white-space: pre-line;
+            white-space: normal;           /* allow wrapping */
             font-size: 0.95rem;
             line-height: 1.6;
-            /* Properly separate headings */
         }
         .legal-content strong {
-            font-weight: 700;
             display: block;
+            font-weight: 700;
             margin-top: 1.2rem;
             margin-bottom: 0.4rem;
+        }
+        .legal-content p {
+            margin-bottom: 0.6rem;
         }
 
         /* Map modal */
