@@ -2750,29 +2750,31 @@
 
         // ---------- LEGAL PAGES ASSEMBLY ----------
         function buildLegalTexts(legalObj) {
-            // Build privacy text from keys starting with "Privacy"
-            let privacyText = '';
-            let termsText = '';
-            const keys = Object.keys(legalObj).sort();
-            for (const key of keys) {
-                const value = legalObj[key];
-                if (typeof value !== 'string' || value.trim() === '') continue;
-                if (key.startsWith('Privacy')) {
+            function buildHTML(prefix) {
+                let html = '';
+                const keys = Object.keys(legalObj).filter(k => k.startsWith(prefix)).sort();
+                // First key ending with "Heading" is the pop‑up title – skip it in content
+                const titleKey = keys.find(k => k.endsWith('Heading'));
+                const contentKeys = keys.filter(k => k !== titleKey);
+
+                for (const key of contentKeys) {
+                    const value = (legalObj[key] || '').trim();
+                    if (!value) continue;
                     if (key.endsWith('Heading')) {
-                        privacyText += '\n\n' + value + '\n\n';
+                        html += `<strong>${value}</strong>`;
                     } else {
-                        privacyText += value + '\n\n';
-                    }
-                } else if (key.startsWith('Terms')) {
-                    if (key.endsWith('Heading')) {
-                        termsText += '\n\n' + value + '\n\n';
-                    } else {
-                        termsText += value + '\n\n';
+                        // treat as normal paragraph
+                        html += `<p>${value}</p>`;
                     }
                 }
+                return { title: titleKey ? (legalObj[titleKey] || '').trim() : '', html };
             }
-            legalPages.PrivacyPolicy = privacyText.trim();
-            legalPages.TermsOfService = termsText.trim();
+
+            const privacy = buildHTML('Privacy');
+            const terms = buildHTML('Terms');
+
+            legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
+            legalPages.TermsOfService = { title: terms.title, html: terms.html };
         }
 
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
