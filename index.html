@@ -121,6 +121,13 @@
             white-space: pre-line;
             font-size: 0.95rem;
             line-height: 1.6;
+            /* Properly separate headings */
+        }
+        .legal-content strong {
+            font-weight: 700;
+            display: block;
+            margin-top: 1.2rem;
+            margin-bottom: 0.4rem;
         }
 
         /* Map modal */
@@ -603,7 +610,7 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* ---------- STICKY FOOTER (collapsed = slim bar) ---------- */
+        /* ---------- STICKY FOOTER (collapsed by default) ---------- */
         .site-footer {
             position: fixed;
             bottom: 0;
@@ -626,32 +633,40 @@
             100% { box-shadow: 0 -2px 8px var(--secondary-color, #f29b2a); }
         }
 
-        /* Default (collapsed) styles – slim inline headings */
+        /* ----- default (collapsed) footer layout ----- */
         .site-footer.collapsed .footer-inner {
-            padding: 0.4rem 2rem;              /* very tight */
-            justify-content: center;            /* centre the headings */
-            gap: 3rem;                          /* space between headings */
+            padding: 0.4rem 2rem;
+            display: flex;
+            flex-wrap: nowrap;          /* keep all headings in one row */
+            gap: 2rem;                  /* same as home columns gap */
+            justify-content: space-between; /* mimic home columns distribution */
         }
         .site-footer.collapsed .footer-col {
-            flex: 0 1 auto;                     /* don’t stretch */
+            flex: 1;                    /* equal width columns like home */
             min-width: 0;
         }
         .site-footer.collapsed .footer-col h4 {
-            margin-bottom: 0;                   /* no extra space under heading */
-            display: inline-block;
+            margin-bottom: 0;
+            font-size: 1rem;            /* normal desktop size */
         }
         .site-footer.collapsed .footer-col a,
         .site-footer.collapsed .footer-col .social-icon {
-            display: none;                      /* hide links completely */
+            display: none;              /* hide links */
         }
         .site-footer.collapsed .footer-bottom {
-            padding: 0.2rem 2rem 0.3rem;       /* copyright line close */
+            padding: 0.2rem 2rem 0.3rem;
         }
 
-        /* Expanded state – show links as before */
+        /* ----- expanded footer layout (same as before) ----- */
         .site-footer:not(.collapsed) .footer-inner {
             padding: 0.75rem 2rem;
             gap: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .site-footer:not(.collapsed) .footer-col {
+            flex: 1;
+            min-width: 150px;
         }
         .site-footer:not(.collapsed) .footer-col a,
         .site-footer:not(.collapsed) .footer-col .social-icon {
@@ -661,19 +676,14 @@
             padding: 0 2rem 0.75rem;
         }
 
-        /* General footer styles */
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            transition: padding 0.3s;
         }
         .footer-col {
             text-align: center;
         }
         .footer-col h4 {
-            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -796,9 +806,18 @@
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
 
+            /* ----- mobile collapsed footer: smaller headings, still in row ----- */
             .site-footer.collapsed .footer-inner {
-                gap: 1.5rem;          /* smaller gap on mobile */
+                gap: 1rem;                      /* tighter */
+                padding: 0.3rem 1rem;
             }
+            .site-footer.collapsed .footer-col h4 {
+                font-size: 0.75rem;             /* smaller to fit one row */
+            }
+            .site-footer:not(.collapsed) .footer-inner {
+                flex-direction: column;         /* expand as column on mobile */
+            }
+
             .footer-bottom { padding: 0 1.5rem 0.3rem; }
             .map-modal-box { width: 95vw; }
         }
@@ -2727,17 +2746,16 @@
             });
         }
 
-        // LEGAL PAGES – build from the flat object
+        // ---------- LEGAL PAGES ASSEMBLY ----------
         function buildLegalTexts(legalObj) {
-            // Build privacy text from keys starting with "Privacy" (case‑sensitive)
+            // Build privacy text from keys starting with "Privacy"
             let privacyText = '';
             let termsText = '';
-            const keys = Object.keys(legalObj).sort(); // sort for stable order
+            const keys = Object.keys(legalObj).sort();
             for (const key of keys) {
                 const value = legalObj[key];
                 if (typeof value !== 'string' || value.trim() === '') continue;
                 if (key.startsWith('Privacy')) {
-                    // If key ends with "Heading", make it a heading; otherwise plain text
                     if (key.endsWith('Heading')) {
                         privacyText += '\n\n' + value + '\n\n';
                     } else {
@@ -2755,7 +2773,6 @@
             legalPages.TermsOfService = termsText.trim();
         }
 
-        // Attach legal link handlers
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
             if (legalPages.PrivacyPolicy) {
