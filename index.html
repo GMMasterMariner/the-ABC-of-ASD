@@ -1178,7 +1178,7 @@
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
         let paymentKeys = {};
-        let legalPages = {};            // will become { PrivacyPolicy: {title, html}, TermsOfService: {title, html} }
+        let legalPages = {};
 
         // ---------- SESSION STORAGE HELPERS ----------
         function saveToSession(key, value) {
@@ -1217,7 +1217,7 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- LEGAL MODAL (now accepts object with title and html) ----------
+        // ---------- LEGAL MODAL ----------
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
             document.getElementById('legalModalContent').innerHTML = contentObj.html;
@@ -2753,7 +2753,7 @@
             function buildHTML(prefix) {
                 let html = '';
                 const keys = Object.keys(legalObj).filter(k => k.startsWith(prefix)).sort();
-                // First key ending with "Heading" is the pop‑up title – skip it in content
+                // The first key ending with "Heading" is the pop‑up title – skip it in the content
                 const titleKey = keys.find(k => k.endsWith('Heading'));
                 const contentKeys = keys.filter(k => k !== titleKey);
 
