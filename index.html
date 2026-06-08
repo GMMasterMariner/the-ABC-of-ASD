@@ -2751,12 +2751,20 @@
         // ---------- LEGAL PAGES ASSEMBLY ----------
         function buildLegalTexts(legalObj) {
             function buildHTML(prefix) {
-                let html = '';
-                const keys = Object.keys(legalObj).filter(k => k.startsWith(prefix)).sort();
-                // The first key ending with "Heading" is the pop‑up title – skip it in the content
+                // Get all keys in the order they appear in the sheet (no sort)
+                let keys = Object.keys(legalObj);
+                // Also include keys starting with "Pricacy" (typo) for Privacy
+                if (prefix === 'Privacy') {
+                    keys = keys.filter(k => k.startsWith('Privacy') || k.startsWith('Pricacy'));
+                } else {
+                    keys = keys.filter(k => k.startsWith(prefix));
+                }
+                // The first key ending with "Heading" is the pop‑up title
                 const titleKey = keys.find(k => k.endsWith('Heading'));
+                // Remove the title from the content list
                 const contentKeys = keys.filter(k => k !== titleKey);
 
+                let html = '';
                 for (const key of contentKeys) {
                     const value = (legalObj[key] || '').trim();
                     if (!value) continue;
@@ -2769,7 +2777,7 @@
                 return { title: titleKey ? (legalObj[titleKey] || '').trim() : '', html };
             }
 
-            const privacy = buildHTML('Privacy');
+            const privacy = buildHTML('Privacy');   // also catches "Pricacy…"
             const terms = buildHTML('Terms');
 
             legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
