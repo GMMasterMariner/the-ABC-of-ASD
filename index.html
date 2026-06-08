@@ -1050,7 +1050,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';   // ← PUT YOUR REAL WEB APP URL HERE
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -1122,7 +1122,7 @@
             }
         });
 
-        // ---------- PHONE COUNTRY CODE EXTRACTOR (uses known codes) ----------
+        // ---------- PHONE COUNTRY CODE EXTRACTOR (uses known codes + strips leading zero) ----------
         function getKnownPhoneCodes() {
             if (!shippingRegions || !shippingRegions.length) return [];
             return shippingRegions
@@ -1134,18 +1134,26 @@
         function extractCountryCode(fullNumber) {
             if (!fullNumber.startsWith('+')) return null;
             const codes = getKnownPhoneCodes();
-            // Do nothing if codes are not yet loaded (prevents wrong split)
-            if (codes.length === 0) return null;
+            if (codes.length === 0) return null;   // wait for data
+
             for (const code of codes) {
                 if (fullNumber.startsWith('+' + code)) {
-                    const rest = fullNumber.slice(('+' + code).length).trim();
+                    let rest = fullNumber.slice(('+' + code).length).trim();
+                    // Remove leading zero from local number (common autofill quirk)
+                    if (rest.length > 1 && rest.startsWith('0')) {
+                        rest = rest.slice(1).trim();
+                    }
                     return { code: '+' + code, number: rest };
                 }
             }
-            // fallback (only if codes exist but none matched) – simple 1-4 digit rule
+            // fallback: generic 1-4 digit rule
             const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
             if (match) {
-                return { code: '+' + match[1], number: match[2] || '' };
+                let rest = (match[2] || '').trim();
+                if (rest.length > 1 && rest.startsWith('0')) {
+                    rest = rest.slice(1).trim();
+                }
+                return { code: '+' + match[1], number: rest };
             }
             return null;
         }
@@ -1196,7 +1204,7 @@
             handleChange();
         }
 
-        // Force split after shippingRegions are loaded
+        // Force split after shippingRegions are loaded (and again after a short delay)
         function splitAllPhoneFields() {
             // Order phone
             if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
@@ -1855,7 +1863,6 @@
                 if (selectedProduct && selectedProduct.Type === 'Physical') {
                     document.getElementById('shippingAddressSection').style.display = 'block';
                 }
-                // Re-split phone after restore
                 splitAllPhoneFields();
             } else {
                 document.getElementById('emailVerifyWrapper').style.display = 'flex';
@@ -2043,11 +2050,10 @@
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
 
-            // Try to restore previous session state; if not, start fresh
             if (!loadOrderState()) {
                 resetOrderForm();
             }
-            // Ensure phone fields are clean after any autofill
+            // Re-split after any autofill
             splitAllPhoneFields();
         }
 
@@ -2139,7 +2145,7 @@
                         }
                     }
                     updateOrderSummary();
-                    saveOrderState(); // persist immediately after verification
+                    saveOrderState();
                 } else {
                     showAlertModal('Verification Failed', data.result === 'expired' ? 'Verification code has expired. Please request a new one.' : 'Invalid verification code. Please try again.');
                     document.getElementById('verifyLeft').style.display = 'block';
@@ -2448,7 +2454,6 @@
 
         // ---------- SPA NAVIGATION (with order state save/restore) ----------
         function showPage(sectionId) {
-            // Save current order state if leaving order page
             if (document.getElementById('order-section').classList.contains('active') && sectionId !== 'order-section') {
                 saveOrderState();
             }
@@ -2462,7 +2467,7 @@
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
             if (sectionId === 'order-section') {
                 loadOrderState();
-                splitAllPhoneFields(); // clean up after page restore
+                splitAllPhoneFields();
             }
 
             window.scrollTo(0, 0);
@@ -2594,7 +2599,6 @@
 
         // ---------- INIT (clear all on refresh) ----------
         async function init() {
-            // Clear any leftover personal data from previous sessions
             sessionStorage.removeItem('orderState');
             sessionStorage.removeItem('userDetails');
             sessionStorage.removeItem('verifiedEmail');
@@ -2617,8 +2621,9 @@
                 setupContactForm();
                 equalizeHeights();
 
-                // Now that shipping regions are loaded, clean any autofilled phone numbers
+                // Split after data is fully loaded + again after a short delay for autofill
                 splitAllPhoneFields();
+                setTimeout(splitAllPhoneFields, 800);
 
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
