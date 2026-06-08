@@ -507,7 +507,7 @@
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
         .shipping-header .locate-btn img {
             height: 24px;
-            /* NO filter – icons now show their original colour */
+            filter: brightness(0) invert(1);       /* Make icons white */
         }
 
         .address-fields-grid {
@@ -628,7 +628,7 @@
         .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0.5rem 2rem;               /* further reduced */
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -666,7 +666,7 @@
         }
         .footer-bottom {
             text-align: center;
-            padding: 0 2rem 0.5rem;             /* reduced bottom padding */
+            padding: 0 2rem 0.75rem;
             font-size: 0.85rem;
             color: #aaa;
         }
@@ -776,8 +776,8 @@
             .verify-left, .verify-right { width: 100%; }
             .verify-right .btn { width: 100%; }
 
-            .footer-inner { flex-direction: column; padding: 0.5rem 1.5rem; }
-            .footer-bottom { padding: 0 1.5rem 0.5rem; }
+            .footer-inner { flex-direction: column; padding: 0.75rem 1.5rem; }
+            .footer-bottom { padding: 0 1.5rem 0.75rem; }
             .map-modal-box { width: 95vw; }
         }
 
@@ -975,11 +975,11 @@
                             <h4>Shipping Address</h4>
                             <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
                                 <img id="locationIcon" src="" alt="Location" style="height: 24px;"
-                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
                             </button>
                             <button type="button" class="locate-btn" id="mapBtn" title="Choose on map">
                                 <img id="mapIcon" src="" alt="Map" style="height: 24px;"
-                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z%22/%3E%3C/svg%3E';">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z%22/%3E%3C/svg%3E';">
                             </button>
                         </div>
                         <div class="address-fields-grid">
@@ -1118,7 +1118,7 @@
         // ==============================================
         // 🔧 REPLACE WITH YOUR WEB APP URL
         // ==============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzVsq1fwKZ59_j2ZUJmjxrILB74_yUCz-kAi8XNd4xKfDQBGAdVMdurw8sb-WC0rdXW/exec';
 
         // ---------- GLOBAL STATE ----------
         let appSettings = {};
@@ -1722,7 +1722,7 @@
             if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
             if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
             if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
-            if (settings.MapsIconURL) document.getElementById('mapIcon').src = settings.MapsIconURL;
+            if (settings.MapsIconURL) document.getElementById('mapIcon').src = settings.MapsIconURL;   // <-- map icon from sheet
 
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
@@ -2097,18 +2097,20 @@
                 startResendCooldown();
             });
 
-            // ----- Location button: opens map modal with user coords -----
             document.getElementById('locateBtn').addEventListener('click', () => {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(pos => {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
                         const { latitude, longitude } = pos.coords;
-                        openMapModal({ lat: latitude, lng: longitude });
-                    }, () => {
-                        showAlertModal('Error', 'Unable to retrieve location.');
-                    });
-                } else {
-                    showAlertModal('Error', 'Geolocation not supported.');
-                }
+                        if (window.google && google.maps) {
+                            const geocoder = new google.maps.Geocoder();
+                            const latlng = new google.maps.LatLng(latitude, longitude);
+                            geocoder.geocode({ location: latlng }, (results, status) => {
+                                if (status === 'OK' && results[0]) fillAddressFromPlace(results[0]);
+                                else showAlertModal('Error', 'Geolocation service unavailable.');
+                            });
+                        } else showAlertModal('Error', 'Geolocation service unavailable.');
+                    }, () => showAlertModal('Error', 'Unable to retrieve location.'));
+                } else showAlertModal('Error', 'Geolocation not supported.');
             });
 
             document.getElementById('mapBtn').addEventListener('click', () => {
@@ -2484,13 +2486,13 @@
             }
         }
 
-        // ---------- GOOGLE MAPS (autocomplete + map modal with AdvancedMarkerElement) ----------
+        // ---------- GOOGLE MAPS (autocomplete + map modal) ----------
         let mapModal, map, marker;
 
         function loadGoogleMapsScript(apiKey) {
             if (window.google && google.maps) return;
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
             script.defer = true;
             script.onload = () => {
                 if (window._gmapCallbacks) {
@@ -2511,7 +2513,7 @@
             });
         }
 
-        function openMapModal(initialCenter = null) {
+        function openMapModal() {
             mapModal = document.getElementById('mapModalOverlay');
             const apiKey = appSettings.GoogleMapsApiKey;
             if (!apiKey) {
@@ -2524,31 +2526,27 @@
             function showMap() {
                 const mapContainer = document.getElementById('mapContainer');
                 if (!map) {
-                    let center = initialCenter || { lat: -30.5595, lng: 22.9375 };
+                    let center = { lat: -30.5595, lng: 22.9375 };
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            map.setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                            map.setZoom(14);
+                        });
+                    }
                     map = new google.maps.Map(mapContainer, {
                         center: center,
-                        zoom: initialCenter ? 14 : 5,
+                        zoom: 5,
                         streetViewControl: false,
                         mapTypeControl: false
                     });
-
-                    // Use AdvancedMarkerElement if available (modern)
-                    if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
-                        marker = new google.maps.marker.AdvancedMarkerElement({
-                            map,
-                            position: center,
-                            gmpDraggable: true
-                        });
-                    } else {
-                        marker = new google.maps.Marker({
-                            map,
-                            draggable: true,
-                            position: center
-                        });
-                    }
+                    marker = new google.maps.Marker({
+                        map: map,
+                        draggable: true,
+                        position: center
+                    });
 
                     map.addListener('click', (e) => {
-                        marker.position = e.latLng;
+                        marker.setPosition(e.latLng);
                         const geocoder = new google.maps.Geocoder();
                         geocoder.geocode({ location: e.latLng }, (results, status) => {
                             if (status === 'OK' && results[0]) {
@@ -2558,7 +2556,7 @@
                     });
 
                     marker.addListener('dragend', () => {
-                        const pos = marker.position;
+                        const pos = marker.getPosition();
                         const geocoder = new google.maps.Geocoder();
                         geocoder.geocode({ location: pos }, (results, status) => {
                             if (status === 'OK' && results[0]) {
@@ -2568,11 +2566,6 @@
                     });
                 } else {
                     google.maps.event.trigger(map, 'resize');
-                    if (initialCenter) {
-                        map.setCenter(initialCenter);
-                        map.setZoom(14);
-                        if (marker) marker.position = initialCenter;
-                    }
                 }
             }
 
