@@ -1122,13 +1122,13 @@
             }
         });
 
-        // ---------- PHONE COUNTRY CODE EXTRACTOR (uses known codes + strips leading zero) ----------
+        // ---------- PHONE COUNTRY CODE EXTRACTOR (strips leading '+' from sheet codes, then matches) ----------
         function getKnownPhoneCodes() {
             if (!shippingRegions || !shippingRegions.length) return [];
             return shippingRegions
-                .map(r => r.PhoneCode)
-                .filter(Boolean)
-                .sort((a,b) => b.length - a.length); // longest first
+                .map(r => (r.PhoneCode || '').replace(/^\+/, ''))   // remove any existing '+'
+                .filter(code => code.length > 0)
+                .sort((a,b) => b.length - a.length); // longest first (e.g. 1242 before 1)
         }
 
         function extractCountryCode(fullNumber) {
@@ -1146,7 +1146,7 @@
                     return { code: '+' + code, number: rest };
                 }
             }
-            // fallback: generic 1-4 digit rule
+            // fallback: generic 1-4 digit rule (should rarely be needed now)
             const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
             if (match) {
                 let rest = (match[2] || '').trim();
@@ -2053,7 +2053,6 @@
             if (!loadOrderState()) {
                 resetOrderForm();
             }
-            // Re-split after any autofill
             splitAllPhoneFields();
         }
 
