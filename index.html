@@ -1158,11 +1158,20 @@
             return null;
         }
 
-        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER ----------
+        // ---------- PHONE NUMBER AUTO‑FILL SPLITTER (with leading‑zero stripping) ----------
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
             if (!numInput || !codeInput) return;
+
+            function stripLeadingZeroIfNeeded() {
+                // If number starts with '0' and a code is present, remove the zero
+                const numVal = numInput.value.trim();
+                const codeVal = codeInput.value.trim();
+                if (numVal.startsWith('0') && codeVal.startsWith('+') && codeVal.length > 1) {
+                    numInput.value = numVal.slice(1).trim();
+                }
+            }
 
             function splitNumberField() {
                 const val = numInput.value.trim();
@@ -1172,6 +1181,7 @@
                     autoResizePhoneCodeInput(codeInput.id);
                     numInput.value = extracted.number;
                 }
+                stripLeadingZeroIfNeeded();
             }
 
             function splitCodeField() {
@@ -1186,6 +1196,7 @@
                         }
                     }
                 }
+                stripLeadingZeroIfNeeded();
             }
 
             function handleChange() {
@@ -1216,6 +1227,10 @@
                     autoResizePhoneCodeInput('phoneCodeInput');
                     numInput.value = extracted.number;
                 }
+                // strip leading zero if code is set
+                if (numInput.value.startsWith('0') && codeInput.value.startsWith('+')) {
+                    numInput.value = numInput.value.slice(1).trim();
+                }
             }
             // Contact phone
             if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
@@ -1226,6 +1241,9 @@
                     codeInput.value = extracted.code;
                     autoResizePhoneCodeInput('contactPhoneCodeInput');
                     numInput.value = extracted.number;
+                }
+                if (numInput.value.startsWith('0') && codeInput.value.startsWith('+')) {
+                    numInput.value = numInput.value.slice(1).trim();
                 }
             }
         }
@@ -2052,6 +2070,14 @@
 
             if (!loadOrderState()) {
                 resetOrderForm();
+            }
+
+            // Ensure the phone code matches the detected country (overrides reset default)
+            if (userCountryRegion && shippingRegions.length) {
+                const region = shippingRegions.find(r => r.Region === userCountryRegion);
+                if (region) {
+                    setUserCountry(region);
+                }
             }
             splitAllPhoneFields();
         }
