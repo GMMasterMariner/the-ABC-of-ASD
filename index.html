@@ -118,7 +118,7 @@
             max-height: 60vh;
             overflow-y: auto;
             margin-bottom: 1.5rem;
-            white-space: normal;           /* allow wrapping */
+            white-space: normal;
             font-size: 0.95rem;
             line-height: 1.6;
         }
@@ -516,7 +516,7 @@
         .shipping-header .locate-btn { background: none; border: none; cursor: pointer; padding: 0; }
         .shipping-header .locate-btn img {
             height: 24px;
-            filter: brightness(0) invert(1);       /* icons white */
+            /* icons now show their original colour */
         }
 
         .address-fields-grid {
@@ -639,27 +639,27 @@
         .site-footer.collapsed .footer-inner {
             padding: 0.4rem 2rem;
             display: flex;
-            flex-wrap: nowrap;          /* keep all headings in one row */
-            gap: 2rem;                  /* same as home columns gap */
-            justify-content: space-between; /* mimic home columns distribution */
+            flex-wrap: nowrap;
+            gap: 2rem;
+            justify-content: space-between;
         }
         .site-footer.collapsed .footer-col {
-            flex: 1;                    /* equal width columns like home */
+            flex: 1;
             min-width: 0;
         }
         .site-footer.collapsed .footer-col h4 {
             margin-bottom: 0;
-            font-size: 1rem;            /* normal desktop size */
+            font-size: 1rem;
         }
         .site-footer.collapsed .footer-col a,
         .site-footer.collapsed .footer-col .social-icon {
-            display: none;              /* hide links */
+            display: none;
         }
         .site-footer.collapsed .footer-bottom {
             padding: 0.2rem 2rem 0.3rem;
         }
 
-        /* ----- expanded footer layout (same as before) ----- */
+        /* ----- expanded footer layout ----- */
         .site-footer:not(.collapsed) .footer-inner {
             padding: 0.75rem 2rem;
             gap: 2rem;
@@ -810,14 +810,14 @@
 
             /* ----- mobile collapsed footer: smaller headings, still in row ----- */
             .site-footer.collapsed .footer-inner {
-                gap: 1rem;                      /* tighter */
+                gap: 1rem;
                 padding: 0.3rem 1rem;
             }
             .site-footer.collapsed .footer-col h4 {
-                font-size: 0.75rem;             /* smaller to fit one row */
+                font-size: 0.75rem;
             }
             .site-footer:not(.collapsed) .footer-inner {
-                flex-direction: column;         /* expand as column on mobile */
+                flex-direction: column;
             }
 
             .footer-bottom { padding: 0 1.5rem 0.3rem; }
@@ -1018,11 +1018,11 @@
                             <h4>Shipping Address</h4>
                             <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
                                 <img id="locationIcon" src="" alt="Location" style="height: 24px;"
-                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
                             </button>
                             <button type="button" class="locate-btn" id="mapBtn" title="Choose on map">
                                 <img id="mapIcon" src="" alt="Map" style="height: 24px;"
-                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z%22/%3E%3C/svg%3E';">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z%22/%3E%3C/svg%3E';">
                             </button>
                         </div>
                         <div class="address-fields-grid">
@@ -1178,7 +1178,7 @@
         let isEmailVerified = false;
         let lastVerifiedEmail = '';
         let paymentKeys = {};
-        let legalPages = {};            // will become { PrivacyPolicy: "...", TermsOfService: "..." }
+        let legalPages = {};            // will become { PrivacyPolicy: {title, html}, TermsOfService: {title, html} }
 
         // ---------- SESSION STORAGE HELPERS ----------
         function saveToSession(key, value) {
@@ -1217,7 +1217,7 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- LEGAL MODAL ----------
+        // ---------- LEGAL MODAL (now accepts object with title and html) ----------
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
             document.getElementById('legalModalContent').innerHTML = contentObj.html;
@@ -2763,7 +2763,6 @@
                     if (key.endsWith('Heading')) {
                         html += `<strong>${value}</strong>`;
                     } else {
-                        // treat as normal paragraph
                         html += `<p>${value}</p>`;
                     }
                 }
@@ -2779,16 +2778,16 @@
 
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
-            if (legalPages.PrivacyPolicy) {
-                showLegalModal('Privacy Policy', legalPages.PrivacyPolicy);
+            if (legalPages.PrivacyPolicy && legalPages.PrivacyPolicy.title) {
+                showLegalModal(legalPages.PrivacyPolicy.title, legalPages.PrivacyPolicy);
             } else {
                 showAlertModal('Privacy Policy', 'Policy text not available yet.');
             }
         });
         document.getElementById('termsOfServiceLink').addEventListener('click', (e) => {
             e.preventDefault();
-            if (legalPages.TermsOfService) {
-                showLegalModal('Terms of Service', legalPages.TermsOfService);
+            if (legalPages.TermsOfService && legalPages.TermsOfService.title) {
+                showLegalModal(legalPages.TermsOfService.title, legalPages.TermsOfService);
             } else {
                 showAlertModal('Terms of Service', 'Terms text not available yet.');
             }
