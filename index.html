@@ -672,12 +672,16 @@
                 justify-content: space-around;
                 align-items: center;
                 gap: 0.3rem;
-                padding: 0.375rem 0.5rem;   /* tighter side padding for row */
+                padding: 0.375rem 0.5rem;
+            }
+            .site-footer.collapsed .footer-col {
+                min-width: 0;               /* allow columns to shrink */
+                flex: 0 1 auto;             /* don't force equal width */
             }
             .site-footer.collapsed .footer-col h4 {
-                font-size: 0.7rem;          /* smaller text */
+                font-size: 0.7rem;
                 margin-bottom: 0;
-                white-space: nowrap;        /* keep headings on one line */
+                white-space: nowrap;
                 text-align: center;
             }
             .footer-bottom { padding: 0 1.5rem 0.375rem; }
