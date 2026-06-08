@@ -255,12 +255,11 @@
         .btn:hover, .pay-btn:hover { opacity: 0.95; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
         .btn:disabled, .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
         .btn img, .pay-btn img { height: 24px; width: auto; }
-        .btn-secondary {
-            background-color: var(--secondary-color, #f29b2a);   /* brand secondary */
-            color: white;
+        .modal-box .btn-secondary {
+            background: #aaa;
         }
-        .btn-secondary:hover {
-            opacity: 0.85;
+        .modal-box .btn-secondary:hover {
+            background: #888;
         }
 
         /* ---------- MAIN CONTENT ---------- */
@@ -881,7 +880,7 @@
     <!-- ================== CONFIRMATION MODAL ================== -->
     <div class="modal-overlay" id="confirmModalOverlay">
         <div class="modal-box" style="max-width: 550px; text-align: left;">
-            <h3>Confirm Your Order</h3>
+            <h3>Pease Confirm Your Order</h3>
             <div id="confirmModalContent" class="confirm-modal-content"></div>
             <div id="confirmModalButtons" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
                 <button class="btn" id="confirmPayBtn" disabled>Confirm &amp; Pay</button>
