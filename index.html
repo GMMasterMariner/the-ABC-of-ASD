@@ -1203,12 +1203,17 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ---------- LEGAL MODAL ----------
+        // ---------- LEGAL MODAL (scroll reset) ----------
         function showLegalModal(title, htmlContent) {
             document.getElementById('legalModalTitle').textContent = title;
             const contentDiv = document.getElementById('legalModalContent');
             contentDiv.innerHTML = htmlContent;
-            contentDiv.scrollTop = 0;                    // reset scroll
+            // Force scroll to top after content is rendered
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    contentDiv.scrollTop = 0;
+                });
+            }, 10);
             document.getElementById('legalModalOverlay').classList.add('active');
         }
 
@@ -1221,13 +1226,14 @@
             }
         });
 
-        // ---------- BUILD LEGAL HTML FROM STRUCTURED DATA (preserves sheet order) ----------
-        function buildLegalHTML(prefix) {
+        // ---------- BUILD LEGAL HTML (preserves sheet order, main title used externally) ----------
+        function buildLegalHTML(prefix, excludeTitleKey = null) {
             const keys = Object.keys(legalPages).filter(k => k.startsWith(prefix));
-            // No sorting – preserves the order they appear in the object (which is the sheet row order)
+            // No sorting – sheet order is kept
 
             let html = '';
             for (const key of keys) {
+                if (excludeTitleKey && key === excludeTitleKey) continue;
                 const value = legalPages[key] || '';
                 if (key.endsWith('Heading')) {
                     html += `<h4>${escapeHtml(value)}</h4>`;
@@ -1383,12 +1389,13 @@
         }
 
         async function fetchPaymentKeys() {
+            // Still fetch keys so they're available later
             const res = await fetch(API_URL + '?action=getPaymentKeys');
             return await res.json();
         }
 
-        async function initPayments() {
-            // Terms agreement enables the payment buttons
+        // ---------- PAYMENT BUTTONS (placeholder until gateways are set up) ----------
+        function setupPaymentPlaceholder() {
             const agreeCheckbox = document.getElementById('agreeTerms');
             const paypalBtn = document.getElementById('paypalBtn');
             const payfastBtn = document.getElementById('payfastBtn');
@@ -1400,77 +1407,16 @@
             }
 
             agreeCheckbox.addEventListener('change', updatePaymentButtons);
-            // Also re-evaluate when order state changes (e.g. select product, verify email)
             window.addEventListener('paymentStateChange', updatePaymentButtons);
 
-            if (paymentKeys.paypalClientId && document.getElementById('paypalBtn')) {
-                const script = document.createElement('script');
-                script.src = `https://www.paypal.com/sdk/js?client-id=${paymentKeys.paypalClientId}&currency=ZAR`;
-                script.onload = () => {
-                    if (typeof paypal !== 'undefined') {
-                        paypal.Buttons({
-                            createOrder: function(data, actions) {
-                                const total = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                                return actions.order.create({
-                                    purchase_units: [{ amount: { value: total } }]
-                                });
-                            },
-                            onApprove: function(data, actions) {
-                                return actions.order.capture().then(function(details) {
-                                    showAlertModal('Payment Successful', 'Transaction completed by ' + details.payer.name.given_name + '.');
-                                });
-                            }
-                        }).render('#paypalBtn');
-                    }
-                };
-                document.head.appendChild(script);
-            }
-
-            const payfastBtnEl = document.getElementById('payfastBtn');
-            if (payfastBtnEl) {
-                payfastBtnEl.addEventListener('click', async () => {
-                    if (!selectedProduct || !isEmailVerified || !agreeCheckbox.checked) return;
-                    const email = document.getElementById('verifiedEmail').value;
-                    const name = document.getElementById('customerName').value;
-                    const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                    const itemName = selectedProduct.ProductName;
-                    const description = selectedProduct.Type + ' book';
-
-                    const formFields = {
-                        merchant_id: paymentKeys.payfastMerchantId,
-                        merchant_key: paymentKeys.payfastMerchantKey,
-                        return_url: window.location.origin + '/success',
-                        cancel_url: window.location.origin + '/cancel',
-                        notify_url: API_URL + '?action=notify',
-                        name_first: name.split(' ')[0] || '',
-                        name_last: name.split(' ').slice(1).join(' ') || '',
-                        email_address: email,
-                        m_payment_id: Date.now().toString(),
-                        amount: amount,
-                        item_name: itemName,
-                        item_description: description
-                    };
-
-                    const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
-                    const sigData = await sigRes.json();
-                    formFields.signature = sigData.signature;
-
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'https://sandbox.payfast.co.za/eng/process';
-                    form.style.display = 'none';
-                    for (const [key, value] of Object.entries(formFields)) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = value;
-                        form.appendChild(input);
-                    }
-                    document.body.appendChild(form);
-                    form.submit();
-                    document.body.removeChild(form);
-                });
-            }
+            paypalBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAlertModal('Payment Gateway', 'Waiting for payment gateway setup.');
+            });
+            payfastBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAlertModal('Payment Gateway', 'Waiting for payment gateway setup.');
+            });
 
             // Initial state
             updatePaymentButtons();
@@ -2035,7 +1981,6 @@
                 document.getElementById('shippingAddressSection').style.display = 'none';
                 document.getElementById('termsAgreement').style.display = 'none';
             }
-            // Trigger payment button update
             window.dispatchEvent(new Event('paymentStateChange'));
             return true;
         }
@@ -2224,14 +2169,9 @@
             // Terms link in order form opens the terms modal
             document.getElementById('termsLinkOrder').addEventListener('click', (e) => {
                 e.preventDefault();
-                const html = buildLegalHTML('Terms');
-                if (html) {
-                    showLegalModal('Terms of Service', html);
-                } else if (legalPages.TermsOfService) {
-                    showLegalModal('Terms of Service', `<p>${escapeHtml(legalPages.TermsOfService)}</p>`);
-                } else {
-                    showAlertModal('Terms of Service', 'Terms text not available yet.');
-                }
+                const title = legalPages['TermsofServiceHeading'] || 'Terms of Service';
+                const html = buildLegalHTML('Terms', 'TermsofServiceHeading');
+                showLegalModal(title, html || `<p>${escapeHtml(legalPages.TermsOfService || 'Terms text not available yet.')}</p>`);
             });
 
             if (!loadOrderState()) {
@@ -2732,32 +2672,19 @@
             });
         }
 
-        // ---------- LEGAL PAGES (click handlers) ----------
+        // ---------- LEGAL PAGES (click handlers – use sheet headings as title) ----------
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
-            if (legalPages.PrivacyPolicy) {
-                showLegalModal('Privacy Policy', `<p>${escapeHtml(legalPages.PrivacyPolicy)}</p>`);
-                return;
-            }
-            const html = buildLegalHTML('Privacy');
-            if (html) {
-                showLegalModal('Privacy Policy', html);
-            } else {
-                showAlertModal('Privacy Policy', 'Policy text not available yet.');
-            }
+            const title = legalPages['PrivacyPolicyHeading'] || 'Privacy Policy';
+            const html = buildLegalHTML('Privacy', 'PrivacyPolicyHeading');
+            showLegalModal(title, html || `<p>${escapeHtml(legalPages.PrivacyPolicy || 'Policy text not available yet.')}</p>`);
         });
+
         document.getElementById('termsOfServiceLink').addEventListener('click', (e) => {
             e.preventDefault();
-            if (legalPages.TermsOfService) {
-                showLegalModal('Terms of Service', `<p>${escapeHtml(legalPages.TermsOfService)}</p>`);
-                return;
-            }
-            const html = buildLegalHTML('Terms');
-            if (html) {
-                showLegalModal('Terms of Service', html);
-            } else {
-                showAlertModal('Terms of Service', 'Terms text not available yet.');
-            }
+            const title = legalPages['TermsofServiceHeading'] || 'Terms of Service';
+            const html = buildLegalHTML('Terms', 'TermsofServiceHeading');
+            showLegalModal(title, html || `<p>${escapeHtml(legalPages.TermsOfService || 'Terms text not available yet.')}</p>`);
         });
 
         // ---------- STICKY FOOTER INTERACTIVITY ----------
@@ -2845,8 +2772,8 @@
                 splitAllPhoneFields();
                 setTimeout(splitAllPhoneFields, 800);
 
-                paymentKeys = await fetchPaymentKeys();
-                initPayments();
+                // Set up payment buttons (placeholder)
+                setupPaymentPlaceholder();
 
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
