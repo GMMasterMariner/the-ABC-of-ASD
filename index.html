@@ -1373,6 +1373,10 @@
 
         // ---------- SINGLE FETCH ----------
         async function fetchAllSiteData() {
+            try {
+                const res = await fetch('data.json');
+                if (res.ok) return await res.json();
+            } catch(e) {}
             const res = await fetch(API_URL + '?combined=true');
             return await res.json();
         }
