@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+        label { display: block; margin-top: 1rem; font-weight: bold; }
+        input, textarea { width: 100%; padding: 0.5rem; margin-top: 0.2rem; }
+        button { margin-top: 1.5rem; padding: 0.75rem 2rem; background: #194373; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0e2b4d; }
+        #status { margin-top: 1rem; font-weight: bold; }
+        #login, #editor { display: none; }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <h1>Admin Login</h1>
+        <label>Password</label>
+        <input type="password" id="passwordInput">
+        <button onclick="login()">Login</button>
+        <div id="loginStatus"></div>
+    </div>
+
+    <div id="editor">
+        <h1>Edit Site Content</h1>
+        <form id="adminForm">
+            <label>Book Title</label>
+            <input type="text" id="BannerBookTitle">
+
+            <label>Book Subtitle</label>
+            <input type="text" id="BannerBookSubTitile">
+
+            <label>Home Description 1</label>
+            <input type="text" id="HomePageBookDescription1">
+
+            <label>Home Description 2</label>
+            <textarea id="HomePageBookDescription2" rows="3"></textarea>
+
+            <!-- Add more fields for all your site data -->
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const API_URL = 'YOUR_NEW_APPS_SCRIPT_URL'; // replace with the new deployment URL
+        let password = '';
+
+        // ========== LOGIN ==========
+        function login() {
+            password = document.getElementById('passwordInput').value;
+            // Try a dummy fetch to verify password
+            fetch(API_URL + '?action=admin&password=' + encodeURIComponent(password) + '&action=updateSite')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.result === 'success' || data.result === 'error' && data.message !== 'Unauthorised') {
+                        document.getElementById('login').style.display = 'none';
+                        document.getElementById('editor').style.display = 'block';
+                        loadCurrentData();
+                    } else {
+                        document.getElementById('loginStatus').textContent = 'Wrong password';
+                    }
+                });
+        }
+
+        // ========== LOAD CURRENT DATA ==========
+        function loadCurrentData() {
+            fetch(API_URL + '?combined=true')
+                .then(r => r.json())
+                .then(data => {
+                    const s = data.settings || {};
+                    document.getElementById('BannerBookTitle').value = s.BannerBookTitle || '';
+                    document.getElementById('BannerBookSubTitile').value = s.BannerBookSubTitile || '';
+                    document.getElementById('HomePageBookDescription1').value = data.home?.HomePageBookDescription1 || '';
+                    document.getElementById('HomePageBookDescription2').value = data.home?.HomePageBookDescription2 || '';
+                    // populate all other fields
+                });
+        }
+
+        // ========== SAVE ==========
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('action', 'updateSite');
+            formData.append('password', password);
+
+            const params = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+
+            fetch(API_URL, { method: 'POST', body: params })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('status').textContent = data.result === 'success'
+                        ? '✅ Saved! Site will update in a few seconds.'
+                        : '❌ Error: ' + data.message;
+                });
+        });
+    </script>
+</body>
+</html>
