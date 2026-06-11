@@ -829,6 +829,20 @@
             .top-bar { min-height: 54px; }
             .banner-logo img { max-height: 28px; }
         }
+
+                /* Watermark on product images */
+        .order-product-option img, .product-card img {
+            position: relative;
+        }
+        .order-product-option::after, .product-card::after {
+            content: '© GM Master Mariner';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -2801,6 +2815,14 @@
                 showLegalModal(legalPages.TermsOfService.title, legalPages.TermsOfService);
             } else {
                 showAlertModal('Terms of Service', 'Terms text not available yet.');
+            }
+        });
+
+        // Right-click protection on images
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+                showAlertModal('Protected', 'Images are copyrighted © GM Master Mariner.');
             }
         });
 
