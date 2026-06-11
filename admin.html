@@ -47,60 +47,78 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec'; // replace with the new deployment URL
-        let password = '';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
+    let password = '';
 
-        // ========== LOGIN ==========
-        function login() {
-            password = document.getElementById('passwordInput').value;
-            // Try a dummy fetch to verify password
-            fetch(API_URL + '?action=admin&password=' + encodeURIComponent(password))
-                .then(r => r.json())
-                .then(data => {
-                    if (data.result === 'success' || data.result === 'error' && data.message !== 'Unauthorised') {
-                        document.getElementById('login').style.display = 'none';
-                        document.getElementById('editor').style.display = 'block';
-                        loadCurrentData();
-                    } else {
-                        document.getElementById('loginStatus').textContent = 'Wrong password';
-                    }
-                });
+    // ========== LOGIN ==========
+    function login() {
+        password = document.getElementById('passwordInput').value;
+        // Test the password by fetching combined data with the password parameter
+        fetch(API_URL + '?combined=true&password=' + encodeURIComponent(password))
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.settings) {
+                    // Password was ignored by doGet (which doesn't check it), but if we got data, the server is reachable
+                    // Now verify the password properly via POST
+                    const params = new URLSearchParams();
+                    params.append('action', 'admin');
+                    params.append('password', password);
+                    params.append('test', 'true');
+                    return fetch(API_URL, { method: 'POST', body: params });
+                }
+                throw new Error('Server unreachable');
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.result === 'error' && data.message === 'Unauthorised') {
+                    document.getElementById('loginStatus').textContent = 'Wrong password';
+                } else {
+                    document.getElementById('login').style.display = 'none';
+                    document.getElementById('editor').style.display = 'block';
+                    loadCurrentData();
+                }
+            })
+            .catch(() => {
+                document.getElementById('loginStatus').textContent = 'Connection error';
+            });
+    }
+
+    // ========== LOAD CURRENT DATA ==========
+    function loadCurrentData() {
+        fetch(API_URL + '?combined=true')
+            .then(r => r.json())
+            .then(data => {
+                const s = data.settings || {};
+                document.getElementById('BannerBookTitle').value = s.BannerBookTitle || '';
+                document.getElementById('BannerBookSubTitile').value = s.BannerBookSubTitile || '';
+                document.getElementById('HomePageBookDescription1').value = data.home?.HomePageBookDescription1 || '';
+                document.getElementById('HomePageBookDescription2').value = data.home?.HomePageBookDescription2 || '';
+            });
+    }
+
+    // ========== SAVE ==========
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.append('action', 'admin');
+        formData.append('password', password);
+
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
         }
 
-        // ========== LOAD CURRENT DATA ==========
-        function loadCurrentData() {
-            fetch(API_URL + '?combined=true')
-                .then(r => r.json())
-                .then(data => {
-                    const s = data.settings || {};
-                    document.getElementById('BannerBookTitle').value = s.BannerBookTitle || '';
-                    document.getElementById('BannerBookSubTitile').value = s.BannerBookSubTitile || '';
-                    document.getElementById('HomePageBookDescription1').value = data.home?.HomePageBookDescription1 || '';
-                    document.getElementById('HomePageBookDescription2').value = data.home?.HomePageBookDescription2 || '';
-                    // populate all other fields
-                });
-        }
-
-        // ========== SAVE ==========
-        document.getElementById('adminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            formData.append('action', 'updateSite');
-            formData.append('password', password);
-
-            const params = new URLSearchParams();
-            for (const [key, value] of formData.entries()) {
-                params.append(key, value);
-            }
-
-            fetch(API_URL, { method: 'POST', body: params })
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('status').textContent = data.result === 'success'
-                        ? '✅ Saved! Site will update in a few seconds.'
-                        : '❌ Error: ' + data.message;
-                });
-        });
+        fetch(API_URL, { method: 'POST', body: params })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('status').textContent = data.result === 'success'
+                    ? '✅ Saved! Site will update in a few seconds.'
+                    : '❌ Error: ' + (data.message || 'Unknown error');
+            })
+            .catch(err => {
+                document.getElementById('status').textContent = '❌ Network error';
+            });
+    });
     </script>
 </body>
 </html>
