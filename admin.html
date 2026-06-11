@@ -54,7 +54,7 @@
         function login() {
             password = document.getElementById('passwordInput').value;
             // Try a dummy fetch to verify password
-            fetch(API_URL + '?action=admin&password=' + encodeURIComponent(password) + '&action=updateSite')
+            fetch(API_URL + '?action=admin&password=' + encodeURIComponent(password))
                 .then(r => r.json())
                 .then(data => {
                     if (data.result === 'success' || data.result === 'error' && data.message !== 'Unauthorised') {
