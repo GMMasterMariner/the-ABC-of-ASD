@@ -2889,6 +2889,32 @@
             }
         });
 
+        // ========== ADMIN ICON TOGGLE ==========
+        (function() {
+            const adminIcon = document.getElementById('adminIconLink');
+            const bannerLogo = document.getElementById('bannerLogo');
+
+            if (bannerLogo) {
+                bannerLogo.style.cursor = 'pointer';
+                bannerLogo.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (adminIcon.querySelector('img') && adminIcon.querySelector('img').src && adminIcon.querySelector('img').src !== '') {
+                        if (adminIcon.style.display === 'none' || adminIcon.style.display === '') {
+                            adminIcon.style.display = 'inline-flex';
+                        } else {
+                            adminIcon.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                if (e.target !== bannerLogo && !bannerLogo.contains(e.target)) {
+                    adminIcon.style.display = 'none';
+                }
+            });
+        })();
+
         (function() {
             const footer = document.getElementById('siteFooter');
             let pinned = false;
