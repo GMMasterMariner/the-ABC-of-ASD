@@ -1826,9 +1826,11 @@
             document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
 
             const logo = document.getElementById('bannerLogo');
+            const splashLogo = document.getElementById('splash-logo');
             if (settings.BannerLogo) {
                 logo.src = settings.BannerLogo;
                 logo.style.display = 'block';
+                splashLogo.src = settings.BannerLogo;
             } else {
                 logo.style.display = 'none';
             }
