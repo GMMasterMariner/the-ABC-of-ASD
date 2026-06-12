@@ -2892,27 +2892,43 @@
         // ========== ADMIN ICON TOGGLE ==========
         (function() {
             const adminIcon = document.getElementById('adminIconLink');
+            const adminImg = document.getElementById('adminIconImg');
             const bannerLogo = document.getElementById('bannerLogo');
 
+            // Function to show the admin icon (only if it has a valid image)
+            function showAdminIcon() {
+                if (adminImg && adminImg.src && adminImg.src !== '' && adminImg.src !== window.location.href) {
+                    adminIcon.style.setProperty('display', 'inline-flex', 'important');
+                }
+            }
+
+            // Function to hide the admin icon
+            function hideAdminIcon() {
+                adminIcon.style.setProperty('display', 'none', 'important');
+            }
+
+            // Click on banner logo toggles admin icon
             if (bannerLogo) {
                 bannerLogo.style.cursor = 'pointer';
                 bannerLogo.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    if (adminIcon.querySelector('img') && adminIcon.querySelector('img').src && adminIcon.querySelector('img').src !== '') {
-                        if (adminIcon.style.display === 'none' || adminIcon.style.display === '') {
-                            adminIcon.style.display = 'inline-flex';
-                        } else {
-                            adminIcon.style.display = 'none';
-                        }
+                    if (adminIcon.style.display === 'none' || adminIcon.style.display === '') {
+                        showAdminIcon();
+                    } else {
+                        hideAdminIcon();
                     }
                 });
             }
 
+            // Click anywhere else hides admin icon
             document.addEventListener('click', function(e) {
-                if (e.target !== bannerLogo && !bannerLogo.contains(e.target)) {
-                    adminIcon.style.display = 'none';
+                if (e.target !== bannerLogo && !bannerLogo.contains(e.target) && e.target !== adminIcon && !adminIcon.contains(e.target)) {
+                    hideAdminIcon();
                 }
             });
+
+            // Hide on page load
+            hideAdminIcon();
         })();
 
         (function() {
