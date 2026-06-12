@@ -5,120 +5,424 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
-        label { display: block; margin-top: 1rem; font-weight: bold; }
-        input, textarea { width: 100%; padding: 0.5rem; margin-top: 0.2rem; }
-        button { margin-top: 1.5rem; padding: 0.75rem 2rem; background: #194373; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Nunito Sans', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #2c3e50;
+            padding: 1rem;
+        }
+        h1 { text-align: center; margin-bottom: 1.5rem; color: #194373; }
+        h2 {
+            background: #194373;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: 2rem 0 1rem 0;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        h2::after { content: ' ▼'; float: right; }
+        h2.collapsed::after { content: ' ▶'; }
+        .section { display: block; }
+        .section.collapsed { display: none; }
+        label {
+            display: block;
+            margin-top: 0.8rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #194373;
+        }
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        input[type="color"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+        textarea { min-height: 80px; resize: vertical; }
+        .color-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .color-row label { flex: 1; min-width: 100px; }
+        button {
+            margin-top: 1.5rem;
+            padding: 0.75rem 2rem;
+            background: #194373;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
         button:hover { background: #0e2b4d; }
-        #status { margin-top: 1rem; font-weight: bold; }
-        #login { display: block; }
-        #editor { display: none; }
+        #saveStatus {
+            margin-top: 1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            max-width: 420px; width: 90%;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-box h3 { font-size: 1.2rem; margin-bottom: 1rem; color: #194373; }
+        .modal-box p { margin-bottom: 1.5rem; }
+        .modal-box button {
+            margin: 0 0.5rem;
+            min-width: 100px;
+        }
+        .btn-secondary { background: #aaa; }
+        .btn-secondary:hover { background: #888; }
     </style>
 </head>
 <body>
-    <div id="login">
-        <h1>Admin Login</h1>
-        <label>Password</label>
-        <input type="password" id="passwordInput">
-        <button onclick="login()">Login</button>
-        <div id="loginStatus"></div>
-    </div>
+    <h1>⚙️ Admin Panel</h1>
 
-    <div id="editor">
-        <h1>Edit Site Content</h1>
-        <form id="adminForm">
-            <label>Book Title</label>
-            <input type="text" id="BannerBookTitle">
+    <form id="adminForm">
 
-            <label>Book Subtitle</label>
-            <input type="text" id="BannerBookSubTitile">
+        <!-- ========== SITE SETTINGS ========== -->
+        <h2 onclick="toggleSection(this)">Site Settings</h2>
+        <div class="section">
+            <div class="color-row">
+                <label>Primary Color <input type="color" id="PrimaryColor" name="PrimaryColor"></label>
+                <label>Secondary Color <input type="color" id="SecondaryColor" name="SecondaryColor"></label>
+                <label>Background Color <input type="color" id="BackgroundColor" name="BackgroundColor"></label>
+            </div>
+            <div class="color-row">
+                <label>CTA Color <input type="color" id="CTAColor" name="CTAColor"></label>
+                <label>Alert Color <input type="color" id="AlertColor" name="AlertColor"></label>
+                <label>Text Color <input type="color" id="TextColor" name="TextColor"></label>
+            </div>
+            <label>Contact Email <input type="text" id="ContactEmail" name="ContactEmail"></label>
+            <label>Background Image URL <input type="url" id="BackgroundImage" name="BackgroundImage"></label>
+            <label>Banner Logo URL <input type="url" id="BannerLogo" name="BannerLogo"></label>
+            <label>Book Title <input type="text" id="BannerBookTitle" name="BannerBookTitle"></label>
+            <label>Book Title Abbreviation <input type="text" id="BannerBookTitleAbbreviation" name="BannerBookTitleAbbreviation"></label>
+            <label>Book Subtitle <input type="text" id="BannerBookSubTitile" name="BannerBookSubTitile"></label>
+            <label>Home Page Title <input type="text" id="HomePageTitle" name="HomePageTitle"></label>
+            <label>Order Page Title <input type="text" id="OrderPageTitle" name="OrderPageTitle"></label>
+            <label>About Page Title <input type="text" id="AboutPageTitle" name="AboutPageTitle"></label>
+            <label>Contact Page Title <input type="text" id="ContactPageTitle" name="ContactPageTitle"></label>
+            <label>Nav Icon - Home <input type="url" id="NavIconURLHome" name="NavIconURLHome"></label>
+            <label>Nav Icon - About <input type="url" id="NavIconURLAbout" name="NavIconURLAbout"></label>
+            <label>Nav Icon - Contact <input type="url" id="NavIconURLContact" name="NavIconURLContact"></label>
+            <label>Nav Icon - LinkedIn <input type="url" id="NavIconURLLinkedIn" name="NavIconURLLinkedIn"></label>
+            <label>Nav Icon - Admin <input type="url" id="NavIconURLAdmin" name="NavIconURLAdmin"></label>
+            <label>LinkedIn URL <input type="url" id="LinkedInURL" name="LinkedInURL"></label>
+            <label>PayPal Logo <input type="url" id="PayPalLogo" name="PayPalLogo"></label>
+            <label>Payfast Logo <input type="url" id="PayfastLogo" name="PayfastLogo"></label>
+            <label>Location Icon <input type="url" id="LocationIconURL" name="LocationIconURL"></label>
+            <label>Maps Icon <input type="url" id="MapsIconURL" name="MapsIconURL"></label>
+            <label>Google Maps API Key <input type="text" id="GoogleMapsApiKey" name="GoogleMapsApiKey"></label>
+        </div>
 
-            <label>Home Description 1</label>
-            <input type="text" id="HomePageBookDescription1">
+        <!-- ========== HOME PAGE ========== -->
+        <h2 onclick="toggleSection(this)">Home Page</h2>
+        <div class="section">
+            <label>Headline <input type="text" id="HomePageBookHeadline" name="HomePageBookHeadline"></label>
+            <label>Description 1 <input type="text" id="HomePageBookDescription1" name="HomePageBookDescription1"></label>
+            <label>Description 2 <textarea id="HomePageBookDescription2" name="HomePageBookDescription2"></textarea></label>
+            <label>Carousel Interval (ms) <input type="number" id="HomePageCarouselInterval" name="HomePageCarouselInterval"></label>
+            <label>Carousel Image 1 <input type="url" id="HomePageCarouselImage1" name="HomePageCarouselImage1"></label>
+            <label>Carousel Image 2 <input type="url" id="HomePageCarouselImage2" name="HomePageCarouselImage2"></label>
+            <label>Carousel Image 3 <input type="url" id="HomePageCarouselImage3" name="HomePageCarouselImage3"></label>
+            <label>Carousel Image 4 <input type="url" id="HomePageCarouselImage4" name="HomePageCarouselImage4"></label>
+            <label>Carousel Image 5 <input type="url" id="HomePageCarouselImage5" name="HomePageCarouselImage5"></label>
+            <label>Carousel Image 6 <input type="url" id="HomePageCarouselImage6" name="HomePageCarouselImage6"></label>
+            <label>Carousel Image 7 <input type="url" id="HomePageCarouselImage7" name="HomePageCarouselImage7"></label>
+            <label>Carousel Image 8 <input type="url" id="HomePageCarouselImage8" name="HomePageCarouselImage8"></label>
+            <label>Carousel Image 9 <input type="url" id="HomePageCarouselImage9" name="HomePageCarouselImage9"></label>
+            <label>Product Card 1 - Main Text <input type="text" id="HomePageItem1MainText" name="HomePageItem1MainText"></label>
+            <label>Product Card 1 - Sub Text <textarea id="HomePageItem1SubText" name="HomePageItem1SubText"></textarea></label>
+            <label>Product Card 2 - Main Text <input type="text" id="HomePageItem2MainText" name="HomePageItem2MainText"></label>
+            <label>Product Card 2 - Sub Text <textarea id="HomePageItem2SubText" name="HomePageItem2SubText"></textarea></label>
+        </div>
 
-            <label>Home Description 2</label>
-            <textarea id="HomePageBookDescription2" rows="3"></textarea>
+        <!-- ========== PRODUCTS ========== -->
+        <h2 onclick="toggleSection(this)">Products</h2>
+        <div class="section">
+            <h3 style="color:#194373;">Product 1 - Physical</h3>
+            <label>Product Name <input type="text" id="prod1_ProductName" name="prod1_ProductName"></label>
+            <label>Product ID <input type="text" id="prod1_ProductID" name="prod1_ProductID"></label>
+            <label>Type <input type="text" id="prod1_Type" name="prod1_Type"></label>
+            <label>Weight (kg) <input type="number" id="prod1_Weight" name="prod1_Weight" step="0.1"></label>
+            <label>Base Price (ZAR) <input type="number" id="prod1_BasePrice" name="prod1_BasePrice"></label>
+            <label>Discount Threshold <input type="number" id="prod1_DiscountThreshold" name="prod1_DiscountThreshold"></label>
+            <label>Discount Percent <input type="number" id="prod1_DiscountPercent" name="prod1_DiscountPercent"></label>
+            <label>Description <textarea id="prod1_Description" name="prod1_Description"></textarea></label>
+            <label>Image URL <input type="url" id="prod1_ImageURL" name="prod1_ImageURL"></label>
 
-            <!-- Add more fields for all your site data -->
+            <h3 style="color:#194373;">Product 2 - Digital</h3>
+            <label>Product Name <input type="text" id="prod2_ProductName" name="prod2_ProductName"></label>
+            <label>Product ID <input type="text" id="prod2_ProductID" name="prod2_ProductID"></label>
+            <label>Type <input type="text" id="prod2_Type" name="prod2_Type"></label>
+            <label>Weight (kg) <input type="number" id="prod2_Weight" name="prod2_Weight" step="0.1"></label>
+            <label>Base Price (ZAR) <input type="number" id="prod2_BasePrice" name="prod2_BasePrice"></label>
+            <label>Discount Threshold <input type="number" id="prod2_DiscountThreshold" name="prod2_DiscountThreshold"></label>
+            <label>Discount Percent <input type="number" id="prod2_DiscountPercent" name="prod2_DiscountPercent"></label>
+            <label>Description <textarea id="prod2_Description" name="prod2_Description"></textarea></label>
+            <label>Image URL <input type="url" id="prod2_ImageURL" name="prod2_ImageURL"></label>
+        </div>
 
-            <button type="submit">Save Changes</button>
-        </form>
-        <div id="status"></div>
+        <!-- ========== ABOUT ========== -->
+        <h2 onclick="toggleSection(this)">About</h2>
+        <div class="section">
+            <label>Author Name <input type="text" id="AuthorName" name="AuthorName"></label>
+            <label>Author Title <input type="text" id="AuthorTitle" name="AuthorTitle"></label>
+            <label>Short Bio <textarea id="AuthorShortBio" name="AuthorShortBio"></textarea></label>
+            <label>Extended Bio <textarea id="AuthorExtendedBio" name="AuthorExtendedBio" rows="6"></textarea></label>
+            <label>Author Image 1 <input type="url" id="AuthorImage1URL" name="AuthorImage1URL"></label>
+            <label>Author Image 2 <input type="url" id="AuthorImage2URL" name="AuthorImage2URL"></label>
+        </div>
+
+        <!-- ========== LEGAL ========== -->
+        <h2 onclick="toggleSection(this)">Legal</h2>
+        <div class="section">
+            <h3 style="color:#194373;">Privacy Policy</h3>
+            <label>Heading <input type="text" id="PrivacyPolicyHeading" name="PrivacyPolicyHeading"></label>
+            <label>Intro Text <textarea id="PrivacyIntroText" name="PrivacyIntroText"></textarea></label>
+            <label>Data Collection Heading <input type="text" id="PrivacyDataCollectionHeading" name="PrivacyDataCollectionHeading"></label>
+            <label>Data Collection Text <textarea id="PrivacyDataCollectionText" name="PrivacyDataCollectionText"></textarea></label>
+            <label>Data Use Heading <input type="text" id="PrivacyDataUseHeading" name="PrivacyDataUseHeading"></label>
+            <label>Data Use Text <textarea id="PrivacyDataUseText" name="PrivacyDataUseText"></textarea></label>
+            <label>Data Storage Heading <input type="text" id="PrivacyDataStorageHeading" name="PrivacyDataStorageHeading"></label>
+            <label>Data Storage Text <textarea id="PrivacyDataStorageText" name="PrivacyDataStorageText"></textarea></label>
+            <label>Cookies Heading <input type="text" id="PrivacyCookiesHeading" name="PrivacyCookiesHeading"></label>
+            <label>Cookies Text <textarea id="PrivacyCookiesText" name="PrivacyCookiesText"></textarea></label>
+            <label>Your Rights Heading <input type="text" id="PrivacyRightsHeading" name="PrivacyRightsHeading"></label>
+            <label>Your Rights Text <textarea id="PrivacyRightsText" name="PrivacyRightsText"></textarea></label>
+            <label>Changes Heading <input type="text" id="PrivacyPolicyCangesHeading" name="PrivacyPolicyCangesHeading"></label>
+            <label>Changes Text <textarea id="PrivacyPolicyCangesText" name="PrivacyPolicyCangesText"></textarea></label>
+            <label>Last Updated Heading <input type="text" id="PrivacyLastUpdatedHeading" name="PrivacyLastUpdatedHeading"></label>
+            <label>Last Updated Text <input type="text" id="PrivacyLastUpdatedText" name="PrivacyLastUpdatedText"></label>
+
+            <h3 style="color:#194373;">Terms of Service</h3>
+            <label>Heading <input type="text" id="TermsofServiceHeading" name="TermsofServiceHeading"></label>
+            <label>Intro Text <textarea id="TermsIntroText" name="TermsIntroText"></textarea></label>
+            <label>Orders Heading <input type="text" id="TermsOrdersHeading" name="TermsOrdersHeading"></label>
+            <label>Orders Text <textarea id="TermsOrdersText" name="TermsOrdersText"></textarea></label>
+            <label>Payment Heading <input type="text" id="TermsPaymentHeading" name="TermsPaymentHeading"></label>
+            <label>Payment Text <textarea id="TermsPaymentText" name="TermsPaymentText"></textarea></label>
+            <label>Shipping Heading <input type="text" id="TermsShippingHeading" name="TermsShippingHeading"></label>
+            <label>Shipping Text <textarea id="TermsShippingText" name="TermsShippingText"></textarea></label>
+            <label>Returns & Refunds Heading <input type="text" id="TermsReturnsRefundsHeading" name="TermsReturnsRefundsHeading"></label>
+            <label>Returns & Refunds Text <textarea id="TermsReturnsRefundsText" name="TermsReturnsRefundsText"></textarea></label>
+            <label>Intellectual Property Heading <input type="text" id="TermsIntellectualPropertyHeading" name="TermsIntellectualPropertyHeading"></label>
+            <label>Intellectual Property Text <textarea id="TermsIntellectualPropertyText" name="TermsIntellectualPropertyText"></textarea></label>
+            <label>Limitation of Liability Heading <input type="text" id="TermsLiabilityHeading" name="TermsLiabilityHeading"></label>
+            <label>Limitation of Liability Text <textarea id="TermsLiabilityText" name="TermsLiabilityText"></textarea></label>
+            <label>Governing Law Heading <input type="text" id="TermsLawHeading" name="TermsLawHeading"></label>
+            <label>Governing Law Text <textarea id="TermsLawText" name="TermsLawText"></textarea></label>
+            <label>Contact Heading <input type="text" id="TermsContactHeading" name="TermsContactHeading"></label>
+            <label>Contact Text <textarea id="TermsContactText" name="TermsContactText"></textarea></label>
+            <label>Last Updated Heading <input type="text" id="TermsLastUpdatedHeading" name="TermsLastUpdatedHeading"></label>
+            <label>Last Updated Text <input type="text" id="TermsLastUpdatedText" name="TermsLastUpdatedText"></label>
+        </div>
+
+        <button type="submit">💾 Save Changes</button>
+        <div id="saveStatus"></div>
+    </form>
+
+    <!-- Save Result Modal -->
+    <div class="modal-overlay" id="saveModalOverlay">
+        <div class="modal-box">
+            <h3 id="saveModalTitle"></h3>
+            <p id="saveModalMessage"></p>
+            <button class="btn-secondary" id="saveContinueBtn">Continue Editing</button>
+            <button id="saveReturnBtn">Return to Site</button>
+        </div>
     </div>
 
     <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
-    let password = '';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
+        const MAIN_SITE = 'https://gmmastermariner.github.io/the-ABC-of-ASD/';
 
-    // ========== LOGIN ==========
-    function login() {
-        password = document.getElementById('passwordInput').value;
-        // Test the password by fetching combined data with the password parameter
-        fetch(API_URL + '?combined=true&password=' + encodeURIComponent(password))
-            .then(r => r.json())
-            .then(data => {
-                if (data && data.settings) {
-                    // Password was ignored by doGet (which doesn't check it), but if we got data, the server is reachable
-                    // Now verify the password properly via POST
-                    const params = new URLSearchParams();
-                    params.append('action', 'admin');
-                    params.append('password', password);
-                    params.append('test', 'true');
-                    return fetch(API_URL, { method: 'POST', body: params });
-                }
-                throw new Error('Server unreachable');
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.result === 'error' && data.message === 'Unauthorised') {
-                    document.getElementById('loginStatus').textContent = 'Wrong password';
-                } else {
-                    document.getElementById('login').style.display = 'none';
-                    document.getElementById('editor').style.display = 'block';
-                    loadCurrentData();
-                }
-            })
-            .catch(() => {
-                document.getElementById('loginStatus').textContent = 'Connection error';
-            });
-    }
-
-    // ========== LOAD CURRENT DATA ==========
-    function loadCurrentData() {
-        fetch(API_URL + '?combined=true')
-            .then(r => r.json())
-            .then(data => {
-                const s = data.settings || {};
-                document.getElementById('BannerBookTitle').value = s.BannerBookTitle || '';
-                document.getElementById('BannerBookSubTitile').value = s.BannerBookSubTitile || '';
-                document.getElementById('HomePageBookDescription1').value = data.home?.HomePageBookDescription1 || '';
-                document.getElementById('HomePageBookDescription2').value = data.home?.HomePageBookDescription2 || '';
-            });
-    }
-
-    // ========== SAVE ==========
-    document.getElementById('adminForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        formData.append('action', 'admin');
-        formData.append('password', password);
-
-        const params = new URLSearchParams();
-        for (const [key, value] of formData.entries()) {
-            params.append(key, value);
+        function toggleSection(h2) {
+            h2.classList.toggle('collapsed');
+            h2.nextElementSibling.classList.toggle('collapsed');
         }
 
-        fetch(API_URL, { method: 'POST', body: params })
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('status').textContent = data.result === 'success'
-                    ? '✅ Saved! Site will update in a few seconds.'
-                    : '❌ Error: ' + (data.message || 'Unknown error');
-            })
-            .catch(err => {
-                document.getElementById('status').textContent = '❌ Network error';
-            });
-    });
+        // Load current data
+        async function loadData() {
+            try {
+                const res = await fetch(API_URL + '?combined=true');
+                const data = await res.json();
+                const s = data.settings || {};
+                const h = data.home || {};
+                const a = data.about || {};
+                const l = data.legal || {};
+                const p = data.products || [];
+
+                // Settings
+                setVal('PrimaryColor', s.PrimaryColor);
+                setVal('SecondaryColor', s.SecondaryColor);
+                setVal('BackgroundColor', s.BackgroundColor);
+                setVal('CTAColor', s.CTAColor);
+                setVal('AlertColor', s.AlertColor);
+                setVal('TextColor', s.TextColor);
+                setVal('ContactEmail', s.ContactEmail);
+                setVal('BackgroundImage', s.BackgroundImage);
+                setVal('BannerLogo', s.BannerLogo);
+                setVal('BannerBookTitle', s.BannerBookTitle);
+                setVal('BannerBookTitleAbbreviation', s.BannerBookTitleAbbreviation);
+                setVal('BannerBookSubTitile', s.BannerBookSubTitile);
+                setVal('HomePageTitle', s.HomePageTitle);
+                setVal('OrderPageTitle', s.OrderPageTitle);
+                setVal('AboutPageTitle', s.AboutPageTitle);
+                setVal('ContactPageTitle', s.ContactPageTitle);
+                setVal('NavIconURLHome', s.NavIconURLHome);
+                setVal('NavIconURLAbout', s.NavIconURLAbout);
+                setVal('NavIconURLContact', s.NavIconURLContact);
+                setVal('NavIconURLLinkedIn', s.NavIconURLLinkedIn);
+                setVal('NavIconURLAdmin', s.NavIconURLAdmin);
+                setVal('LinkedInURL', s.LinkedInURL);
+                setVal('PayPalLogo', s.PayPalLogo);
+                setVal('PayfastLogo', s.PayfastLogo);
+                setVal('LocationIconURL', s.LocationIconURL);
+                setVal('MapsIconURL', s.MapsIconURL);
+                setVal('GoogleMapsApiKey', s.GoogleMapsApiKey);
+
+                // Home
+                setVal('HomePageBookHeadline', h.HomePageBookHeadline);
+                setVal('HomePageBookDescription1', h.HomePageBookDescription1);
+                setVal('HomePageBookDescription2', h.HomePageBookDescription2);
+                setVal('HomePageCarouselInterval', h.HomePageCarouselInterval);
+                for (let i = 1; i <= 9; i++) {
+                    setVal('HomePageCarouselImage' + i, h['HomePageCarouselImage' + i]);
+                }
+                setVal('HomePageItem1MainText', h.HomePageItem1MainText);
+                setVal('HomePageItem1SubText', h.HomePageItem1SubText);
+                setVal('HomePageItem2MainText', h.HomePageItem2MainText);
+                setVal('HomePageItem2SubText', h.HomePageItem2SubText);
+
+                // Products
+                if (p[0]) {
+                    setVal('prod1_ProductName', p[0].ProductName);
+                    setVal('prod1_ProductID', p[0].ProductID);
+                    setVal('prod1_Type', p[0].Type);
+                    setVal('prod1_Weight', p[0].Weight);
+                    setVal('prod1_BasePrice', p[0].BasePrice);
+                    setVal('prod1_DiscountThreshold', p[0].DiscountThreshold);
+                    setVal('prod1_DiscountPercent', p[0].DiscountPercent);
+                    setVal('prod1_Description', p[0].Description);
+                    setVal('prod1_ImageURL', p[0].ImageURL);
+                }
+                if (p[1]) {
+                    setVal('prod2_ProductName', p[1].ProductName);
+                    setVal('prod2_ProductID', p[1].ProductID);
+                    setVal('prod2_Type', p[1].Type);
+                    setVal('prod2_Weight', p[1].Weight);
+                    setVal('prod2_BasePrice', p[1].BasePrice);
+                    setVal('prod2_DiscountThreshold', p[1].DiscountThreshold);
+                    setVal('prod2_DiscountPercent', p[1].DiscountPercent);
+                    setVal('prod2_Description', p[1].Description);
+                    setVal('prod2_ImageURL', p[1].ImageURL);
+                }
+
+                // About
+                setVal('AuthorName', a.AuthorName);
+                setVal('AuthorTitle', a.AuthorTitle);
+                setVal('AuthorShortBio', a.AuthorShortBio);
+                setVal('AuthorExtendedBio', a.AuthorExtendedBio);
+                setVal('AuthorImage1URL', a.AuthorImage1URL);
+                setVal('AuthorImage2URL', a.AuthorImage2URL);
+
+                // Legal
+                for (const key of Object.keys(l)) {
+                    setVal(key, l[key]);
+                }
+
+            } catch (err) {
+                console.error('Failed to load data:', err);
+            }
+        }
+
+        function setVal(id, val) {
+            const el = document.getElementById(id);
+            if (el && val !== undefined && val !== null) {
+                el.value = val;
+            }
+        }
+
+        // Save
+        document.getElementById('adminForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            document.getElementById('saveStatus').textContent = 'Saving...';
+
+            const formData = new FormData(this);
+            // Get password from sessionStorage (stored on login)
+            const password = sessionStorage.getItem('adminPassword') || '';
+            formData.append('action', 'admin');
+            formData.append('password', password);
+
+            const params = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    showSaveResult(true, 'Changes saved successfully! The site will update in a few seconds.');
+                } else {
+                    showSaveResult(false, 'Error: ' + (data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                showSaveResult(false, 'Network error. Please try again.');
+            }
+            document.getElementById('saveStatus').textContent = '';
+        });
+
+        function showSaveResult(success, message) {
+            document.getElementById('saveModalTitle').textContent = success ? '✅ Success' : '❌ Error';
+            document.getElementById('saveModalMessage').textContent = message;
+            document.getElementById('saveModalOverlay').classList.add('active');
+        }
+
+        document.getElementById('saveContinueBtn').addEventListener('click', function() {
+            document.getElementById('saveModalOverlay').classList.remove('active');
+        });
+
+        document.getElementById('saveReturnBtn').addEventListener('click', function() {
+            // Open the main site in a new tab
+            window.open(MAIN_SITE, '_blank');
+            // Close this admin tab
+            window.close();
+        });
+
+        // On page load, check for stored password
+        if (!sessionStorage.getItem('adminPassword')) {
+            // Password should be passed from the main site via sessionStorage
+            // If not present, redirect to main site
+            window.location.href = MAIN_SITE;
+        } else {
+            loadData();
+        }
     </script>
 </body>
 </html>
