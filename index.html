@@ -1281,6 +1281,9 @@
                 const data = await res.json();
                 if (data.result === 'success' || (data.result === 'error' && data.message !== 'Unauthorised')) {
                     document.getElementById('adminLoginOverlay').classList.remove('active');
+                    // Store password for admin page
+                    sessionStorage.setItem('adminPassword', password);
+                    // Open admin page in new tab
                     window.open('admin.html', '_blank');
                 } else {
                     statusEl.textContent = 'Wrong password';
