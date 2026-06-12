@@ -1840,8 +1840,8 @@
 
             // Admin icon
             if (settings.NavIconURLAdmin) {
-                document.getElementById('adminIconLink').style.display = 'inline-flex';
                 document.getElementById('adminIconImg').src = settings.NavIconURLAdmin;
+                // Keep hidden until banner logo is clicked
             }
 
             const titleEl = document.getElementById('bannerTitle');
