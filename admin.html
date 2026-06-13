@@ -473,24 +473,25 @@
         let adminToken = '';
         let adminNum = '';
         let adminName = '';
-
+    
         async function loadLoginScreen() {
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const admin = params.get('admin');
-
+    
             console.log('Admin page loaded - token:', token, 'admin:', admin);
-
+    
             if (!token || !admin) {
                 document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
                 document.getElementById('codeInput').style.display = 'none';
                 document.getElementById('verifyBtn').style.display = 'none';
                 return;
             }
-
+    
             adminToken = token;
             adminNum = admin;
-
+    
+            // Try to validate the token directly
             try {
                 const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
                 const rawText = await res.text();
@@ -501,25 +502,26 @@
                     data = JSON.parse(rawText);
                 } catch (e) {
                     console.error('JSON parse error:', e);
-                    document.getElementById('loginPrompt').textContent = 'Error parsing server response.';
-                    return;
                 }
                 
-                if (data.result === 'success') {
+                if (data && data.result === 'success') {
                     adminName = data.adminName;
-                    document.getElementById('loginPrompt').textContent = `Welcome ${adminName}! Enter your verification code`;
-                    document.getElementById('codeInput').focus();
-                } else {
-                    document.getElementById('loginPrompt').textContent = 'Session expired. Please login again from the main site.';
-                    document.getElementById('codeInput').style.display = 'none';
-                    document.getElementById('verifyBtn').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminNameDisplay').textContent = adminName || 'Admin';
+                    loadAllData();
+                    return;
                 }
             } catch (err) {
-                console.error('Failed to load admin info:', err);
-                document.getElementById('loginPrompt').textContent = 'Error loading. Please try again.';
+                console.error('Failed to validate token:', err);
             }
+    
+            // Token invalid - show code entry with request button
+            document.getElementById('loginPrompt').textContent = 'Session expired. Enter a new verification code.';
+            document.getElementById('requestCodeBtn').style.display = 'block';
+            document.getElementById('codeInput').focus();
         }
-
+    
         document.getElementById('verifyBtn').addEventListener('click', async () => {
             const code = document.getElementById('codeInput').value.trim();
             if (!code || code.length !== 6) {
@@ -527,29 +529,16 @@
                 document.getElementById('loginError').style.display = 'block';
                 return;
             }
-
+    
             try {
                 const params = new URLSearchParams();
                 params.append('action', 'verifyAdminCode');
                 params.append('admin', adminNum);
                 params.append('code', code);
                 
-                console.log('Verifying code for admin:', adminNum);
-                
                 const res = await fetch(API_URL, { method: 'POST', body: params });
-                const rawText = await res.text();
-                console.log('verifyAdminCode raw response:', rawText);
-                
-                let data;
-                try {
-                    data = JSON.parse(rawText);
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    document.getElementById('loginError').textContent = 'Server error.';
-                    document.getElementById('loginError').style.display = 'block';
-                    return;
-                }
-
+                const data = await res.json();
+    
                 if (data.result === 'success') {
                     adminToken = data.token;
                     document.getElementById('loginScreen').style.display = 'none';
@@ -561,16 +550,48 @@
                     document.getElementById('loginError').style.display = 'block';
                 }
             } catch (err) {
-                console.error('Verification error:', err);
-                document.getElementById('loginError').textContent = 'Network error. Please try again.';
+                document.getElementById('loginError').textContent = 'Network error.';
                 document.getElementById('loginError').style.display = 'block';
             }
         });
-
+    
+        document.getElementById('requestCodeBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('requestCodeBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
+            
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', adminNum);
+                
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                
+                if (data.result === 'success') {
+                    document.getElementById('loginSuccess').textContent = 'Code sent! Check your email.';
+                    document.getElementById('loginSuccess').style.display = 'block';
+                    document.getElementById('codeInput').value = '';
+                    document.getElementById('codeInput').focus();
+                } else {
+                    document.getElementById('loginError').textContent = data.message || 'Failed to send code.';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('loginError').textContent = 'Network error.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Request New Code';
+        });
+    
         document.getElementById('codeInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('verifyBtn').click();
         });
-
+    
         function logout() {
             adminToken = '';
             adminNum = '';
@@ -578,9 +599,11 @@
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('codeInput').value = '';
             document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
+            document.getElementById('requestCodeBtn').style.display = 'none';
             window.history.pushState({}, '', 'admin.html');
         }
-
+    
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             statusEl.textContent = message;
@@ -588,21 +611,11 @@
             statusEl.style.display = 'block';
             setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
         }
-
+    
         async function loadAllData() {
             try {
                 const res = await fetch(API_URL + '?action=getAllAdminData&token=' + encodeURIComponent(adminToken) + '&admin=' + encodeURIComponent(adminNum));
-                const rawText = await res.text();
-                console.log('getAllAdminData raw response:', rawText.substring(0, 200) + '...');
-                
-                let data;
-                try {
-                    data = JSON.parse(rawText);
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    showStatus('Error parsing data', 'error');
-                    return;
-                }
+                const data = await res.json();
                 
                 if (data.settings) {
                     populateSettings(data.settings || {});
@@ -612,7 +625,7 @@
                     populateShipping(data.shippingRegions || [], data.regionRates || []);
                     populateLegal(data.legal || {});
                 } else {
-                    showStatus('No settings data received', 'error');
+                    showStatus('No data received', 'error');
                 }
             } catch (err) {
                 console.error('Failed to load data:', err);
