@@ -893,11 +893,20 @@
     <!-- ================== ADMIN LOGIN MODAL ================== -->
     <div class="modal-overlay" id="adminLoginOverlay">
         <div class="modal-box admin-login-box">
-            <h3>Admin Login</h3>
-            <input type="password" id="adminPasswordInput" placeholder="Enter password">
-            <div>
-                <button class="btn" id="adminLoginBtn">Login</button>
-                <button class="btn btn-secondary" id="adminCancelBtn">Cancel</button>
+            <div id="adminSelectStep">
+                <h3>Select Admin</h3>
+                <p>Choose your account to continue</p>
+                <div id="adminSelectButtons"></div>
+            </div>
+            <div id="adminCodeStep" style="display:none;">
+                <h3>Enter Verification Code</h3>
+                <p>A 6-digit code has been sent to your email</p>
+                <input type="text" id="adminCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <div style="margin-top:1rem;">
+                    <button class="btn" id="adminVerifyBtn">Verify</button>
+                    <button class="btn btn-secondary" id="adminCodeCancelBtn">Back</button>
+                </div>
+                <p id="adminCodeStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
             </div>
             <p id="adminLoginStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
         </div>
