@@ -1335,7 +1335,7 @@
                 document.getElementById('adminCodeInput').value = '';
             };
     
-            // Verify button — placed here so it exists when the modal is shown
+            // Verify button
             document.getElementById('adminVerifyBtn').onclick = async function() {
                 const code = document.getElementById('adminCodeInput').value.trim();
                 const adminNum = sessionStorage.getItem('adminNum');
@@ -1344,7 +1344,7 @@
                     document.getElementById('adminCodeStatus').style.display = 'block';
                     return;
                 }
-    
+            
                 try {
                     const params = new URLSearchParams();
                     params.append('action', 'verifyAdminCode');
@@ -1354,7 +1354,9 @@
                     const data = await res.json();
                     if (data.result === 'success') {
                         document.getElementById('adminLoginOverlay').classList.remove('active');
-                        window.open('admin.html', '_blank');
+                        // Pass token and admin in the URL
+                        const adminUrl = 'admin.html?token=' + encodeURIComponent(data.token) + '&admin=' + encodeURIComponent(adminNum);
+                        window.open(adminUrl, '_blank');
                     } else {
                         document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
                         document.getElementById('adminCodeStatus').style.display = 'block';
