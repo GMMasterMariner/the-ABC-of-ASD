@@ -513,26 +513,41 @@
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const admin = params.get('admin');
-
+        
+            console.log('Admin page loaded - token:', token, 'admin:', admin);
+        
             if (!token || !admin) {
                 document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
                 document.getElementById('codeInput').style.display = 'none';
                 document.getElementById('verifyBtn').style.display = 'none';
                 return;
             }
-
+        
             adminToken = token;
             adminNum = admin;
-
+        
             try {
-                const res = await fetch(API_URL + '?action=getAdminInfo&token=' + token + '&admin=' + admin);
-                const data = await res.json();
+                const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
+                const rawText = await res.text();
+                console.log('getAdminInfo raw response:', rawText);
+                
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    document.getElementById('loginPrompt').textContent = 'Error parsing server response.';
+                    return;
+                }
                 
                 if (data.result === 'success') {
                     adminName = data.adminName;
                     document.getElementById('loginPrompt').textContent = `Welcome ${adminName}! Enter your verification code`;
+                    document.getElementById('codeInput').focus();
                 } else {
-                    document.getElementById('loginPrompt').textContent = 'Session expired. Please login again.';
+                    document.getElementById('loginPrompt').textContent = 'Session expired. Please login again from the main site.';
+                    document.getElementById('codeInput').style.display = 'none';
+                    document.getElementById('verifyBtn').style.display = 'none';
                 }
             } catch (err) {
                 console.error('Failed to load admin info:', err);
