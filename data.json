@@ -26,7 +26,8 @@
     "PayfastLogo": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/button_payfast.png",
     "LocationIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_location.png",
     "MapsIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_maps.png",
-    "GoogleMapsApiKey": "AIzaSyB1mdRh0WmY4-Cy6Q7SK0ASA7DIVqOKVmE"
+    "Admin1IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin1_icon.png"
+    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png"
   },
   "home": {
     "HomePageCarouselImage1": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_1.png",
