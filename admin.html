@@ -11,8 +11,8 @@
             background: #f5f5f5;
             color: #2c3e50;
             padding: 1rem;
+            padding-top: 70px;
         }
-        h1 { text-align: center; margin-bottom: 1.5rem; color: #194373; }
         h2 {
             background: #194373;
             color: white;
@@ -52,21 +52,51 @@
         .color-row { display: flex; gap: 1rem; flex-wrap: wrap; }
         .color-row label { flex: 1; min-width: 100px; }
         button {
-            margin-top: 1.5rem;
-            padding: 0.75rem 2rem;
-            background: #194373;
-            color: white;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            background: #f29b2a;
             border: none;
             border-radius: 4px;
+            color: white;
             cursor: pointer;
-            font-size: 1rem;
         }
-        button:hover { background: #0e2b4d; }
+        button:hover { opacity: 0.9; }
+        .btn-exit {
+            background: #aaa;
+        }
+        .btn-exit:hover {
+            background: #888;
+        }
+
+        .admin-sticky-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #194373;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1.5rem;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .admin-sticky-bar h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: white;
+        }
+        .admin-sticky-bar .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
         #saveStatus {
-            margin-top: 1rem;
-            font-weight: bold;
-            text-align: center;
+            font-size: 0.9rem;
+            color: #ddd;
         }
+
         /* Modal */
         .modal-overlay {
             display: none;
@@ -95,12 +125,18 @@
             margin: 0 0.5rem;
             min-width: 100px;
         }
-        .btn-secondary { background: #aaa; }
-        .btn-secondary:hover { background: #888; }
     </style>
 </head>
 <body>
-    <h1>⚙️ Admin Panel</h1>
+
+    <div class="admin-sticky-bar">
+        <h1>⚙️ Admin Panel</h1>
+        <div class="btn-group">
+            <span id="saveStatus"></span>
+            <button type="submit" form="adminForm">💾 Save Changes</button>
+            <button type="button" class="btn-exit" onclick="window.close()">✕ Exit</button>
+        </div>
+    </div>
 
     <form id="adminForm">
 
@@ -243,8 +279,6 @@
             <label>Last Updated Text <input type="text" id="TermsLastUpdatedText" name="TermsLastUpdatedText"></label>
         </div>
 
-        <button type="submit">💾 Save Changes</button>
-        <div id="saveStatus"></div>
     </form>
 
     <!-- Save Result Modal -->
@@ -252,7 +286,7 @@
         <div class="modal-box">
             <h3 id="saveModalTitle"></h3>
             <p id="saveModalMessage"></p>
-            <button class="btn-secondary" id="saveContinueBtn">Continue Editing</button>
+            <button class="btn-exit" id="saveContinueBtn">Continue Editing</button>
             <button id="saveReturnBtn">Return to Site</button>
         </div>
     </div>
@@ -374,7 +408,6 @@
             document.getElementById('saveStatus').textContent = 'Saving...';
 
             const formData = new FormData(this);
-            // Get password from sessionStorage (stored on login)
             const password = sessionStorage.getItem('adminPassword') || '';
             formData.append('action', 'admin');
             formData.append('password', password);
@@ -409,16 +442,16 @@
         });
 
         document.getElementById('saveReturnBtn').addEventListener('click', function() {
-            // Open the main site in a new tab
-            window.open(MAIN_SITE, '_blank');
-            // Close this admin tab
-            window.close();
+            // Try to close the original main site tab if it exists
+            if (window.opener && !window.opener.closed) {
+                window.opener.close();
+            }
+            // Open site in this tab
+            window.location.href = MAIN_SITE;
         });
 
         // On page load, check for stored password
         if (!sessionStorage.getItem('adminPassword')) {
-            // Password should be passed from the main site via sessionStorage
-            // If not present, redirect to main site
             window.location.href = MAIN_SITE;
         } else {
             loadData();
