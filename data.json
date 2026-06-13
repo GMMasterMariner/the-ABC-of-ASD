@@ -26,8 +26,9 @@
     "PayfastLogo": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/button_payfast.png",
     "LocationIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_location.png",
     "MapsIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_maps.png",
-    "Admin1IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin1_icon.png"
-    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png"
+    "Admin1IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin1_icon.png",
+    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png",
+    "GoogleMapsApiKey": "AIzaSyB1mdRh0WmY4-Cy6Q7SK0ASA7DIVqOKVmE"
   },
   "home": {
     "HomePageCarouselImage1": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_1.png",
@@ -83,189 +84,189 @@
     },
     {
       "CurrencyCode": "USD",
-      "RateToBase": 0.06099,
+      "RateToBase": 0.061413,
       "FlagURL": "https://flagcdn.com/w20/us.png",
       "CountryName": "United States",
       "Symbol": "$"
     },
     {
       "CurrencyCode": "EUR",
-      "RateToBase": 0.052796,
+      "RateToBase": 0.053067,
       "FlagURL": "https://flagcdn.com/w20/eu.png",
       "CountryName": "Eurozone",
       "Symbol": "€"
     },
     {
       "CurrencyCode": "GBP",
-      "RateToBase": 0.045568,
+      "RateToBase": 0.045769,
       "FlagURL": "https://flagcdn.com/w20/gb.png",
       "CountryName": "United Kingdom",
       "Symbol": "£"
     },
     {
       "CurrencyCode": "AUD",
-      "RateToBase": 0.086872,
+      "RateToBase": 0.08717,
       "FlagURL": "https://flagcdn.com/w20/au.png",
       "CountryName": "Australia",
       "Symbol": "A$"
     },
     {
       "CurrencyCode": "CAD",
-      "RateToBase": 0.085211,
+      "RateToBase": 0.085789,
       "FlagURL": "https://flagcdn.com/w20/ca.png",
       "CountryName": "Canada",
       "Symbol": "C$"
     },
     {
       "CurrencyCode": "SGD",
-      "RateToBase": 0.078303,
+      "RateToBase": 0.078788,
       "FlagURL": "https://flagcdn.com/w20/sg.png",
       "CountryName": "Singapore",
       "Symbol": "S$"
     },
     {
       "CurrencyCode": "NOK",
-      "RateToBase": 0.579924,
+      "RateToBase": 0.58437,
       "FlagURL": "https://flagcdn.com/w20/no.png",
       "CountryName": "Norway",
       "Symbol": "kr"
     },
     {
       "CurrencyCode": "SEK",
-      "RateToBase": 0.579313,
+      "RateToBase": 0.57893,
       "FlagURL": "https://flagcdn.com/w20/se.png",
       "CountryName": "Sweden",
       "Symbol": "kr"
     },
     {
       "CurrencyCode": "DKK",
-      "RateToBase": 0.393971,
+      "RateToBase": 0.395899,
       "FlagURL": "https://flagcdn.com/w20/dk.png",
       "CountryName": "Denmark",
       "Symbol": "kr"
     },
     {
       "CurrencyCode": "JPY",
-      "RateToBase": 9.769658,
+      "RateToBase": 9.834766,
       "FlagURL": "https://flagcdn.com/w20/jp.png",
       "CountryName": "Japan",
       "Symbol": "¥"
     },
     {
       "CurrencyCode": "CNY",
-      "RateToBase": 0.411316,
+      "RateToBase": 0.416403,
       "FlagURL": "https://flagcdn.com/w20/cn.png",
       "CountryName": "China",
       "Symbol": "¥"
     },
     {
       "CurrencyCode": "KRW",
-      "RateToBase": 92.757773,
+      "RateToBase": 93.2123,
       "FlagURL": "https://flagcdn.com/w20/kr.png",
       "CountryName": "South Korea",
       "Symbol": "₩"
     },
     {
       "CurrencyCode": "INR",
-      "RateToBase": 5.803295,
+      "RateToBase": 5.834239,
       "FlagURL": "https://flagcdn.com/w20/in.png",
       "CountryName": "India",
       "Symbol": "₹"
     },
     {
       "CurrencyCode": "BRL",
-      "RateToBase": 0.313324,
+      "RateToBase": 0.31343,
       "FlagURL": "https://flagcdn.com/w20/br.png",
       "CountryName": "Brazil",
       "Symbol": "R$"
     },
     {
       "CurrencyCode": "AED",
-      "RateToBase": 0.224033,
+      "RateToBase": 0.225538,
       "FlagURL": "https://flagcdn.com/w20/ae.png",
       "CountryName": "United Arab Emirates",
       "Symbol": "د.إ"
     },
     {
       "CurrencyCode": "MYR",
-      "RateToBase": 0.246607,
+      "RateToBase": 0.248882,
       "FlagURL": "https://flagcdn.com/w20/my.png",
       "CountryName": "Malaysia",
       "Symbol": "RM"
     },
     {
       "CurrencyCode": "PLN",
-      "RateToBase": 0.224567,
+      "RateToBase": 0.225161,
       "FlagURL": "https://flagcdn.com/w20/pl.png",
       "CountryName": "Poland",
       "Symbol": "zł"
     },
     {
       "CurrencyCode": "PHP",
-      "RateToBase": 3.713147,
+      "RateToBase": 3.731236,
       "FlagURL": "https://flagcdn.com/w20/ph.png",
       "CountryName": "Philippines",
       "Symbol": "₱"
     },
     {
       "CurrencyCode": "IDR",
-      "RateToBase": 1089.61337,
+      "RateToBase": 1096.358421,
       "FlagURL": "https://flagcdn.com/w20/id.png",
       "CountryName": "Indonesia",
       "Symbol": "Rp"
     },
     {
       "CurrencyCode": "TRY",
-      "RateToBase": 2.81751,
+      "RateToBase": 2.844262,
       "FlagURL": "https://flagcdn.com/w20/tr.png",
       "CountryName": "Turkey",
       "Symbol": "₺"
     },
     {
       "CurrencyCode": "MXN",
-      "RateToBase": 1.057048,
+      "RateToBase": 1.057248,
       "FlagURL": "https://flagcdn.com/w20/mx.png",
       "CountryName": "Mexico",
       "Symbol": "$"
     },
     {
       "CurrencyCode": "HKD",
-      "RateToBase": 0.476918,
+      "RateToBase": 0.481303,
       "FlagURL": "https://flagcdn.com/w20/hk.png",
       "CountryName": "Hong Kong",
       "Symbol": "HK$"
     },
     {
       "CurrencyCode": "NZD",
-      "RateToBase": 0.105109,
+      "RateToBase": 0.105364,
       "FlagURL": "https://flagcdn.com/w20/nz.png",
       "CountryName": "New Zealand",
       "Symbol": "NZ$"
     },
     {
       "CurrencyCode": "CLP",
-      "RateToBase": 55.39562,
+      "RateToBase": 55.58574,
       "FlagURL": "https://flagcdn.com/w20/cl.png",
       "CountryName": "Chile",
       "Symbol": "CLP$"
     },
     {
       "CurrencyCode": "ZMW",
-      "RateToBase": 1.062301,
+      "RateToBase": 1.074246,
       "FlagURL": "https://flagcdn.com/w20/zm.png",
       "CountryName": "Zambia",
       "Symbol": "K"
     },
     {
       "CurrencyCode": "NGN",
-      "RateToBase": 82.379115,
+      "RateToBase": 83.323658,
       "FlagURL": "https://flagcdn.com/w20/ng.png",
       "CountryName": "Nigeria",
       "Symbol": "₦"
     },
     {
       "CurrencyCode": "EGP",
-      "RateToBase": 3.147548,
+      "RateToBase": 3.191444,
       "FlagURL": "https://flagcdn.com/w20/eg.png",
       "CountryName": "Egypt",
       "Symbol": "E£"
