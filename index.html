@@ -1305,6 +1305,7 @@
                 container.appendChild(btn);
             });
 
+            // Cancel button — go back to name selection
             document.getElementById('adminCodeCancelBtn').onclick = function() {
                 document.getElementById('adminSelectStep').style.display = 'block';
                 document.getElementById('adminCodeStep').style.display = 'none';
@@ -1312,6 +1313,37 @@
                 document.getElementById('adminCodeInput').value = '';
             };
 
+            // Verify button — placed here so it exists when the modal is shown
+            document.getElementById('adminVerifyBtn').onclick = async function() {
+                const code = document.getElementById('adminCodeInput').value.trim();
+                const adminNum = sessionStorage.getItem('adminNum');
+                if (!code || code.length !== 6) {
+                    document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'verifyAdminCode');
+                    params.append('admin', adminNum);
+                    params.append('code', code);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        document.getElementById('adminLoginOverlay').classList.remove('active');
+                        window.open('admin.html', '_blank');
+                    } else {
+                        document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                }
+            };
+
+            // Close modal when clicking overlay background
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
@@ -1343,36 +1375,7 @@
                 document.getElementById('adminCodeStatus').textContent = 'Network error.';
             }
         }
-
-        document.getElementById('adminVerifyBtn').addEventListener('click', async function() {
-            const code = document.getElementById('adminCodeInput').value.trim();
-            const adminNum = sessionStorage.getItem('adminNum');
-            if (!code || code.length !== 6) {
-                document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
-                document.getElementById('adminCodeStatus').style.display = 'block';
-                return;
-            }
-
-            try {
-                const params = new URLSearchParams();
-                params.append('action', 'verifyAdminCode');
-                params.append('admin', adminNum);
-                params.append('code', code);
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                if (data.result === 'success') {
-                    document.getElementById('adminLoginOverlay').classList.remove('active');
-                    window.open('admin.html', '_blank');
-                } else {
-                    document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
-                    document.getElementById('adminCodeStatus').style.display = 'block';
-                }
-            } catch (err) {
-                document.getElementById('adminCodeStatus').textContent = 'Network error.';
-                document.getElementById('adminCodeStatus').style.display = 'block';
-            }
-        });
-
+        
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
             const contentDiv = document.getElementById('legalModalContent');
