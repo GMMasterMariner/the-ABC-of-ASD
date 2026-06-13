@@ -11,15 +11,33 @@
             background: #f5f5f5;
             color: #333;
         }
+        
+        /* Sticky Header */
         .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             background: #194373;
             color: white;
-            padding: 1rem 2rem;
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        .admin-header h1 { font-size: 1.5rem; }
+        .admin-header h1 { font-size: 1.3rem; white-space: nowrap; }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
         .logout-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.3);
@@ -27,8 +45,83 @@
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        /* Tab buttons in header */
+        .tab-nav {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .tab-btn.active {
+            background: #f29b2a;
+            color: white;
+            border-color: #f29b2a;
+        }
+        
+        /* Save button in header */
+        .header-save-btn {
+            background: #f29b2a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .header-save-btn:hover { background: #e08a1a; }
+        .header-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        /* Status message in header */
+        .header-status {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            display: none;
+            white-space: nowrap;
+            animation: fadeIn 0.3s ease;
+        }
+        .header-status.success {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+        }
+        .header-status.error {
+            display: inline-block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .header-status.saving {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
         .section {
             background: white;
@@ -38,6 +131,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .section h2 { color: #194373; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; }
+        .section h3 { color: #194373; margin: 1.5rem 0 1rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555; }
         .form-group input, .form-group textarea, .form-group select {
@@ -46,27 +140,48 @@
         }
         .form-group textarea { min-height: 100px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .btn {
-            background: #f29b2a; color: white; border: none; padding: 0.8rem 1.5rem;
-            border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer;
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        
+        /* Color input with preview */
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
-        .btn:hover { background: #e08a1a; }
-        .btn-secondary { background: #aaa; }
-        .btn-secondary:hover { background: #888; }
-        .btn-danger { background: #dc3c33; }
-        .btn-danger:hover { background: #c53030; }
-        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
-        .status-message { padding: 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; }
-        .status-message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
-        .status-message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
-        .tab-nav { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 0.6rem 1.2rem; border: 1px solid #ddd; background: white;
-            border-radius: 4px; cursor: pointer;
+        .color-input-group input[type="color"] {
+            width: 50px;
+            height: 40px;
+            padding: 2px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
         }
-        .tab-btn.active { background: #194373; color: white; border-color: #194373; }
+        .color-input-group input[type="text"] {
+            flex: 1;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            flex-shrink: 0;
+        }
+        
+        /* Image preview */
+        .image-preview {
+            max-width: 120px;
+            max-height: 80px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            margin-top: 0.5rem;
+            display: none;
+            object-fit: contain;
+        }
+        .image-preview.visible { display: block; }
+        
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
         #loginScreen {
             display: flex; align-items: center; justify-content: center;
             min-height: 100vh; background: #194373;
@@ -79,7 +194,35 @@
         .login-box h2 { color: #194373; margin-bottom: 0.5rem; }
         .login-box p { color: #666; margin-bottom: 1.5rem; }
         #adminPanel { display: none; }
-        .loading-text { color: #666; font-style: italic; }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            background: #f29b2a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-sm:hover { background: #e08a1a; }
+        .btn-secondary { background: #aaa; }
+        .btn-secondary:hover { background: #888; }
+        .btn-danger { background: #dc3c33; }
+        .btn-danger:hover { background: #c53030; }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.6rem 1rem;
+            }
+            .header-center { order: 2; }
+            .header-right { order: 1; width: 100%; justify-content: space-between; }
+            .tab-nav { justify-content: center; }
+            .tab-btn { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .admin-container { padding: 0 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -92,136 +235,214 @@
 
     <div id="adminPanel">
         <header class="admin-header">
-            <h1>Admin Panel</h1>
-            <div>
-                <span id="adminNameDisplay" style="margin-right:1rem;"></span>
+            <h1>⚙️ Admin</h1>
+            <div class="header-center">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="tab-settings">Site Settings</button>
+                    <button class="tab-btn" data-tab="tab-products">Products</button>
+                    <button class="tab-btn" data-tab="tab-home">Home Page</button>
+                    <button class="tab-btn" data-tab="tab-about">About</button>
+                    <button class="tab-btn" data-tab="tab-shipping">Shipping</button>
+                    <button class="tab-btn" data-tab="tab-legal">Legal</button>
+                </div>
+                <button class="header-save-btn" id="headerSaveBtn" onclick="saveCurrentTab()">💾 Save</button>
+                <span class="header-status" id="headerStatus"></span>
+            </div>
+            <div class="header-right">
+                <span id="adminNameDisplay"></span>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </header>
 
         <div class="admin-container">
-            <div id="statusMessage" class="status-message"></div>
-
-            <div class="tab-nav">
-                <button class="tab-btn active" data-tab="tab-settings">Site Settings</button>
-                <button class="tab-btn" data-tab="tab-products">Products</button>
-                <button class="tab-btn" data-tab="tab-home">Home Page</button>
-                <button class="tab-btn" data-tab="tab-about">About</button>
-                <button class="tab-btn" data-tab="tab-shipping">Shipping</button>
-                <button class="tab-btn" data-tab="tab-legal">Legal</button>
-            </div>
-
             <div class="tab-content active" id="tab-settings">
                 <div class="section">
-                    <h2>Site Settings</h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>Primary Color</label><input type="color" id="primaryColor"></div>
-                        <div class="form-group"><label>CTA Color</label><input type="color" id="ctaColor"></div>
-                        <div class="form-group"><label>Secondary Color</label><input type="color" id="secondaryColor"></div>
-                        <div class="form-group"><label>Alert Color</label><input type="color" id="alertColor"></div>
-                        <div class="form-group"><label>Background Color</label><input type="color" id="backgroundColor"></div>
-                        <div class="form-group"><label>Text Color</label><input type="color" id="textColor"></div>
+                    <h2>🎨 Site Settings</h2>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Primary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="primaryColor" onchange="updateColorPreview('primaryColor', 'primaryColorPreview')">
+                                <div class="color-preview" id="primaryColorPreview"></div>
+                                <input type="text" id="primaryColorText" placeholder="#194373" oninput="updateColorFromText('primaryColor', 'primaryColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>CTA Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="ctaColor" onchange="updateColorPreview('ctaColor', 'ctaColorPreview')">
+                                <div class="color-preview" id="ctaColorPreview"></div>
+                                <input type="text" id="ctaColorText" placeholder="#f29b2a" oninput="updateColorFromText('ctaColor', 'ctaColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="secondaryColor" onchange="updateColorPreview('secondaryColor', 'secondaryColorPreview')">
+                                <div class="color-preview" id="secondaryColorPreview"></div>
+                                <input type="text" id="secondaryColorText" placeholder="#f29b2a" oninput="updateColorFromText('secondaryColor', 'secondaryColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Alert Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="alertColor" onchange="updateColorPreview('alertColor', 'alertColorPreview')">
+                                <div class="color-preview" id="alertColorPreview"></div>
+                                <input type="text" id="alertColorText" placeholder="#dc3c33" oninput="updateColorFromText('alertColor', 'alertColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="backgroundColor" onchange="updateColorPreview('backgroundColor', 'backgroundColorPreview')">
+                                <div class="color-preview" id="backgroundColorPreview"></div>
+                                <input type="text" id="backgroundColorText" placeholder="#ffffff" oninput="updateColorFromText('backgroundColor', 'backgroundColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="textColor" onchange="updateColorPreview('textColor', 'textColorPreview')">
+                                <div class="color-preview" id="textColorPreview"></div>
+                                <input type="text" id="textColorText" placeholder="#000000" oninput="updateColorFromText('textColor', 'textColorPreview', this.value)">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group"><label>Background Image URL</label><input type="text" id="backgroundImage"></div>
-                    <div class="form-group"><label>Banner Logo URL</label><input type="text" id="bannerLogo"></div>
-                    <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
-                    <div class="form-group"><label>Banner Book Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                    <div class="form-group">
+                        <label>Background Image URL</label>
+                        <input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage', 'bgImagePreview')">
+                        <img class="image-preview" id="bgImagePreview" alt="Background preview">
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Logo URL</label>
+                        <input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo', 'bannerLogoPreview')">
+                        <img class="image-preview" id="bannerLogoPreview" alt="Logo preview">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
+                        <div class="form-group"><label>Banner Book Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                    </div>
                     <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
+                    
+                    <h3>👤 Admin Accounts</h3>
                     <div class="form-row">
                         <div class="form-group"><label>Admin 1 Name</label><input type="text" id="admin1Name"></div>
                         <div class="form-group"><label>Admin 1 Email</label><input type="email" id="admin1Email"></div>
-                        <div class="form-group"><label>Admin 1 Icon URL</label><input type="text" id="admin1IconURL"></div>
+                        <div class="form-group">
+                            <label>Admin 1 Icon URL</label>
+                            <input type="text" id="admin1IconURL" oninput="updateImagePreview('admin1IconURL', 'admin1IconPreview')">
+                            <img class="image-preview" id="admin1IconPreview" alt="Admin 1 icon">
+                        </div>
                         <div class="form-group"><label>Admin 2 Name</label><input type="text" id="admin2Name"></div>
                         <div class="form-group"><label>Admin 2 Email</label><input type="email" id="admin2Email"></div>
-                        <div class="form-group"><label>Admin 2 Icon URL</label><input type="text" id="admin2IconURL"></div>
+                        <div class="form-group">
+                            <label>Admin 2 Icon URL</label>
+                            <input type="text" id="admin2IconURL" oninput="updateImagePreview('admin2IconURL', 'admin2IconPreview')">
+                            <img class="image-preview" id="admin2IconPreview" alt="Admin 2 icon">
+                        </div>
                     </div>
                     <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
-                    <button class="btn" onclick="saveSettings()">Save Settings</button>
                 </div>
             </div>
 
             <div class="tab-content" id="tab-products">
                 <div class="section">
-                    <h2>Product 1</h2>
-                    <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
+                    <h2>📦 Product 1</h2>
                     <div class="form-row">
+                        <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
                         <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
-                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
                     </div>
                     <div class="form-row">
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
                         <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
-                        <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL', 'product1ImagePreview')">
+                        <img class="image-preview" id="product1ImagePreview" alt="Product 1 image">
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold"></div>
                         <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1"></div>
                     </div>
-                </div>
-                <div class="section">
-                    <h2>Product 2</h2>
-                    <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
+                    
+                    <h3>📦 Product 2</h3>
                     <div class="form-row">
+                        <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
                         <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
-                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
                     </div>
                     <div class="form-row">
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
                         <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
-                        <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL', 'product2ImagePreview')">
+                        <img class="image-preview" id="product2ImagePreview" alt="Product 2 image">
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold"></div>
                         <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1"></div>
                     </div>
-                    <button class="btn" onclick="saveProducts()">Save Products</button>
                 </div>
             </div>
 
             <div class="tab-content" id="tab-home">
                 <div class="section">
-                    <h2>Home Page Content</h2>
+                    <h2>🏠 Home Page Content</h2>
                     <div class="form-group"><label>Home Page Book Headline</label><input type="text" id="homeHeadline"></div>
                     <div class="form-group"><label>Home Page Book Description 1</label><textarea id="homeDesc1"></textarea></div>
                     <div class="form-group"><label>Home Page Book Description 2</label><textarea id="homeDesc2"></textarea></div>
-                    <div class="form-group"><label>Home Page Item 1 Main Text</label><input type="text" id="homeItem1Main"></div>
-                    <div class="form-group"><label>Home Page Item 1 Sub Text</label><input type="text" id="homeItem1Sub"></div>
-                    <div class="form-group"><label>Home Page Item 2 Main Text</label><input type="text" id="homeItem2Main"></div>
-                    <div class="form-group"><label>Home Page Item 2 Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Home Page Item 1 Main Text</label><input type="text" id="homeItem1Main"></div>
+                        <div class="form-group"><label>Home Page Item 1 Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Home Page Item 2 Main Text</label><input type="text" id="homeItem2Main"></div>
+                        <div class="form-group"><label>Home Page Item 2 Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                    </div>
                     <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
-                    <div class="form-group"><label>Carousel Images (one per line)</label><textarea id="carouselImages" rows="4"></textarea></div>
-                    <button class="btn" onclick="saveHomePage()">Save Home Page</button>
+                    <div class="form-group"><label>Carousel Images (one per line, up to 9)</label><textarea id="carouselImages" rows="4"></textarea></div>
                 </div>
             </div>
 
             <div class="tab-content" id="tab-about">
                 <div class="section">
-                    <h2>About Section</h2>
-                    <div class="form-group"><label>Author Image 1 URL</label><input type="text" id="authorImage1"></div>
-                    <div class="form-group"><label>Author Image 2 URL</label><input type="text" id="authorImage2"></div>
+                    <h2>👤 About Section</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Author Image 1 URL</label>
+                            <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1', 'authorImage1Preview')">
+                            <img class="image-preview" id="authorImage1Preview" alt="Author image 1">
+                        </div>
+                        <div class="form-group">
+                            <label>Author Image 2 URL</label>
+                            <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2', 'authorImage2Preview')">
+                            <img class="image-preview" id="authorImage2Preview" alt="Author image 2">
+                        </div>
+                    </div>
                     <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3"></textarea></div>
                     <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="6"></textarea></div>
-                    <button class="btn" onclick="saveAbout()">Save About</button>
                 </div>
             </div>
 
             <div class="tab-content" id="tab-shipping">
                 <div class="section">
-                    <h2>Shipping Regions & Rates</h2>
+                    <h2>🚚 Shipping Regions & Rates</h2>
                     <div id="shippingRegionsList"></div>
-                    <button class="btn" onclick="addShippingRegion()" style="margin-top:1rem;">Add Region</button>
-                    <button class="btn" onclick="saveShipping()" style="margin-top:1rem; margin-left:0.5rem;">Save All</button>
+                    <button class="btn-sm" onclick="addShippingRegion()" style="margin-top:1rem;">+ Add Region</button>
                 </div>
             </div>
 
             <div class="tab-content" id="tab-legal">
                 <div class="section">
-                    <h2>Legal Pages</h2>
+                    <h2>📄 Legal Pages</h2>
                     <h3>Privacy Policy</h3>
                     <div class="form-group"><label>Privacy Policy Heading</label><input type="text" id="privacyHeading"></div>
                     <div class="form-group"><label>Privacy Policy Content</label><textarea id="privacyContent" rows="8"></textarea></div>
                     <h3>Terms of Service</h3>
                     <div class="form-group"><label>Terms of Service Heading</label><input type="text" id="termsHeading"></div>
                     <div class="form-group"><label>Terms of Service Content</label><textarea id="termsContent" rows="8"></textarea></div>
-                    <button class="btn" onclick="saveLegal()">Save Legal</button>
                 </div>
             </div>
         </div>
@@ -232,13 +453,116 @@
         let adminToken = '';
         let adminNum = '';
         let adminName = '';
+        let currentTab = 'tab-settings';
+
+        // Color preview functions
+        function updateColorPreview(colorInputId, previewId) {
+            const colorInput = document.getElementById(colorInputId);
+            const preview = document.getElementById(previewId);
+            const textInput = document.getElementById(colorInputId + 'Text');
+            if (colorInput && preview) {
+                preview.style.backgroundColor = colorInput.value;
+                if (textInput) textInput.value = colorInput.value;
+            }
+        }
+
+        function updateColorFromText(colorInputId, previewId, value) {
+            const colorInput = document.getElementById(colorInputId);
+            const preview = document.getElementById(previewId);
+            if (value.match(/^#[0-9a-fA-F]{6}$/)) {
+                if (colorInput) colorInput.value = value;
+                if (preview) preview.style.backgroundColor = value;
+            }
+        }
+
+        function initColorPreviews() {
+            const colorFields = ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'];
+            colorFields.forEach(field => {
+                const colorInput = document.getElementById(field);
+                const preview = document.getElementById(field + 'Preview');
+                const textInput = document.getElementById(field + 'Text');
+                if (colorInput && preview) {
+                    preview.style.backgroundColor = colorInput.value || '#000000';
+                    if (textInput) textInput.value = colorInput.value || '';
+                }
+            });
+        }
+
+        // Image preview function
+        function updateImagePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            if (input && preview) {
+                const url = input.value.trim();
+                if (url && (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/'))) {
+                    preview.src = url;
+                    preview.classList.add('visible');
+                    preview.onerror = function() { this.classList.remove('visible'); };
+                } else {
+                    preview.classList.remove('visible');
+                }
+            }
+        }
+
+        function initImagePreviews() {
+            const imageFields = ['backgroundImage', 'bannerLogo', 'admin1IconURL', 'admin2IconURL', 
+                                 'product1ImageURL', 'product2ImageURL', 'authorImage1', 'authorImage2'];
+            imageFields.forEach(field => {
+                const input = document.getElementById(field);
+                const previewId = field + 'Preview';
+                if (input && input.value) {
+                    updateImagePreview(field, previewId);
+                }
+            });
+        }
+
+        // Status message in header
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('headerStatus');
+            statusEl.textContent = message;
+            statusEl.className = 'header-status ' + type;
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => { statusEl.className = 'header-status'; }, 3000);
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                document.getElementById(currentTab).classList.add('active');
+            });
+        });
+
+        // Save current tab
+        async function saveCurrentTab() {
+            const saveBtn = document.getElementById('headerSaveBtn');
+            saveBtn.disabled = true;
+            showStatus('Saving...', 'saving');
+            
+            try {
+                switch(currentTab) {
+                    case 'tab-settings': await saveSettings(); break;
+                    case 'tab-products': await saveProducts(); break;
+                    case 'tab-home': await saveHomePage(); break;
+                    case 'tab-about': await saveAbout(); break;
+                    case 'tab-shipping': await saveShipping(); break;
+                    case 'tab-legal': await saveLegal(); break;
+                }
+            } catch(err) {
+                showStatus('Error!', 'error');
+            }
+            
+            saveBtn.disabled = false;
+        }
 
         async function init() {
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const admin = params.get('admin');
-
-            console.log('Admin page - token:', token, 'admin:', admin);
 
             if (!token || !admin) {
                 document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
@@ -248,37 +572,29 @@
             adminToken = token;
             adminNum = admin;
 
-            // Try to get admin info with the token
             try {
                 const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
                 const data = await res.json();
-                console.log('getAdminInfo result:', data);
 
                 if (data.result === 'success') {
                     adminName = data.adminName;
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = adminName;
-                    loadAllData();
+                    document.getElementById('adminNameDisplay').textContent = '👤 ' + adminName;
+                    await loadAllData();
+                    initColorPreviews();
+                    initImagePreviews();
                     return;
                 }
             } catch (err) {
                 console.error('Error:', err);
             }
 
-            // If we get here, token is invalid
             document.getElementById('loginPrompt').textContent = 'Session expired. Please login again from the main site.';
         }
 
         function logout() {
             window.close();
-        }
-
-        function showStatus(message, type) {
-            const statusEl = document.getElementById('statusMessage');
-            statusEl.textContent = message;
-            statusEl.className = 'status-message ' + type;
-            setTimeout(() => { statusEl.className = 'status-message'; }, 3000);
         }
 
         async function loadAllData() {
@@ -293,6 +609,8 @@
                     populateAbout(data.about || {});
                     populateShipping(data.shippingRegions || [], data.regionRates || []);
                     populateLegal(data.legal || {});
+                    initColorPreviews();
+                    initImagePreviews();
                 }
             } catch (err) {
                 console.error(err);
@@ -390,208 +708,4 @@
                                 <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01"></div>
                                 <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01"></div>
                                 <div class="form-group"><label>Time</label><input type="text" class="rate-time" value="${rate.Time || ''}"></div>
-                                <div class="form-group"><button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button class="btn btn-sm btn-secondary" onclick="addRateRow(this)">Add Rate</button>
-                    <button class="btn btn-sm btn-danger" onclick="this.closest('.section').remove()" style="margin-left:0.5rem;">Remove Region</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function populateLegal(legal) {
-            const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
-            const termsKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('terms'));
-            document.getElementById('privacyHeading').value = legal[privacyKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('privacyContent').value = privacyKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
-            document.getElementById('termsHeading').value = legal[termsKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('termsContent').value = termsKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
-        }
-
-        function addShippingRegion() {
-            const container = document.getElementById('shippingRegionsList');
-            const div = document.createElement('div');
-            div.className = 'section';
-            div.style.marginBottom = '1rem';
-            div.innerHTML = `
-                <h3>New Region</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>Location</label><input type="text" class="region-location" placeholder="Country name"></div>
-                    <div class="form-group"><label>Region Code</label><input type="text" class="region-code"></div>
-                    <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag"></div>
-                    <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
-                </div>
-                <div class="rates-container"></div>
-                <button class="btn btn-sm btn-secondary" onclick="addRateRow(this)">Add Rate</button>
-                <button class="btn btn-sm btn-danger" onclick="this.closest('.section').remove()" style="margin-left:0.5rem;">Remove Region</button>
-            `;
-            container.appendChild(div);
-        }
-
-        function addRateRow(btn) {
-            const container = btn.parentElement.querySelector('.rates-container');
-            const row = document.createElement('div');
-            row.className = 'form-row rate-row';
-            row.style.marginBottom = '0.5rem';
-            row.innerHTML = `
-                <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" step="0.01"></div>
-                <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" step="0.01"></div>
-                <div class="form-group"><label>Time</label><input type="text" class="rate-time"></div>
-                <div class="form-group"><button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button></div>
-            `;
-            container.appendChild(row);
-        }
-
-        async function saveData(action, dataObj) {
-            const params = new URLSearchParams();
-            params.append('action', action);
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(dataObj));
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            showStatus(data.result === 'success' ? 'Saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-        }
-
-        async function saveSettings() {
-            await saveData('saveSettings', {
-                PrimaryColor: document.getElementById('primaryColor').value,
-                CTAColor: document.getElementById('ctaColor').value,
-                SecondaryColor: document.getElementById('secondaryColor').value,
-                AlertColour: document.getElementById('alertColor').value,
-                BackgroundColor: document.getElementById('backgroundColor').value,
-                TextColor: document.getElementById('textColor').value,
-                BackgroundImage: document.getElementById('backgroundImage').value,
-                BannerLogo: document.getElementById('bannerLogo').value,
-                BannerBookTitle: document.getElementById('bannerBookTitle').value,
-                BannerBookTitleAbbreviation: document.getElementById('bannerBookTitleAbbreviation').value,
-                BannerBookSubTitile: document.getElementById('bannerBookSubtitle').value,
-                Admin1Name: document.getElementById('admin1Name').value,
-                Admin1Email: document.getElementById('admin1Email').value,
-                Admin1IconURL: document.getElementById('admin1IconURL').value,
-                Admin2Name: document.getElementById('admin2Name').value,
-                Admin2Email: document.getElementById('admin2Email').value,
-                Admin2IconURL: document.getElementById('admin2IconURL').value,
-                GoogleMapsApiKey: document.getElementById('googleMapsApiKey').value
-            });
-        }
-
-        async function saveProducts() {
-            await saveData('saveProducts', [
-                {
-                    ProductName: document.getElementById('product1Name').value,
-                    Type: document.getElementById('product1Type').value,
-                    BasePrice: parseFloat(document.getElementById('product1BasePrice').value) || 0,
-                    Weight: parseFloat(document.getElementById('product1Weight').value) || 0,
-                    ImageURL: document.getElementById('product1ImageURL').value,
-                    DiscountThreshold: parseInt(document.getElementById('product1DiscountThreshold').value) || 0,
-                    DiscountPercent: parseFloat(document.getElementById('product1DiscountPercent').value) || 0
-                },
-                {
-                    ProductName: document.getElementById('product2Name').value,
-                    Type: document.getElementById('product2Type').value,
-                    BasePrice: parseFloat(document.getElementById('product2BasePrice').value) || 0,
-                    Weight: parseFloat(document.getElementById('product2Weight').value) || 0,
-                    ImageURL: document.getElementById('product2ImageURL').value,
-                    DiscountThreshold: parseInt(document.getElementById('product2DiscountThreshold').value) || 0,
-                    DiscountPercent: parseFloat(document.getElementById('product2DiscountPercent').value) || 0
-                }
-            ]);
-        }
-
-        async function saveHomePage() {
-            const carouselUrls = document.getElementById('carouselImages').value.split('\n').filter(u => u.trim());
-            const home = {
-                HomePageBookHeadline: document.getElementById('homeHeadline').value,
-                HomePageBookDescription1: document.getElementById('homeDesc1').value,
-                HomePageBookDescription2: document.getElementById('homeDesc2').value,
-                HomePageItem1MainText: document.getElementById('homeItem1Main').value,
-                HomePageItem1SubText: document.getElementById('homeItem1Sub').value,
-                HomePageItem2MainText: document.getElementById('homeItem2Main').value,
-                HomePageItem2SubText: document.getElementById('homeItem2Sub').value,
-                HomePageCarouselInterval: parseInt(document.getElementById('carouselInterval').value) || 3000
-            };
-            carouselUrls.forEach((url, i) => { home['HomePageCarouselImage' + (i + 1)] = url.trim(); });
-            await saveData('saveHome', home);
-        }
-
-        async function saveAbout() {
-            await saveData('saveAbout', {
-                AuthorImage1URL: document.getElementById('authorImage1').value,
-                AuthorImage2URL: document.getElementById('authorImage2').value,
-                AuthorShortBio: document.getElementById('authorShortBio').value,
-                AuthorExtendedBio: document.getElementById('authorExtendedBio').value
-            });
-        }
-
-        async function saveShipping() {
-            const regions = [], rates = [];
-            document.querySelectorAll('#shippingRegionsList .section').forEach(section => {
-                const location = section.querySelector('.region-location').value.trim();
-                if (!location) return;
-                regions.push({
-                    Location: location,
-                    Region: section.querySelector('.region-code').value.trim(),
-                    FlagURL: section.querySelector('.region-flag').value.trim(),
-                    PhoneCode: section.querySelector('.region-phone').value.trim()
-                });
-                section.querySelectorAll('.rate-row').forEach(row => {
-                    rates.push({
-                        Location: location,
-                        MaxWeight: parseFloat(row.querySelector('.rate-maxweight').value) || 0,
-                        Cost: parseFloat(row.querySelector('.rate-cost').value) || 0,
-                        Time: row.querySelector('.rate-time').value.trim()
-                    });
-                });
-            });
-            const params = new URLSearchParams();
-            params.append('action', 'saveShipping');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('regions', JSON.stringify(regions));
-            params.append('rates', JSON.stringify(rates));
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            showStatus(data.result === 'success' ? 'Saved!' : 'Failed', data.result === 'success' ? 'success' : 'error');
-        }
-
-        async function saveLegal() {
-            const legal = {};
-            const pH = document.getElementById('privacyHeading').value.trim();
-            if (pH) legal['PrivacyPolicyHeading'] = pH;
-            const pC = document.getElementById('privacyContent').value.trim();
-            if (pC) {
-                pC.split('\n\n').forEach((line, i) => {
-                    const ci = line.indexOf(':');
-                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
-                    else legal['PrivacyPolicyContent' + (i + 1)] = line;
-                });
-            }
-            const tH = document.getElementById('termsHeading').value.trim();
-            if (tH) legal['TermsHeading'] = tH;
-            const tC = document.getElementById('termsContent').value.trim();
-            if (tC) {
-                tC.split('\n\n').forEach((line, i) => {
-                    const ci = line.indexOf(':');
-                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
-                    else legal['TermsContent' + (i + 1)] = line;
-                });
-            }
-            await saveData('saveLegal', legal);
-        }
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
-            });
-        });
-
-        init();
-    </script>
-</body>
-</html>
+                                <div class="form-group"><button class="btn-sm btn
