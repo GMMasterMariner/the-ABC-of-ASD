@@ -555,41 +555,53 @@
             }
         }
 
-        document.getElementById('verifyBtn').addEventListener('click', async () => {
-            const code = document.getElementById('codeInput').value.trim();
-            if (!code || code.length !== 6) {
-                document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
-                document.getElementById('loginError').style.display = 'block';
-                return;
-            }
+document.getElementById('verifyBtn').addEventListener('click', async () => {
+    const code = document.getElementById('codeInput').value.trim();
+    if (!code || code.length !== 6) {
+        document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
+        document.getElementById('loginError').style.display = 'block';
+        return;
+    }
 
-            try {
-                const params = new URLSearchParams();
-                params.append('action', 'verifyAdminCode');
-                params.append('admin', adminNum);
-                params.append('code', code);
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
+    try {
+        const params = new URLSearchParams();
+        params.append('action', 'verifyAdminCode');
+        params.append('admin', adminNum);
+        params.append('code', code);
+        
+        console.log('Verifying code for admin:', adminNum);
+        
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const rawText = await res.text();
+        console.log('verifyAdminCode raw response:', rawText);
+        
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            document.getElementById('loginError').textContent = 'Server error.';
+            document.getElementById('loginError').style.display = 'block';
+            return;
+        }
 
-                if (data.result === 'success') {
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = adminName || 'Admin';
-                    loadAllData();
-                } else {
-                    document.getElementById('loginError').textContent = data.message || 'Invalid code.';
-                    document.getElementById('loginError').style.display = 'block';
-                }
-            } catch (err) {
-                document.getElementById('loginError').textContent = 'Network error. Please try again.';
-                document.getElementById('loginError').style.display = 'block';
-            }
-        });
-
-        document.getElementById('codeInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('verifyBtn').click();
-        });
-
+        if (data.result === 'success') {
+            // Update token with the new one from verification
+            adminToken = data.token;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
+            loadAllData();
+        } else {
+            document.getElementById('loginError').textContent = data.message || 'Invalid code.';
+            document.getElementById('loginError').style.display = 'block';
+        }
+    } catch (err) {
+        console.error('Verification error:', err);
+        document.getElementById('loginError').textContent = 'Network error. Please try again.';
+        document.getElementById('loginError').style.display = 'block';
+    }
+});
         function logout() {
             adminToken = '';
             adminNum = '';
