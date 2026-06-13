@@ -1251,48 +1251,120 @@
             showModal(title, message, 'OK', null, null, null);
         }
 
-        // ========== ADMIN LOGIN ==========
+        // ========== ADMIN LOGIN (EMAIL CODE) ==========
         document.getElementById('adminIconLink').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('adminLoginOverlay').classList.add('active');
-            document.getElementById('adminPasswordInput').value = '';
+            showAdminLoginModal();
+        });
+
+        function showAdminLoginModal() {
+            const overlay = document.getElementById('adminLoginOverlay');
+            overlay.classList.add('active');
+            document.getElementById('adminSelectStep').style.display = 'block';
+            document.getElementById('adminCodeStep').style.display = 'none';
             document.getElementById('adminLoginStatus').style.display = 'none';
-            document.getElementById('adminPasswordInput').focus();
-        });
+            document.getElementById('adminCodeStatus').style.display = 'none';
 
-        document.getElementById('adminCancelBtn').addEventListener('click', function() {
-            document.getElementById('adminLoginOverlay').classList.remove('active');
-        });
+            // Build admin select buttons from appSettings
+            const container = document.getElementById('adminSelectButtons');
+            const admin1Name = appSettings.Admin1Name || 'Admin 1';
+            const admin2Name = appSettings.Admin2Name || 'Admin 2';
+            const admin1Icon = appSettings.Admin1IconURL || '';
+            const admin2Icon = appSettings.Admin2IconURL || '';
 
-        document.getElementById('adminLoginBtn').addEventListener('click', async function() {
-            const password = document.getElementById('adminPasswordInput').value;
-            const statusEl = document.getElementById('adminLoginStatus');
-            statusEl.style.display = 'none';
+            container.innerHTML = '';
+            [
+                { num: 1, name: admin1Name, icon: admin1Icon },
+                { num: 2, name: admin2Name, icon: admin2Icon }
+            ].forEach(admin => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.margin = '0 0.5rem';
+                btn.style.minWidth = '140px';
+                if (admin.icon) {
+                    const img = document.createElement('img');
+                    img.src = admin.icon;
+                    img.style.height = '20px';
+                    img.style.width = '20px';
+                    img.style.borderRadius = '50%';
+                    img.style.marginRight = '0.4rem';
+                    img.style.verticalAlign = 'middle';
+                    btn.appendChild(img);
+                }
+                btn.appendChild(document.createTextNode(admin.name));
+                btn.addEventListener('click', () => requestAdminCode(admin.num, admin.name));
+                container.appendChild(btn);
+            });
 
-            if (!password) {
-                statusEl.textContent = 'Please enter a password';
-                statusEl.style.display = 'block';
+            // Cancel button behaviour
+            document.getElementById('adminCodeCancelBtn').addEventListener('click', function() {
+                document.getElementById('adminSelectStep').style.display = 'block';
+                document.getElementById('adminCodeStep').style.display = 'none';
+                document.getElementById('adminCodeStatus').style.display = 'none';
+                document.getElementById('adminCodeInput').value = '';
+            });
+
+            // Close modal when clicking overlay
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        }
+
+        async function requestAdminCode(adminNum, adminName) {
+            document.getElementById('adminSelectStep').style.display = 'none';
+            document.getElementById('adminCodeStep').style.display = 'block';
+            document.getElementById('adminCodeStatus').style.display = 'block';
+            document.getElementById('adminCodeStatus').textContent = 'Sending code...';
+            document.getElementById('adminCodeInput').value = '';
+            document.getElementById('adminCodeInput').focus();
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', adminNum);
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    document.getElementById('adminCodeStatus').textContent = '';
+                    document.getElementById('adminCodeStatus').style.display = 'none';
+                    // Store admin info for later
+                    sessionStorage.setItem('adminNum', adminNum);
+                    sessionStorage.setItem('adminName', adminName);
+                    sessionStorage.setItem('adminIcon', appSettings['Admin' + adminNum + 'IconURL'] || '');
+                } else {
+                    document.getElementById('adminCodeStatus').textContent = 'Failed to send code. Please try again.';
+                }
+            } catch (err) {
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+            }
+        }
+
+        document.getElementById('adminVerifyBtn').addEventListener('click', async function() {
+            const code = document.getElementById('adminCodeInput').value.trim();
+            const adminNum = sessionStorage.getItem('adminNum');
+            if (!code || code.length !== 6) {
+                document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                document.getElementById('adminCodeStatus').style.display = 'block';
                 return;
             }
 
-            const params = new URLSearchParams();
-            params.append('action', 'admin');
-            params.append('password', password);
-
             try {
+                const params = new URLSearchParams();
+                params.append('action', 'verifyAdminCode');
+                params.append('admin', adminNum);
+                params.append('code', code);
                 const res = await fetch(API_URL, { method: 'POST', body: params });
                 const data = await res.json();
-                if (data.result === 'success' || (data.result === 'error' && data.message !== 'Unauthorised')) {
+                if (data.result === 'success') {
                     document.getElementById('adminLoginOverlay').classList.remove('active');
-                    sessionStorage.setItem('adminPassword', password);
                     window.open('admin.html', '_blank');
                 } else {
-                    statusEl.textContent = 'Wrong password';
-                    statusEl.style.display = 'block';
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
                 }
             } catch (err) {
-                statusEl.textContent = 'Connection error';
-                statusEl.style.display = 'block';
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                document.getElementById('adminCodeStatus').style.display = 'block';
             }
         });
 
