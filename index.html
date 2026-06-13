@@ -1349,34 +1349,43 @@
             }
         }
 
-        document.getElementById('adminVerifyBtn').addEventListener('click', async function() {
-            const code = document.getElementById('adminCodeInput').value.trim();
-            const adminNum = sessionStorage.getItem('adminNum');
-            if (!code || code.length !== 6) {
-                document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
-                document.getElementById('adminCodeStatus').style.display = 'block';
-                return;
-            }
+        // Attach verify button listener after DOM is ready
+        function setupAdminVerifyListener() {
+            const verifyBtn = document.getElementById('adminVerifyBtn');
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', async function() {
+                    const code = document.getElementById('adminCodeInput').value.trim();
+                    const adminNum = sessionStorage.getItem('adminNum');
+                    if (!code || code.length !== 6) {
+                        document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                        return;
+                    }
 
-            try {
-                const params = new URLSearchParams();
-                params.append('action', 'verifyAdminCode');
-                params.append('admin', adminNum);
-                params.append('code', code);
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                if (data.result === 'success') {
-                    document.getElementById('adminLoginOverlay').classList.remove('active');
-                    window.open('admin.html', '_blank');
-                } else {
-                    document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
-                    document.getElementById('adminCodeStatus').style.display = 'block';
-                }
-            } catch (err) {
-                document.getElementById('adminCodeStatus').textContent = 'Network error.';
-                document.getElementById('adminCodeStatus').style.display = 'block';
+                    try {
+                        const params = new URLSearchParams();
+                        params.append('action', 'verifyAdminCode');
+                        params.append('admin', adminNum);
+                        params.append('code', code);
+                        const res = await fetch(API_URL, { method: 'POST', body: params });
+                        const data = await res.json();
+                        if (data.result === 'success') {
+                            document.getElementById('adminLoginOverlay').classList.remove('active');
+                            window.open('admin.html', '_blank');
+                        } else {
+                            document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                            document.getElementById('adminCodeStatus').style.display = 'block';
+                        }
+                    } catch (err) {
+                        document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                    }
+                });
             }
-        });
+        }
+
+        // Call this once on page load
+        setupAdminVerifyListener();
 
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
