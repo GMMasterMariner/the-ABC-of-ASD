@@ -87,18 +87,11 @@
             transition: background 0.2s;
         }
         .btn:hover { background: #e08a1a; }
-        .btn-secondary {
-            background: #aaa;
-        }
+        .btn-secondary { background: #aaa; }
         .btn-secondary:hover { background: #888; }
-        .btn-danger {
-            background: #dc3c33;
-        }
+        .btn-danger { background: #dc3c33; }
         .btn-danger:hover { background: #c53030; }
-        .btn-sm {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.9rem;
-        }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
         .status-message {
             padding: 1rem;
             border-radius: 6px;
@@ -115,26 +108,11 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        .data-table th,
-        .data-table td {
-            padding: 0.8rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        .data-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-        }
         .tab-nav {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         .tab-btn {
             padding: 0.6rem 1.2rem;
@@ -187,19 +165,6 @@
             font-family: inherit;
         }
         #adminPanel { display: none; }
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #194373;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -486,7 +451,7 @@
                     </div>
                     <div class="form-group">
                         <label>Privacy Policy Content</label>
-                        <textarea id="privacyContent" rows="8" placeholder="Enter privacy policy text... Use PrivacyPolicyHeading1, PrivacyPolicyContent1, PrivacyPolicyHeading2, PrivacyPolicyContent2 format in the save..."></textarea>
+                        <textarea id="privacyContent" rows="8"></textarea>
                     </div>
                     <h3>Terms of Service</h3>
                     <div class="form-group">
@@ -495,7 +460,7 @@
                     </div>
                     <div class="form-group">
                         <label>Terms of Service Content</label>
-                        <textarea id="termsContent" rows="8" placeholder="Enter terms of service text..."></textarea>
+                        <textarea id="termsContent" rows="8"></textarea>
                     </div>
                     <button class="btn" onclick="saveLegal()">Save Legal</button>
                 </div>
@@ -513,19 +478,19 @@
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const admin = params.get('admin');
-        
+
             console.log('Admin page loaded - token:', token, 'admin:', admin);
-        
+
             if (!token || !admin) {
                 document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
                 document.getElementById('codeInput').style.display = 'none';
                 document.getElementById('verifyBtn').style.display = 'none';
                 return;
             }
-        
+
             adminToken = token;
             adminNum = admin;
-        
+
             try {
                 const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
                 const rawText = await res.text();
@@ -555,53 +520,57 @@
             }
         }
 
-document.getElementById('verifyBtn').addEventListener('click', async () => {
-    const code = document.getElementById('codeInput').value.trim();
-    if (!code || code.length !== 6) {
-        document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
-        document.getElementById('loginError').style.display = 'block';
-        return;
-    }
+        document.getElementById('verifyBtn').addEventListener('click', async () => {
+            const code = document.getElementById('codeInput').value.trim();
+            if (!code || code.length !== 6) {
+                document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
 
-    try {
-        const params = new URLSearchParams();
-        params.append('action', 'verifyAdminCode');
-        params.append('admin', adminNum);
-        params.append('code', code);
-        
-        console.log('Verifying code for admin:', adminNum);
-        
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const rawText = await res.text();
-        console.log('verifyAdminCode raw response:', rawText);
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            console.error('JSON parse error:', e);
-            document.getElementById('loginError').textContent = 'Server error.';
-            document.getElementById('loginError').style.display = 'block';
-            return;
-        }
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'verifyAdminCode');
+                params.append('admin', adminNum);
+                params.append('code', code);
+                
+                console.log('Verifying code for admin:', adminNum);
+                
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const rawText = await res.text();
+                console.log('verifyAdminCode raw response:', rawText);
+                
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    document.getElementById('loginError').textContent = 'Server error.';
+                    document.getElementById('loginError').style.display = 'block';
+                    return;
+                }
 
-        if (data.result === 'success') {
-            // Update token with the new one from verification
-            adminToken = data.token;
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
-            loadAllData();
-        } else {
-            document.getElementById('loginError').textContent = data.message || 'Invalid code.';
-            document.getElementById('loginError').style.display = 'block';
-        }
-    } catch (err) {
-        console.error('Verification error:', err);
-        document.getElementById('loginError').textContent = 'Network error. Please try again.';
-        document.getElementById('loginError').style.display = 'block';
-    }
-});
+                if (data.result === 'success') {
+                    adminToken = data.token;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
+                    loadAllData();
+                } else {
+                    document.getElementById('loginError').textContent = data.message || 'Invalid code.';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Verification error:', err);
+                document.getElementById('loginError').textContent = 'Network error. Please try again.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        document.getElementById('codeInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('verifyBtn').click();
+        });
+
         function logout() {
             adminToken = '';
             adminNum = '';
@@ -622,10 +591,20 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
 
         async function loadAllData() {
             try {
-                const res = await fetch(API_URL + '?action=getAllAdminData&token=' + adminToken + '&admin=' + adminNum);
-                const data = await res.json();
+                const res = await fetch(API_URL + '?action=getAllAdminData&token=' + encodeURIComponent(adminToken) + '&admin=' + encodeURIComponent(adminNum));
+                const rawText = await res.text();
+                console.log('getAllAdminData raw response:', rawText.substring(0, 200) + '...');
                 
-                if (data.result === 'success') {
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    showStatus('Error parsing data', 'error');
+                    return;
+                }
+                
+                if (data.settings) {
                     populateSettings(data.settings || {});
                     populateProducts(data.products || []);
                     populateHome(data.home || {});
@@ -633,7 +612,7 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                     populateShipping(data.shippingRegions || [], data.regionRates || []);
                     populateLegal(data.legal || {});
                 } else {
-                    showStatus('Failed to load data', 'error');
+                    showStatus('No settings data received', 'error');
                 }
             } catch (err) {
                 console.error('Failed to load data:', err);
@@ -714,7 +693,7 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
             
             const allLocations = [...new Set([...regions.map(r => r.Location), ...rates.map(r => r.Location)])];
             
-            allLocations.forEach((loc, index) => {
+            allLocations.forEach((loc) => {
                 const region = regions.find(r => r.Location === loc) || {};
                 const regionRates = rates.filter(r => r.Location === loc);
                 
@@ -741,7 +720,7 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                             <input type="text" class="region-phone" value="${region.PhoneCode || '+1'}">
                         </div>
                     </div>
-                    <div class="rates-container" data-location="${loc || ''}">
+                    <div class="rates-container">
                         ${regionRates.map(rate => `
                             <div class="form-row rate-row" style="margin-bottom:0.5rem;">
                                 <div class="form-group">
@@ -770,18 +749,18 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
         }
 
         function populateLegal(legal) {
-            const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy'));
+            const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
             const termsKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('terms'));
             
-            document.getElementById('privacyHeading').value = legal[privacyKeys.find(k => k.endsWith('Heading'))] || '';
+            document.getElementById('privacyHeading').value = legal[privacyKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
             document.getElementById('privacyContent').value = privacyKeys
-                .filter(k => !k.endsWith('Heading'))
+                .filter(k => !k.toLowerCase().endsWith('heading'))
                 .map(k => k + ': ' + legal[k])
                 .join('\n\n');
             
-            document.getElementById('termsHeading').value = legal[termsKeys.find(k => k.endsWith('Heading'))] || '';
+            document.getElementById('termsHeading').value = legal[termsKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
             document.getElementById('termsContent').value = termsKeys
-                .filter(k => !k.endsWith('Heading'))
+                .filter(k => !k.toLowerCase().endsWith('heading'))
                 .map(k => k + ': ' + legal[k])
                 .join('\n\n');
         }
