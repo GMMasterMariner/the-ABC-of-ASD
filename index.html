@@ -1218,7 +1218,7 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
-
+    
         let appSettings = {};
         let exchangeRates = [];
         let selectedCurrency = null;
@@ -1234,26 +1234,26 @@
         let lastVerifiedEmail = '';
         let paymentKeys = {};
         let legalPages = {};
-
+    
         function saveToSession(key, value) {
             try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
         }
         function loadFromSession(key) {
             try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; }
         }
-
+    
         function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalMessage').textContent = message;
             const confirmBtn = document.getElementById('modalConfirmBtn');
             const cancelBtn = document.getElementById('modalCancelBtn');
             const overlay = document.getElementById('modalOverlay');
-
+    
             confirmBtn.textContent = confirmText || 'OK';
             confirmBtn.style.display = 'inline-flex';
             cancelBtn.style.display = (cancelText || onCancel) ? 'inline-flex' : 'none';
             cancelBtn.textContent = cancelText || 'Cancel';
-
+    
             confirmBtn.onclick = function() {
                 overlay.classList.remove('active');
                 if (onConfirm) onConfirm();
@@ -1262,34 +1262,47 @@
                 overlay.classList.remove('active');
                 if (onCancel) onCancel();
             };
-
+    
             overlay.classList.add('active');
         }
-
+    
         function showAlertModal(title, message) {
             showModal(title, message, 'OK', null, null, null);
         }
-
+    
         // ========== ADMIN LOGIN (EMAIL CODE) ==========
         document.getElementById('adminIconLink').addEventListener('click', function(e) {
             e.preventDefault();
             showAdminLoginModal();
         });
-
-        function showAdminLoginModal() {
+    
+        async function showAdminLoginModal() {
             const overlay = document.getElementById('adminLoginOverlay');
             overlay.classList.add('active');
             document.getElementById('adminSelectStep').style.display = 'block';
             document.getElementById('adminCodeStep').style.display = 'none';
             document.getElementById('adminLoginStatus').style.display = 'none';
             document.getElementById('adminCodeStatus').style.display = 'none';
-
+    
             const container = document.getElementById('adminSelectButtons');
+            
+            // DEBUG: Log all settings to see exact property names
+            console.log('=== ADMIN LOGIN DEBUG ===');
+            console.log('All appSettings keys:', Object.keys(appSettings));
+            console.log('Admin1Name value:', appSettings.Admin1Name);
+            console.log('Admin2Name value:', appSettings.Admin2Name);
+            console.log('Admin1IconURL value:', appSettings.Admin1IconURL);
+            console.log('Admin2IconURL value:', appSettings.Admin2IconURL);
+            
             const admin1Name = appSettings.Admin1Name || 'Admin 1';
             const admin2Name = appSettings.Admin2Name || 'Admin 2';
             const admin1Icon = appSettings.Admin1IconURL || '';
             const admin2Icon = appSettings.Admin2IconURL || '';
-
+            
+            console.log('Using admin1Name:', admin1Name);
+            console.log('Using admin2Name:', admin2Name);
+            console.log('========================');
+    
             container.innerHTML = '';
             [
                 { num: 1, name: admin1Name, icon: admin1Icon },
@@ -1313,7 +1326,7 @@
                 btn.addEventListener('click', () => requestAdminCode(admin.num, admin.name));
                 container.appendChild(btn);
             });
-
+    
             // Cancel button — go back to name selection
             document.getElementById('adminCodeCancelBtn').onclick = function() {
                 document.getElementById('adminSelectStep').style.display = 'block';
@@ -1321,7 +1334,7 @@
                 document.getElementById('adminCodeStatus').style.display = 'none';
                 document.getElementById('adminCodeInput').value = '';
             };
-
+    
             // Verify button — placed here so it exists when the modal is shown
             document.getElementById('adminVerifyBtn').onclick = async function() {
                 const code = document.getElementById('adminCodeInput').value.trim();
@@ -1331,7 +1344,7 @@
                     document.getElementById('adminCodeStatus').style.display = 'block';
                     return;
                 }
-
+    
                 try {
                     const params = new URLSearchParams();
                     params.append('action', 'verifyAdminCode');
@@ -1351,13 +1364,13 @@
                     document.getElementById('adminCodeStatus').style.display = 'block';
                 }
             };
-
+    
             // Close modal when clicking overlay background
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
         }
-
+    
         async function requestAdminCode(adminNum, adminName) {
             document.getElementById('adminSelectStep').style.display = 'none';
             document.getElementById('adminCodeStep').style.display = 'block';
@@ -1365,23 +1378,42 @@
             document.getElementById('adminCodeStatus').textContent = 'Sending code...';
             document.getElementById('adminCodeInput').value = '';
             document.getElementById('adminCodeInput').focus();
-
+    
             try {
                 const params = new URLSearchParams();
                 params.append('action', 'sendAdminCode');
                 params.append('admin', adminNum);
+                
+                console.log('Sending admin code request for admin:', adminNum);
+                
                 const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
+                console.log('Response status:', res.status);
+                
+                const rawText = await res.text();
+                console.log('Raw response:', rawText);
+                
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    document.getElementById('adminCodeStatus').textContent = 'Server error. Check console.';
+                    return;
+                }
+                
                 if (data.result === 'success') {
                     document.getElementById('adminCodeStatus').textContent = '';
                     document.getElementById('adminCodeStatus').style.display = 'none';
                     sessionStorage.setItem('adminNum', adminNum);
                     sessionStorage.setItem('adminName', adminName);
+                    console.log('Code sent successfully');
                 } else {
-                    document.getElementById('adminCodeStatus').textContent = 'Failed to send code. Please try again.';
+                    console.error('Failed:', data);
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Failed to send code. Please try again.';
                 }
             } catch (err) {
-                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                console.error('Network error:', err);
+                document.getElementById('adminCodeStatus').textContent = 'Network error: ' + err.message;
             }
         }
         
@@ -1393,7 +1425,7 @@
             setTimeout(() => { contentDiv.scrollTop = 0; }, 10);
             document.getElementById('legalModalOverlay').classList.add('active');
         }
-
+    
         document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
             document.getElementById('legalModalOverlay').classList.remove('active');
         });
@@ -1402,7 +1434,7 @@
                 document.getElementById('legalModalOverlay').classList.remove('active');
             }
         });
-
+    
         function getKnownPhoneCodes() {
             if (!shippingRegions || !shippingRegions.length) return [];
             return shippingRegions
@@ -1410,7 +1442,7 @@
                 .filter(code => code.length > 0)
                 .sort((a,b) => b.length - a.length);
         }
-
+    
         function extractCountryCode(fullNumber) {
             if (!fullNumber.startsWith('+')) return null;
             const codes = getKnownPhoneCodes();
@@ -1434,12 +1466,12 @@
             }
             return null;
         }
-
+    
         function setupPhoneSplitter(numberInputId, codeInputId) {
             const numInput = document.getElementById(numberInputId);
             const codeInput = document.getElementById(codeInputId);
             if (!numInput || !codeInput) return;
-
+    
             function stripLeadingZeroIfNeeded() {
                 const numVal = numInput.value.trim();
                 const codeVal = codeInput.value.trim();
@@ -1447,7 +1479,7 @@
                     numInput.value = numVal.slice(1).trim();
                 }
             }
-
+    
             function splitNumberField() {
                 const val = numInput.value.trim();
                 const extracted = extractCountryCode(val);
@@ -1458,7 +1490,7 @@
                 }
                 stripLeadingZeroIfNeeded();
             }
-
+    
             function splitCodeField() {
                 const val = codeInput.value.trim();
                 if (val.startsWith('+') && val.length > 5) {
@@ -1473,12 +1505,12 @@
                 }
                 stripLeadingZeroIfNeeded();
             }
-
+    
             function handleChange() {
                 splitNumberField();
                 splitCodeField();
             }
-
+    
             numInput.addEventListener('input', splitNumberField);
             numInput.addEventListener('change', handleChange);
             numInput.addEventListener('blur', handleChange);
@@ -1487,7 +1519,7 @@
             codeInput.addEventListener('blur', handleChange);
             handleChange();
         }
-
+    
         function splitAllPhoneFields() {
             if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
                 const num = document.getElementById('customerPhone');
@@ -1516,7 +1548,7 @@
                 }
             }
         }
-
+    
         async function fetchAllSiteData() {
             try {
                 const res = await fetch('data.json');
@@ -1525,12 +1557,12 @@
             const res = await fetch(API_URL + '?combined=true');
             return await res.json();
         }
-
+    
         async function fetchPaymentKeys() {
             const res = await fetch(API_URL + '?action=getPaymentKeys');
             return await res.json();
         }
-
+    
         async function initPayments() {
             if (paymentKeys.paypalClientId && document.getElementById('paypalBtn')) {
                 const script = document.createElement('script');
@@ -1554,7 +1586,7 @@
                 };
                 document.head.appendChild(script);
             }
-
+    
             const payfastBtn = document.getElementById('payfastBtn');
             if (payfastBtn) {
                 payfastBtn.addEventListener('click', async () => {
@@ -1564,7 +1596,7 @@
                     const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
                     const itemName = selectedProduct.ProductName;
                     const description = selectedProduct.Type + ' book';
-
+    
                     const formFields = {
                         merchant_id: paymentKeys.payfastMerchantId,
                         merchant_key: paymentKeys.payfastMerchantKey,
@@ -1579,11 +1611,11 @@
                         item_name: itemName,
                         item_description: description
                     };
-
+    
                     const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
                     const sigData = await sigRes.json();
                     formFields.signature = sigData.signature;
-
+    
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = 'https://sandbox.payfast.co.za/eng/process';
@@ -1601,7 +1633,7 @@
                 });
             }
         }
-
+    
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1622,7 +1654,7 @@
             });
             dropdown.addEventListener('click', (e) => e.stopPropagation());
         }
-
+    
         function buildSearchableDropdown(container, items, placeholder = 'Search...') {
             container.innerHTML = '';
             const search = document.createElement('input');
@@ -1639,12 +1671,12 @@
             container.appendChild(search);
             items.forEach(item => container.appendChild(item.element));
         }
-
+    
         function buildCurrencySelector() {
             const container = document.getElementById('currencySelectorContainer');
             container.innerHTML = '';
             if (!exchangeRates.length) return;
-
+    
             const btn = document.createElement('div');
             btn.className = 'currency-selector';
             btn.id = 'currencyBtn';
@@ -1654,11 +1686,11 @@
             codeSpan.id = 'currencyCodeDisplay';
             btn.appendChild(flagImg);
             btn.appendChild(codeSpan);
-
+    
             const dropdown = document.createElement('div');
             dropdown.className = 'currency-dropdown';
             dropdown.id = 'currencyDropdown';
-
+    
             const sorted = [...exchangeRates].sort((a, b) => a.CountryName.localeCompare(b.CountryName));
             const items = sorted.map(rate => {
                 const item = document.createElement('div');
@@ -1679,7 +1711,7 @@
             setupDropdown(btn, dropdown);
             if (selectedCurrency) { updateCurrencyDisplay(); } else { selectedCurrency = exchangeRates[0]; updateCurrencyDisplay(); }
         }
-
+    
         function updateCurrencyDisplay() {
             const flag = document.getElementById('currencyFlag');
             const codeDisplay = document.getElementById('currencyCodeDisplay');
@@ -1688,7 +1720,7 @@
                 codeDisplay.textContent = selectedCurrency.CurrencyCode;
             }
         }
-
+    
         async function detectUserCurrency() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
@@ -1719,12 +1751,12 @@
                 setUserCountry(shippingRegions[0]);
             }
         }
-
+    
         function setUserCountryFromName(countryName) {
             const match = shippingRegions.find(r => r.Location === countryName);
             if (match) setUserCountry(match);
         }
-
+    
         function setUserCountry(regionObj) {
             document.getElementById('countryNameDisplay').textContent = regionObj.Location;
             document.getElementById('countryFlag').src = regionObj.FlagURL;
@@ -1735,12 +1767,12 @@
             document.getElementById('phoneFlag').src = regionObj.FlagURL;
             updateOrderSummary();
         }
-
+    
         function convertPrice(zarAmount) {
             if (!selectedCurrency || selectedCurrency.CurrencyCode === 'ZAR') return zarAmount;
             return Math.round(zarAmount * selectedCurrency.RateToBase * 100) / 100;
         }
-
+    
         function formatPrice(zarAmount) {
             const converted = convertPrice(zarAmount);
             const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
@@ -1748,7 +1780,7 @@
             const symbol = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code;
             return symbol + ' ' + formattedNumber;
         }
-
+    
         function refreshAllPrices() {
             const alertColor = appSettings.AlertColour || '#dc3c33';
             document.querySelectorAll('[data-zar]').forEach(el => {
@@ -1767,7 +1799,7 @@
                 updateOrderSummary();
             }
         }
-
+    
         function equalizeHeights() {
             const rightCol = document.getElementById('productCardsColumn');
             const leftBox = document.getElementById('leftBox');
@@ -1788,11 +1820,11 @@
                 }
             });
         }
-
+    
         window.addEventListener('resize', () => {
             if (document.getElementById('home-section')?.classList.contains('active')) equalizeHeights();
         });
-
+    
         function buildCarousel(imageUrls, interval) {
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
@@ -1824,7 +1856,7 @@
             let currentIndex = 1;
             const totalSlides = imageUrls.length;
             let isTransitioning = false;
-
+    
             function updateCarousel(animate = true) {
                 if (!animate) track.style.transition = 'none';
                 else track.style.transition = 'transform 0.5s ease';
@@ -1832,13 +1864,13 @@
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
             }
-
+    
             function goToSlide(realIndex) {
                 currentIndex = realIndex + 1;
                 updateCarousel();
                 resetAutoPlay();
             }
-
+    
             function nextSlide() {
                 if (isTransitioning) return;
                 isTransitioning = true;
@@ -1854,7 +1886,7 @@
                     }, 500);
                 } else { setTimeout(() => isTransitioning = false, 500); }
             }
-
+    
             function prevSlide() {
                 if (isTransitioning) return;
                 isTransitioning = true;
@@ -1870,12 +1902,12 @@
                     }, 500);
                 } else { setTimeout(() => isTransitioning = false, 500); }
             }
-
+    
             function updateDots() {
                 const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
                 document.querySelectorAll('.carousel-dot').forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
             }
-
+    
             function startAutoPlay() {
                 if (carouselIntervalId) clearInterval(carouselIntervalId);
                 carouselIntervalId = setInterval(nextSlide, interval);
@@ -1884,40 +1916,40 @@
                 if (carouselIntervalId) { clearInterval(carouselIntervalId); carouselIntervalId = null; }
             }
             function resetAutoPlay() { stopAutoPlay(); startAutoPlay(); }
-
+    
             nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
             prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
-
+    
             const wrapper = document.getElementById('carouselWrapper');
             wrapper.addEventListener('mouseenter', stopAutoPlay);
             wrapper.addEventListener('mouseleave', startAutoPlay);
             wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true });
             wrapper.addEventListener('touchend', startAutoPlay);
-
+    
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); }
                 if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); }
             });
-
+    
             updateCarousel(false);
             startAutoPlay();
         }
-
+    
         function applySettingsDirect(settings) {
             document.body.style.backgroundColor = settings.BackgroundColor || '#ffffff';
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('topBar').style.backgroundColor = settings.PrimaryColor || '#194373';
-
+    
             if (settings.BackgroundImage) {
                 document.body.style.backgroundImage = `url('${settings.BackgroundImage}')`;
             }
-
+    
             document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
             document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
             document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
             document.documentElement.style.setProperty('--bg-color', settings.BackgroundColor || '#eee6ca');
-
+    
             const logo = document.getElementById('bannerLogo');
             const splashLogo = document.getElementById('splash-logo');
             if (settings.BannerLogo) {
@@ -1927,11 +1959,11 @@
             } else {
                 logo.style.display = 'none';
             }
-
+    
             if (settings.NavIconURLAdmin) {
                 document.getElementById('adminIconImg').src = settings.NavIconURLAdmin;
             }
-
+    
             const titleEl = document.getElementById('bannerTitle');
             const mainTitle = settings.BannerBookTitle || '';
             const abbrev = settings.BannerBookTitleAbbreviation || '';
@@ -1939,12 +1971,12 @@
             else if (mainTitle) titleEl.textContent = mainTitle;
             else titleEl.textContent = '';
             document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
-
+    
             if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
             if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
             if (settings.LocationIconURL) document.getElementById('locationIcon').src = settings.LocationIconURL;
             if (settings.MapsIconURL) document.getElementById('mapIcon').src = settings.MapsIconURL;
-
+    
             const navContainer = document.getElementById('navIcons');
             navContainer.innerHTML = '';
             const navItems = [
@@ -1985,7 +2017,7 @@
                 span.textContent = item.label;
                 a.appendChild(span);
                 navContainer.appendChild(a);
-
+    
                 if (item.iconSetting === 'NavIconURLLinkedIn') {
                     const footerLinkedIn = document.getElementById('footerLinkedIn');
                     if (footerLinkedIn) {
@@ -2009,30 +2041,30 @@
                 if (section) showPage(section);
             });
         }
-
+    
         function loadHomePageDirect(home) {
             document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
-
+    
             const images = [];
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
                 if (url) images.push(url);
             }
             if (images.length) buildCarousel(images, home.HomePageCarouselInterval || 3000);
-
+    
             const productColumn = document.getElementById('productCardsColumn');
             productColumn.innerHTML = '';
-
+    
             const item1Main = home.HomePageItem1MainText || '';
             const item1Sub = home.HomePageItem1SubText || '';
             const item2Main = home.HomePageItem2MainText || '';
             const item2Sub = home.HomePageItem2SubText || '';
-
+    
             const product1 = products[0] || {};
             const product2 = products[1] || {};
-
+    
             function createCard(mainText, subText, product) {
                 const card = document.createElement('div');
                 card.className = 'product-card';
@@ -2040,26 +2072,26 @@
                 card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
                 return card;
             }
-
+    
             const card1 = createCard(item1Main, item1Sub, product1);
             const card2 = createCard(item2Main, item2Sub, product2);
-
+    
             const orderBtn = document.createElement('div');
             orderBtn.className = 'central-order-btn';
             orderBtn.innerHTML = '<button class="btn">Order Now</button>';
             productColumn.appendChild(card1);
             productColumn.appendChild(orderBtn);
             productColumn.appendChild(card2);
-
+    
             orderBtn.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
             refreshAllPrices();
         }
-
+    
         function loadAboutSectionDirect(about) {
             aboutData = about || {};
             const img1 = document.getElementById('aboutImg1');
             if (about.AuthorImage1URL) { img1.src = about.AuthorImage1URL; img1.style.display = 'block'; } else { img1.style.display = 'none'; }
-
+    
             const img2 = document.getElementById('aboutImg2');
             if (about.AuthorImage2URL) {
                 img2.src = about.AuthorImage2URL;
@@ -2071,14 +2103,14 @@
             } else {
                 img2.style.display = 'none';
             }
-
+    
             document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
             document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
-
+    
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
             const bioExtended = document.getElementById('bioExtended');
-
+    
             function collapse() {
                 bioExtended.style.display = 'none';
                 toggleMore.style.display = 'inline';
@@ -2087,7 +2119,7 @@
                     img2.style.display = 'block';
                 }
             }
-
+    
             function expand() {
                 bioExtended.style.display = 'block';
                 toggleMore.style.display = 'none';
@@ -2096,16 +2128,16 @@
                     img2.style.display = 'block';
                 }
             }
-
+    
             if (window.innerWidth <= 768 && about.AuthorImage2URL) {
                 document.querySelector('.about-section-content').appendChild(img2);
             }
             collapse();
-
+    
             toggleMore.addEventListener('click', expand);
             toggleLess.addEventListener('click', collapse);
         }
-
+    
         function saveOrderState() {
             if (!document.getElementById('order-section')) return;
             const state = {
@@ -2127,7 +2159,7 @@
             };
             saveToSession('orderState', state);
         }
-
+    
         function loadOrderState() {
             const state = loadFromSession('orderState');
             if (!state) return false;
@@ -2167,7 +2199,7 @@
             }
             return true;
         }
-
+    
         function resetOrderForm() {
             isEmailVerified = false;
             lastVerifiedEmail = '';
@@ -2187,7 +2219,7 @@
             document.getElementById('instructionMessage').style.display = 'block';
             document.getElementById('instructionMessage').textContent = 'Please select a book format, and verify your email to continue ordering.';
             document.getElementById('instructionMessage').classList.add('pulse-message');
-
+    
             document.getElementById('emailVerifyWrapper').style.display = 'flex';
             document.getElementById('verifyLeft').style.display = 'block';
             document.getElementById('verifyRight').style.display = 'flex';
@@ -2195,11 +2227,11 @@
             document.getElementById('verifyingMessageRow').style.display = 'none';
             document.getElementById('customerDetails').style.display = 'none';
             document.getElementById('shippingAddressSection').style.display = 'none';
-
+    
             document.getElementById('orderEmail').value = '';
             document.getElementById('orderEmail').disabled = false;
             document.getElementById('verifyEmailBtn').disabled = true;
-
+    
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
             document.getElementById('phoneCodeInput').value = '+1';
@@ -2209,45 +2241,45 @@
             document.getElementById('addressCity').value = '';
             document.getElementById('addressPostcode').value = '';
             document.getElementById('addressRegion').value = '';
-
+    
             for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
             if (window.resendTimer) clearInterval(window.resendTimer);
             document.getElementById('resendBtn').disabled = false;
             document.getElementById('resendBtn').textContent = 'Resend Code';
-
+    
             document.getElementById('shippingTimeText').textContent = '';
             updateOrderSummary();
         }
-
+    
         function loadOrderPage() {
             if (products.length < 2) return;
             const prod1 = products[0], prod2 = products[1];
-
+    
             document.getElementById('prod1Img').src = prod1.ImageURL || '';
             document.getElementById('prod1Img').style.display = prod1.ImageURL ? 'block' : 'none';
             document.getElementById('prod1Name').textContent = prod1.ProductName;
             document.getElementById('prod1Price').textContent = formatPrice(prod1.BasePrice);
             document.getElementById('prod1Price').setAttribute('data-zar', prod1.BasePrice);
-
+    
             document.getElementById('prod2Img').src = prod2.ImageURL || '';
             document.getElementById('prod2Img').style.display = prod2.ImageURL ? 'block' : 'none';
             document.getElementById('prod2Name').textContent = prod2.ProductName;
             document.getElementById('prod2Price').textContent = formatPrice(prod2.BasePrice);
             document.getElementById('prod2Price').setAttribute('data-zar', prod2.BasePrice);
-
+    
             document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
             document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
-
+    
             const qtyInput = document.getElementById('orderQuantity');
             const qtyUp = document.getElementById('qtyUp');
             const qtyDown = document.getElementById('qtyDown');
-
+    
             function updateQtyButtons() {
                 let val = parseInt(qtyInput.value) || 1;
                 qtyUp.disabled = !selectedProduct;
                 qtyDown.disabled = !selectedProduct || val <= 1;
             }
-
+    
             qtyUp.addEventListener('click', () => {
                 if (!selectedProduct) return;
                 let val = parseInt(qtyInput.value) || 1;
@@ -2274,7 +2306,7 @@
                 updateQuantityTotal();
                 updateOrderSummary();
             });
-
+    
             const emailInput = document.getElementById('orderEmail');
             const verifyBtn = document.getElementById('verifyEmailBtn');
             emailInput.addEventListener('input', () => {
@@ -2285,7 +2317,7 @@
                 if (!email) return;
                 sendVerificationCode(email);
             });
-
+    
             const codeInputs = document.querySelectorAll('.code-digit');
             codeInputs.forEach((input, idx) => {
                 input.addEventListener('input', (e) => {
@@ -2307,7 +2339,7 @@
                     }
                 });
             });
-
+    
             document.getElementById('resendBtn').addEventListener('click', () => {
                 if (document.getElementById('resendBtn').disabled) return;
                 for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
@@ -2315,7 +2347,7 @@
                 sendVerificationCode(lastEmailAttempt, true);
                 startResendCooldown();
             });
-
+    
             document.getElementById('locateBtn').addEventListener('click', () => {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -2331,23 +2363,23 @@
                     }, () => showAlertModal('Error', 'Unable to retrieve location.'));
                 } else showAlertModal('Error', 'Geolocation not supported.');
             });
-
+    
             document.getElementById('mapBtn').addEventListener('click', () => {
                 openMapModal();
             });
-
+    
             buildCountrySelector();
             buildPhoneCodeSelector();
             buildContactPhoneCodeSelector();
-
+    
             autoResizePhoneCodeInput('phoneCodeInput');
             autoResizePhoneCodeInput('contactPhoneCodeInput');
             document.getElementById('phoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('phoneCodeInput'));
             document.getElementById('contactPhoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('contactPhoneCodeInput'));
-
+    
             setupPhoneSplitter('customerPhone', 'phoneCodeInput');
             setupPhoneSplitter('phone', 'contactPhoneCodeInput');
-
+    
             if (!loadOrderState()) {
                 resetOrderForm();
             }
@@ -2359,7 +2391,7 @@
             }
             splitAllPhoneFields();
         }
-
+    
         function autoResizePhoneCodeInput(inputId) {
             const input = document.getElementById(inputId);
             if (!input) return;
@@ -2374,9 +2406,9 @@
             input.style.width = width + 'px';
             document.body.removeChild(span);
         }
-
+    
         let lastEmailAttempt = '';
-
+    
         async function sendVerificationCode(email, silentResend = false) {
             lastEmailAttempt = email;
             if (!silentResend) {
@@ -2401,7 +2433,7 @@
                 }
             }
         }
-
+    
         function startResendCooldown() {
             const btn = document.getElementById('resendBtn');
             let seconds = 30;
@@ -2419,13 +2451,13 @@
                 }
             }, 1000);
         }
-
+    
         async function startVerification(code) {
             document.getElementById('codeEntryStack').style.display = 'none';
             document.getElementById('verifyingMessageRow').style.display = 'flex';
             document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
             document.getElementById('verifyingText').classList.add('pulse-message');
-
+    
             try {
                 const params = new URLSearchParams();
                 params.append('action', 'verifyCode');
@@ -2434,7 +2466,7 @@
                 const res = await fetch(API_URL, { method: 'POST', body: params });
                 if (!res.ok) throw new Error('Network response was not ok');
                 const data = await res.json();
-
+    
                 if (data.result === 'verified') {
                     isEmailVerified = true;
                     document.getElementById('emailVerifyWrapper').style.display = 'none';
@@ -2467,7 +2499,7 @@
                 document.getElementById('verifyingMessageRow').style.display = 'none';
             }
         }
-
+    
         function selectProduct(index, isRestore = false) {
             const opt1 = document.getElementById('productOption1');
             const opt2 = document.getElementById('productOption2');
@@ -2478,7 +2510,7 @@
             document.getElementById('orderQuantity').disabled = false;
             document.getElementById('qtyUp').disabled = false;
             document.getElementById('qtyDown').disabled = false;
-
+    
             if (!isRestore) {
                 const qtyInput = document.getElementById('orderQuantity');
                 let currentVal = parseInt(qtyInput.value);
@@ -2497,7 +2529,7 @@
                 else document.getElementById('shippingAddressSection').style.display = 'none';
             }
         }
-
+    
         function updateInstructionMessage() {
             const msgEl = document.getElementById('instructionMessage');
             if (!selectedProduct) {
@@ -2520,13 +2552,13 @@
                 totalEl.classList.add('price-glow');
             }
         }
-
+    
         function updateQuantityTotal() {
             if (!selectedProduct) return;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
             document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * qty);
         }
-
+    
         function getUnitPrice() {
             if (!selectedProduct) return 0;
             const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
@@ -2535,7 +2567,7 @@
             if (qty >= threshold) return selectedProduct.BasePrice * (1 - discountPercent / 100);
             return selectedProduct.BasePrice;
         }
-
+    
         function getShippingCost() {
             if (!selectedProduct || selectedProduct.Type === 'Digital') return 0;
             if (!userCountryRegion) return 0;
@@ -2552,7 +2584,7 @@
             for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) return row.Cost || 0;
             return rows[rows.length-1].Cost || 0;
         }
-
+    
         function getShippingTime() {
             if (!selectedProduct || selectedProduct.Type === 'Digital') return '';
             if (!userCountryRegion || !selectedShippingCountry) return '';
@@ -2570,13 +2602,13 @@
             for (const row of rows) if (totalWeight <= (row.MaxWeight || 0)) { time = row.Time; break; }
             if (!time) time = rows[rows.length-1].Time || '';
             if (!time) return '';
-
+    
             const isSouthAfrica = selectedShippingCountry === 'South Africa';
             return isSouthAfrica
                 ? `Please allow up to ${time} for delivery within South Africa.`
                 : `Please allow up to ${time} for shipping from South Africa.`;
         }
-
+    
         function updateOrderSummary() {
             const digitalMsg = document.getElementById('digitalMessage');
             const deliveryContainer = document.getElementById('deliveryDetailsContainer');
@@ -2600,12 +2632,12 @@
             const shipping = getShippingCost();
             const total = subtotal + shipping;
             const discountAmount = (selectedProduct.BasePrice - unitPrice) * qty;
-
+    
             document.getElementById('sumUnitPrice').textContent = formatPrice(unitPrice);
             document.getElementById('sumQuantity').textContent = qty;
             document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
             document.getElementById('sumTotal').textContent = formatPrice(total);
-
+    
             const discountRow = document.getElementById('discountRow');
             const discountDetailEl = document.getElementById('discountDetail');
             if (qty >= (selectedProduct.DiscountThreshold || 0) && discountAmount > 0) {
@@ -2617,7 +2649,7 @@
                 discountRow.style.display = 'none';
                 discountDetailEl.style.display = 'none';
             }
-
+    
             const shippingRow = document.getElementById('shippingRow');
             if (selectedProduct.Type === 'Digital') {
                 shippingRow.style.display = 'none';
@@ -2632,7 +2664,7 @@
                 deliveryContainer.style.display = (isEmailVerified && userCountryRegion) ? 'flex' : 'none';
             }
         }
-
+    
         function buildCountrySelector() {
             const dropdown = document.getElementById('countryDropdown');
             const trigger = document.getElementById('countrySelector');
@@ -2655,7 +2687,7 @@
             buildSearchableDropdown(dropdown, items, 'Search country...');
             setupDropdown(trigger, dropdown);
         }
-
+    
         function buildPhoneCodeSelector() {
             const dropdown = document.getElementById('phoneCodeDropdown');
             const trigger = document.getElementById('phoneCodeSelector');
@@ -2677,7 +2709,7 @@
             buildSearchableDropdown(dropdown, items, 'Search country...');
             setupDropdown(trigger, dropdown);
         }
-
+    
         function buildContactPhoneCodeSelector() {
             const dropdown = document.getElementById('contactPhoneCodeDropdown');
             const trigger = document.getElementById('contactPhoneCodeSelector');
@@ -2706,9 +2738,9 @@
                 autoResizePhoneCodeInput('contactPhoneCodeInput');
             }
         }
-
+    
         let mapModal, map, marker;
-
+    
         function loadGoogleMapsScript(apiKey) {
             if (window.google && google.maps) return;
             const script = document.createElement('script');
@@ -2722,7 +2754,7 @@
             };
             document.head.appendChild(script);
         }
-
+    
         function initAutocomplete() {
             const input = document.getElementById('addressLine1');
             if (!input) return;
@@ -2732,7 +2764,7 @@
                 fillAddressFromPlace(place);
             });
         }
-
+    
         function openMapModal() {
             mapModal = document.getElementById('mapModalOverlay');
             const apiKey = appSettings.GoogleMapsApiKey;
@@ -2740,9 +2772,9 @@
                 showAlertModal('Error', 'Map feature not configured.');
                 return;
             }
-
+    
             mapModal.classList.add('active');
-
+    
             function showMap() {
                 const mapContainer = document.getElementById('mapContainer');
                 if (!map) {
@@ -2764,7 +2796,7 @@
                         draggable: true,
                         position: center
                     });
-
+    
                     map.addListener('click', (e) => {
                         marker.setPosition(e.latLng);
                         const geocoder = new google.maps.Geocoder();
@@ -2774,7 +2806,7 @@
                             }
                         });
                     });
-
+    
                     marker.addListener('dragend', () => {
                         const pos = marker.getPosition();
                         const geocoder = new google.maps.Geocoder();
@@ -2788,7 +2820,7 @@
                     google.maps.event.trigger(map, 'resize');
                 }
             }
-
+    
             if (window.google && google.maps) {
                 showMap();
             } else {
@@ -2797,7 +2829,7 @@
                 loadGoogleMapsScript(apiKey);
             }
         }
-
+    
         document.getElementById('mapCloseBtn').addEventListener('click', () => {
             document.getElementById('mapModalOverlay').classList.remove('active');
         });
@@ -2806,7 +2838,7 @@
                 document.getElementById('mapModalOverlay').classList.remove('active');
             }
         });
-
+    
         function fillAddressFromPlace(place) {
             document.getElementById('addressLine2').value = '';
             document.getElementById('addressSuburb').value = '';
@@ -2815,9 +2847,9 @@
             document.getElementById('addressRegion').value = '';
             document.getElementById('countryNameDisplay').textContent = 'Country';
             document.getElementById('countryFlag').src = '';
-
+    
             document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
-
+    
             for (const comp of place.address_components) {
                 const types = comp.types;
                 if (types.includes('locality')) document.getElementById('addressCity').value = comp.long_name;
@@ -2837,7 +2869,7 @@
             }
             updateOrderSummary();
         }
-
+    
         function showPage(sectionId) {
             if (document.getElementById('order-section').classList.contains('active') && sectionId !== 'order-section') {
                 saveOrderState();
@@ -2845,19 +2877,19 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
-
+    
             document.getElementById('topBarRight').classList.remove('open');
             document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
-
+    
             if (sectionId === 'home-section') setTimeout(equalizeHeights, 50);
             if (sectionId === 'order-section') {
                 loadOrderState();
                 splitAllPhoneFields();
             }
-
+    
             window.scrollTo(0, 0);
         }
-
+    
         function setupHamburger() {
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('topBarRight');
@@ -2873,38 +2905,38 @@
                 }
             });
         }
-
+    
         function setupContactForm() {
             const form = document.getElementById('contactForm');
             const resultDiv = document.getElementById('contactResult');
             const sendBtn = document.getElementById('sendButton');
             if (!form) return;
-
+    
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const phone = document.getElementById('phone').value.trim();
                 const message = document.getElementById('message').value.trim();
-
+    
                 if (!name || !email || !message) {
                     showAlertModal('Missing Information', 'Please fill in all required fields.');
                     return;
                 }
-
+    
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Sending...';
-
+    
                 const phoneCode = document.getElementById('contactPhoneCodeInput').value;
                 const fullPhone = phoneCode ? phoneCode + ' ' + phone : phone;
-
+    
                 const params = new URLSearchParams();
                 params.append('action', 'sendContact');
                 params.append('name', name);
                 params.append('email', email);
                 params.append('phone', fullPhone);
                 params.append('message', message);
-
+    
                 try {
                     const res = await fetch(API_URL, { method: 'POST', body: params });
                     const data = await res.json();
@@ -2923,7 +2955,7 @@
                 }
             });
         }
-
+    
         function buildLegalTexts(legalObj) {
             function buildHTML(prefix) {
                 let keys = Object.keys(legalObj);
@@ -2934,7 +2966,7 @@
                 }
                 const titleKey = keys.find(k => k.endsWith('Heading'));
                 const contentKeys = keys.filter(k => k !== titleKey);
-
+    
                 let html = '';
                 for (const key of contentKeys) {
                     const value = (legalObj[key] || '').trim();
@@ -2948,14 +2980,14 @@
                 }
                 return { title: titleKey ? (legalObj[titleKey] || '').trim() : '', html };
             }
-
+    
             const privacy = buildHTML('Privacy');
             const terms = buildHTML('Terms');
-
+    
             legalPages.PrivacyPolicy = { title: privacy.title, html: privacy.html };
             legalPages.TermsOfService = { title: terms.title, html: terms.html };
         }
-
+    
         document.getElementById('privacyPolicyLink').addEventListener('click', (e) => {
             e.preventDefault();
             if (legalPages.PrivacyPolicy && legalPages.PrivacyPolicy.title) {
@@ -2972,30 +3004,30 @@
                 showAlertModal('Terms of Service', 'Terms text not available yet.');
             }
         });
-
+    
         document.addEventListener('contextmenu', function(e) {
             if (e.target.tagName === 'IMG') {
                 e.preventDefault();
                 showAlertModal('Protected', 'Images are copyrighted © GM Master Mariner.');
             }
         });
-
+    
         // ========== ADMIN ICON TOGGLE ==========
         (function() {
             const adminIcon = document.getElementById('adminIconLink');
             const adminImg = document.getElementById('adminIconImg');
             const bannerLogo = document.getElementById('bannerLogo');
-
+    
             function showAdminIcon() {
                 if (adminImg && adminImg.src && adminImg.src !== '' && adminImg.src !== window.location.href) {
                     adminIcon.style.setProperty('display', 'inline-flex', 'important');
                 }
             }
-
+    
             function hideAdminIcon() {
                 adminIcon.style.setProperty('display', 'none', 'important');
             }
-
+    
             if (bannerLogo) {
                 bannerLogo.style.cursor = 'pointer';
                 bannerLogo.addEventListener('click', function(e) {
@@ -3007,23 +3039,23 @@
                     }
                 });
             }
-
+    
             document.addEventListener('click', function(e) {
                 if (e.target !== bannerLogo && !bannerLogo.contains(e.target) && e.target !== adminIcon && !adminIcon.contains(e.target)) {
                     hideAdminIcon();
                 }
             });
-
+    
             hideAdminIcon();
         })();
-
+    
         (function() {
             const footer = document.getElementById('siteFooter');
             let pinned = false;
-
+    
             function expand() { footer.classList.remove('collapsed'); }
             function collapse() { footer.classList.add('collapsed'); }
-
+    
             footer.addEventListener('mouseenter', () => { if (!pinned) expand(); });
             footer.addEventListener('mouseleave', () => { if (!pinned) collapse(); });
             footer.addEventListener('click', () => {
@@ -3033,7 +3065,7 @@
             });
             collapse();
         })();
-
+    
         function hideSplashScreen() {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -3041,7 +3073,7 @@
                 setTimeout(() => { splash.style.display = 'none'; }, 500);
             }
         }
-
+    
         (function() {
             const dotsEl = document.getElementById('loadingDots');
             if (!dotsEl) return;
@@ -3059,9 +3091,9 @@
             });
             observer.observe(document.getElementById('splash-screen'), { attributes: true, attributeFilter: ['class'] });
         })();
-
+    
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-
+    
         document.querySelectorAll('.footer-col a[data-section]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -3069,12 +3101,12 @@
                 if (section) showPage(section);
             });
         });
-
+    
         async function init() {
             sessionStorage.removeItem('orderState');
             sessionStorage.removeItem('userDetails');
             sessionStorage.removeItem('verifiedEmail');
-
+    
             try {
                 const allData = await fetchAllSiteData();
                 appSettings = allData.settings || {};
@@ -3093,20 +3125,20 @@
                 setupHamburger();
                 setupContactForm();
                 equalizeHeights();
-
+    
                 splitAllPhoneFields();
                 setTimeout(splitAllPhoneFields, 800);
-
+    
                 paymentKeys = await fetchPaymentKeys();
                 initPayments();
-
+    
                 setTimeout(hideSplashScreen, 500);
             } catch (err) {
                 console.error('Error initializing:', err);
                 hideSplashScreen();
             }
         }
-
+    
         init();
     </script>
 </body>
