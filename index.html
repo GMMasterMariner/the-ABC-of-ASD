@@ -1275,7 +1275,6 @@
             document.getElementById('adminLoginStatus').style.display = 'none';
             document.getElementById('adminCodeStatus').style.display = 'none';
 
-            // Build admin select buttons from appSettings
             const container = document.getElementById('adminSelectButtons');
             const admin1Name = appSettings.Admin1Name || 'Admin 1';
             const admin2Name = appSettings.Admin2Name || 'Admin 2';
@@ -1306,18 +1305,16 @@
                 container.appendChild(btn);
             });
 
-            // Cancel button behaviour
-            document.getElementById('adminCodeCancelBtn').addEventListener('click', function() {
+            document.getElementById('adminCodeCancelBtn').onclick = function() {
                 document.getElementById('adminSelectStep').style.display = 'block';
                 document.getElementById('adminCodeStep').style.display = 'none';
                 document.getElementById('adminCodeStatus').style.display = 'none';
                 document.getElementById('adminCodeInput').value = '';
-            });
+            };
 
-            // Close modal when clicking overlay
-            overlay.addEventListener('click', function(e) {
+            overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
-            });
+            };
         }
 
         async function requestAdminCode(adminNum, adminName) {
@@ -1337,10 +1334,8 @@
                 if (data.result === 'success') {
                     document.getElementById('adminCodeStatus').textContent = '';
                     document.getElementById('adminCodeStatus').style.display = 'none';
-                    // Store admin info for later
                     sessionStorage.setItem('adminNum', adminNum);
                     sessionStorage.setItem('adminName', adminName);
-                    sessionStorage.setItem('adminIcon', appSettings['Admin' + adminNum + 'IconURL'] || '');
                 } else {
                     document.getElementById('adminCodeStatus').textContent = 'Failed to send code. Please try again.';
                 }
@@ -1349,43 +1344,34 @@
             }
         }
 
-        // Attach verify button listener after DOM is ready
-        function setupAdminVerifyListener() {
-            const verifyBtn = document.getElementById('adminVerifyBtn');
-            if (verifyBtn) {
-                verifyBtn.addEventListener('click', async function() {
-                    const code = document.getElementById('adminCodeInput').value.trim();
-                    const adminNum = sessionStorage.getItem('adminNum');
-                    if (!code || code.length !== 6) {
-                        document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
-                        document.getElementById('adminCodeStatus').style.display = 'block';
-                        return;
-                    }
-
-                    try {
-                        const params = new URLSearchParams();
-                        params.append('action', 'verifyAdminCode');
-                        params.append('admin', adminNum);
-                        params.append('code', code);
-                        const res = await fetch(API_URL, { method: 'POST', body: params });
-                        const data = await res.json();
-                        if (data.result === 'success') {
-                            document.getElementById('adminLoginOverlay').classList.remove('active');
-                            window.open('admin.html', '_blank');
-                        } else {
-                            document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
-                            document.getElementById('adminCodeStatus').style.display = 'block';
-                        }
-                    } catch (err) {
-                        document.getElementById('adminCodeStatus').textContent = 'Network error.';
-                        document.getElementById('adminCodeStatus').style.display = 'block';
-                    }
-                });
+        document.getElementById('adminVerifyBtn').addEventListener('click', async function() {
+            const code = document.getElementById('adminCodeInput').value.trim();
+            const adminNum = sessionStorage.getItem('adminNum');
+            if (!code || code.length !== 6) {
+                document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                document.getElementById('adminCodeStatus').style.display = 'block';
+                return;
             }
-        }
 
-        // Call this once on page load
-        setupAdminVerifyListener();
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'verifyAdminCode');
+                params.append('admin', adminNum);
+                params.append('code', code);
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    document.getElementById('adminLoginOverlay').classList.remove('active');
+                    window.open('admin.html', '_blank');
+                } else {
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                document.getElementById('adminCodeStatus').style.display = 'block';
+            }
+        });
 
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
