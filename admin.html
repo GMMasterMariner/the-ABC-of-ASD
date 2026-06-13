@@ -474,86 +474,87 @@
         let adminNum = '';
         let adminName = '';
     
-        async function loadLoginScreen() {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get('token');
-            const admin = params.get('admin');
-    
-            console.log('Admin page loaded - token:', token, 'admin:', admin);
-    
-            if (!token || !admin) {
-                document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
-                document.getElementById('codeInput').style.display = 'none';
-                document.getElementById('verifyBtn').style.display = 'none';
-                return;
-            }
-    
-            adminToken = token;
-            adminNum = admin;
-    
-            // Try to validate the token directly
-            try {
-                const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
-                const rawText = await res.text();
-                console.log('getAdminInfo raw response:', rawText);
-                
-                let data;
-                try {
-                    data = JSON.parse(rawText);
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                }
-                
-                if (data && data.result === 'success') {
-                    adminName = data.adminName;
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = adminName || 'Admin';
-                    loadAllData();
-                    return;
-                }
-            } catch (err) {
-                console.error('Failed to validate token:', err);
-            }
-    
-            // Token invalid - show code entry with request button
-            document.getElementById('loginPrompt').textContent = 'Session expired. Enter a new verification code.';
-            document.getElementById('requestCodeBtn').style.display = 'block';
-            document.getElementById('codeInput').focus();
+async function loadLoginScreen() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const admin = params.get('admin');
+
+    console.log('Admin page loaded - token:', token, 'admin:', admin);
+
+    if (!token || !admin) {
+        document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
+        document.getElementById('codeInput').style.display = 'none';
+        document.getElementById('verifyBtn').style.display = 'none';
+        return;
+    }
+
+    adminToken = token;
+    adminNum = admin;
+
+    // Verify the token directly (no code needed)
+    try {
+        const params = new URLSearchParams();
+        params.append('action', 'verifyAdminCode');
+        params.append('admin', adminNum);
+        params.append('token', token);
+        
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+        
+        console.log('Token verification result:', data);
+        
+        if (data.result === 'success') {
+            adminName = data.adminName;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminNameDisplay').textContent = adminName || 'Admin';
+            loadAllData();
+            return;
         }
-    
-        document.getElementById('verifyBtn').addEventListener('click', async () => {
-            const code = document.getElementById('codeInput').value.trim();
-            if (!code || code.length !== 6) {
-                document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
-                document.getElementById('loginError').style.display = 'block';
-                return;
-            }
-    
-            try {
-                const params = new URLSearchParams();
-                params.append('action', 'verifyAdminCode');
-                params.append('admin', adminNum);
-                params.append('code', code);
-                
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-    
-                if (data.result === 'success') {
-                    adminToken = data.token;
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
-                    loadAllData();
-                } else {
-                    document.getElementById('loginError').textContent = data.message || 'Invalid code.';
-                    document.getElementById('loginError').style.display = 'block';
-                }
-            } catch (err) {
-                document.getElementById('loginError').textContent = 'Network error.';
-                document.getElementById('loginError').style.display = 'block';
-            }
-        });
+    } catch (err) {
+        console.error('Token verification failed:', err);
+    }
+
+    // If token verification failed, show code entry
+    document.getElementById('loginPrompt').textContent = 'Session expired. Enter a new verification code.';
+    document.getElementById('requestCodeBtn').style.display = 'block';
+    document.getElementById('codeInput').focus();
+}
+
+document.getElementById('verifyBtn').addEventListener('click', async () => {
+    const code = document.getElementById('codeInput').value.trim();
+    if (!code || code.length !== 6) {
+        document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
+        document.getElementById('loginError').style.display = 'block';
+        return;
+    }
+
+    try {
+        const params = new URLSearchParams();
+        params.append('action', 'verifyAdminCode');
+        params.append('admin', adminNum);
+        params.append('code', code);
+        
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+
+        console.log('Code verification result:', data);
+
+        if (data.result === 'success') {
+            adminToken = data.token;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
+            loadAllData();
+        } else {
+            document.getElementById('loginError').textContent = data.message || 'Invalid code.';
+            document.getElementById('loginError').style.display = 'block';
+        }
+    } catch (err) {
+        document.getElementById('loginError').textContent = 'Network error.';
+        document.getElementById('loginError').style.display = 'block';
+    }
+});
     
         document.getElementById('requestCodeBtn').addEventListener('click', async () => {
             const btn = document.getElementById('requestCodeBtn');
