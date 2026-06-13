@@ -22,7 +22,6 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            /* Background image is set dynamically via JavaScript */
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
@@ -113,7 +112,6 @@
         .modal-box .btn-secondary:hover {
             background: #888;
         }
-        /* Admin login modal */
         .admin-login-box input[type="password"] {
             width: 100%;
             padding: 0.8rem;
@@ -853,52 +851,6 @@
             .top-bar { min-height: 54px; }
             .banner-logo img { max-height: 28px; }
         }
-                .admin-sticky-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #194373;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem 1.5rem;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .admin-sticky-bar h1 {
-            font-size: 1.2rem;
-            margin: 0;
-            color: white;
-        }
-        .admin-sticky-bar .btn-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .admin-sticky-bar button {
-            margin: 0;
-            padding: 0.4rem 1rem;
-            font-size: 0.9rem;
-            background: var(--cta-color, #f29b2a);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
-        .admin-sticky-bar button:hover { opacity: 0.9; }
-        .admin-sticky-bar .btn-exit {
-            background: #aaa;
-        }
-        .admin-sticky-bar .btn-exit:hover {
-            background: #888;
-        }
-        #saveStatus {
-            font-size: 0.9rem;
-            color: #ddd;
-        }
-        body { padding-top: 60px; }
     </style>
 </head>
 <body>
@@ -1327,9 +1279,7 @@
                 const data = await res.json();
                 if (data.result === 'success' || (data.result === 'error' && data.message !== 'Unauthorised')) {
                     document.getElementById('adminLoginOverlay').classList.remove('active');
-                    // Store password for admin page
                     sessionStorage.setItem('adminPassword', password);
-                    // Open admin page in new tab
                     window.open('admin.html', '_blank');
                 } else {
                     statusEl.textContent = 'Wrong password';
@@ -1864,7 +1814,6 @@
             document.body.style.color = settings.TextColor || '#000000';
             document.getElementById('topBar').style.backgroundColor = settings.PrimaryColor || '#194373';
 
-            // Background image
             if (settings.BackgroundImage) {
                 document.body.style.backgroundImage = `url('${settings.BackgroundImage}')`;
             }
@@ -1884,10 +1833,8 @@
                 logo.style.display = 'none';
             }
 
-            // Admin icon
             if (settings.NavIconURLAdmin) {
                 document.getElementById('adminIconImg').src = settings.NavIconURLAdmin;
-                // Keep hidden until banner logo is clicked
             }
 
             const titleEl = document.getElementById('bannerTitle');
@@ -2944,19 +2891,16 @@
             const adminImg = document.getElementById('adminIconImg');
             const bannerLogo = document.getElementById('bannerLogo');
 
-            // Function to show the admin icon (only if it has a valid image)
             function showAdminIcon() {
                 if (adminImg && adminImg.src && adminImg.src !== '' && adminImg.src !== window.location.href) {
                     adminIcon.style.setProperty('display', 'inline-flex', 'important');
                 }
             }
 
-            // Function to hide the admin icon
             function hideAdminIcon() {
                 adminIcon.style.setProperty('display', 'none', 'important');
             }
 
-            // Click on banner logo toggles admin icon
             if (bannerLogo) {
                 bannerLogo.style.cursor = 'pointer';
                 bannerLogo.addEventListener('click', function(e) {
@@ -2969,14 +2913,12 @@
                 });
             }
 
-            // Click anywhere else hides admin icon
             document.addEventListener('click', function(e) {
                 if (e.target !== bannerLogo && !bannerLogo.contains(e.target) && e.target !== adminIcon && !adminIcon.contains(e.target)) {
                     hideAdminIcon();
                 }
             });
 
-            // Hide on page load
             hideAdminIcon();
         })();
 
