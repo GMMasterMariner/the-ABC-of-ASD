@@ -559,39 +559,57 @@
             saveBtn.disabled = false;
         }
 
-        async function init() {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get('token');
-            const admin = params.get('admin');
+async function init() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const admin = params.get('admin');
 
-            if (!token || !admin) {
-                document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
-                return;
-            }
+    console.log('Admin page - token:', token, 'admin:', admin);
 
-            adminToken = token;
-            adminNum = admin;
+    if (!token || !admin) {
+        document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
+        return;
+    }
 
-            try {
-                const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
-                const data = await res.json();
+    adminToken = token;
+    adminNum = admin;
 
-                if (data.result === 'success') {
-                    adminName = data.adminName;
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = '👤 ' + adminName;
-                    await loadAllData();
-                    initColorPreviews();
-                    initImagePreviews();
-                    return;
-                }
-            } catch (err) {
-                console.error('Error:', err);
-            }
-
-            document.getElementById('loginPrompt').textContent = 'Session expired. Please login again from the main site.';
+    try {
+        const url = API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin);
+        console.log('Fetching:', url);
+        
+        const res = await fetch(url);
+        const rawText = await res.text();
+        console.log('Raw response:', rawText);
+        
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            document.getElementById('loginPrompt').textContent = 'Server error. Please try again.';
+            return;
         }
+
+        console.log('Parsed data:', data);
+
+        if (data.result === 'success') {
+            adminName = data.adminName;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminNameDisplay').textContent = '👤 ' + adminName;
+            await loadAllData();
+            initColorPreviews();
+            initImagePreviews();
+            return;
+        } else {
+            document.getElementById('loginPrompt').textContent = 'Session expired: ' + (data.message || 'Please login again from the main site.');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        document.getElementById('loginPrompt').textContent = 'Network error. Please check your connection and try again.';
+    }
+}
 
         function logout() {
             window.close();
