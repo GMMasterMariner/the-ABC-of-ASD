@@ -29,11 +29,7 @@
             cursor: pointer;
         }
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
-        .admin-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
+        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
         .section {
             background: white;
             border-radius: 8px;
@@ -41,50 +37,18 @@
             margin-bottom: 2rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .section h2 {
-            color: #194373;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 0.5rem;
+        .section h2 { color: #194373; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 1rem; font-family: inherit;
         }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #555;
-        }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .btn {
-            background: #f29b2a;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
+            background: #f29b2a; color: white; border: none; padding: 0.8rem 1.5rem;
+            border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer;
         }
         .btn:hover { background: #e08a1a; }
         .btn-secondary { background: #aaa; }
@@ -92,89 +56,37 @@
         .btn-danger { background: #dc3c33; }
         .btn-danger:hover { background: #c53030; }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
-        .status-message {
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .tab-nav {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
+        .status-message { padding: 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; }
+        .status-message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .status-message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+        .tab-nav { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
         .tab-btn {
-            padding: 0.6rem 1.2rem;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 0.6rem 1.2rem; border: 1px solid #ddd; background: white;
+            border-radius: 4px; cursor: pointer;
         }
-        .tab-btn.active {
-            background: #194373;
-            color: white;
-            border-color: #194373;
-        }
+        .tab-btn.active { background: #194373; color: white; border-color: #194373; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         #loginScreen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: #194373;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; background: #194373;
         }
         .login-box {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
+            background: white; border-radius: 12px; padding: 3rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center;
+            max-width: 400px; width: 90%;
         }
-        .login-box h2 {
-            color: #194373;
-            margin-bottom: 0.5rem;
-        }
-        .login-box p {
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
-        .login-box input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1.3rem;
-            letter-spacing: 4px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-family: inherit;
-        }
+        .login-box h2 { color: #194373; margin-bottom: 0.5rem; }
+        .login-box p { color: #666; margin-bottom: 1.5rem; }
         #adminPanel { display: none; }
+        .loading-text { color: #666; font-style: italic; }
     </style>
 </head>
 <body>
     <div id="loginScreen">
         <div class="login-box">
             <h2>Admin Login</h2>
-            <p id="loginPrompt">Enter your verification code</p>
-            <input type="text" id="codeInput" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-            <button class="btn" id="verifyBtn" style="width:100%;">Verify</button>
-            <p id="loginError" style="color:#dc3c33; margin-top:1rem; display:none;"></p>
+            <p id="loginPrompt">Verifying access...</p>
         </div>
     </div>
 
@@ -203,81 +115,27 @@
                 <div class="section">
                     <h2>Site Settings</h2>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Primary Color</label>
-                            <input type="color" id="primaryColor" value="#194373">
-                        </div>
-                        <div class="form-group">
-                            <label>CTA Color</label>
-                            <input type="color" id="ctaColor" value="#f29b2a">
-                        </div>
-                        <div class="form-group">
-                            <label>Secondary Color</label>
-                            <input type="color" id="secondaryColor" value="#f29b2a">
-                        </div>
-                        <div class="form-group">
-                            <label>Alert Color</label>
-                            <input type="color" id="alertColor" value="#dc3c33">
-                        </div>
-                        <div class="form-group">
-                            <label>Background Color</label>
-                            <input type="color" id="backgroundColor" value="#ffffff">
-                        </div>
-                        <div class="form-group">
-                            <label>Text Color</label>
-                            <input type="color" id="textColor" value="#000000">
-                        </div>
+                        <div class="form-group"><label>Primary Color</label><input type="color" id="primaryColor"></div>
+                        <div class="form-group"><label>CTA Color</label><input type="color" id="ctaColor"></div>
+                        <div class="form-group"><label>Secondary Color</label><input type="color" id="secondaryColor"></div>
+                        <div class="form-group"><label>Alert Color</label><input type="color" id="alertColor"></div>
+                        <div class="form-group"><label>Background Color</label><input type="color" id="backgroundColor"></div>
+                        <div class="form-group"><label>Text Color</label><input type="color" id="textColor"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Background Image URL</label>
-                        <input type="text" id="backgroundImage" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label>Banner Logo URL</label>
-                        <input type="text" id="bannerLogo">
-                    </div>
-                    <div class="form-group">
-                        <label>Banner Book Title</label>
-                        <input type="text" id="bannerBookTitle">
-                    </div>
-                    <div class="form-group">
-                        <label>Banner Book Title Abbreviation</label>
-                        <input type="text" id="bannerBookTitleAbbreviation">
-                    </div>
-                    <div class="form-group">
-                        <label>Banner Book Subtitle</label>
-                        <input type="text" id="bannerBookSubtitle">
-                    </div>
+                    <div class="form-group"><label>Background Image URL</label><input type="text" id="backgroundImage"></div>
+                    <div class="form-group"><label>Banner Logo URL</label><input type="text" id="bannerLogo"></div>
+                    <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
+                    <div class="form-group"><label>Banner Book Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                    <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Admin 1 Name</label>
-                            <input type="text" id="admin1Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Admin 1 Email</label>
-                            <input type="email" id="admin1Email">
-                        </div>
-                        <div class="form-group">
-                            <label>Admin 1 Icon URL</label>
-                            <input type="text" id="admin1IconURL">
-                        </div>
-                        <div class="form-group">
-                            <label>Admin 2 Name</label>
-                            <input type="text" id="admin2Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Admin 2 Email</label>
-                            <input type="email" id="admin2Email">
-                        </div>
-                        <div class="form-group">
-                            <label>Admin 2 Icon URL</label>
-                            <input type="text" id="admin2IconURL">
-                        </div>
+                        <div class="form-group"><label>Admin 1 Name</label><input type="text" id="admin1Name"></div>
+                        <div class="form-group"><label>Admin 1 Email</label><input type="email" id="admin1Email"></div>
+                        <div class="form-group"><label>Admin 1 Icon URL</label><input type="text" id="admin1IconURL"></div>
+                        <div class="form-group"><label>Admin 2 Name</label><input type="text" id="admin2Name"></div>
+                        <div class="form-group"><label>Admin 2 Email</label><input type="email" id="admin2Email"></div>
+                        <div class="form-group"><label>Admin 2 Icon URL</label><input type="text" id="admin2IconURL"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Google Maps API Key</label>
-                        <input type="text" id="googleMapsApiKey">
-                    </div>
+                    <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
                     <button class="btn" onclick="saveSettings()">Save Settings</button>
                 </div>
             </div>
@@ -285,82 +143,34 @@
             <div class="tab-content" id="tab-products">
                 <div class="section">
                     <h2>Product 1</h2>
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" id="product1Name">
+                    <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Type (Physical/Digital)</label>
-                            <select id="product1Type">
-                                <option value="Physical">Physical</option>
-                                <option value="Digital">Digital</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Base Price (ZAR)</label>
-                            <input type="number" id="product1BasePrice" step="0.01">
-                        </div>
+                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
+                        <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Weight (kg)</label>
-                            <input type="number" id="product1Weight" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>Image URL</label>
-                            <input type="text" id="product1ImageURL">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Discount Threshold</label>
-                            <input type="number" id="product1DiscountThreshold">
-                        </div>
-                        <div class="form-group">
-                            <label>Discount Percent</label>
-                            <input type="number" id="product1DiscountPercent" step="0.1">
-                        </div>
+                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold"></div>
+                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1"></div>
                     </div>
                 </div>
                 <div class="section">
                     <h2>Product 2</h2>
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" id="product2Name">
+                    <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Type (Physical/Digital)</label>
-                            <select id="product2Type">
-                                <option value="Physical">Physical</option>
-                                <option value="Digital">Digital</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Base Price (ZAR)</label>
-                            <input type="number" id="product2BasePrice" step="0.01">
-                        </div>
+                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
+                        <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Weight (kg)</label>
-                            <input type="number" id="product2Weight" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>Image URL</label>
-                            <input type="text" id="product2ImageURL">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Discount Threshold</label>
-                            <input type="number" id="product2DiscountThreshold">
-                        </div>
-                        <div class="form-group">
-                            <label>Discount Percent</label>
-                            <input type="number" id="product2DiscountPercent" step="0.1">
-                        </div>
+                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold"></div>
+                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1"></div>
                     </div>
                     <button class="btn" onclick="saveProducts()">Save Products</button>
                 </div>
@@ -369,42 +179,15 @@
             <div class="tab-content" id="tab-home">
                 <div class="section">
                     <h2>Home Page Content</h2>
-                    <div class="form-group">
-                        <label>Home Page Book Headline</label>
-                        <input type="text" id="homeHeadline">
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Book Description 1</label>
-                        <textarea id="homeDesc1"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Book Description 2</label>
-                        <textarea id="homeDesc2"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Item 1 Main Text</label>
-                        <input type="text" id="homeItem1Main">
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Item 1 Sub Text</label>
-                        <input type="text" id="homeItem1Sub">
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Item 2 Main Text</label>
-                        <input type="text" id="homeItem2Main">
-                    </div>
-                    <div class="form-group">
-                        <label>Home Page Item 2 Sub Text</label>
-                        <input type="text" id="homeItem2Sub">
-                    </div>
-                    <div class="form-group">
-                        <label>Carousel Interval (ms)</label>
-                        <input type="number" id="carouselInterval" value="3000">
-                    </div>
-                    <div class="form-group">
-                        <label>Carousel Images (one per line, up to 9)</label>
-                        <textarea id="carouselImages" rows="4" placeholder="https://...&#10;https://...&#10;https://..."></textarea>
-                    </div>
+                    <div class="form-group"><label>Home Page Book Headline</label><input type="text" id="homeHeadline"></div>
+                    <div class="form-group"><label>Home Page Book Description 1</label><textarea id="homeDesc1"></textarea></div>
+                    <div class="form-group"><label>Home Page Book Description 2</label><textarea id="homeDesc2"></textarea></div>
+                    <div class="form-group"><label>Home Page Item 1 Main Text</label><input type="text" id="homeItem1Main"></div>
+                    <div class="form-group"><label>Home Page Item 1 Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                    <div class="form-group"><label>Home Page Item 2 Main Text</label><input type="text" id="homeItem2Main"></div>
+                    <div class="form-group"><label>Home Page Item 2 Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                    <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
+                    <div class="form-group"><label>Carousel Images (one per line)</label><textarea id="carouselImages" rows="4"></textarea></div>
                     <button class="btn" onclick="saveHomePage()">Save Home Page</button>
                 </div>
             </div>
@@ -412,22 +195,10 @@
             <div class="tab-content" id="tab-about">
                 <div class="section">
                     <h2>About Section</h2>
-                    <div class="form-group">
-                        <label>Author Image 1 URL</label>
-                        <input type="text" id="authorImage1">
-                    </div>
-                    <div class="form-group">
-                        <label>Author Image 2 URL</label>
-                        <input type="text" id="authorImage2">
-                    </div>
-                    <div class="form-group">
-                        <label>Author Short Bio</label>
-                        <textarea id="authorShortBio" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Author Extended Bio</label>
-                        <textarea id="authorExtendedBio" rows="6"></textarea>
-                    </div>
+                    <div class="form-group"><label>Author Image 1 URL</label><input type="text" id="authorImage1"></div>
+                    <div class="form-group"><label>Author Image 2 URL</label><input type="text" id="authorImage2"></div>
+                    <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3"></textarea></div>
+                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="6"></textarea></div>
                     <button class="btn" onclick="saveAbout()">Save About</button>
                 </div>
             </div>
@@ -445,23 +216,11 @@
                 <div class="section">
                     <h2>Legal Pages</h2>
                     <h3>Privacy Policy</h3>
-                    <div class="form-group">
-                        <label>Privacy Policy Heading</label>
-                        <input type="text" id="privacyHeading">
-                    </div>
-                    <div class="form-group">
-                        <label>Privacy Policy Content</label>
-                        <textarea id="privacyContent" rows="8"></textarea>
-                    </div>
+                    <div class="form-group"><label>Privacy Policy Heading</label><input type="text" id="privacyHeading"></div>
+                    <div class="form-group"><label>Privacy Policy Content</label><textarea id="privacyContent" rows="8"></textarea></div>
                     <h3>Terms of Service</h3>
-                    <div class="form-group">
-                        <label>Terms of Service Heading</label>
-                        <input type="text" id="termsHeading">
-                    </div>
-                    <div class="form-group">
-                        <label>Terms of Service Content</label>
-                        <textarea id="termsContent" rows="8"></textarea>
-                    </div>
+                    <div class="form-group"><label>Terms of Service Heading</label><input type="text" id="termsHeading"></div>
+                    <div class="form-group"><label>Terms of Service Content</label><textarea id="termsContent" rows="8"></textarea></div>
                     <button class="btn" onclick="saveLegal()">Save Legal</button>
                 </div>
             </div>
@@ -473,186 +232,93 @@
         let adminToken = '';
         let adminNum = '';
         let adminName = '';
-    
-async function loadLoginScreen() {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const admin = params.get('admin');
 
-    console.log('Admin page loaded - token:', token, 'admin:', admin);
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const admin = params.get('admin');
 
-    if (!token || !admin) {
-        document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
-        document.getElementById('codeInput').style.display = 'none';
-        document.getElementById('verifyBtn').style.display = 'none';
-        return;
-    }
+            console.log('Admin page - token:', token, 'admin:', admin);
 
-    adminToken = token;
-    adminNum = admin;
+            if (!token || !admin) {
+                document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
+                return;
+            }
 
-    // Verify the token directly (no code needed)
-    try {
-        const params = new URLSearchParams();
-        params.append('action', 'verifyAdminCode');
-        params.append('admin', adminNum);
-        params.append('token', token);
-        
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
-        
-        console.log('Token verification result:', data);
-        
-        if (data.result === 'success') {
-            adminName = data.adminName;
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminNameDisplay').textContent = adminName || 'Admin';
-            loadAllData();
-            return;
-        }
-    } catch (err) {
-        console.error('Token verification failed:', err);
-    }
+            adminToken = token;
+            adminNum = admin;
 
-    // If token verification failed, show code entry
-    document.getElementById('loginPrompt').textContent = 'Session expired. Enter a new verification code.';
-    document.getElementById('requestCodeBtn').style.display = 'block';
-    document.getElementById('codeInput').focus();
-}
-
-document.getElementById('verifyBtn').addEventListener('click', async () => {
-    const code = document.getElementById('codeInput').value.trim();
-    if (!code || code.length !== 6) {
-        document.getElementById('loginError').textContent = 'Please enter a 6-digit code.';
-        document.getElementById('loginError').style.display = 'block';
-        return;
-    }
-
-    try {
-        const params = new URLSearchParams();
-        params.append('action', 'verifyAdminCode');
-        params.append('admin', adminNum);
-        params.append('code', code);
-        
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
-
-        console.log('Code verification result:', data);
-
-        if (data.result === 'success') {
-            adminToken = data.token;
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminNameDisplay').textContent = adminName || data.adminName || 'Admin';
-            loadAllData();
-        } else {
-            document.getElementById('loginError').textContent = data.message || 'Invalid code.';
-            document.getElementById('loginError').style.display = 'block';
-        }
-    } catch (err) {
-        document.getElementById('loginError').textContent = 'Network error.';
-        document.getElementById('loginError').style.display = 'block';
-    }
-});
-    
-        document.getElementById('requestCodeBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('requestCodeBtn');
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('loginSuccess').style.display = 'none';
-            
+            // Try to get admin info with the token
             try {
-                const params = new URLSearchParams();
-                params.append('action', 'sendAdminCode');
-                params.append('admin', adminNum);
-                
-                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const res = await fetch(API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin));
                 const data = await res.json();
-                
+                console.log('getAdminInfo result:', data);
+
                 if (data.result === 'success') {
-                    document.getElementById('loginSuccess').textContent = 'Code sent! Check your email.';
-                    document.getElementById('loginSuccess').style.display = 'block';
-                    document.getElementById('codeInput').value = '';
-                    document.getElementById('codeInput').focus();
-                } else {
-                    document.getElementById('loginError').textContent = data.message || 'Failed to send code.';
-                    document.getElementById('loginError').style.display = 'block';
+                    adminName = data.adminName;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminNameDisplay').textContent = adminName;
+                    loadAllData();
+                    return;
                 }
             } catch (err) {
-                document.getElementById('loginError').textContent = 'Network error.';
-                document.getElementById('loginError').style.display = 'block';
+                console.error('Error:', err);
             }
-            
-            btn.disabled = false;
-            btn.textContent = 'Request New Code';
-        });
-    
-        document.getElementById('codeInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('verifyBtn').click();
-        });
-    
-        function logout() {
-            adminToken = '';
-            adminNum = '';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('codeInput').value = '';
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('loginSuccess').style.display = 'none';
-            document.getElementById('requestCodeBtn').style.display = 'none';
-            window.history.pushState({}, '', 'admin.html');
+
+            // If we get here, token is invalid
+            document.getElementById('loginPrompt').textContent = 'Session expired. Please login again from the main site.';
         }
-    
+
+        function logout() {
+            window.close();
+        }
+
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             statusEl.textContent = message;
             statusEl.className = 'status-message ' + type;
-            statusEl.style.display = 'block';
-            setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
+            setTimeout(() => { statusEl.className = 'status-message'; }, 3000);
         }
-    
+
         async function loadAllData() {
             try {
                 const res = await fetch(API_URL + '?action=getAllAdminData&token=' + encodeURIComponent(adminToken) + '&admin=' + encodeURIComponent(adminNum));
                 const data = await res.json();
                 
                 if (data.settings) {
-                    populateSettings(data.settings || {});
+                    populateSettings(data.settings);
                     populateProducts(data.products || []);
                     populateHome(data.home || {});
                     populateAbout(data.about || {});
                     populateShipping(data.shippingRegions || [], data.regionRates || []);
                     populateLegal(data.legal || {});
-                } else {
-                    showStatus('No data received', 'error');
                 }
             } catch (err) {
-                console.error('Failed to load data:', err);
+                console.error(err);
                 showStatus('Error loading data', 'error');
             }
         }
 
-        function populateSettings(settings) {
-            document.getElementById('primaryColor').value = settings.PrimaryColor || '#194373';
-            document.getElementById('ctaColor').value = settings.CTAColor || '#f29b2a';
-            document.getElementById('secondaryColor').value = settings.SecondaryColor || '#f29b2a';
-            document.getElementById('alertColor').value = settings.AlertColour || '#dc3c33';
-            document.getElementById('backgroundColor').value = settings.BackgroundColor || '#ffffff';
-            document.getElementById('textColor').value = settings.TextColor || '#000000';
-            document.getElementById('backgroundImage').value = settings.BackgroundImage || '';
-            document.getElementById('bannerLogo').value = settings.BannerLogo || '';
-            document.getElementById('bannerBookTitle').value = settings.BannerBookTitle || '';
-            document.getElementById('bannerBookTitleAbbreviation').value = settings.BannerBookTitleAbbreviation || '';
-            document.getElementById('bannerBookSubtitle').value = settings.BannerBookSubTitile || '';
-            document.getElementById('admin1Name').value = settings.Admin1Name || '';
-            document.getElementById('admin1Email').value = settings.Admin1Email || '';
-            document.getElementById('admin1IconURL').value = settings.Admin1IconURL || '';
-            document.getElementById('admin2Name').value = settings.Admin2Name || '';
-            document.getElementById('admin2Email').value = settings.Admin2Email || '';
-            document.getElementById('admin2IconURL').value = settings.Admin2IconURL || '';
-            document.getElementById('googleMapsApiKey').value = settings.GoogleMapsApiKey || '';
+        function populateSettings(s) {
+            document.getElementById('primaryColor').value = s.PrimaryColor || '#194373';
+            document.getElementById('ctaColor').value = s.CTAColor || '#f29b2a';
+            document.getElementById('secondaryColor').value = s.SecondaryColor || '#f29b2a';
+            document.getElementById('alertColor').value = s.AlertColour || '#dc3c33';
+            document.getElementById('backgroundColor').value = s.BackgroundColor || '#ffffff';
+            document.getElementById('textColor').value = s.TextColor || '#000000';
+            document.getElementById('backgroundImage').value = s.BackgroundImage || '';
+            document.getElementById('bannerLogo').value = s.BannerLogo || '';
+            document.getElementById('bannerBookTitle').value = s.BannerBookTitle || '';
+            document.getElementById('bannerBookTitleAbbreviation').value = s.BannerBookTitleAbbreviation || '';
+            document.getElementById('bannerBookSubtitle').value = s.BannerBookSubTitile || '';
+            document.getElementById('admin1Name').value = s.Admin1Name || '';
+            document.getElementById('admin1Email').value = s.Admin1Email || '';
+            document.getElementById('admin1IconURL').value = s.Admin1IconURL || '';
+            document.getElementById('admin2Name').value = s.Admin2Name || '';
+            document.getElementById('admin2Email').value = s.Admin2Email || '';
+            document.getElementById('admin2IconURL').value = s.Admin2IconURL || '';
+            document.getElementById('googleMapsApiKey').value = s.GoogleMapsApiKey || '';
         }
 
         function populateProducts(products) {
@@ -685,13 +351,12 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
             document.getElementById('homeItem2Main').value = home.HomePageItem2MainText || '';
             document.getElementById('homeItem2Sub').value = home.HomePageItem2SubText || '';
             document.getElementById('carouselInterval').value = home.HomePageCarouselInterval || '3000';
-            
-            let carouselUrls = [];
+            let urls = [];
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
-                if (url) carouselUrls.push(url);
+                if (url) urls.push(url);
             }
-            document.getElementById('carouselImages').value = carouselUrls.join('\n');
+            document.getElementById('carouselImages').value = urls.join('\n');
         }
 
         function populateAbout(about) {
@@ -704,54 +369,28 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
         function populateShipping(regions, rates) {
             const container = document.getElementById('shippingRegionsList');
             container.innerHTML = '';
-            
             const allLocations = [...new Set([...regions.map(r => r.Location), ...rates.map(r => r.Location)])];
-            
-            allLocations.forEach((loc) => {
+            allLocations.forEach(loc => {
                 const region = regions.find(r => r.Location === loc) || {};
                 const regionRates = rates.filter(r => r.Location === loc);
-                
                 const div = document.createElement('div');
                 div.className = 'section';
                 div.style.marginBottom = '1rem';
                 div.innerHTML = `
                     <h3>${loc || 'New Region'}</h3>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label>Location</label>
-                            <input type="text" class="region-location" value="${loc || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Region Code</label>
-                            <input type="text" class="region-code" value="${region.Region || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Flag URL</label>
-                            <input type="text" class="region-flag" value="${region.FlagURL || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Code</label>
-                            <input type="text" class="region-phone" value="${region.PhoneCode || '+1'}">
-                        </div>
+                        <div class="form-group"><label>Location</label><input type="text" class="region-location" value="${loc || ''}"></div>
+                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${region.Region || ''}"></div>
+                        <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag" value="${region.FlagURL || ''}"></div>
+                        <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${region.PhoneCode || '+1'}"></div>
                     </div>
                     <div class="rates-container">
                         ${regionRates.map(rate => `
                             <div class="form-row rate-row" style="margin-bottom:0.5rem;">
-                                <div class="form-group">
-                                    <label>Max Weight (kg)</label>
-                                    <input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label>Cost (ZAR)</label>
-                                    <input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label>Time</label>
-                                    <input type="text" class="rate-time" value="${rate.Time || ''}">
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button>
-                                </div>
+                                <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01"></div>
+                                <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01"></div>
+                                <div class="form-group"><label>Time</label><input type="text" class="rate-time" value="${rate.Time || ''}"></div>
+                                <div class="form-group"><button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button></div>
                             </div>
                         `).join('')}
                     </div>
@@ -765,18 +404,10 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
         function populateLegal(legal) {
             const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
             const termsKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('terms'));
-            
             document.getElementById('privacyHeading').value = legal[privacyKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('privacyContent').value = privacyKeys
-                .filter(k => !k.toLowerCase().endsWith('heading'))
-                .map(k => k + ': ' + legal[k])
-                .join('\n\n');
-            
+            document.getElementById('privacyContent').value = privacyKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
             document.getElementById('termsHeading').value = legal[termsKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('termsContent').value = termsKeys
-                .filter(k => !k.toLowerCase().endsWith('heading'))
-                .map(k => k + ': ' + legal[k])
-                .join('\n\n');
+            document.getElementById('termsContent').value = termsKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
         }
 
         function addShippingRegion() {
@@ -787,22 +418,10 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
             div.innerHTML = `
                 <h3>New Region</h3>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" class="region-location" placeholder="Country name">
-                    </div>
-                    <div class="form-group">
-                        <label>Region Code</label>
-                        <input type="text" class="region-code" placeholder="e.g., Africa">
-                    </div>
-                    <div class="form-group">
-                        <label>Flag URL</label>
-                        <input type="text" class="region-flag">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Code</label>
-                        <input type="text" class="region-phone" value="+1">
-                    </div>
+                    <div class="form-group"><label>Location</label><input type="text" class="region-location" placeholder="Country name"></div>
+                    <div class="form-group"><label>Region Code</label><input type="text" class="region-code"></div>
+                    <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag"></div>
+                    <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
                 </div>
                 <div class="rates-container"></div>
                 <button class="btn btn-sm btn-secondary" onclick="addRateRow(this)">Add Rate</button>
@@ -817,27 +436,27 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
             row.className = 'form-row rate-row';
             row.style.marginBottom = '0.5rem';
             row.innerHTML = `
-                <div class="form-group">
-                    <label>Max Weight (kg)</label>
-                    <input type="number" class="rate-maxweight" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Cost (ZAR)</label>
-                    <input type="number" class="rate-cost" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Time</label>
-                    <input type="text" class="rate-time">
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button>
-                </div>
+                <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" step="0.01"></div>
+                <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" step="0.01"></div>
+                <div class="form-group"><label>Time</label><input type="text" class="rate-time"></div>
+                <div class="form-group"><button class="btn btn-danger btn-sm" onclick="this.closest('.rate-row').remove()">Remove</button></div>
             `;
             container.appendChild(row);
         }
 
+        async function saveData(action, dataObj) {
+            const params = new URLSearchParams();
+            params.append('action', action);
+            params.append('token', adminToken);
+            params.append('admin', adminNum);
+            params.append('data', JSON.stringify(dataObj));
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            showStatus(data.result === 'success' ? 'Saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
+        }
+
         async function saveSettings() {
-            const settings = {
+            await saveData('saveSettings', {
                 PrimaryColor: document.getElementById('primaryColor').value,
                 CTAColor: document.getElementById('ctaColor').value,
                 SecondaryColor: document.getElementById('secondaryColor').value,
@@ -856,25 +475,11 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                 Admin2Email: document.getElementById('admin2Email').value,
                 Admin2IconURL: document.getElementById('admin2IconURL').value,
                 GoogleMapsApiKey: document.getElementById('googleMapsApiKey').value
-            };
-
-            const params = new URLSearchParams();
-            params.append('action', 'saveSettings');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(settings));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'Settings saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving settings', 'error');
-            }
+            });
         }
 
         async function saveProducts() {
-            const products = [
+            await saveData('saveProducts', [
                 {
                     ProductName: document.getElementById('product1Name').value,
                     Type: document.getElementById('product1Type').value,
@@ -893,21 +498,7 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                     DiscountThreshold: parseInt(document.getElementById('product2DiscountThreshold').value) || 0,
                     DiscountPercent: parseFloat(document.getElementById('product2DiscountPercent').value) || 0
                 }
-            ];
-
-            const params = new URLSearchParams();
-            params.append('action', 'saveProducts');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(products));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'Products saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving products', 'error');
-            }
+            ]);
         }
 
         async function saveHomePage() {
@@ -922,64 +513,30 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                 HomePageItem2SubText: document.getElementById('homeItem2Sub').value,
                 HomePageCarouselInterval: parseInt(document.getElementById('carouselInterval').value) || 3000
             };
-            
-            carouselUrls.forEach((url, i) => {
-                home['HomePageCarouselImage' + (i + 1)] = url.trim();
-            });
-
-            const params = new URLSearchParams();
-            params.append('action', 'saveHome');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(home));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'Home page saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving home page', 'error');
-            }
+            carouselUrls.forEach((url, i) => { home['HomePageCarouselImage' + (i + 1)] = url.trim(); });
+            await saveData('saveHome', home);
         }
 
         async function saveAbout() {
-            const about = {
+            await saveData('saveAbout', {
                 AuthorImage1URL: document.getElementById('authorImage1').value,
                 AuthorImage2URL: document.getElementById('authorImage2').value,
                 AuthorShortBio: document.getElementById('authorShortBio').value,
                 AuthorExtendedBio: document.getElementById('authorExtendedBio').value
-            };
-
-            const params = new URLSearchParams();
-            params.append('action', 'saveAbout');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(about));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'About saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving about', 'error');
-            }
+            });
         }
 
         async function saveShipping() {
-            const regions = [];
-            const rates = [];
-            
+            const regions = [], rates = [];
             document.querySelectorAll('#shippingRegionsList .section').forEach(section => {
                 const location = section.querySelector('.region-location').value.trim();
                 if (!location) return;
-                
                 regions.push({
                     Location: location,
                     Region: section.querySelector('.region-code').value.trim(),
                     FlagURL: section.querySelector('.region-flag').value.trim(),
                     PhoneCode: section.querySelector('.region-phone').value.trim()
                 });
-                
                 section.querySelectorAll('.rate-row').forEach(row => {
                     rates.push({
                         Location: location,
@@ -989,78 +546,42 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                     });
                 });
             });
-
             const params = new URLSearchParams();
             params.append('action', 'saveShipping');
             params.append('token', adminToken);
             params.append('admin', adminNum);
             params.append('regions', JSON.stringify(regions));
             params.append('rates', JSON.stringify(rates));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'Shipping saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving shipping', 'error');
-            }
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            const data = await res.json();
+            showStatus(data.result === 'success' ? 'Saved!' : 'Failed', data.result === 'success' ? 'success' : 'error');
         }
 
         async function saveLegal() {
             const legal = {};
-            
-            const privacyHeading = document.getElementById('privacyHeading').value.trim();
-            if (privacyHeading) legal['PrivacyPolicyHeading'] = privacyHeading;
-            
-            const privacyContent = document.getElementById('privacyContent').value.trim();
-            if (privacyContent) {
-                const lines = privacyContent.split('\n\n');
-                lines.forEach((line, i) => {
-                    const colonIndex = line.indexOf(':');
-                    if (colonIndex > 0) {
-                        const key = line.substring(0, colonIndex).trim();
-                        const value = line.substring(colonIndex + 1).trim();
-                        legal[key] = value;
-                    } else {
-                        legal['PrivacyPolicyContent' + (i + 1)] = line;
-                    }
+            const pH = document.getElementById('privacyHeading').value.trim();
+            if (pH) legal['PrivacyPolicyHeading'] = pH;
+            const pC = document.getElementById('privacyContent').value.trim();
+            if (pC) {
+                pC.split('\n\n').forEach((line, i) => {
+                    const ci = line.indexOf(':');
+                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
+                    else legal['PrivacyPolicyContent' + (i + 1)] = line;
                 });
             }
-            
-            const termsHeading = document.getElementById('termsHeading').value.trim();
-            if (termsHeading) legal['TermsHeading'] = termsHeading;
-            
-            const termsContent = document.getElementById('termsContent').value.trim();
-            if (termsContent) {
-                const lines = termsContent.split('\n\n');
-                lines.forEach((line, i) => {
-                    const colonIndex = line.indexOf(':');
-                    if (colonIndex > 0) {
-                        const key = line.substring(0, colonIndex).trim();
-                        const value = line.substring(colonIndex + 1).trim();
-                        legal[key] = value;
-                    } else {
-                        legal['TermsContent' + (i + 1)] = line;
-                    }
+            const tH = document.getElementById('termsHeading').value.trim();
+            if (tH) legal['TermsHeading'] = tH;
+            const tC = document.getElementById('termsContent').value.trim();
+            if (tC) {
+                tC.split('\n\n').forEach((line, i) => {
+                    const ci = line.indexOf(':');
+                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
+                    else legal['TermsContent' + (i + 1)] = line;
                 });
             }
-
-            const params = new URLSearchParams();
-            params.append('action', 'saveLegal');
-            params.append('token', adminToken);
-            params.append('admin', adminNum);
-            params.append('data', JSON.stringify(legal));
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: params });
-                const data = await res.json();
-                showStatus(data.result === 'success' ? 'Legal saved!' : 'Failed to save', data.result === 'success' ? 'success' : 'error');
-            } catch (err) {
-                showStatus('Error saving legal', 'error');
-            }
+            await saveData('saveLegal', legal);
         }
 
-        // Tab navigation
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1070,8 +591,7 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
             });
         });
 
-        // Initialize
-        loadLoginScreen();
+        init();
     </script>
 </body>
 </html>
