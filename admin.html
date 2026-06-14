@@ -128,12 +128,6 @@
             border-bottom: 2px solid #f0f0f0; 
             padding-bottom: 0.5rem; 
         }
-        .section h3 { 
-            color: #194373; 
-            margin: 1.2rem 0 0.8rem; 
-            font-size: 1rem;
-            font-weight: 600;
-        }
         
         .form-group { margin-bottom: 0.8rem; }
         .form-group label { 
@@ -256,9 +250,6 @@
             margin: 0; 
             font-size: 0.95rem; 
             color: #194373;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
         .collapsible-card-header .toggle-icon {
             font-size: 1.2rem;
@@ -294,9 +285,6 @@
             margin: 0; 
             font-size: 0.95rem; 
             color: #194373;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
         .region-card-header h4 .region-subtitle {
             font-weight: 400;
@@ -331,9 +319,10 @@
         .rate-row .btn-sm { flex-shrink: 0; align-self: center; margin-top: 0.15rem; }
         
         .calc-field {
-            background: #f9f9f9;
+            background: #f4f6f8;
             font-weight: 600;
             color: #194373;
+            text-align: center;
         }
         
         @media (max-width: 768px) {
@@ -377,7 +366,7 @@
         <div class="admin-container">
             <!-- ==================== SITE SETTINGS TAB ==================== -->
             <div class="tab-content active" id="tab-settings">
-                <!-- Colours -->
+                <!-- Colours (open by default) -->
                 <div class="collapsible-card open">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>🎨 Colours</h4>
@@ -431,19 +420,19 @@
                     </div>
                 </div>
 
-                <!-- Banner & Logo -->
-                <div class="collapsible-card open">
+                <!-- Banner & Logo (closed) -->
+                <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>🖼️ Banner & Logo</h4>
                         <span class="toggle-icon">▾</span>
                     </div>
                     <div class="collapsible-card-body">
                         <div class="image-url-row">
-                            <div class="form-group"><label>Banner Logo URL</label><input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo')"></div>
+                            <div class="form-group"><label>Banner Logo URL</label><input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo','primary')"></div>
                             <img class="image-preview" id="bannerLogoPreview">
                         </div>
                         <div class="image-url-row">
-                            <div class="form-group"><label>Background Image URL</label><input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage')"></div>
+                            <div class="form-group"><label>Background Image URL</label><input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage','bg')"></div>
                             <img class="image-preview" id="backgroundImagePreview">
                         </div>
                         <div class="form-row">
@@ -454,7 +443,7 @@
                     </div>
                 </div>
 
-                <!-- Page Titles -->
+                <!-- Page Titles (closed) -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>📄 Page Titles</h4>
@@ -472,7 +461,7 @@
                     </div>
                 </div>
 
-                <!-- Navigation Icons -->
+                <!-- Navigation Icons (closed) -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>🔗 Navigation Icons</h4>
@@ -480,21 +469,21 @@
                     </div>
                     <div class="collapsible-card-body">
                         <div class="form-row">
-                            <div class="form-group"><label>Home Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLHome" style="flex:1;"><img class="image-preview" id="navIconURLHomePreview"></div></div>
-                            <div class="form-group"><label>About Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAbout" style="flex:1;"><img class="image-preview" id="navIconURLAboutPreview"></div></div>
+                            <div class="form-group"><label>Home Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLHome" oninput="updateImagePreview('navIconURLHome','icon')" style="flex:1;"><img class="image-preview" id="navIconURLHomePreview"></div></div>
+                            <div class="form-group"><label>About Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAbout" oninput="updateImagePreview('navIconURLAbout','icon')" style="flex:1;"><img class="image-preview" id="navIconURLAboutPreview"></div></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>Contact Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLContact" style="flex:1;"><img class="image-preview" id="navIconURLContactPreview"></div></div>
-                            <div class="form-group"><label>LinkedIn Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLLinkedIn" style="flex:1;"><img class="image-preview" id="navIconURLLinkedInPreview"></div></div>
+                            <div class="form-group"><label>Contact Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLContact" oninput="updateImagePreview('navIconURLContact','icon')" style="flex:1;"><img class="image-preview" id="navIconURLContactPreview"></div></div>
+                            <div class="form-group"><label>LinkedIn Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLLinkedIn" oninput="updateImagePreview('navIconURLLinkedIn','icon')" style="flex:1;"><img class="image-preview" id="navIconURLLinkedInPreview"></div></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>Admin Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAdmin" style="flex:1;"><img class="image-preview" id="navIconURLAdminPreview"></div></div>
+                            <div class="form-group"><label>Admin Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAdmin" oninput="updateImagePreview('navIconURLAdmin','icon')" style="flex:1;"><img class="image-preview" id="navIconURLAdminPreview"></div></div>
                             <div class="form-group"><label>LinkedIn URL</label><input type="text" id="linkedInURL" placeholder="https://www.linkedin.com/in/..."></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payment & Icons -->
+                <!-- Payment & Icons (closed) -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>💳 Payment & Icons</h4>
@@ -502,12 +491,12 @@
                     </div>
                     <div class="collapsible-card-body">
                         <div class="form-row">
-                            <div class="form-group"><label>PayPal Logo URL</label><div class="image-url-row"><input type="text" id="payPalLogo" style="flex:1;"><img class="image-preview" id="payPalLogoPreview"></div></div>
-                            <div class="form-group"><label>Payfast Logo URL</label><div class="image-url-row"><input type="text" id="payfastLogo" style="flex:1;"><img class="image-preview" id="payfastLogoPreview"></div></div>
+                            <div class="form-group"><label>PayPal Logo URL</label><div class="image-url-row"><input type="text" id="payPalLogo" oninput="updateImagePreview('payPalLogo','cta')" style="flex:1;"><img class="image-preview" id="payPalLogoPreview"></div></div>
+                            <div class="form-group"><label>Payfast Logo URL</label><div class="image-url-row"><input type="text" id="payfastLogo" oninput="updateImagePreview('payfastLogo','cta')" style="flex:1;"><img class="image-preview" id="payfastLogoPreview"></div></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>Location Icon URL</label><div class="image-url-row"><input type="text" id="locationIconURL" style="flex:1;"><img class="image-preview" id="locationIconURLPreview"></div></div>
-                            <div class="form-group"><label>Maps Icon URL</label><div class="image-url-row"><input type="text" id="mapsIconURL" style="flex:1;"><img class="image-preview" id="mapsIconURLPreview"></div></div>
+                            <div class="form-group"><label>Location Icon URL</label><div class="image-url-row"><input type="text" id="locationIconURL" oninput="updateImagePreview('locationIconURL','icon')" style="flex:1;"><img class="image-preview" id="locationIconURLPreview"></div></div>
+                            <div class="form-group"><label>Maps Icon URL</label><div class="image-url-row"><input type="text" id="mapsIconURL" oninput="updateImagePreview('mapsIconURL','icon')" style="flex:1;"><img class="image-preview" id="mapsIconURLPreview"></div></div>
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
@@ -516,7 +505,7 @@
                     </div>
                 </div>
 
-                <!-- My Profile -->
+                <!-- My Profile (open) -->
                 <div class="collapsible-card open" style="border-left: 4px solid #f29b2a;">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>👤 My Profile <span style="font-weight:400;font-size:0.8rem;color:#888;">(private — only you can edit)</span></h4>
@@ -530,7 +519,7 @@
                         <div class="form-group">
                             <label>My Icon URL</label>
                             <div class="image-url-row">
-                                <input type="text" id="myProfileIconURL" oninput="updateImagePreview('myProfileIconURL')" style="flex:1;">
+                                <input type="text" id="myProfileIconURL" oninput="updateImagePreview('myProfileIconURL','icon')" style="flex:1;">
                                 <img class="image-preview" id="myProfileIconURLPreview">
                             </div>
                         </div>
@@ -541,7 +530,7 @@
 
             <!-- ==================== PRODUCTS TAB ==================== -->
             <div class="tab-content" id="tab-products">
-                <!-- Product 1 -->
+                <!-- Product 1 (open) -->
                 <div class="collapsible-card open">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>📦 Product 1</h4>
@@ -558,20 +547,20 @@
                             <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01" oninput="updateDiscountCalc(1)"></div>
                             <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
                         </div>
-                        <div class="form-row">
+                        <div class="form-row-4">
                             <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold" oninput="updateDiscountCalc(1)"></div>
                             <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1" oninput="updateDiscountCalc(1)"></div>
                             <div class="form-group"><label>Discount Amount</label><input type="text" id="product1DiscountAmount" class="calc-field" readonly></div>
                             <div class="form-group"><label>Discounted Unit Price</label><input type="text" id="product1DiscountedPrice" class="calc-field" readonly></div>
                         </div>
                         <div class="image-url-row">
-                            <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL')"></div>
+                            <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL','bg')"></div>
                             <img class="image-preview" id="product1ImageURLPreview">
                         </div>
                     </div>
                 </div>
 
-                <!-- Product 2 -->
+                <!-- Product 2 (closed) -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>📦 Product 2</h4>
@@ -588,14 +577,14 @@
                             <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01" oninput="updateDiscountCalc(2)"></div>
                             <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
                         </div>
-                        <div class="form-row">
+                        <div class="form-row-4">
                             <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold" oninput="updateDiscountCalc(2)"></div>
                             <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1" oninput="updateDiscountCalc(2)"></div>
                             <div class="form-group"><label>Discount Amount</label><input type="text" id="product2DiscountAmount" class="calc-field" readonly></div>
                             <div class="form-group"><label>Discounted Unit Price</label><input type="text" id="product2DiscountedPrice" class="calc-field" readonly></div>
                         </div>
                         <div class="image-url-row">
-                            <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL')"></div>
+                            <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL','bg')"></div>
                             <img class="image-preview" id="product2ImageURLPreview">
                         </div>
                     </div>
@@ -604,7 +593,6 @@
 
             <!-- ==================== HOME PAGE TAB ==================== -->
             <div class="tab-content" id="tab-home">
-                <!-- Home Page Content -->
                 <div class="collapsible-card open">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>📝 Home Page Content</h4>
@@ -624,7 +612,6 @@
                     </div>
                 </div>
 
-                <!-- Carousel Images -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>🎠 Carousel Images</h4>
@@ -647,14 +634,14 @@
                         <div class="form-group">
                             <label>Author Image 1 URL</label>
                             <div class="image-url-row">
-                                <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1')" style="flex:1;">
+                                <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1','bg')" style="flex:1;">
                                 <img class="image-preview" id="authorImage1Preview">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Author Image 2 URL</label>
                             <div class="image-url-row">
-                                <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2')" style="flex:1;">
+                                <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2','bg')" style="flex:1;">
                                 <img class="image-preview" id="authorImage2Preview">
                             </div>
                         </div>
@@ -675,7 +662,6 @@
 
             <!-- ==================== LEGAL TAB ==================== -->
             <div class="tab-content" id="tab-legal">
-                <!-- Privacy Policy -->
                 <div class="collapsible-card open">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>🔒 Privacy Policy</h4>
@@ -684,7 +670,6 @@
                     <div class="collapsible-card-body" id="privacyFieldsContainer"></div>
                 </div>
 
-                <!-- Terms of Service -->
                 <div class="collapsible-card">
                     <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
                         <h4>📋 Terms of Service</h4>
@@ -703,8 +688,6 @@
         let adminName = '';
         let currentTab = 'tab-settings';
         let carouselImageCount = 0;
-        let legalPrivacyFields = [];
-        let legalTermsFields = [];
 
         // ========== COLOR HELPERS ==========
         function updateColorText(colorId) {
@@ -719,13 +702,22 @@
             }
         }
         function initColorTexts() {
-            ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'].forEach(id => {
-                updateColorText(id);
-            });
+            ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'].forEach(id => updateColorText(id));
         }
 
-        // ========== IMAGE PREVIEW ==========
-        function updateImagePreview(inputId) {
+        // ========== IMAGE PREVIEW WITH CONTEXTUAL BACKGROUND ==========
+        function getColorForContext(context) {
+            // context: 'primary', 'cta', 'icon', 'bg'
+            switch(context) {
+                case 'primary': return document.getElementById('primaryColor').value || '#194373';
+                case 'cta': return document.getElementById('ctaColor').value || '#f29b2a';
+                case 'icon': return '#194373'; // nav icons sit on primary banner
+                case 'bg':
+                default: return document.getElementById('backgroundColor').value || '#eee6ca';
+            }
+        }
+
+        function updateImagePreview(inputId, context) {
             const input = document.getElementById(inputId);
             const preview = document.getElementById(inputId + 'Preview');
             if (input && preview) {
@@ -737,35 +729,55 @@
                 } else {
                     preview.classList.remove('visible');
                 }
-                updateThumbnailBg(preview);
+                applyThumbnailBg(preview, context || 'bg');
             }
         }
-        function updateThumbnailBg(preview) {
-            const bgColor = document.getElementById('backgroundColor').value || '#eee6ca';
-            preview.style.backgroundColor = bgColor;
-            preview.style.backgroundImage = 'linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%, #e0e0e0), linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%, #e0e0e0)';
+
+        function applyThumbnailBg(preview, context) {
+            const color = getColorForContext(context || 'bg');
+            // Solid background with checkerboard for transparent images
+            preview.style.background = `
+                linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)),
+                linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05))
+            `;
             preview.style.backgroundSize = '8px 8px';
             preview.style.backgroundPosition = '0 0, 4px 4px';
+            preview.style.backgroundColor = color;
         }
+
         function updateAllThumbnailBgs() {
-            document.querySelectorAll('.image-preview').forEach(p => updateThumbnailBg(p));
-        }
-        function initImagePreviews() {
-            const bgColor = document.getElementById('backgroundColor');
-            if (bgColor) {
-                bgColor.addEventListener('change', updateAllThumbnailBgs);
-                document.getElementById('backgroundColorText').addEventListener('input', function() {
-                    if (this.value.match(/^#[0-9a-fA-F]{6}$/)) updateAllThumbnailBgs();
-                });
-            }
-            document.querySelectorAll('input[type="text"]').forEach(input => {
-                if (input.id && document.getElementById(input.id + 'Preview')) {
-                    if (input.value) updateImagePreview(input.id);
+            // Update all visible previews
+            document.querySelectorAll('.image-preview.visible').forEach(p => {
+                // Determine context from the input's oninput attribute
+                const input = p.previousElementSibling;
+                if (input && input.tagName === 'INPUT') {
+                    const oninput = input.getAttribute('oninput') || '';
+                    const match = oninput.match(/updateImagePreview\('([^']+)','([^']+)'\)/);
+                    applyThumbnailBg(p, match ? match[2] : 'bg');
                 }
             });
-            // Carousel images
-            document.querySelectorAll('[id^="carouselImageURL"]').forEach(input => {
-                if (input.value) updateImagePreview(input.id);
+        }
+
+        function initImagePreviews() {
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                const oninput = input.getAttribute('oninput') || '';
+                const match = oninput.match(/updateImagePreview\('([^']+)'(\s*,\s*'([^']+)')?\)/);
+                if (match) {
+                    const previewId = match[1] + 'Preview';
+                    const preview = document.getElementById(previewId);
+                    if (preview && input.value) {
+                        updateImagePreview(match[1], match[3] || 'bg');
+                    }
+                }
+            });
+            // Color changes update thumbnails
+            ['primaryColor', 'ctaColor', 'backgroundColor'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', updateAllThumbnailBgs);
+                const textEl = document.getElementById(id + 'Text');
+                if (textEl) textEl.addEventListener('input', function() {
+                    if (this.value.match(/^#[0-9a-fA-F]{6}$/)) updateAllThumbnailBgs();
+                });
             });
         }
 
@@ -996,13 +1008,12 @@
             document.getElementById('homeItem2Sub').value = home.HomePageItem2SubText || '';
             document.getElementById('carouselInterval').value = home.HomePageCarouselInterval || '3000';
             
-            // Build carousel image inputs
             const container = document.getElementById('carouselImagesContainer');
             container.innerHTML = '';
             carouselImageCount = 0;
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
-                if (url || i <= 3) { // Show at least 3 slots
+                if (url || i <= 3) {
                     addCarouselImageField(url || '');
                 }
             }
@@ -1019,12 +1030,12 @@
             div.innerHTML = `
                 <div class="form-group" style="flex:1;margin-bottom:0;">
                     <label>Image ${idx} URL</label>
-                    <input type="text" id="carouselImageURL${idx}" value="${url || ''}" oninput="updateImagePreview('carouselImageURL${idx}')">
+                    <input type="text" id="carouselImageURL${idx}" value="${url || ''}" oninput="updateImagePreview('carouselImageURL${idx}','bg')">
                 </div>
                 <img class="image-preview" id="carouselImageURL${idx}Preview" src="${url || ''}" style="${url ? 'display:block;' : ''}">
             `;
             container.appendChild(div);
-            if (url) updateImagePreview('carouselImageURL' + idx);
+            if (url) updateImagePreview('carouselImageURL' + idx, 'bg');
         }
 
         function addCarouselImage() {
@@ -1050,14 +1061,13 @@
             const container = document.getElementById('shippingRegionsList');
             container.innerHTML = '';
             
-            // Group locations by region
+            // Group by region
             const regionMap = {};
             regions.forEach(r => {
                 if (!regionMap[r.Region]) {
                     regionMap[r.Region] = { region: r.Region, locations: [], phoneCode: r.PhoneCode || '+1' };
                 }
                 regionMap[r.Region].locations.push(r);
-                if (r.PhoneCode && r.PhoneCode !== '+1') regionMap[r.Region].phoneCode = r.PhoneCode;
             });
             
             const ratesByRegion = {};
@@ -1071,25 +1081,19 @@
             allRegions.forEach(regionName => {
                 const regionData = regionMap[regionName] || { region: regionName, locations: [], phoneCode: '+1' };
                 const regionRates = ratesByRegion[regionName] || [];
-                const countryNames = regionData.locations.map(l => l.Location).filter(Boolean).join(', ');
-                const firstFlag = regionData.locations[0]?.FlagURL || '';
+                const countryCount = regionData.locations.length;
+                const countryLabel = countryCount > 0 ? `${countryCount} countr${countryCount === 1 ? 'y' : 'ies'}` : 'No countries';
                 
                 const card = document.createElement('div');
                 card.className = 'region-card';
                 
-                const flagHtml = firstFlag ? `<img src="${firstFlag}" alt="">` : '';
-                
                 card.innerHTML = `
                     <div class="region-card-header" onclick="this.parentElement.classList.toggle('open')">
-                        <h4>${flagHtml} ${regionName || 'New Region'} <span class="region-subtitle">(${countryNames || 'No countries'})</span></h4>
+                        <h4>${regionName || 'New Region'} <span class="region-subtitle">(${countryLabel})</span></h4>
                         <span class="toggle-icon">▾</span>
                     </div>
                     <div class="region-card-body">
-                        <div class="form-row">
-                            <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${regionName || ''}"></div>
-                            <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${regionData.phoneCode || '+1'}"></div>
-                        </div>
-                        <h4 style="margin-top:0.8rem;">Rates</h4>
+                        <h4 style="margin-top:0.5rem;">Rates</h4>
                         <div class="rates-container">
                             ${regionRates.map(rate => `
                                 <div class="rate-row">
@@ -1110,62 +1114,39 @@
         }
 
         function populateLegal(legal) {
-            // Privacy fields
-            const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
-            legalPrivacyFields = privacyKeys.sort();
-            buildLegalFieldGroup('privacyFieldsContainer', legal, privacyKeys, 'privacy');
+            // Get keys in their original order from the object
+            const allKeys = Object.keys(legal);
             
-            // Terms fields
-            const termsKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('terms'));
-            legalTermsFields = termsKeys.sort();
-            buildLegalFieldGroup('termsFieldsContainer', legal, termsKeys, 'terms');
+            // Separate into privacy and terms while preserving order
+            const privacyKeys = allKeys.filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
+            const termsKeys = allKeys.filter(k => k.toLowerCase().startsWith('terms'));
+            
+            buildLegalFieldGroup('privacyFieldsContainer', legal, privacyKeys);
+            buildLegalFieldGroup('termsFieldsContainer', legal, termsKeys);
         }
 
-        function buildLegalFieldGroup(containerId, legal, keys, prefix) {
+        function buildLegalFieldGroup(containerId, legal, keys) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             
-            // Separate headings from content
-            const headingKeys = keys.filter(k => k.toLowerCase().endsWith('heading'));
-            const otherKeys = keys.filter(k => !k.toLowerCase().endsWith('heading'));
-            
-            // For each heading, show it followed by its related content
-            const usedContentKeys = new Set();
-            
-            headingKeys.forEach(hKey => {
-                const hValue = legal[hKey] || '';
-                const div = document.createElement('div');
-                div.className = 'form-group';
-                div.innerHTML = `<label>${hKey}</label><input type="text" class="legal-field" data-key="${hKey}" value="${escapeHtml(hValue)}">`;
-                container.appendChild(div);
-                
-                // Find content keys that likely belong to this heading
-                const baseName = hKey.replace(/heading$/i, '');
-                const relatedKeys = otherKeys.filter(k => k.toLowerCase().startsWith(baseName.toLowerCase()) && !usedContentKeys.has(k));
-                relatedKeys.forEach(rKey => {
-                    usedContentKeys.add(rKey);
-                    const rValue = legal[rKey] || '';
-                    const rDiv = document.createElement('div');
-                    rDiv.className = 'form-group';
-                    rDiv.innerHTML = `<label>${rKey}</label><textarea class="legal-field auto-height" data-key="${rKey}" rows="2" oninput="autoResizeTextarea(this)">${escapeHtml(rValue)}</textarea>`;
-                    container.appendChild(rDiv);
-                });
-            });
-            
-            // Any remaining content keys
-            otherKeys.forEach(rKey => {
-                if (!usedContentKeys.has(rKey)) {
-                    const rValue = legal[rKey] || '';
-                    const rDiv = document.createElement('div');
-                    rDiv.className = 'form-group';
-                    rDiv.innerHTML = `<label>${rKey}</label><textarea class="legal-field auto-height" data-key="${rKey}" rows="2" oninput="autoResizeTextarea(this)">${escapeHtml(rValue)}</textarea>`;
-                    container.appendChild(rDiv);
-                }
-            });
-            
             if (keys.length === 0) {
                 container.innerHTML = '<p style="color:#888;">No entries yet. They will appear here once added in the spreadsheet.</p>';
+                return;
             }
+            
+            keys.forEach(key => {
+                const value = legal[key] || '';
+                const isHeading = key.toLowerCase().endsWith('heading');
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                
+                if (isHeading) {
+                    div.innerHTML = `<label>${key}</label><input type="text" class="legal-field" data-key="${key}" value="${escapeHtml(value)}">`;
+                } else {
+                    div.innerHTML = `<label>${key}</label><textarea class="legal-field auto-height" data-key="${key}" rows="2" oninput="autoResizeTextarea(this)">${escapeHtml(value)}</textarea>`;
+                }
+                container.appendChild(div);
+            });
         }
 
         function escapeHtml(str) {
@@ -1184,11 +1165,7 @@
                     <span class="toggle-icon">▾</span>
                 </div>
                 <div class="region-card-body">
-                    <div class="form-row">
-                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code" placeholder="e.g. Europe, UK, Middle East"></div>
-                        <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
-                    </div>
-                    <h4 style="margin-top:0.8rem;">Rates</h4>
+                    <h4 style="margin-top:0.5rem;">Rates</h4>
                     <div class="rates-container"></div>
                     <button class="btn-sm btn-secondary" onclick="addRateRow(this)" style="margin-top:0.5rem;">+ Add Rate</button>
                     <button class="btn-sm btn-danger" onclick="this.closest('.region-card').remove()" style="margin-left:0.3rem;">Remove Region</button>
@@ -1328,31 +1305,28 @@
         }
 
         async function saveShipping() {
-            const regions = [], rates = [];
+            const rates = [];
             document.querySelectorAll('#shippingRegionsList .region-card').forEach(card => {
-                const regionCode = card.querySelector('.region-code').value.trim();
-                if (!regionCode) return;
-                const phoneCode = card.querySelector('.region-phone').value.trim() || '+1';
-                regions.push({
-                    Location: regionCode,
-                    Region: regionCode,
-                    FlagURL: '',
-                    PhoneCode: phoneCode
-                });
+                const headerText = card.querySelector('.region-card-header h4').textContent.trim();
+                const regionName = headerText.split('(')[0].trim();
+                if (!regionName || regionName === 'New Region') return;
+                
                 card.querySelectorAll('.rate-row').forEach(row => {
                     rates.push({
-                        Region: regionCode,
+                        Region: regionName,
                         MaxWeight: parseFloat(row.querySelector('.rate-maxweight').value) || 0,
                         Cost: parseFloat(row.querySelector('.rate-cost').value) || 0,
                         Time: row.querySelector('.rate-time').value.trim()
                     });
                 });
             });
+            
+            // We only save rates now; regions come from the spreadsheet
             const formData = new URLSearchParams();
             formData.append('action', 'saveShipping');
             formData.append('token', adminToken);
             formData.append('admin', adminNum);
-            formData.append('regions', JSON.stringify(regions));
+            formData.append('regions', JSON.stringify([])); // Empty - regions managed in sheet
             formData.append('rates', JSON.stringify(rates));
             const res = await fetch(API_URL, { method: 'POST', body: formData });
             const data = await res.json();
