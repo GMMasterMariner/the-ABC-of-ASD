@@ -31,8 +31,8 @@
     "Admin2Name": "",
     "Admin1Email": "",
     "Admin2Email": "",
-    "Admin1IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin1_icon.png",
-    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png"
+    "Admin1IconURL": "",
+    "Admin2IconURL": ""
   },
   "exchangeRates": [
     { "CurrencyCode": "ZAR", "RateToBase": 1, "FlagURL": "https://flagcdn.com/w20/za.png", "CountryName": "South Africa", "Symbol": "R" },
@@ -79,7 +79,7 @@
     {
       "ProductCode": "978-1-0492-6643-5",
       "ProductName": "Digital e-Book",
-      "ProductDescription": "A digital replica of the hardcover book, fully searcheable with content navigation links. Excludes the display poster.",
+      "ProductDescription": "A digital replica of the hardcover book, fully searchable with content navigation links. Excludes the display poster.",
       "Type": "Digital",
       "BasePrice": 950,
       "DiscountThreshold": 5,
@@ -100,10 +100,10 @@
     "HomePageCarouselImage9": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_9_book.png",
     "HomePageCarouselInterval": "3500",
     "HomePageBookDescription1": "Written for tug operators",
-    "HomePageBookDescription2": "Whether you prefer the weight of a premium hardcover or the convenience of a digital file, The ABC of ASD delivers the same expert knowledge. This comprehensive book features over 70 full‑colour images, clear manoeuvre diagrams, and practical safety insights drawn from real‑world experience. The physical edition includes an exclusive free bridge display poster. The digital edition is a fully searchable replica, perfect for your tug computer or phone – always accessible wherever you are. Choose the best format for your tug.",
+    "HomePageBookDescription2": "Whether you prefer the weight of a premium hardcover or the convenience of a digital file, The ABC of ASD delivers the same expert knowledge. This comprehensive book features over 70 full-colour images, clear manoeuvre diagrams, and practical safety insights drawn from real-world experience. The physical edition includes an exclusive free bridge display poster. The digital edition is a fully searchable replica, perfect for your tug computer or phone – always accessible wherever you are. Choose the best format for your tug.",
     "HomePageItem1MainText": "Hardcopy printed format",
     "HomePageItem1SubText": "A physical hardcover book printed on premium gloss paper.",
-    "HomePageItem2MainText": "Versitile electronic format",
+    "HomePageItem2MainText": "Versatile electronic format",
     "HomePageItem2SubText": "A digital downloadable e-book with licence key for 2 devices"
   },
   "about": {
@@ -111,14 +111,23 @@
     "AuthorTitle": "Master Mariner | ASD Simulator/Training Instructor",
     "AuthorImage1URL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_about_1.png",
     "AuthorImage2URL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_about_2.png",
-    "AuthorShortBio": "Why this book? It was born on the bridge of an ASD tug, where theory meets the raw power of the sea. After over 30 years at sea and more than 15 in command as a Master Mariner, I've asked, searched, and answered the same questions from trainees and colleagues countless times. So I decided to put everything I knew into one practical guide. The ABC of ASD distills decades of operational knowledge – my hard‑earned knowledge, and that of other ASD tug Masters I have the privilege of working with. It's a straightforward, hands‑on guide to ASD tug manoeuvring – built for the real world, with safety and efficiency at the forefront. Whether you're a seasoned master or a cadet on your first ASD tug, this book is your practical companion.",
-    "AuthorExtendedBio": "\"The advice in The ABC of ASD isn't abstract theory – it's the sum of what I've learned, practiced, and taught across more than three decades on the ocean. Every book has an author, and every author has a voyage. Here's mine.\n\nI have been a seafarer since 1996, and a qualified Master Mariner since 2007, holding an STCW II/2 Master Unlimited qualification. My connection to the sea runs deep – my grandfather served in the South African Navy, and my uncle, also a Captain, first introduced me to a career at sea. That family thread pulled me into an occupation that began on container, bulk, and general cargo vessels with Safmarine and Maersk, where I gained the deep‑sea experience that still grounds my work today. My true passion ignited when I discovered the world of smaller, highly manoeuvrable craft. Joining SMIT Amandla Marine (now AMSOL), I qualified and served as a Master. After a period away, gaining additional offshore experience, and developing a specialisation in Azimuth Stern Drive (ASD) tug operations, I returned to AMSOL, where I continue to work today – conducting SBM (Single Buoy Mooring) support, static and escort towing, and emergency response operations. Alongside my operational role, I teach ASD tug handling at the South African Maritime Training Academy (SAMTRA) when my free time allows. This combination of active command and hands‑on instruction forms the practical foundation of The ABC of ASD. The book is the classroom and the bridge brought together – a resource born from the real questions of tug masters, officers, and trainees, and refined through years of mentoring and real‑world operations.\""
+    "AuthorShortBio": "Why this book? It was born on the bridge of an ASD tug, where theory meets the raw power of the sea. After over 30 years at sea and more than 15 in command as a Master Mariner, I've asked, searched, and answered the same questions from trainees and colleagues countless times. So I decided to put everything I knew into one practical guide. The ABC of ASD distills decades of operational knowledge – my hard-earned knowledge, and that of other ASD tug Masters I have the privilege of working with. It's a straightforward, hands-on guide to ASD tug manoeuvring – built for the real world, with safety and efficiency at the forefront. Whether you're a seasoned master or a cadet on your first ASD tug, this book is your practical companion.",
+    "AuthorExtendedBio": "\"The advice in The ABC of ASD isn't abstract theory – it's the sum of what I've learned, practiced, and taught across more than three decades on the ocean. Every book has an author, and every author has a voyage. Here's mine.\n\nI have been a seafarer since 1996, and a qualified Master Mariner since 2007, holding an STCW II/2 Master Unlimited qualification. My connection to the sea runs deep – my grandfather served in the South African Navy, and my uncle, also a Captain, first introduced me to a career at sea. That family thread pulled me into an occupation that began on container, bulk, and general cargo vessels with Safmarine and Maersk, where I gained the deep-sea experience that still grounds my work today. My true passion ignited when I discovered the world of smaller, highly manoeuvrable craft. Joining SMIT Amandla Marine (now AMSOL), I qualified and served as a Master. After a period away, gaining additional offshore experience, and developing a specialisation in Azimuth Stern Drive (ASD) tug operations, I returned to AMSOL, where I continue to work today – conducting SBM (Single Buoy Mooring) support, static and escort towing, and emergency response operations. Alongside my operational role, I teach ASD tug handling at the South African Maritime Training Academy (SAMTRA) when my free time allows. This combination of active command and hands-on instruction forms the practical foundation of The ABC of ASD. The book is the classroom and the bridge brought together – a resource born from the real questions of tug masters, officers, and trainees, and refined through years of mentoring and real-world operations.\""
   },
   "shippingRegions": [
     { "Location": "South Africa", "Region": "South Africa", "FlagURL": "https://flagcdn.com/w20/za.png", "PhoneCode": "+27" }
   ],
   "regionRates": [
     { "Region": "South Africa", "MaxWeight": 5, "Cost": 109, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 6, "Cost": 134, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 7, "Cost": 159, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 8, "Cost": 184, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 9, "Cost": 209, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 10, "Cost": 234, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 11, "Cost": 259, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 12, "Cost": 284, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 13, "Cost": 309, "Time": "5 business days" },
+    { "Region": "South Africa", "MaxWeight": 14, "Cost": 334, "Time": "5 business days" },
     { "Region": "South Africa", "MaxWeight": 15, "Cost": 359, "Time": "5 business days" }
   ],
   "legal": {
@@ -147,7 +156,7 @@
     "TermsShippingHeading": "Shipping",
     "TermsShippingText": "• Physical books will be shipped to the address you provide.\n• Delivery times are estimates and depend on your location.\n• Digital products will be delivered via email after payment is confirmed.",
     "TermsReturnsRefundsHeading": "Returns & Refunds",
-    "TermsReturnsRefundsText": "• If you receive a damaged or incorrect item, please contact us within 14 days for a replacement or refund.\n• Digital products are non‑refundable once the download link has been sent.",
+    "TermsReturnsRefundsText": "• If you receive a damaged or incorrect item, please contact us within 14 days for a replacement or refund.\n• Digital products are non-refundable once the download link has been sent.",
     "TermsIntellectualPropertyHeading": "Intellectual Property",
     "TermsIntellectualPropertyText": "• All content on this Site, including the book *The ABC of ASD*, is the intellectual property of GM Master Mariner and is protected by copyright.\n• You may not reproduce, distribute, or sell any part of the book or Site content without written permission.",
     "TermsLiabilityHeading": "Limitation of Liability",
