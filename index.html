@@ -1674,6 +1674,8 @@
             const titleEl = document.getElementById('bannerTitle'), mt = s.BannerBookTitle || '', ab = s.BannerBookTitleAbbreviation || '';
             if (mt && ab) titleEl.innerHTML = `${mt} <span class="abbreviation">${ab}</span>`; else if (mt) titleEl.textContent = mt; else titleEl.textContent = '';
             document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitle || '';
+            document.getElementById('aboutPageHeading').textContent = settings.AboutPageTitle || 'About me';
+            document.getElementById('contactPageHeading').textContent = settings.ContactPageTitle || 'Get in touch';
             if (s.PayPalLogo) document.getElementById('paypalLogoImg').src = s.PayPalLogo;
             if (s.PayfastLogo) document.getElementById('payfastLogoImg').src = s.PayfastLogo;
             if (s.LocationIconURL) document.getElementById('locationIcon').src = s.LocationIconURL;
