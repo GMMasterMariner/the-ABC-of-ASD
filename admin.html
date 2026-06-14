@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #f0f2f5;
             color: #333;
         }
         
@@ -18,66 +18,55 @@
             z-index: 100;
             background: #194373;
             color: white;
-            padding: 0.8rem 2rem;
+            padding: 0.6rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .admin-header h1 { font-size: 1.3rem; white-space: nowrap; }
-        .header-center {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
             flex-wrap: wrap;
-            justify-content: center;
+            gap: 0.5rem;
         }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        .admin-header h1 { font-size: 1.2rem; white-space: nowrap; }
         
-        .tab-nav { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .tab-nav { display: flex; gap: 0.2rem; flex-wrap: wrap; }
         .tab-btn {
             padding: 0.4rem 0.8rem;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: none;
             background: transparent;
-            color: rgba(255,255,255,0.8);
-            border-radius: 4px;
+            color: rgba(255,255,255,0.75);
+            border-radius: 4px 4px 0 0;
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
             white-space: nowrap;
+            border-bottom: 2px solid transparent;
         }
-        .tab-btn:hover { background: rgba(255,255,255,0.15); color: white; }
-        .tab-btn.active { background: #f29b2a; color: white; border-color: #f29b2a; }
+        .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .tab-btn.active { 
+            background: rgba(255,255,255,0.15); 
+            color: white; 
+            border-bottom-color: #f29b2a;
+        }
         
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
         .header-save-btn {
             background: #f29b2a;
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.45rem 1.2rem;
             border-radius: 4px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.15s;
         }
-        .header-save-btn:hover { background: #e08a1a; }
-        .header-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .header-save-btn:hover { background: #e08a1a; transform: scale(1.03); }
+        .header-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .header-status {
             font-size: 0.85rem;
@@ -90,56 +79,128 @@
         .header-status.error { display: inline-block; background: #f8d7da; color: #721c24; }
         .header-status.saving { display: inline-block; background: rgba(255,255,255,0.2); color: white; }
         
-        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .logout-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.25); }
+        
+        .admin-container { max-width: 1100px; margin: 1.5rem auto; padding: 0 1.5rem; }
+        
         .section {
             background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .section h2 { 
+            color: #194373; 
+            margin-bottom: 1rem; 
+            font-size: 1.1rem;
+            border-bottom: 2px solid #f0f0f0; 
+            padding-bottom: 0.5rem; 
+        }
+        .section h3 { 
+            color: #194373; 
+            margin: 1.2rem 0 0.8rem; 
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .section-group {
+            background: #f8f9fb;
             border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e8eaed;
         }
-        .section h2 { color: #194373; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; }
-        .section h3 { color: #194373; margin: 1.5rem 0 1rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555; }
+        .section-group h4 {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group { margin-bottom: 0.8rem; }
+        .form-group label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 0.3rem; 
+            color: #555; 
+            font-size: 0.85rem;
+        }
         .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px;
-            font-size: 1rem; font-family: inherit;
+            width: 100%; 
+            padding: 0.6rem 0.7rem; 
+            border: 1px solid #ddd; 
+            border-radius: 6px;
+            font-size: 0.9rem; 
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
-        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #194373;
+            box-shadow: 0 0 0 3px rgba(25,67,115,0.1);
+        }
+        .form-group textarea { min-height: 70px; resize: vertical; }
+        .form-group textarea.tall { min-height: 120px; }
+        
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+        .form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem; }
         
         .color-input-group {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         .color-input-group input[type="color"] {
-            width: 44px;
-            height: 38px;
+            width: 36px;
+            height: 34px;
             padding: 2px;
             border: 2px solid #ddd;
             border-radius: 6px;
             cursor: pointer;
+            flex-shrink: 0;
         }
-        .color-input-group input[type="text"] { flex: 1; }
+        .color-input-group input[type="text"] { 
+            flex: 1; 
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            min-width: 70px;
+        }
         .color-preview {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             border-radius: 6px;
             border: 2px solid #ddd;
             flex-shrink: 0;
         }
         
+        .image-url-row {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+        .image-url-row .form-group { flex: 1; margin-bottom: 0; }
         .image-preview {
-            max-width: 120px;
-            max-height: 80px;
+            width: 80px;
+            height: 50px;
             border-radius: 6px;
             border: 2px solid #ddd;
-            margin-top: 0.5rem;
-            display: none;
             object-fit: contain;
+            flex-shrink: 0;
+            display: none;
+            background: #fafafa;
         }
         .image-preview.visible { display: block; }
         
@@ -160,28 +221,99 @@
         #adminPanel { display: none; }
         
         .btn-sm {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.85rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
             background: #f29b2a;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background 0.2s;
         }
         .btn-sm:hover { background: #e08a1a; }
-        .btn-secondary { background: #aaa; }
-        .btn-secondary:hover { background: #888; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
         .btn-danger { background: #dc3c33; }
         .btn-danger:hover { background: #c53030; }
         
+        /* Collapsible region cards */
+        .region-card {
+            background: #f8f9fb;
+            border: 1px solid #e0e2e5;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+        .region-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .region-card-header:hover { background: #eef0f3; }
+        .region-card-header h4 { 
+            margin: 0; 
+            font-size: 0.95rem; 
+            color: #194373;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .region-card-header h4 img { height: 20px; width: auto; border-radius: 2px; }
+        .region-card-header .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+            color: #888;
+        }
+        .region-card.open .region-card-header .toggle-icon { transform: rotate(180deg); }
+        .region-card-body {
+            display: none;
+            padding: 0 1rem 1rem 1rem;
+        }
+        .region-card.open .region-card-body { display: block; }
+        
+        .rate-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: flex-end;
+            margin-bottom: 0.4rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .rate-row .form-group { flex: 1; margin-bottom: 0; }
+        .rate-row .form-group label { font-size: 0.75rem; margin-bottom: 0.15rem; }
+        .rate-row .form-group input { padding: 0.45rem 0.5rem; font-size: 0.85rem; }
+        .rate-row .btn-sm { flex-shrink: 0; align-self: center; margin-top: 0.15rem; }
+        
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .profile-badge img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
         @media (max-width: 768px) {
-            .admin-header { flex-direction: column; gap: 0.5rem; padding: 0.6rem 1rem; }
-            .header-center { order: 2; }
-            .header-right { order: 1; width: 100%; justify-content: space-between; }
+            .admin-header { flex-direction: column; gap: 0.4rem; padding: 0.5rem 0.8rem; }
             .tab-nav { justify-content: center; }
-            .tab-btn { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
-            .form-row, .form-row-3 { grid-template-columns: 1fr; }
-            .admin-container { padding: 0 1rem; }
+            .tab-btn { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
+            .form-row, .form-row-3, .form-row-4 { grid-template-columns: 1fr; }
+            .admin-container { padding: 0 0.8rem; }
+            .image-url-row { flex-direction: column; }
+            .image-preview { width: 100%; height: 60px; }
         }
     </style>
 </head>
@@ -196,196 +328,250 @@
     <div id="adminPanel">
         <header class="admin-header">
             <h1>⚙️ Admin</h1>
-            <div class="header-center">
-                <div class="tab-nav">
-                    <button class="tab-btn active" data-tab="tab-settings">Site Settings</button>
-                    <button class="tab-btn" data-tab="tab-products">Products</button>
-                    <button class="tab-btn" data-tab="tab-home">Home Page</button>
-                    <button class="tab-btn" data-tab="tab-about">About</button>
-                    <button class="tab-btn" data-tab="tab-shipping">Shipping</button>
-                    <button class="tab-btn" data-tab="tab-legal">Legal</button>
-                </div>
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="tab-settings">Site Settings</button>
+                <button class="tab-btn" data-tab="tab-products">Products</button>
+                <button class="tab-btn" data-tab="tab-home">Home Page</button>
+                <button class="tab-btn" data-tab="tab-about">About</button>
+                <button class="tab-btn" data-tab="tab-shipping">Shipping</button>
+                <button class="tab-btn" data-tab="tab-legal">Legal</button>
+            </div>
+            <div class="header-actions">
+                <span class="profile-badge" id="adminBadge"></span>
                 <button class="header-save-btn" id="headerSaveBtn" onclick="saveCurrentTab()">💾 Save</button>
                 <span class="header-status" id="headerStatus"></span>
-            </div>
-            <div class="header-right">
-                <span id="adminNameDisplay"></span>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </header>
 
         <div class="admin-container">
+            <!-- ==================== SITE SETTINGS TAB ==================== -->
             <div class="tab-content active" id="tab-settings">
                 <div class="section">
-                    <h2>🎨 Site Settings</h2>
+                    <h2>🎨 Colours</h2>
                     <div class="form-row-3">
                         <div class="form-group">
                             <label>Primary Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="primaryColor" onchange="updateColorPreview('primaryColor')">
+                                <input type="text" id="primaryColorText" oninput="updateColorFromText('primaryColor', this.value)" placeholder="#194373">
                                 <div class="color-preview" id="primaryColorPreview"></div>
-                                <input type="text" id="primaryColorText" oninput="updateColorFromText('primaryColor', this.value)">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>CTA Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="ctaColor" onchange="updateColorPreview('ctaColor')">
+                                <input type="text" id="ctaColorText" oninput="updateColorFromText('ctaColor', this.value)" placeholder="#f29b2a">
                                 <div class="color-preview" id="ctaColorPreview"></div>
-                                <input type="text" id="ctaColorText" oninput="updateColorFromText('ctaColor', this.value)">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Secondary Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="secondaryColor" onchange="updateColorPreview('secondaryColor')">
+                                <input type="text" id="secondaryColorText" oninput="updateColorFromText('secondaryColor', this.value)" placeholder="#5693ac">
                                 <div class="color-preview" id="secondaryColorPreview"></div>
-                                <input type="text" id="secondaryColorText" oninput="updateColorFromText('secondaryColor', this.value)">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Alert Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="alertColor" onchange="updateColorPreview('alertColor')">
+                                <input type="text" id="alertColorText" oninput="updateColorFromText('alertColor', this.value)" placeholder="#dc3c33">
                                 <div class="color-preview" id="alertColorPreview"></div>
-                                <input type="text" id="alertColorText" oninput="updateColorFromText('alertColor', this.value)">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Background Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="backgroundColor" onchange="updateColorPreview('backgroundColor')">
+                                <input type="text" id="backgroundColorText" oninput="updateColorFromText('backgroundColor', this.value)" placeholder="#eee6ca">
                                 <div class="color-preview" id="backgroundColorPreview"></div>
-                                <input type="text" id="backgroundColorText" oninput="updateColorFromText('backgroundColor', this.value)">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Text Color</label>
                             <div class="color-input-group">
                                 <input type="color" id="textColor" onchange="updateColorPreview('textColor')">
+                                <input type="text" id="textColorText" oninput="updateColorFromText('textColor', this.value)" placeholder="#2c3e50">
                                 <div class="color-preview" id="textColorPreview"></div>
-                                <input type="text" id="textColorText" oninput="updateColorFromText('textColor', this.value)">
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Background Image URL</label>
-                        <input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage')">
-                        <img class="image-preview" id="backgroundImagePreview">
-                    </div>
-                    <div class="form-group">
-                        <label>Banner Logo URL</label>
-                        <input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo')">
+                </div>
+
+                <div class="section">
+                    <h2>🖼️ Banner & Logo</h2>
+                    <div class="image-url-row">
+                        <div class="form-group">
+                            <label>Banner Logo URL</label>
+                            <input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo')">
+                        </div>
                         <img class="image-preview" id="bannerLogoPreview">
+                    </div>
+                    <div class="image-url-row">
+                        <div class="form-group">
+                            <label>Background Image URL</label>
+                            <input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage')">
+                        </div>
+                        <img class="image-preview" id="backgroundImagePreview">
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
-                        <div class="form-group"><label>Banner Book Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                        <div class="form-group"><label>Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
                     </div>
                     <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
-                    
-                    <h3>👤 Admin Accounts</h3>
+                </div>
+
+                <div class="section">
+                    <h2>📄 Page Titles</h2>
                     <div class="form-row">
-                        <div class="form-group"><label>Admin 1 Name</label><input type="text" id="admin1Name"></div>
-                        <div class="form-group"><label>Admin 1 Email</label><input type="email" id="admin1Email"></div>
-                        <div class="form-group">
-                            <label>Admin 1 Icon URL</label>
-                            <input type="text" id="admin1IconURL" oninput="updateImagePreview('admin1IconURL')">
-                            <img class="image-preview" id="admin1IconURLPreview">
-                        </div>
-                        <div class="form-group"><label>Admin 2 Name</label><input type="text" id="admin2Name"></div>
-                        <div class="form-group"><label>Admin 2 Email</label><input type="email" id="admin2Email"></div>
-                        <div class="form-group">
-                            <label>Admin 2 Icon URL</label>
-                            <input type="text" id="admin2IconURL" oninput="updateImagePreview('admin2IconURL')">
-                            <img class="image-preview" id="admin2IconURLPreview">
+                        <div class="form-group"><label>Home Page Title</label><input type="text" id="homePageTitle"></div>
+                        <div class="form-group"><label>Order Page Title</label><input type="text" id="orderPageTitle"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>About Page Title</label><input type="text" id="aboutPageTitle"></div>
+                        <div class="form-group"><label>Contact Page Title</label><input type="text" id="contactPageTitle"></div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔗 Navigation Icons</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Home Icon URL</label><input type="text" id="navIconURLHome"></div>
+                        <div class="form-group"><label>About Icon URL</label><input type="text" id="navIconURLAbout"></div>
+                        <div class="form-group"><label>Contact Icon URL</label><input type="text" id="navIconURLContact"></div>
+                        <div class="form-group"><label>LinkedIn Icon URL</label><input type="text" id="navIconURLLinkedIn"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Admin Icon URL</label><input type="text" id="navIconURLAdmin"></div>
+                        <div class="form-group"><label>LinkedIn URL</label><input type="text" id="linkedInURL" placeholder="https://www.linkedin.com/in/..."></div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>💳 Payment & Icons</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>PayPal Logo URL</label><input type="text" id="payPalLogo"></div>
+                        <div class="form-group"><label>Payfast Logo URL</label><input type="text" id="payfastLogo"></div>
+                        <div class="form-group"><label>Location Icon URL</label><input type="text" id="locationIconURL"></div>
+                        <div class="form-group"><label>Maps Icon URL</label><input type="text" id="mapsIconURL"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
+                        <div class="form-group"><label>Contact Email</label><input type="email" id="contactEmail"></div>
+                    </div>
+                </div>
+
+                <!-- My Profile -->
+                <div class="section" style="border-left: 4px solid #f29b2a;">
+                    <h2>👤 My Profile <span style="font-weight:400;font-size:0.85rem;color:#888;">(only you can see and edit this)</span></h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>My Name</label><input type="text" id="myProfileName"></div>
+                        <div class="form-group"><label>My Email</label><input type="email" id="myProfileEmail"></div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>My Icon URL</label>
+                            <div class="image-url-row">
+                                <input type="text" id="myProfileIconURL" oninput="updateImagePreview('myProfileIconURL')" style="flex:1;">
+                                <img class="image-preview" id="myProfileIconURLPreview">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
+                    <button class="btn-sm" onclick="saveMyProfile()" style="margin-top:0.8rem;">💾 Save My Profile</button>
                 </div>
             </div>
 
+            <!-- ==================== PRODUCTS TAB ==================== -->
             <div class="tab-content" id="tab-products">
                 <div class="section">
                     <h2>📦 Product 1</h2>
                     <div class="form-row">
+                        <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product1Code"></div>
                         <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
-                        <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
                     </div>
+                    <div class="form-group"><label>Description</label><textarea id="product1Desc" rows="2"></textarea></div>
                     <div class="form-row">
+                        <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
                         <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
                         <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Image URL</label>
-                        <input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL')">
-                        <img class="image-preview" id="product1ImageURLPreview">
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold"></div>
                         <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1"></div>
                     </div>
+                    <div class="image-url-row">
+                        <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL')"></div>
+                        <img class="image-preview" id="product1ImageURLPreview">
+                    </div>
                     
                     <h3>📦 Product 2</h3>
                     <div class="form-row">
+                        <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product2Code"></div>
                         <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
-                        <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
                     </div>
+                    <div class="form-group"><label>Description</label><textarea id="product2Desc" rows="2"></textarea></div>
                     <div class="form-row">
+                        <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
                         <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
                         <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Image URL</label>
-                        <input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL')">
-                        <img class="image-preview" id="product2ImageURLPreview">
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold"></div>
                         <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1"></div>
                     </div>
+                    <div class="image-url-row">
+                        <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL')"></div>
+                        <img class="image-preview" id="product2ImageURLPreview">
+                    </div>
                 </div>
             </div>
 
+            <!-- ==================== HOME PAGE TAB ==================== -->
             <div class="tab-content" id="tab-home">
                 <div class="section">
                     <h2>🏠 Home Page Content</h2>
-                    <div class="form-group"><label>Home Page Book Headline</label><input type="text" id="homeHeadline"></div>
-                    <div class="form-group"><label>Home Page Book Description 1</label><textarea id="homeDesc1"></textarea></div>
-                    <div class="form-group"><label>Home Page Book Description 2</label><textarea id="homeDesc2"></textarea></div>
+                    <div class="form-group"><label>Book Description 1</label><input type="text" id="homeDesc1"></div>
+                    <div class="form-group"><label>Book Description 2</label><textarea id="homeDesc2" rows="3"></textarea></div>
                     <div class="form-row">
-                        <div class="form-group"><label>Home Page Item 1 Main Text</label><input type="text" id="homeItem1Main"></div>
-                        <div class="form-group"><label>Home Page Item 1 Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                        <div class="form-group"><label>Item 1 - Main Text</label><input type="text" id="homeItem1Main"></div>
+                        <div class="form-group"><label>Item 1 - Sub Text</label><input type="text" id="homeItem1Sub"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>Home Page Item 2 Main Text</label><input type="text" id="homeItem2Main"></div>
-                        <div class="form-group"><label>Home Page Item 2 Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                        <div class="form-group"><label>Item 2 - Main Text</label><input type="text" id="homeItem2Main"></div>
+                        <div class="form-group"><label>Item 2 - Sub Text</label><input type="text" id="homeItem2Sub"></div>
                     </div>
                     <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
-                    <div class="form-group"><label>Carousel Images (one per line, up to 9)</label><textarea id="carouselImages" rows="4"></textarea></div>
+                    <div class="form-group"><label>Carousel Images (one URL per line, up to 9)</label><textarea id="carouselImages" rows="3" placeholder="https://...carousel_1.png&#10;https://...carousel_2.png"></textarea></div>
                 </div>
             </div>
 
+            <!-- ==================== ABOUT TAB ==================== -->
             <div class="tab-content" id="tab-about">
                 <div class="section">
                     <h2>👤 About Section</h2>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Author Image 1 URL</label>
-                            <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1')">
-                            <img class="image-preview" id="authorImage1Preview">
+                            <div class="image-url-row">
+                                <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1')" style="flex:1;">
+                                <img class="image-preview" id="authorImage1Preview">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Author Image 2 URL</label>
-                            <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2')">
-                            <img class="image-preview" id="authorImage2Preview">
+                            <div class="image-url-row">
+                                <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2')" style="flex:1;">
+                                <img class="image-preview" id="authorImage2Preview">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3"></textarea></div>
-                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="6"></textarea></div>
+                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="5" class="tall"></textarea></div>
                 </div>
             </div>
 
+            <!-- ==================== SHIPPING TAB ==================== -->
             <div class="tab-content" id="tab-shipping">
                 <div class="section">
                     <h2>🚚 Shipping Regions & Rates</h2>
@@ -394,15 +580,16 @@
                 </div>
             </div>
 
+            <!-- ==================== LEGAL TAB ==================== -->
             <div class="tab-content" id="tab-legal">
                 <div class="section">
                     <h2>📄 Legal Pages</h2>
                     <h3>Privacy Policy</h3>
-                    <div class="form-group"><label>Privacy Policy Heading</label><input type="text" id="privacyHeading"></div>
-                    <div class="form-group"><label>Privacy Policy Content</label><textarea id="privacyContent" rows="8" placeholder="Use format: KeyName: Value text..."></textarea></div>
+                    <div class="form-group"><label>Heading</label><input type="text" id="privacyHeading"></div>
+                    <div class="form-group"><label>Content</label><textarea id="privacyContent" rows="6" placeholder="KeyName: Value text&#10;KeyName: Value text..."></textarea></div>
                     <h3>Terms of Service</h3>
-                    <div class="form-group"><label>Terms of Service Heading</label><input type="text" id="termsHeading"></div>
-                    <div class="form-group"><label>Terms of Service Content</label><textarea id="termsContent" rows="8" placeholder="Use format: KeyName: Value text..."></textarea></div>
+                    <div class="form-group"><label>Heading</label><input type="text" id="termsHeading"></div>
+                    <div class="form-group"><label>Content</label><textarea id="termsContent" rows="6" placeholder="KeyName: Value text&#10;KeyName: Value text..."></textarea></div>
                 </div>
             </div>
         </div>
@@ -415,7 +602,7 @@
         let adminName = '';
         let currentTab = 'tab-settings';
 
-        // Color preview functions
+        // ========== COLOR PREVIEW HELPERS ==========
         function updateColorPreview(colorId) {
             const colorInput = document.getElementById(colorId);
             const preview = document.getElementById(colorId + 'Preview');
@@ -425,7 +612,6 @@
                 if (textInput) textInput.value = colorInput.value;
             }
         }
-
         function updateColorFromText(colorId, value) {
             if (value.match(/^#[0-9a-fA-F]{6}$/)) {
                 const colorInput = document.getElementById(colorId);
@@ -434,14 +620,13 @@
                 if (preview) preview.style.backgroundColor = value;
             }
         }
-
         function initColorPreviews() {
             ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'].forEach(id => {
                 updateColorPreview(id);
             });
         }
 
-        // Image preview function
+        // ========== IMAGE PREVIEW ==========
         function updateImagePreview(inputId) {
             const input = document.getElementById(inputId);
             const preview = document.getElementById(inputId + 'Preview');
@@ -456,25 +641,25 @@
                 }
             }
         }
-
         function initImagePreviews() {
-            ['backgroundImage', 'bannerLogo', 'admin1IconURL', 'admin2IconURL', 
+            ['backgroundImage', 'bannerLogo', 'myProfileIconURL',
              'product1ImageURL', 'product2ImageURL', 'authorImage1', 'authorImage2'].forEach(id => {
                 const input = document.getElementById(id);
                 if (input && input.value) updateImagePreview(id);
             });
         }
 
+        // ========== STATUS ==========
         function showStatus(message, type) {
             const statusEl = document.getElementById('headerStatus');
             statusEl.textContent = message;
             statusEl.className = 'header-status ' + type;
             if (type === 'success' || type === 'error') {
-                setTimeout(() => { statusEl.className = 'header-status'; }, 3000);
+                setTimeout(() => { statusEl.className = 'header-status'; }, 3500);
             }
         }
 
-        // Tab switching
+        // ========== TAB SWITCHING ==========
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -485,12 +670,10 @@
             });
         });
 
-        // Save current tab
         async function saveCurrentTab() {
             const saveBtn = document.getElementById('headerSaveBtn');
             saveBtn.disabled = true;
             showStatus('Saving...', 'saving');
-            
             try {
                 switch(currentTab) {
                     case 'tab-settings': await saveSettings(); break;
@@ -504,16 +687,14 @@
                 showStatus('Error!', 'error');
                 console.error(err);
             }
-            
             saveBtn.disabled = false;
         }
 
+        // ========== INIT ==========
         async function init() {
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const admin = params.get('admin');
-
-            console.log('Admin page - token:', token, 'admin:', admin);
 
             if (!token || !admin) {
                 document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
@@ -529,19 +710,17 @@
                 formData.append('token', token);
                 formData.append('admin', admin);
                 
-                console.log('Verifying token via POST...');
-                
                 const res = await fetch(API_URL, { method: 'POST', body: formData });
                 const data = await res.json();
-                
-                console.log('Token verification result:', data);
 
                 if (data.result === 'success') {
                     adminName = data.adminName;
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminNameDisplay').textContent = '👤 ' + adminName;
                     await loadAllData();
+                    // Populate profile badge
+                    const scriptProps = await fetchAdminProfile();
+                    updateAdminBadge(scriptProps);
                     initColorPreviews();
                     initImagePreviews();
                     return;
@@ -554,8 +733,32 @@
             }
         }
 
+        function updateAdminBadge(profile) {
+            const badge = document.getElementById('adminBadge');
+            const iconUrl = profile.iconURL || '';
+            const name = profile.name || adminName || ('Admin ' + adminNum);
+            let html = '';
+            if (iconUrl) {
+                html += `<img src="${iconUrl}" alt="" onerror="this.style.display='none';">`;
+            }
+            html += name;
+            badge.innerHTML = html;
+        }
+
+        async function fetchAdminProfile() {
+            // We get this from the allData settings which now come from Script Properties
+            const key = 'Admin' + adminNum;
+            return {
+                name: document.getElementById('myProfileName').value || '',
+                email: document.getElementById('myProfileEmail').value || '',
+                iconURL: document.getElementById('myProfileIconURL').value || ''
+            };
+        }
+
         function logout() {
-            window.close();
+            if (confirm('Are you sure you want to logout?')) {
+                window.close();
+            }
         }
 
         async function loadAllData() {
@@ -585,29 +788,54 @@
         }
 
         function populateSettings(s) {
+            // Colours
             document.getElementById('primaryColor').value = s.PrimaryColor || '#194373';
             document.getElementById('ctaColor').value = s.CTAColor || '#f29b2a';
             document.getElementById('secondaryColor').value = s.SecondaryColor || '#f29b2a';
-            document.getElementById('alertColor').value = s.AlertColour || '#dc3c33';
+            document.getElementById('alertColor').value = s.AlertColor || '#dc3c33';
             document.getElementById('backgroundColor').value = s.BackgroundColor || '#ffffff';
             document.getElementById('textColor').value = s.TextColor || '#000000';
+            // Banner
             document.getElementById('backgroundImage').value = s.BackgroundImage || '';
             document.getElementById('bannerLogo').value = s.BannerLogo || '';
             document.getElementById('bannerBookTitle').value = s.BannerBookTitle || '';
             document.getElementById('bannerBookTitleAbbreviation').value = s.BannerBookTitleAbbreviation || '';
-            document.getElementById('bannerBookSubtitle').value = s.BannerBookSubTitile || '';
-            document.getElementById('admin1Name').value = s.Admin1Name || '';
-            document.getElementById('admin1Email').value = s.Admin1Email || '';
-            document.getElementById('admin1IconURL').value = s.Admin1IconURL || '';
-            document.getElementById('admin2Name').value = s.Admin2Name || '';
-            document.getElementById('admin2Email').value = s.Admin2Email || '';
-            document.getElementById('admin2IconURL').value = s.Admin2IconURL || '';
+            document.getElementById('bannerBookSubtitle').value = s.BannerBookSubTitle || '';
+            // Page titles
+            document.getElementById('homePageTitle').value = s.HomePageTitle || '';
+            document.getElementById('orderPageTitle').value = s.OrderPageTitle || '';
+            document.getElementById('aboutPageTitle').value = s.AboutPageTitle || '';
+            document.getElementById('contactPageTitle').value = s.ContactPageTitle || '';
+            // Nav icons
+            document.getElementById('navIconURLHome').value = s.NavIconURLHome || '';
+            document.getElementById('navIconURLAbout').value = s.NavIconURLAbout || '';
+            document.getElementById('navIconURLContact').value = s.NavIconURLContact || '';
+            document.getElementById('navIconURLLinkedIn').value = s.NavIconURLLinkedIn || '';
+            document.getElementById('navIconURLAdmin').value = s.NavIconURLAdmin || '';
+            document.getElementById('linkedInURL').value = s.LinkedInURL || '';
+            // Payment & icons
+            document.getElementById('payPalLogo').value = s.PayPalLogo || '';
+            document.getElementById('payfastLogo').value = s.PayfastLogo || '';
+            document.getElementById('locationIconURL').value = s.LocationIconURL || '';
+            document.getElementById('mapsIconURL').value = s.MapsIconURL || '';
             document.getElementById('googleMapsApiKey').value = s.GoogleMapsApiKey || '';
+            document.getElementById('contactEmail').value = s.ContactEmail || '';
+            // My Profile (only current admin's own data)
+            const myKey = 'Admin' + adminNum;
+            document.getElementById('myProfileName').value = s[myKey + 'Name'] || '';
+            document.getElementById('myProfileEmail').value = s[myKey + 'Email'] || '';
+            document.getElementById('myProfileIconURL').value = s[myKey + 'IconURL'] || '';
+            updateAdminBadge({
+                name: s[myKey + 'Name'] || '',
+                iconURL: s[myKey + 'IconURL'] || ''
+            });
         }
 
         function populateProducts(products) {
             if (products[0]) {
+                document.getElementById('product1Code').value = products[0].ProductCode || '';
                 document.getElementById('product1Name').value = products[0].ProductName || '';
+                document.getElementById('product1Desc').value = products[0].ProductDescription || '';
                 document.getElementById('product1Type').value = products[0].Type || 'Physical';
                 document.getElementById('product1BasePrice').value = products[0].BasePrice || '';
                 document.getElementById('product1Weight').value = products[0].Weight || '';
@@ -616,7 +844,9 @@
                 document.getElementById('product1DiscountPercent').value = products[0].DiscountPercent || '';
             }
             if (products[1]) {
+                document.getElementById('product2Code').value = products[1].ProductCode || '';
                 document.getElementById('product2Name').value = products[1].ProductName || '';
+                document.getElementById('product2Desc').value = products[1].ProductDescription || '';
                 document.getElementById('product2Type').value = products[1].Type || 'Physical';
                 document.getElementById('product2BasePrice').value = products[1].BasePrice || '';
                 document.getElementById('product2Weight').value = products[1].Weight || '';
@@ -627,7 +857,6 @@
         }
 
         function populateHome(home) {
-            document.getElementById('homeHeadline').value = home.HomePageBookHeadline || '';
             document.getElementById('homeDesc1').value = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').value = home.HomePageBookDescription2 || '';
             document.getElementById('homeItem1Main').value = home.HomePageItem1MainText || '';
@@ -653,35 +882,63 @@
         function populateShipping(regions, rates) {
             const container = document.getElementById('shippingRegionsList');
             container.innerHTML = '';
-            const allLocations = [...new Set([...regions.map(r => r.Location), ...rates.map(r => r.Location)])];
-            allLocations.forEach(loc => {
-                const region = regions.find(r => r.Location === loc) || {};
-                const regionRates = rates.filter(r => r.Location === loc);
-                const div = document.createElement('div');
-                div.className = 'section';
-                div.style.marginBottom = '1rem';
-                div.innerHTML = `
-                    <h3>${loc || 'New Region'}</h3>
-                    <div class="form-row">
-                        <div class="form-group"><label>Location</label><input type="text" class="region-location" value="${loc || ''}"></div>
-                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${region.Region || ''}"></div>
-                        <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag" value="${region.FlagURL || ''}"></div>
-                        <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${region.PhoneCode || '+1'}"></div>
+            
+            // Group by region
+            const regionMap = {};
+            regions.forEach(r => {
+                if (!regionMap[r.Region]) regionMap[r.Region] = { region: r, locations: [] };
+                regionMap[r.Region].locations.push(r);
+            });
+            
+            // Also group rates by region
+            const ratesByRegion = {};
+            rates.forEach(r => {
+                if (!ratesByRegion[r.Region]) ratesByRegion[r.Region] = [];
+                ratesByRegion[r.Region].push(r);
+            });
+            
+            // Combine all unique region names
+            const allRegions = [...new Set([...Object.keys(regionMap), ...Object.keys(ratesByRegion)])];
+            
+            allRegions.forEach(regionName => {
+                const regionData = regionMap[regionName] || { region: {}, locations: [] };
+                const regionRates = ratesByRegion[regionName] || [];
+                const firstLocation = regionData.locations[0] || {};
+                
+                const card = document.createElement('div');
+                card.className = 'region-card';
+                
+                const flagHtml = firstLocation.FlagURL ? `<img src="${firstLocation.FlagURL}" alt="">` : '';
+                const locationLabel = firstLocation.Location || regionName || 'New Region';
+                
+                card.innerHTML = `
+                    <div class="region-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>${flagHtml} ${locationLabel}</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="rates-container">
-                        ${regionRates.map(rate => `
-                            <div class="form-row rate-row" style="margin-bottom:0.5rem;">
-                                <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01"></div>
-                                <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01"></div>
-                                <div class="form-group"><label>Time</label><input type="text" class="rate-time" value="${rate.Time || ''}"></div>
-                                <div class="form-group"><button class="btn-sm btn-danger" onclick="this.closest('.rate-row').remove()">Remove</button></div>
-                            </div>
-                        `).join('')}
+                    <div class="region-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>Location Name</label><input type="text" class="region-location" value="${firstLocation.Location || ''}"></div>
+                            <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${regionData.region.Region || regionName || ''}"></div>
+                            <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag" value="${firstLocation.FlagURL || ''}"></div>
+                            <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${firstLocation.PhoneCode || '+1'}"></div>
+                        </div>
+                        <h4 style="margin-top:0.8rem;">Rates</h4>
+                        <div class="rates-container">
+                            ${regionRates.map(rate => `
+                                <div class="rate-row">
+                                    <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01"></div>
+                                    <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01"></div>
+                                    <div class="form-group"><label>Time</label><input type="text" class="rate-time" value="${rate.Time || ''}"></div>
+                                    <button class="btn-sm btn-danger" onclick="this.closest('.rate-row').remove()">✕</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="btn-sm btn-secondary" onclick="addRateRow(this)" style="margin-top:0.5rem;">+ Add Rate</button>
+                        <button class="btn-sm btn-danger" onclick="this.closest('.region-card').remove()" style="margin-left:0.3rem;">Remove Region</button>
                     </div>
-                    <button class="btn-sm btn-secondary" onclick="addRateRow(this)">+ Add Rate</button>
-                    <button class="btn-sm btn-danger" onclick="this.closest('.section').remove()" style="margin-left:0.5rem;">Remove Region</button>
                 `;
-                container.appendChild(div);
+                container.appendChild(card);
             });
         }
 
@@ -696,34 +953,38 @@
 
         function addShippingRegion() {
             const container = document.getElementById('shippingRegionsList');
-            const div = document.createElement('div');
-            div.className = 'section';
-            div.style.marginBottom = '1rem';
-            div.innerHTML = `
-                <h3>New Region</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>Location</label><input type="text" class="region-location" placeholder="Country name"></div>
-                    <div class="form-group"><label>Region Code</label><input type="text" class="region-code"></div>
-                    <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag"></div>
-                    <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
+            const card = document.createElement('div');
+            card.className = 'region-card open';
+            card.innerHTML = `
+                <div class="region-card-header" onclick="this.parentElement.classList.toggle('open')">
+                    <h4>New Region</h4>
+                    <span class="toggle-icon">▾</span>
                 </div>
-                <div class="rates-container"></div>
-                <button class="btn-sm btn-secondary" onclick="addRateRow(this)">+ Add Rate</button>
-                <button class="btn-sm btn-danger" onclick="this.closest('.section').remove()" style="margin-left:0.5rem;">Remove Region</button>
+                <div class="region-card-body">
+                    <div class="form-row">
+                        <div class="form-group"><label>Location Name</label><input type="text" class="region-location" placeholder="Country name"></div>
+                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code"></div>
+                        <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag"></div>
+                        <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
+                    </div>
+                    <h4 style="margin-top:0.8rem;">Rates</h4>
+                    <div class="rates-container"></div>
+                    <button class="btn-sm btn-secondary" onclick="addRateRow(this)" style="margin-top:0.5rem;">+ Add Rate</button>
+                    <button class="btn-sm btn-danger" onclick="this.closest('.region-card').remove()" style="margin-left:0.3rem;">Remove Region</button>
+                </div>
             `;
-            container.appendChild(div);
+            container.appendChild(card);
         }
 
         function addRateRow(btn) {
-            const container = btn.parentElement.querySelector('.rates-container');
+            const container = btn.closest('.region-card-body').querySelector('.rates-container');
             const row = document.createElement('div');
-            row.className = 'form-row rate-row';
-            row.style.marginBottom = '0.5rem';
+            row.className = 'rate-row';
             row.innerHTML = `
                 <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" step="0.01"></div>
                 <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" step="0.01"></div>
                 <div class="form-group"><label>Time</label><input type="text" class="rate-time"></div>
-                <div class="form-group"><button class="btn-sm btn-danger" onclick="this.closest('.rate-row').remove()">Remove</button></div>
+                <button class="btn-sm btn-danger" onclick="this.closest('.rate-row').remove()">✕</button>
             `;
             container.appendChild(row);
         }
@@ -739,48 +1000,80 @@
             showStatus(data.result === 'success' ? '✅ Saved!' : '❌ Failed', data.result === 'success' ? 'success' : 'error');
         }
 
+        async function saveMyProfile() {
+            const data = {
+                Name: document.getElementById('myProfileName').value,
+                Email: document.getElementById('myProfileEmail').value,
+                IconURL: document.getElementById('myProfileIconURL').value
+            };
+            const formData = new URLSearchParams();
+            formData.append('action', 'saveMyAdminProfile');
+            formData.append('token', adminToken);
+            formData.append('admin', adminNum);
+            formData.append('data', JSON.stringify(data));
+            const res = await fetch(API_URL, { method: 'POST', body: formData });
+            const result = await res.json();
+            showStatus(result.result === 'success' ? '✅ Profile Saved!' : '❌ Failed', result.result === 'success' ? 'success' : 'error');
+            if (result.result === 'success') {
+                updateAdminBadge(data);
+            }
+        }
+
         async function saveSettings() {
             await saveData('saveSettings', {
                 PrimaryColor: document.getElementById('primaryColor').value,
                 CTAColor: document.getElementById('ctaColor').value,
                 SecondaryColor: document.getElementById('secondaryColor').value,
-                AlertColour: document.getElementById('alertColor').value,
+                AlertColor: document.getElementById('alertColor').value,
                 BackgroundColor: document.getElementById('backgroundColor').value,
                 TextColor: document.getElementById('textColor').value,
                 BackgroundImage: document.getElementById('backgroundImage').value,
                 BannerLogo: document.getElementById('bannerLogo').value,
                 BannerBookTitle: document.getElementById('bannerBookTitle').value,
                 BannerBookTitleAbbreviation: document.getElementById('bannerBookTitleAbbreviation').value,
-                BannerBookSubTitile: document.getElementById('bannerBookSubtitle').value,
-                Admin1Name: document.getElementById('admin1Name').value,
-                Admin1Email: document.getElementById('admin1Email').value,
-                Admin1IconURL: document.getElementById('admin1IconURL').value,
-                Admin2Name: document.getElementById('admin2Name').value,
-                Admin2Email: document.getElementById('admin2Email').value,
-                Admin2IconURL: document.getElementById('admin2IconURL').value,
-                GoogleMapsApiKey: document.getElementById('googleMapsApiKey').value
+                BannerBookSubTitle: document.getElementById('bannerBookSubtitle').value,
+                HomePageTitle: document.getElementById('homePageTitle').value,
+                OrderPageTitle: document.getElementById('orderPageTitle').value,
+                AboutPageTitle: document.getElementById('aboutPageTitle').value,
+                ContactPageTitle: document.getElementById('contactPageTitle').value,
+                NavIconURLHome: document.getElementById('navIconURLHome').value,
+                NavIconURLAbout: document.getElementById('navIconURLAbout').value,
+                NavIconURLContact: document.getElementById('navIconURLContact').value,
+                NavIconURLLinkedIn: document.getElementById('navIconURLLinkedIn').value,
+                NavIconURLAdmin: document.getElementById('navIconURLAdmin').value,
+                LinkedInURL: document.getElementById('linkedInURL').value,
+                PayPalLogo: document.getElementById('payPalLogo').value,
+                PayfastLogo: document.getElementById('payfastLogo').value,
+                LocationIconURL: document.getElementById('locationIconURL').value,
+                MapsIconURL: document.getElementById('mapsIconURL').value,
+                GoogleMapsApiKey: document.getElementById('googleMapsApiKey').value,
+                ContactEmail: document.getElementById('contactEmail').value
             });
         }
 
         async function saveProducts() {
             await saveData('saveProducts', [
                 {
+                    ProductCode: document.getElementById('product1Code').value,
                     ProductName: document.getElementById('product1Name').value,
+                    ProductDescription: document.getElementById('product1Desc').value,
                     Type: document.getElementById('product1Type').value,
                     BasePrice: parseFloat(document.getElementById('product1BasePrice').value) || 0,
-                    Weight: parseFloat(document.getElementById('product1Weight').value) || 0,
-                    ImageURL: document.getElementById('product1ImageURL').value,
                     DiscountThreshold: parseInt(document.getElementById('product1DiscountThreshold').value) || 0,
-                    DiscountPercent: parseFloat(document.getElementById('product1DiscountPercent').value) || 0
+                    DiscountPercent: parseFloat(document.getElementById('product1DiscountPercent').value) || 0,
+                    Weight: parseFloat(document.getElementById('product1Weight').value) || 0,
+                    ImageURL: document.getElementById('product1ImageURL').value
                 },
                 {
+                    ProductCode: document.getElementById('product2Code').value,
                     ProductName: document.getElementById('product2Name').value,
+                    ProductDescription: document.getElementById('product2Desc').value,
                     Type: document.getElementById('product2Type').value,
                     BasePrice: parseFloat(document.getElementById('product2BasePrice').value) || 0,
-                    Weight: parseFloat(document.getElementById('product2Weight').value) || 0,
-                    ImageURL: document.getElementById('product2ImageURL').value,
                     DiscountThreshold: parseInt(document.getElementById('product2DiscountThreshold').value) || 0,
-                    DiscountPercent: parseFloat(document.getElementById('product2DiscountPercent').value) || 0
+                    DiscountPercent: parseFloat(document.getElementById('product2DiscountPercent').value) || 0,
+                    Weight: parseFloat(document.getElementById('product2Weight').value) || 0,
+                    ImageURL: document.getElementById('product2ImageURL').value
                 }
             ]);
         }
@@ -788,7 +1081,6 @@
         async function saveHomePage() {
             const carouselUrls = document.getElementById('carouselImages').value.split('\n').filter(u => u.trim());
             const home = {
-                HomePageBookHeadline: document.getElementById('homeHeadline').value,
                 HomePageBookDescription1: document.getElementById('homeDesc1').value,
                 HomePageBookDescription2: document.getElementById('homeDesc2').value,
                 HomePageItem1MainText: document.getElementById('homeItem1Main').value,
@@ -812,18 +1104,19 @@
 
         async function saveShipping() {
             const regions = [], rates = [];
-            document.querySelectorAll('#shippingRegionsList .section').forEach(section => {
-                const location = section.querySelector('.region-location').value.trim();
-                if (!location) return;
+            document.querySelectorAll('#shippingRegionsList .region-card').forEach(card => {
+                const location = card.querySelector('.region-location').value.trim();
+                const regionCode = card.querySelector('.region-code').value.trim();
+                if (!location && !regionCode) return;
                 regions.push({
-                    Location: location,
-                    Region: section.querySelector('.region-code').value.trim(),
-                    FlagURL: section.querySelector('.region-flag').value.trim(),
-                    PhoneCode: section.querySelector('.region-phone').value.trim()
+                    Location: location || regionCode,
+                    Region: regionCode || location,
+                    FlagURL: card.querySelector('.region-flag').value.trim(),
+                    PhoneCode: card.querySelector('.region-phone').value.trim()
                 });
-                section.querySelectorAll('.rate-row').forEach(row => {
+                card.querySelectorAll('.rate-row').forEach(row => {
                     rates.push({
-                        Location: location,
+                        Region: regionCode || location,
                         MaxWeight: parseFloat(row.querySelector('.rate-maxweight').value) || 0,
                         Cost: parseFloat(row.querySelector('.rate-cost').value) || 0,
                         Time: row.querySelector('.rate-time').value.trim()
