@@ -288,9 +288,21 @@
         .home-col-left-box {
             background: white; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: 100%;
+            position: relative;
         }
         .home-col-left-box h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
         .home-col-left-box p { line-height: 1.6; }
+        .home-col-left-box .copyright-mark {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.4);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .home-col-left-box:hover .copyright-mark { opacity: 1; }
 
         #homeDesc1, #homeDesc2 { text-align: center; }
 
@@ -325,15 +337,25 @@
         .product-card {
             background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
             padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
         }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .product-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .product-card .sub { margin-bottom: 1rem; line-height: 1.4; }
         .product-card .price {
             font-weight: 700; font-size: 1.2rem;
             color: var(--primary-color, #194373);
         }
+        .product-card .copyright-mark {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.4);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .product-card:hover .copyright-mark { opacity: 1; }
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
@@ -423,7 +445,7 @@
         .order-product-option {
             border: 2px solid transparent; border-radius: 12px;
             cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
-            padding: 1rem 0.5rem; position: relative;
+            padding: 1rem 0.5rem 1.8rem 0.5rem; position: relative;
         }
         .order-product-option.selected {
             border-color: var(--primary-color, #194373);
@@ -442,6 +464,17 @@
             font-weight: 700; font-size: 1rem;
             color: var(--primary-color, #194373);
         }
+        .order-product-option .copyright-mark {
+            position: absolute;
+            bottom: 6px;
+            right: 8px;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.4);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .order-product-option:hover .copyright-mark { opacity: 1; }
 
         .selected-checkmark {
             display: none; position: absolute; top: -8px; right: -8px;
@@ -732,20 +765,6 @@
             white-space: nowrap;
         }
 
-        /* Watermark on product images */
-        .order-product-option img, .product-card img {
-            position: relative;
-        }
-        .order-product-option::after, .product-card::after {
-            content: '© GM Master Mariner';
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            font-size: 0.7rem;
-            color: rgba(0,0,0,0.4);
-            pointer-events: none;
-        }
-
         /* ---------- RESPONSIVE (mobile adjustments) ---------- */
         @media (max-width: 768px) {
             body { padding-top: 60px; padding-bottom: 4rem; }
@@ -895,7 +914,7 @@
     <div class="modal-overlay" id="adminLoginOverlay">
         <div class="modal-box admin-login-box">
             <div id="adminSelectStep">
-                <h3>Select Admin</h3>
+                <h3>Admin</h3>
                 <p>Choose your account to continue</p>
                 <div id="adminSelectButtons"></div>
             </div>
@@ -958,6 +977,7 @@
                     <div class="home-col-left-box" id="leftBox">
                         <h3 id="homeDesc1"></h3>
                         <p id="homeDesc2"></p>
+                        <span class="copyright-mark">© GM Master Mariner</span>
                     </div>
                 </div>
                 <div class="home-col home-col-center">
@@ -1001,6 +1021,7 @@
                         <img id="prod1Img" src="" alt="" style="display:none;">
                         <h4 id="prod1Name"></h4>
                         <p class="product-price" id="prod1Price" data-zar="0"></p>
+                        <span class="copyright-mark">© GM Master Mariner</span>
                     </div>
                     <div class="order-quantity-center">
                         <div class="quantity-label">Quantity</div>
@@ -1025,6 +1046,7 @@
                         <img id="prod2Img" src="" alt="" style="display:none;">
                         <h4 id="prod2Name"></h4>
                         <p class="product-price" id="prod2Price" data-zar="0"></p>
+                        <span class="copyright-mark">© GM Master Mariner</span>
                     </div>
                 </div>
 
@@ -1287,21 +1309,10 @@
     
             const container = document.getElementById('adminSelectButtons');
             
-            console.log('=== ADMIN LOGIN DEBUG ===');
-            console.log('All appSettings keys:', Object.keys(appSettings));
-            console.log('Admin1Name value:', appSettings.Admin1Name);
-            console.log('Admin2Name value:', appSettings.Admin2Name);
-            console.log('Admin1IconURL value:', appSettings.Admin1IconURL);
-            console.log('Admin2IconURL value:', appSettings.Admin2IconURL);
-            
             const admin1Name = appSettings.Admin1Name || 'Admin 1';
             const admin2Name = appSettings.Admin2Name || 'Admin 2';
             const admin1Icon = appSettings.Admin1IconURL || '';
             const admin2Icon = appSettings.Admin2IconURL || '';
-            
-            console.log('Using admin1Name:', admin1Name);
-            console.log('Using admin2Name:', admin2Name);
-            console.log('========================');
     
             container.innerHTML = '';
             [
@@ -1312,17 +1323,22 @@
                 btn.className = 'btn';
                 btn.style.margin = '0 0.5rem';
                 btn.style.minWidth = '140px';
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.gap = '0.5rem';
                 if (admin.icon) {
                     const img = document.createElement('img');
                     img.src = admin.icon;
-                    img.style.height = '20px';
-                    img.style.width = '20px';
+                    img.style.height = '24px';
+                    img.style.width = '24px';
                     img.style.borderRadius = '50%';
-                    img.style.marginRight = '0.4rem';
-                    img.style.verticalAlign = 'middle';
+                    img.style.objectFit = 'cover';
                     btn.appendChild(img);
                 }
-                btn.appendChild(document.createTextNode(admin.name));
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = admin.name;
+                btn.appendChild(nameSpan);
                 btn.addEventListener('click', () => requestAdminCode(admin.num, admin.name));
                 container.appendChild(btn);
             });
@@ -1333,6 +1349,13 @@
                 document.getElementById('adminCodeStatus').style.display = 'none';
                 document.getElementById('adminCodeInput').value = '';
             };
+    
+            // Verify on Enter key
+            document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('adminVerifyBtn').click();
+                }
+            });
     
             document.getElementById('adminVerifyBtn').onclick = async function() {
                 const code = document.getElementById('adminCodeInput').value.trim();
@@ -1382,19 +1405,13 @@
                 params.append('action', 'sendAdminCode');
                 params.append('admin', adminNum);
                 
-                console.log('Sending admin code request for admin:', adminNum);
-                
                 const res = await fetch(API_URL, { method: 'POST', body: params });
-                console.log('Response status:', res.status);
-                
                 const rawText = await res.text();
-                console.log('Raw response:', rawText);
                 
                 let data;
                 try {
                     data = JSON.parse(rawText);
                 } catch (e) {
-                    console.error('JSON parse error:', e);
                     document.getElementById('adminCodeStatus').textContent = 'Server error. Check console.';
                     return;
                 }
@@ -1404,13 +1421,10 @@
                     document.getElementById('adminCodeStatus').style.display = 'none';
                     sessionStorage.setItem('adminNum', adminNum);
                     sessionStorage.setItem('adminName', adminName);
-                    console.log('Code sent successfully');
                 } else {
-                    console.error('Failed:', data);
                     document.getElementById('adminCodeStatus').textContent = data.message || 'Failed to send code. Please try again.';
                 }
             } catch (err) {
-                console.error('Network error:', err);
                 document.getElementById('adminCodeStatus').textContent = 'Network error: ' + err.message;
             }
         }
@@ -1562,7 +1576,6 @@
         }
     
         function initPayments() {
-            // Payment gateway setup in progress — both buttons show a friendly message
             const paypalBtn = document.getElementById('paypalBtn');
             const payfastBtn = document.getElementById('payfastBtn');
             
@@ -1646,6 +1659,9 @@
                     refreshAllPrices();
                     sessionStorage.setItem('selectedCurrency', rate.CurrencyCode);
                     dropdown.classList.remove('open');
+                    // Close hamburger menu on mobile after currency selection
+                    document.getElementById('topBarRight').classList.remove('open');
+                    document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
                 });
                 return { element: item, text: rate.CountryName + ' ' + rate.CurrencyCode };
             });
@@ -2012,7 +2028,7 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const basePrice = product.BasePrice || 0;
-                card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p>`;
+                card.innerHTML = `<h4>${mainText}</h4><p class="sub">${subText}</p><p class="price" data-zar="${basePrice}">${formatPrice(basePrice)}</p><span class="copyright-mark">© GM Master Mariner</span>`;
                 return card;
             }
     
@@ -2047,8 +2063,18 @@
                 img2.style.display = 'none';
             }
     
-            document.getElementById('aboutShortBioText').textContent = about.AuthorShortBio || '';
-            document.getElementById('aboutExtendedBioContent').textContent = about.AuthorExtendedBio || '';
+            // Strip wrapping quotation marks from bio texts
+            let shortBio = (about.AuthorShortBio || '').trim();
+            let extendedBio = (about.AuthorExtendedBio || '').trim();
+            if ((shortBio.startsWith('"') && shortBio.endsWith('"')) || (shortBio.startsWith('\u201C') && shortBio.endsWith('\u201D'))) {
+                shortBio = shortBio.slice(1, -1).trim();
+            }
+            if ((extendedBio.startsWith('"') && extendedBio.endsWith('"')) || (extendedBio.startsWith('\u201C') && extendedBio.endsWith('\u201D'))) {
+                extendedBio = extendedBio.slice(1, -1).trim();
+            }
+    
+            document.getElementById('aboutShortBioText').textContent = shortBio;
+            document.getElementById('aboutExtendedBioContent').textContent = extendedBio;
     
             const toggleMore = document.getElementById('bioToggleMore');
             const toggleLess = document.getElementById('bioToggleLess');
@@ -2837,12 +2863,20 @@
             const btn = document.getElementById('hamburgerBtn');
             const menu = document.getElementById('topBarRight');
             btn.style.pointerEvents = 'auto';
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const expanded = menu.classList.toggle('open');
                 btn.setAttribute('aria-expanded', expanded);
             });
             menu.addEventListener('click', (e) => {
                 if (e.target.closest('a')) {
+                    menu.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+            // Close when tapping outside
+            document.addEventListener('click', (e) => {
+                if (menu.classList.contains('open') && !menu.contains(e.target) && e.target !== btn) {
                     menu.classList.remove('open');
                     btn.setAttribute('aria-expanded', 'false');
                 }
