@@ -4,19 +4,20 @@
     "SecondaryColor": "#5693ac",
     "BackgroundColor": "#eee6ca",
     "CTAColor": "#f29b2a",
-    "AlertColor": "#dc3c33",
+    "AlertColour": "#dc3c33",
     "TextColor": "#2c3e50",
-    "ContactEmail": "gm.mastermariner@gmail.com",
+    "ContactEmail": "",
     "BackgroundImage": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_background.svg",
     "BannerLogo": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png",
     "BannerBookTitle": "The ABC of ASD",
     "BannerBookTitleAbbreviation": "(Azimuth Stern Drive)",
-    "BannerBookSubTitile": "A Guide to ASD Tug Handling",
+    "BannerBookSubTitile": "",
     "NavIconURLHome": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_home.png",
     "NavIconURLAbout": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_about.png",
     "NavIconURLContact": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_contact.png",
     "NavIconURLLinkedIn": "https://cdn-icons-png.flaticon.com/512/174/174857.png",
     "NavIconURLAdmin": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_admin.png",
+    "NavIconURLOrder": "",
     "HomePageTitle": "The ultimate ASD tug handling guide now available in two formats",
     "OrderPageTitle": "Purchase your copy now",
     "AboutPageTitle": "About me",
@@ -26,259 +27,243 @@
     "PayfastLogo": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/button_payfast.png",
     "LocationIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_location.png",
     "MapsIconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_maps.png",
+    "GoogleMapsApiKey": "AIzaSyB1mdRh0WmY4-Cy6Q7SK0ASA7DIVqOKVmE",
+    "Admin1Name": "GPM",
+    "Admin2Name": "JGM",
+    "Admin1Email": "geordie1703@gmail.com",
+    "Admin2Email": "jukiangm@gmail.com",
     "Admin1IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin1_icon.png",
-    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png",
-    "GoogleMapsApiKey": "AIzaSyB1mdRh0WmY4-Cy6Q7SK0ASA7DIVqOKVmE"
+    "Admin2IconURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/admin2_icon.png"
   },
-  "home": {
-    "HomePageCarouselImage1": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_1.png",
-    "HomePageCarouselImage2": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_2_book.png",
-    "HomePageCarouselImage3": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_3_book.png",
-    "HomePageCarouselImage4": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_4.png",
-    "HomePageCarouselImage5": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_5_book.png",
-    "HomePageCarouselImage6": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_6_book.png",
-    "HomePageCarouselImage7": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_7.png",
-    "HomePageCarouselImage8": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_8_book.png",
-    "HomePageCarouselImage9": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/carousel_9_book.png",
-    "HomePageCarouselInterval": 3500,
-    "HomePageBookDescription1": "Written for tug operators",
-    "HomePageBookDescription2": "Whether you prefer the weight of a premium hardcover or the convenience of a digital file, The ABC of ASD delivers the same expert knowledge. This comprehensive book features over 70 full‑colour images, clear manoeuvre diagrams, and practical safety insights drawn from real‑world experience. The physical edition includes an exclusive free bridge display poster. The digital edition is a fully searchable replica, perfect for your tug computer or phone – always accessible wherever you are. Choose the best format for your tug.",
-    "HomePageItem1MainText": "Hardcopy printed format",
-    "HomePageItem1SubText": "A physical hardcover book\nprinted on premium gloss paper.",
-    "HomePageItem2MainText": "Versitile electronic format",
-    "HomePageItem2SubText": "A digital downloadable e-book\nlicence key for 2 computers"
-  },
-  "products": [
-    {
-      "ProductID": "978-1-0492-6642-8",
-      "ProductName": "Printed Book & Poster",
-      "Type": "Physical",
-      "Weight": 1,
-      "BasePrice": 1900,
-      "DiscountThreshold": 5,
-      "DiscountPercent": 10,
-      "DiscountUnitPrice": 1710,
-      "Description": "A premium hardcover casebound book. More than 70 full-colour images depicting tug manoeuvres and much more. Includes a free bridge display poster. Perfect for any ASD tug operator who prefer a hands-on reference.",
-      "ImageURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/product_book.png"
-    },
-    {
-      "ProductID": "978-1-0492-6643-5",
-      "ProductName": "Digital e-Book",
-      "Type": "Digital",
-      "Weight": 0,
-      "BasePrice": 950,
-      "DiscountThreshold": 5,
-      "DiscountPercent": 10,
-      "DiscountUnitPrice": 855,
-      "Description": "This digital format is a replica of the printed hardcopy edition. A downloadable and searchable, file to be kept on your tug computer or your phone, always accesible wherever you are. The bridge display Poster is not included with this format.",
-      "ImageURL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/product_ebook.png"
-    }
-  ],
   "exchangeRates": [
     {
-      "CurrencyCode": "ZAR",
-      "RateToBase": 1,
-      "FlagURL": "https://flagcdn.com/w20/za.png",
-      "CountryName": "South Africa",
-      "Symbol": "R"
+      "CountryName": "ZAR",
+      "CurrencyCode": 1,
+      "Symbol": "https://flagcdn.com/w20/za.png",
+      "FlagURL": "South Africa",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "USD",
-      "RateToBase": 0.061413,
-      "FlagURL": "https://flagcdn.com/w20/us.png",
-      "CountryName": "United States",
-      "Symbol": "$"
+      "CountryName": "USD",
+      "CurrencyCode": 0.061413,
+      "Symbol": "https://flagcdn.com/w20/us.png",
+      "FlagURL": "United States",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "EUR",
-      "RateToBase": 0.053067,
-      "FlagURL": "https://flagcdn.com/w20/eu.png",
-      "CountryName": "Eurozone",
-      "Symbol": "€"
+      "CountryName": "EUR",
+      "CurrencyCode": 0.053067,
+      "Symbol": "https://flagcdn.com/w20/eu.png",
+      "FlagURL": "Eurozone",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "GBP",
-      "RateToBase": 0.045769,
-      "FlagURL": "https://flagcdn.com/w20/gb.png",
-      "CountryName": "United Kingdom",
-      "Symbol": "£"
+      "CountryName": "GBP",
+      "CurrencyCode": 0.045769,
+      "Symbol": "https://flagcdn.com/w20/gb.png",
+      "FlagURL": "United Kingdom",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "AUD",
-      "RateToBase": 0.08717,
-      "FlagURL": "https://flagcdn.com/w20/au.png",
-      "CountryName": "Australia",
-      "Symbol": "A$"
+      "CountryName": "AUD",
+      "CurrencyCode": 0.08717,
+      "Symbol": "https://flagcdn.com/w20/au.png",
+      "FlagURL": "Australia",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "CAD",
-      "RateToBase": 0.085789,
-      "FlagURL": "https://flagcdn.com/w20/ca.png",
-      "CountryName": "Canada",
-      "Symbol": "C$"
+      "CountryName": "CAD",
+      "CurrencyCode": 0.085789,
+      "Symbol": "https://flagcdn.com/w20/ca.png",
+      "FlagURL": "Canada",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "SGD",
-      "RateToBase": 0.078788,
-      "FlagURL": "https://flagcdn.com/w20/sg.png",
-      "CountryName": "Singapore",
-      "Symbol": "S$"
+      "CountryName": "SGD",
+      "CurrencyCode": 0.078788,
+      "Symbol": "https://flagcdn.com/w20/sg.png",
+      "FlagURL": "Singapore",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "NOK",
-      "RateToBase": 0.58437,
-      "FlagURL": "https://flagcdn.com/w20/no.png",
-      "CountryName": "Norway",
-      "Symbol": "kr"
+      "CountryName": "NOK",
+      "CurrencyCode": 0.58437,
+      "Symbol": "https://flagcdn.com/w20/no.png",
+      "FlagURL": "Norway",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "SEK",
-      "RateToBase": 0.57893,
-      "FlagURL": "https://flagcdn.com/w20/se.png",
-      "CountryName": "Sweden",
-      "Symbol": "kr"
+      "CountryName": "SEK",
+      "CurrencyCode": 0.57893,
+      "Symbol": "https://flagcdn.com/w20/se.png",
+      "FlagURL": "Sweden",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "DKK",
-      "RateToBase": 0.395899,
-      "FlagURL": "https://flagcdn.com/w20/dk.png",
-      "CountryName": "Denmark",
-      "Symbol": "kr"
+      "CountryName": "DKK",
+      "CurrencyCode": 0.395899,
+      "Symbol": "https://flagcdn.com/w20/dk.png",
+      "FlagURL": "Denmark",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "JPY",
-      "RateToBase": 9.834766,
-      "FlagURL": "https://flagcdn.com/w20/jp.png",
-      "CountryName": "Japan",
-      "Symbol": "¥"
+      "CountryName": "JPY",
+      "CurrencyCode": 9.834766,
+      "Symbol": "https://flagcdn.com/w20/jp.png",
+      "FlagURL": "Japan",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "CNY",
-      "RateToBase": 0.416403,
-      "FlagURL": "https://flagcdn.com/w20/cn.png",
-      "CountryName": "China",
-      "Symbol": "¥"
+      "CountryName": "CNY",
+      "CurrencyCode": 0.416403,
+      "Symbol": "https://flagcdn.com/w20/cn.png",
+      "FlagURL": "China",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "KRW",
-      "RateToBase": 93.2123,
-      "FlagURL": "https://flagcdn.com/w20/kr.png",
-      "CountryName": "South Korea",
-      "Symbol": "₩"
+      "CountryName": "KRW",
+      "CurrencyCode": 93.2123,
+      "Symbol": "https://flagcdn.com/w20/kr.png",
+      "FlagURL": "South Korea",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "INR",
-      "RateToBase": 5.834239,
-      "FlagURL": "https://flagcdn.com/w20/in.png",
-      "CountryName": "India",
-      "Symbol": "₹"
+      "CountryName": "INR",
+      "CurrencyCode": 5.834239,
+      "Symbol": "https://flagcdn.com/w20/in.png",
+      "FlagURL": "India",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "BRL",
-      "RateToBase": 0.31343,
-      "FlagURL": "https://flagcdn.com/w20/br.png",
-      "CountryName": "Brazil",
-      "Symbol": "R$"
+      "CountryName": "BRL",
+      "CurrencyCode": 0.31343,
+      "Symbol": "https://flagcdn.com/w20/br.png",
+      "FlagURL": "Brazil",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "AED",
-      "RateToBase": 0.225538,
-      "FlagURL": "https://flagcdn.com/w20/ae.png",
-      "CountryName": "United Arab Emirates",
-      "Symbol": "د.إ"
+      "CountryName": "AED",
+      "CurrencyCode": 0.225538,
+      "Symbol": "https://flagcdn.com/w20/ae.png",
+      "FlagURL": "United Arab Emirates",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "MYR",
-      "RateToBase": 0.248882,
-      "FlagURL": "https://flagcdn.com/w20/my.png",
-      "CountryName": "Malaysia",
-      "Symbol": "RM"
+      "CountryName": "MYR",
+      "CurrencyCode": 0.248882,
+      "Symbol": "https://flagcdn.com/w20/my.png",
+      "FlagURL": "Malaysia",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "PLN",
-      "RateToBase": 0.225161,
-      "FlagURL": "https://flagcdn.com/w20/pl.png",
-      "CountryName": "Poland",
-      "Symbol": "zł"
+      "CountryName": "PLN",
+      "CurrencyCode": 0.225161,
+      "Symbol": "https://flagcdn.com/w20/pl.png",
+      "FlagURL": "Poland",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "PHP",
-      "RateToBase": 3.731236,
-      "FlagURL": "https://flagcdn.com/w20/ph.png",
-      "CountryName": "Philippines",
-      "Symbol": "₱"
+      "CountryName": "PHP",
+      "CurrencyCode": 3.731236,
+      "Symbol": "https://flagcdn.com/w20/ph.png",
+      "FlagURL": "Philippines",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "IDR",
-      "RateToBase": 1096.358421,
-      "FlagURL": "https://flagcdn.com/w20/id.png",
-      "CountryName": "Indonesia",
-      "Symbol": "Rp"
+      "CountryName": "IDR",
+      "CurrencyCode": 1096.358421,
+      "Symbol": "https://flagcdn.com/w20/id.png",
+      "FlagURL": "Indonesia",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "TRY",
-      "RateToBase": 2.844262,
-      "FlagURL": "https://flagcdn.com/w20/tr.png",
-      "CountryName": "Turkey",
-      "Symbol": "₺"
+      "CountryName": "TRY",
+      "CurrencyCode": 2.844262,
+      "Symbol": "https://flagcdn.com/w20/tr.png",
+      "FlagURL": "Turkey",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "MXN",
-      "RateToBase": 1.057248,
-      "FlagURL": "https://flagcdn.com/w20/mx.png",
-      "CountryName": "Mexico",
-      "Symbol": "$"
+      "CountryName": "MXN",
+      "CurrencyCode": 1.057248,
+      "Symbol": "https://flagcdn.com/w20/mx.png",
+      "FlagURL": "Mexico",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "HKD",
-      "RateToBase": 0.481303,
-      "FlagURL": "https://flagcdn.com/w20/hk.png",
-      "CountryName": "Hong Kong",
-      "Symbol": "HK$"
+      "CountryName": "HKD",
+      "CurrencyCode": 0.481303,
+      "Symbol": "https://flagcdn.com/w20/hk.png",
+      "FlagURL": "Hong Kong",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "NZD",
-      "RateToBase": 0.105364,
-      "FlagURL": "https://flagcdn.com/w20/nz.png",
-      "CountryName": "New Zealand",
-      "Symbol": "NZ$"
+      "CountryName": "NZD",
+      "CurrencyCode": 0.105364,
+      "Symbol": "https://flagcdn.com/w20/nz.png",
+      "FlagURL": "New Zealand",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "CLP",
-      "RateToBase": 55.58574,
-      "FlagURL": "https://flagcdn.com/w20/cl.png",
-      "CountryName": "Chile",
-      "Symbol": "CLP$"
+      "CountryName": "CLP",
+      "CurrencyCode": 55.58574,
+      "Symbol": "https://flagcdn.com/w20/cl.png",
+      "FlagURL": "Chile",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "ZMW",
-      "RateToBase": 1.074246,
-      "FlagURL": "https://flagcdn.com/w20/zm.png",
-      "CountryName": "Zambia",
-      "Symbol": "K"
+      "CountryName": "ZMW",
+      "CurrencyCode": 1.074246,
+      "Symbol": "https://flagcdn.com/w20/zm.png",
+      "FlagURL": "Zambia",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "NGN",
-      "RateToBase": 83.323658,
-      "FlagURL": "https://flagcdn.com/w20/ng.png",
-      "CountryName": "Nigeria",
-      "Symbol": "₦"
+      "CountryName": "NGN",
+      "CurrencyCode": 83.323658,
+      "Symbol": "https://flagcdn.com/w20/ng.png",
+      "FlagURL": "Nigeria",
+      "RateToBase": 1
     },
     {
-      "CurrencyCode": "EGP",
-      "RateToBase": 3.191444,
-      "FlagURL": "https://flagcdn.com/w20/eg.png",
-      "CountryName": "Egypt",
-      "Symbol": "E£"
+      "CountryName": "EGP",
+      "CurrencyCode": 3.191444,
+      "Symbol": "https://flagcdn.com/w20/eg.png",
+      "FlagURL": "Egypt",
+      "RateToBase": 1
     }
   ],
+  "products": [
+    {
+      "ProductName": "978-1-0492-6642-8",
+      "Type": "Printed Book & Poster",
+      "BasePrice": 0,
+      "Weight": 0,
+      "ImageURL": 1900,
+      "DiscountThreshold": 5,
+      "DiscountPercent": 10
+    },
+    {
+      "ProductName": "978-1-0492-6643-5",
+      "Type": "Digital e-Book",
+      "BasePrice": 0,
+      "Weight": 0,
+      "ImageURL": 950,
+      "DiscountThreshold": 5,
+      "DiscountPercent": 10
+    }
+  ],
+  "home": {
+
+  },
   "about": {
+    "Setting": "Value",
     "AuthorName": "Captain Geordie Mac Kenzie",
     "AuthorTitle": "Master Mariner | ASD Simulator/Training Instructor",
-    "AuthorShortBio": "Why this book? It was born on the bridge of an ASD tug, where theory meets the raw power of the sea. After over 30 years at sea and more than 15 in command as a Master Mariner, I've asked, searched, and answered the same questions from trainees and colleagues countless times. So I decided to put everything I knew into one practical guide. The ABC of ASD distills decades of operational knowledge – my hard‑earned knowledge, and that of other ASD tug Masters I have the privilege of working with. It’s a straightforward, hands‑on guide to ASD tug manoeuvring – built for the real world, with safety and efficiency at the forefront. Whether you’re a seasoned master or a cadet on your first ASD tug, this book is your practical companion.",
-    "AuthorExtendedBio": "The advice in The ABC of ASD isn’t abstract theory – it’s the sum of what I’ve learned, practiced, and taught across more than three decades on the ocean. Every book has an author, and every author has a voyage. Here’s mine.\n\nI have been a seafarer since 1996, and a qualified Master Mariner since 2007, holding an STCW II/2 Master Unlimited qualification. My connection to the sea runs deep – my grandfather served in the South African Navy, and my uncle, also a Captain, first introduced me to a career at sea. That family thread pulled me into an occupation that began on container, bulk, and general cargo vessels with Safmarine and Maersk, where I gained the deep‑sea experience that still grounds my work today. My true passion ignited when I discovered the world of smaller, highly manoeuvrable craft. Joining SMIT Amandla Marine (now AMSOL), I qualified and served as a Master. After a period away, gaining additional offshore experience, and developing a specialisation in Azimuth Stern Drive (ASD) tug operations, I returned to AMSOL, where I continue to work today – conducting SBM (Single Buoy Mooring) support, static and escort towing, and emergency response operations. Alongside my operational role, I teach ASD tug handling at the South African Maritime Training Academy (SAMTRA) when my free time allows. This combination of active command and hands‑on instruction forms the practical foundation of The ABC of ASD. The book is the classroom and the bridge brought together – a resource born from the real questions of tug masters, officers, and trainees, and refined through years of mentoring and real‑world operations.",
     "AuthorImage1URL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_about_1.png",
-    "AuthorImage2URL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_about_2.png"
+    "AuthorImage2URL": "https://gmmastermariner.github.io/the-ABC-of-ASD/images/img_about_2.png",
+    "AuthorShortBio": "Why this book? It was born on the bridge of an ASD tug, where theory meets the raw power of the sea. After over 30 years at sea and more than 15 in command as a Master Mariner, I've asked, searched, and answered the same questions from trainees and colleagues countless times. So I decided to put everything I knew into one practical guide. The ABC of ASD distills decades of operational knowledge – my hard‑earned knowledge, and that of other ASD tug Masters I have the privilege of working with. It’s a straightforward, hands‑on guide to ASD tug manoeuvring – built for the real world, with safety and efficiency at the forefront. Whether you’re a seasoned master or a cadet on your first ASD tug, this book is your practical companion.",
+    "AuthorExtendedBio": "The advice in The ABC of ASD isn’t abstract theory – it’s the sum of what I’ve learned, practiced, and taught across more than three decades on the ocean. Every book has an author, and every author has a voyage. Here’s mine.\n\nI have been a seafarer since 1996, and a qualified Master Mariner since 2007, holding an STCW II/2 Master Unlimited qualification. My connection to the sea runs deep – my grandfather served in the South African Navy, and my uncle, also a Captain, first introduced me to a career at sea. That family thread pulled me into an occupation that began on container, bulk, and general cargo vessels with Safmarine and Maersk, where I gained the deep‑sea experience that still grounds my work today. My true passion ignited when I discovered the world of smaller, highly manoeuvrable craft. Joining SMIT Amandla Marine (now AMSOL), I qualified and served as a Master. After a period away, gaining additional offshore experience, and developing a specialisation in Azimuth Stern Drive (ASD) tug operations, I returned to AMSOL, where I continue to work today – conducting SBM (Single Buoy Mooring) support, static and escort towing, and emergency response operations. Alongside my operational role, I teach ASD tug handling at the South African Maritime Training Academy (SAMTRA) when my free time allows. This combination of active command and hands‑on instruction forms the practical foundation of The ABC of ASD. The book is the classroom and the bridge brought together – a resource born from the real questions of tug masters, officers, and trainees, and refined through years of mentoring and real‑world operations."
   },
   "shippingRegions": [
     {
@@ -441,7 +426,7 @@
       "Location": "Palestinian Territories",
       "Region": "Europe, UK, Middle East",
       "FlagURL": "https://flagcdn.com/w20/ps.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Poland",
@@ -591,19 +576,19 @@
       "Location": "Congo - Brazzaville",
       "Region": "Sub Saharan Africa",
       "FlagURL": "https://flagcdn.com/w20/cg.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Congo - Kinshasa",
       "Region": "Sub Saharan Africa",
       "FlagURL": "https://flagcdn.com/w20/cd.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Côte d’Ivoire",
       "Region": "Sub Saharan Africa",
       "FlagURL": "https://flagcdn.com/w20/ci.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Djibouti",
@@ -747,7 +732,7 @@
       "Location": "São Tomé & Príncipe",
       "Region": "Sub Saharan Africa",
       "FlagURL": "https://flagcdn.com/w20/st.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Senegal",
@@ -897,13 +882,13 @@
       "Location": "Antarctica",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/aq.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Antigua & Barbuda",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/ag.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Argentina (24 provinces)",
@@ -981,7 +966,7 @@
       "Location": "Bosnia & Herzegovina",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/ba.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Bouvet Island",
@@ -1047,7 +1032,7 @@
       "Location": "Cocos (Keeling) Islands",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/cc.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Colombia",
@@ -1155,7 +1140,7 @@
       "Location": "French Southern Territories",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/tf.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Georgia",
@@ -1221,7 +1206,7 @@
       "Location": "Heard & McDonald Islands",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/hm.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Honduras",
@@ -1593,43 +1578,43 @@
       "Location": "St. Barthélemy",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/bl.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Helena",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/sh.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Kitts & Nevis",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/kn.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Lucia",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/lc.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Martin",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/mf.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Pierre & Miquelon",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/pm.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "St. Vincent & Grenadines",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/vc.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Sudan",
@@ -1647,7 +1632,7 @@
       "Location": "Svalbard & Jan Mayen",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/sj.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Taiwan",
@@ -1689,7 +1674,7 @@
       "Location": "Trinidad & Tobago",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/tt.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Tunisia",
@@ -1707,7 +1692,7 @@
       "Location": "Turks & Caicos Islands",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/tc.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Tuvalu",
@@ -1719,13 +1704,13 @@
       "Location": "U.S. Outlying Islands",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/um.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "U.S. Virgin Islands",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/vi.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Uruguay",
@@ -1767,7 +1752,7 @@
       "Location": "Wallis & Futuna",
       "Region": "Rest of world",
       "FlagURL": "https://flagcdn.com/w20/wf.png",
-      "PhoneCode": ""
+      "PhoneCode": "+1"
     },
     {
       "Location": "Western Sahara",
@@ -1778,413 +1763,586 @@
   ],
   "regionRates": [
     {
-      "Region": "South Africa",
-      "MaxWeight": 5,
-      "Cost": 109,
-      "Time": "5 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 6,
-      "Cost": 134,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 5,
+      "MaxWeight": 109,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 7,
-      "Cost": 159,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 6,
+      "MaxWeight": 134,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 8,
-      "Cost": 184,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 7,
+      "MaxWeight": 159,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 9,
-      "Cost": 209,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 8,
+      "MaxWeight": 184,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 10,
-      "Cost": 234,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 9,
+      "MaxWeight": 209,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 11,
-      "Cost": 259,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 10,
+      "MaxWeight": 234,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 12,
-      "Cost": 284,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 11,
+      "MaxWeight": 259,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 13,
-      "Cost": 309,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 12,
+      "MaxWeight": 284,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 14,
-      "Cost": 334,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 13,
+      "MaxWeight": 309,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "South Africa",
-      "MaxWeight": 15,
-      "Cost": 359,
-      "Time": "5 business days"
+      "Location": "South Africa",
+      "Region": 14,
+      "MaxWeight": 334,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 0.5,
-      "Cost": 560,
-      "Time": "15 business days"
+      "Location": "South Africa",
+      "Region": 15,
+      "MaxWeight": 359,
+      "Cost": 5,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 1.7,
-      "Cost": 1145,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 3.5,
-      "Cost": 2300,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 7.5,
-      "Cost": 2600,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 0.5,
+      "MaxWeight": 560,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 12.5,
-      "Cost": 3100,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 1.7,
+      "MaxWeight": 1145,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 17.5,
-      "Cost": 4380,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 3.5,
+      "MaxWeight": 2300,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 22.5,
-      "Cost": 5630,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 7.5,
+      "MaxWeight": 2600,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Europe, UK, Middle East",
-      "MaxWeight": 27.5,
-      "Cost": 6800,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 12.5,
+      "MaxWeight": 3100,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 0.5,
-      "Cost": 450,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 17.5,
+      "MaxWeight": 4380,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 1.7,
-      "Cost": 920,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 22.5,
+      "MaxWeight": 5630,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 3.5,
-      "Cost": 1510,
-      "Time": "15 business days"
+      "Location": "Europe, UK, Middle East",
+      "Region": 27.5,
+      "MaxWeight": 6800,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 7.5,
-      "Cost": 2050,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 12.5,
-      "Cost": 2600,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 17.5,
-      "Cost": 3400,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 0.5,
+      "MaxWeight": 450,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 22.5,
-      "Cost": 4000,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 1.7,
+      "MaxWeight": 920,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Sub Saharan Africa",
-      "MaxWeight": 27.5,
-      "Cost": 4700,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 3.5,
+      "MaxWeight": 1510,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 0.5,
-      "Cost": 650,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 7.5,
+      "MaxWeight": 2050,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 1.7,
-      "Cost": 1200,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 12.5,
+      "MaxWeight": 2600,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 3.5,
-      "Cost": 2450,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 17.5,
+      "MaxWeight": 3400,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 7.5,
-      "Cost": 3350,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 22.5,
+      "MaxWeight": 4000,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 12.5,
-      "Cost": 3900,
-      "Time": "15 business days"
+      "Location": "Sub Saharan Africa",
+      "Region": 27.5,
+      "MaxWeight": 4700,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 17.5,
-      "Cost": 5350,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 22.5,
-      "Cost": 6600,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "USA, Canada, Mexico",
-      "MaxWeight": 27.5,
-      "Cost": 8000,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 0.5,
+      "MaxWeight": 650,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 0.5,
-      "Cost": 880,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 1.7,
+      "MaxWeight": 1200,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 1.7,
-      "Cost": 1600,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 3.5,
+      "MaxWeight": 2450,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 3.5,
-      "Cost": 3200,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 7.5,
+      "MaxWeight": 3350,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 7.5,
-      "Cost": 4300,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 12.5,
+      "MaxWeight": 3900,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 12.5,
-      "Cost": 6100,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 17.5,
+      "MaxWeight": 5350,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 17.5,
-      "Cost": 8000,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 22.5,
+      "MaxWeight": 6600,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 22.5,
-      "Cost": 9800,
-      "Time": "15 business days"
+      "Location": "USA, Canada, Mexico",
+      "Region": 27.5,
+      "MaxWeight": 8000,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Australia",
-      "MaxWeight": 27.5,
-      "Cost": 11450,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 0.5,
-      "Cost": 810,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 1.7,
-      "Cost": 1400,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 0.5,
+      "MaxWeight": 880,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 3.5,
-      "Cost": 2786,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 1.7,
+      "MaxWeight": 1600,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 7.5,
-      "Cost": 4100,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 3.5,
+      "MaxWeight": 3200,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 12.5,
-      "Cost": 5100,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 7.5,
+      "MaxWeight": 4300,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 17.5,
-      "Cost": 6600,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 12.5,
+      "MaxWeight": 6100,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 22.5,
-      "Cost": 8400,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 17.5,
+      "MaxWeight": 8000,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "New Zealand",
-      "MaxWeight": 27.5,
-      "Cost": 9800,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 22.5,
+      "MaxWeight": 9800,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 0.5,
-      "Cost": 880,
-      "Time": "15 business days"
+      "Location": "Australia",
+      "Region": 27.5,
+      "MaxWeight": 11450,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 1.7,
-      "Cost": 1536,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 3.5,
-      "Cost": 3200,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 7.5,
-      "Cost": 3800,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 0.5,
+      "MaxWeight": 810,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 12.5,
-      "Cost": 6450,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 1.7,
+      "MaxWeight": 1400,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 17.5,
-      "Cost": 8520,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 3.5,
+      "MaxWeight": 2786,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 22.5,
-      "Cost": 10600,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 7.5,
+      "MaxWeight": 4100,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "China & Hong Kong",
-      "MaxWeight": 27.5,
-      "Cost": 12600,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 12.5,
+      "MaxWeight": 5100,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 0.5,
-      "Cost": 800,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 17.5,
+      "MaxWeight": 6600,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 1.7,
-      "Cost": 1515,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 22.5,
+      "MaxWeight": 8400,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 3.5,
-      "Cost": 2900,
-      "Time": "15 business days"
+      "Location": "New Zealand",
+      "Region": 27.5,
+      "MaxWeight": 9800,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 7.5,
-      "Cost": 4000,
-      "Time": "15 business days"
+      "Location": "China & Hong Kong",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 12.5,
-      "Cost": 4700,
-      "Time": "15 business days"
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 17.5,
-      "Cost": 6350,
-      "Time": "15 business days"
+      "Location": "China & Hong Kong",
+      "Region": 0.5,
+      "MaxWeight": 880,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 22.5,
-      "Cost": 8000,
-      "Time": "15 business days"
+      "Location": "China & Hong Kong",
+      "Region": 1.7,
+      "MaxWeight": 1536,
+      "Cost": 15,
+      "Time": ""
     },
     {
-      "Region": "Rest of world",
-      "MaxWeight": 27.5,
-      "Cost": 9500,
-      "Time": "15 business days"
+      "Location": "China & Hong Kong",
+      "Region": 3.5,
+      "MaxWeight": 3200,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "China & Hong Kong",
+      "Region": 7.5,
+      "MaxWeight": 3800,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "China & Hong Kong",
+      "Region": 12.5,
+      "MaxWeight": 6450,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "China & Hong Kong",
+      "Region": 17.5,
+      "MaxWeight": 8520,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "China & Hong Kong",
+      "Region": 22.5,
+      "MaxWeight": 10600,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "China & Hong Kong",
+      "Region": 27.5,
+      "MaxWeight": 12600,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": "",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
+    },
+    {
+      "Location": "Region",
+      "Region": "MaxWeight",
+      "MaxWeight": 0,
+      "Cost": 0,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 0.5,
+      "MaxWeight": 800,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 1.7,
+      "MaxWeight": 1515,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 3.5,
+      "MaxWeight": 2900,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 7.5,
+      "MaxWeight": 4000,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 12.5,
+      "MaxWeight": 4700,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 17.5,
+      "MaxWeight": 6350,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 22.5,
+      "MaxWeight": 8000,
+      "Cost": 15,
+      "Time": ""
+    },
+    {
+      "Location": "Rest of world",
+      "Region": 27.5,
+      "MaxWeight": 9500,
+      "Cost": 15,
+      "Time": ""
     }
   ],
   "legal": {
+    "Setting": "Value",
     "PrivacyPolicyHeading": "Privacy Policy",
     "PrivacyIntroText": "GM Master Mariner (\"we\", \"our\", \"us\") operates the website https://gmmastermariner.github.io/the-ABC-of-ASD/ (the \"Site\"). This page informs you of our policies regarding the collection, use and disclosure of personal data when you use our Site.",
     "PrivacyDataCollectionHeading": "What data we collect",
-    "PrivacyDataCollectionText": "When you place an order or send a message through our contact form, we may collect:\n Name\n• Email address\n• Phone number (optional)\n• Shipping address (for physical orders)",
+    "PrivacyDataCollectionText": "When you place an order or send a message through our contact form, we may collect:\n• Name\n• Email address\n• Phone number (optional)\n• Shipping address (for physical orders)",
     "PrivacyDataUseHeading": "How we use your data",
     "PrivacyDataUseText": "• To process and deliver your order.\n• To communicate with you about your order or enquiry.\n• To send you a verification code via email during the ordering process.\n\nWe do **not** use your data for marketing purposes, and we will never share or sell your information to third parties.",
     "PrivacyDataStorageHeading": "Data storage",
