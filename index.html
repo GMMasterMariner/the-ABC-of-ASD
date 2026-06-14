@@ -727,8 +727,9 @@
         }
         .footer-bottom {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: clamp(0.65rem, 1.5vw, 0.85rem);
             color: #aaa;
+            white-space: nowrap;
         }
 
         /* Watermark on product images */
@@ -1286,7 +1287,6 @@
     
             const container = document.getElementById('adminSelectButtons');
             
-            // DEBUG: Log all settings to see exact property names
             console.log('=== ADMIN LOGIN DEBUG ===');
             console.log('All appSettings keys:', Object.keys(appSettings));
             console.log('Admin1Name value:', appSettings.Admin1Name);
@@ -1327,7 +1327,6 @@
                 container.appendChild(btn);
             });
     
-            // Cancel button — go back to name selection
             document.getElementById('adminCodeCancelBtn').onclick = function() {
                 document.getElementById('adminSelectStep').style.display = 'block';
                 document.getElementById('adminCodeStep').style.display = 'none';
@@ -1335,7 +1334,6 @@
                 document.getElementById('adminCodeInput').value = '';
             };
     
-            // Verify button
             document.getElementById('adminVerifyBtn').onclick = async function() {
                 const code = document.getElementById('adminCodeInput').value.trim();
                 const adminNum = sessionStorage.getItem('adminNum');
@@ -1354,7 +1352,6 @@
                     const data = await res.json();
                     if (data.result === 'success') {
                         document.getElementById('adminLoginOverlay').classList.remove('active');
-                        // Pass token and admin in the URL
                         const adminUrl = 'admin.html?token=' + encodeURIComponent(data.token) + '&admin=' + encodeURIComponent(adminNum);
                         window.open(adminUrl, '_blank');
                     } else {
@@ -1367,7 +1364,6 @@
                 }
             };
     
-            // Close modal when clicking overlay background
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
@@ -1565,73 +1561,19 @@
             return await res.json();
         }
     
-        async function initPayments() {
-            if (paymentKeys.paypalClientId && document.getElementById('paypalBtn')) {
-                const script = document.createElement('script');
-                script.src = `https://www.paypal.com/sdk/js?client-id=${paymentKeys.paypalClientId}&currency=ZAR`;
-                script.onload = () => {
-                    if (typeof paypal !== 'undefined') {
-                        paypal.Buttons({
-                            createOrder: function(data, actions) {
-                                const total = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                                return actions.order.create({
-                                    purchase_units: [{ amount: { value: total } }]
-                                });
-                            },
-                            onApprove: function(data, actions) {
-                                return actions.order.capture().then(function(details) {
-                                    showAlertModal('Payment Successful', 'Transaction completed by ' + details.payer.name.given_name + '.');
-                                });
-                            }
-                        }).render('#paypalBtn');
-                    }
-                };
-                document.head.appendChild(script);
-            }
-    
+        function initPayments() {
+            // Payment gateway setup in progress — both buttons show a friendly message
+            const paypalBtn = document.getElementById('paypalBtn');
             const payfastBtn = document.getElementById('payfastBtn');
+            
+            if (paypalBtn) {
+                paypalBtn.addEventListener('click', () => {
+                    showAlertModal('Coming Soon', 'Payment gateway setup in progress. Please check back soon.');
+                });
+            }
             if (payfastBtn) {
-                payfastBtn.addEventListener('click', async () => {
-                    if (!selectedProduct || !isEmailVerified) return;
-                    const email = document.getElementById('verifiedEmail').value;
-                    const name = document.getElementById('customerName').value;
-                    const amount = document.getElementById('sumTotal').textContent.replace(/[^0-9.-]/g, '');
-                    const itemName = selectedProduct.ProductName;
-                    const description = selectedProduct.Type + ' book';
-    
-                    const formFields = {
-                        merchant_id: paymentKeys.payfastMerchantId,
-                        merchant_key: paymentKeys.payfastMerchantKey,
-                        return_url: window.location.origin + '/success',
-                        cancel_url: window.location.origin + '/cancel',
-                        notify_url: API_URL + '?action=notify',
-                        name_first: name.split(' ')[0] || '',
-                        name_last: name.split(' ').slice(1).join(' ') || '',
-                        email_address: email,
-                        m_payment_id: Date.now().toString(),
-                        amount: amount,
-                        item_name: itemName,
-                        item_description: description
-                    };
-    
-                    const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(formFields));
-                    const sigData = await sigRes.json();
-                    formFields.signature = sigData.signature;
-    
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'https://sandbox.payfast.co.za/eng/process';
-                    form.style.display = 'none';
-                    for (const [key, value] of Object.entries(formFields)) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = value;
-                        form.appendChild(input);
-                    }
-                    document.body.appendChild(form);
-                    form.submit();
-                    document.body.removeChild(form);
+                payfastBtn.addEventListener('click', () => {
+                    showAlertModal('Coming Soon', 'Payment gateway setup in progress. Please check back soon.');
                 });
             }
         }
@@ -1784,7 +1726,7 @@
         }
     
         function refreshAllPrices() {
-            const alertColor = appSettings.AlertColour || '#dc3c33';
+            const alertColor = appSettings.AlertColor || '#dc3c33';
             document.querySelectorAll('[data-zar]').forEach(el => {
                 const zar = parseFloat(el.getAttribute('data-zar'));
                 if (!isNaN(zar)) {
@@ -1948,7 +1890,7 @@
     
             document.documentElement.style.setProperty('--cta-color', settings.CTAColor || '#f29b2a');
             document.documentElement.style.setProperty('--primary-color', settings.PrimaryColor || '#194373');
-            document.documentElement.style.setProperty('--alert-color', settings.AlertColour || '#dc3c33');
+            document.documentElement.style.setProperty('--alert-color', settings.AlertColor || '#dc3c33');
             document.documentElement.style.setProperty('--secondary-color', settings.SecondaryColor || '#f29b2a');
             document.documentElement.style.setProperty('--bg-color', settings.BackgroundColor || '#eee6ca');
     
@@ -1972,7 +1914,7 @@
             if (mainTitle && abbrev) titleEl.innerHTML = `${mainTitle} <span class="abbreviation">${abbrev}</span>`;
             else if (mainTitle) titleEl.textContent = mainTitle;
             else titleEl.textContent = '';
-            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitile || '';
+            document.getElementById('bannerSubtitle').textContent = settings.BannerBookSubTitle || '';
     
             if (settings.PayPalLogo) document.getElementById('paypalLogoImg').src = settings.PayPalLogo;
             if (settings.PayfastLogo) document.getElementById('payfastLogoImg').src = settings.PayfastLogo;
@@ -1983,7 +1925,6 @@
             navContainer.innerHTML = '';
             const navItems = [
                 { iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' },
-                { iconSetting: 'NavIconURLOrder', section: 'order-section', label: 'Order' },
                 { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' },
                 { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' },
                 { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }
@@ -2045,7 +1986,7 @@
         }
     
         function loadHomePageDirect(home) {
-            document.getElementById('homeHeadline').textContent = home.HomePageBookHeadline || '';
+            document.getElementById('homeHeadline').textContent = appSettings.HomePageTitle || '';
             document.getElementById('homeDesc1').textContent = home.HomePageBookDescription1 || '';
             document.getElementById('homeDesc2').textContent = home.HomePageBookDescription2 || '';
     
