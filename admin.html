@@ -6,6 +6,7 @@
     <title>Admin Panel - The ABC of ASD</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scrollbar-gutter: stable; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
@@ -52,7 +53,21 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
+            flex-shrink: 0;
         }
+        .header-status {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            display: none;
+            white-space: nowrap;
+            min-width: 80px;
+            text-align: center;
+        }
+        .header-status.success { display: inline-block; background: #d4edda; color: #155724; }
+        .header-status.error { display: inline-block; background: #f8d7da; color: #721c24; }
+        .header-status.saving { display: inline-block; background: rgba(255,255,255,0.2); color: white; }
+        
         .header-save-btn {
             background: #f29b2a;
             color: white;
@@ -68,16 +83,22 @@
         .header-save-btn:hover { background: #e08a1a; transform: scale(1.03); }
         .header-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
-        .header-status {
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
             font-size: 0.85rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            display: none;
             white-space: nowrap;
         }
-        .header-status.success { display: inline-block; background: #d4edda; color: #155724; }
-        .header-status.error { display: inline-block; background: #f8d7da; color: #721c24; }
-        .header-status.saving { display: inline-block; background: rgba(255,255,255,0.2); color: white; }
+        .profile-badge img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
         
         .logout-btn {
             background: rgba(255,255,255,0.15);
@@ -114,21 +135,6 @@
             font-weight: 600;
         }
         
-        .section-group {
-            background: #f8f9fb;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #e8eaed;
-        }
-        .section-group h4 {
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
         .form-group { margin-bottom: 0.8rem; }
         .form-group label { 
             display: block; 
@@ -152,7 +158,7 @@
             box-shadow: 0 0 0 3px rgba(25,67,115,0.1);
         }
         .form-group textarea { min-height: 70px; resize: vertical; }
-        .form-group textarea.tall { min-height: 120px; }
+        .form-group textarea.auto-height { min-height: 40px; overflow: hidden; }
         
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
@@ -178,18 +184,11 @@
             font-size: 0.85rem;
             min-width: 70px;
         }
-        .color-preview {
-            width: 34px;
-            height: 34px;
-            border-radius: 6px;
-            border: 2px solid #ddd;
-            flex-shrink: 0;
-        }
         
         .image-url-row {
             display: flex;
             gap: 0.8rem;
-            align-items: flex-start;
+            align-items: flex-end;
         }
         .image-url-row .form-group { flex: 1; margin-bottom: 0; }
         .image-preview {
@@ -200,7 +199,6 @@
             object-fit: contain;
             flex-shrink: 0;
             display: none;
-            background: #fafafa;
         }
         .image-preview.visible { display: block; }
         
@@ -236,7 +234,45 @@
         .btn-danger { background: #dc3c33; }
         .btn-danger:hover { background: #c53030; }
         
-        /* Collapsible region cards */
+        /* Collapsible cards */
+        .collapsible-card {
+            background: #f8f9fb;
+            border: 1px solid #e0e2e5;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+        .collapsible-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .collapsible-card-header:hover { background: #eef0f3; }
+        .collapsible-card-header h4 { 
+            margin: 0; 
+            font-size: 0.95rem; 
+            color: #194373;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .collapsible-card-header .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+            color: #888;
+        }
+        .collapsible-card.open .collapsible-card-header .toggle-icon { transform: rotate(180deg); }
+        .collapsible-card-body {
+            display: none;
+            padding: 0 1rem 1rem 1rem;
+        }
+        .collapsible-card.open .collapsible-card-body { display: block; }
+        
+        /* Region cards (shipping) */
         .region-card {
             background: #f8f9fb;
             border: 1px solid #e0e2e5;
@@ -262,7 +298,11 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .region-card-header h4 img { height: 20px; width: auto; border-radius: 2px; }
+        .region-card-header h4 .region-subtitle {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: #888;
+        }
         .region-card-header .toggle-icon {
             font-size: 1.2rem;
             transition: transform 0.2s;
@@ -290,20 +330,10 @@
         .rate-row .form-group input { padding: 0.45rem 0.5rem; font-size: 0.85rem; }
         .rate-row .btn-sm { flex-shrink: 0; align-self: center; margin-top: 0.15rem; }
         
-        .profile-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: rgba(255,255,255,0.15);
-            padding: 0.3rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-        .profile-badge img {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            object-fit: cover;
+        .calc-field {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #194373;
         }
         
         @media (max-width: 768px) {
@@ -312,7 +342,7 @@
             .tab-btn { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
             .form-row, .form-row-3, .form-row-4 { grid-template-columns: 1fr; }
             .admin-container { padding: 0 0.8rem; }
-            .image-url-row { flex-direction: column; }
+            .image-url-row { flex-direction: column; align-items: stretch; }
             .image-preview { width: 100%; height: 60px; }
         }
     </style>
@@ -337,9 +367,9 @@
                 <button class="tab-btn" data-tab="tab-legal">Legal</button>
             </div>
             <div class="header-actions">
-                <span class="profile-badge" id="adminBadge"></span>
-                <button class="header-save-btn" id="headerSaveBtn" onclick="saveCurrentTab()">💾 Save</button>
                 <span class="header-status" id="headerStatus"></span>
+                <button class="header-save-btn" id="headerSaveBtn" onclick="saveCurrentTab()">💾 Save</button>
+                <span class="profile-badge" id="adminBadge"></span>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </header>
@@ -347,202 +377,265 @@
         <div class="admin-container">
             <!-- ==================== SITE SETTINGS TAB ==================== -->
             <div class="tab-content active" id="tab-settings">
-                <div class="section">
-                    <h2>🎨 Colours</h2>
-                    <div class="form-row-3">
-                        <div class="form-group">
-                            <label>Primary Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="primaryColor" onchange="updateColorPreview('primaryColor')">
-                                <input type="text" id="primaryColorText" oninput="updateColorFromText('primaryColor', this.value)" placeholder="#194373">
-                                <div class="color-preview" id="primaryColorPreview"></div>
+                <!-- Colours -->
+                <div class="collapsible-card open">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>🎨 Colours</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label>Primary Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="primaryColor" onchange="updateColorText('primaryColor')">
+                                    <input type="text" id="primaryColorText" oninput="updateColorFromText('primaryColor', this.value)" placeholder="#194373">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>CTA Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="ctaColor" onchange="updateColorPreview('ctaColor')">
-                                <input type="text" id="ctaColorText" oninput="updateColorFromText('ctaColor', this.value)" placeholder="#f29b2a">
-                                <div class="color-preview" id="ctaColorPreview"></div>
+                            <div class="form-group">
+                                <label>CTA Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="ctaColor" onchange="updateColorText('ctaColor')">
+                                    <input type="text" id="ctaColorText" oninput="updateColorFromText('ctaColor', this.value)" placeholder="#f29b2a">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Secondary Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="secondaryColor" onchange="updateColorPreview('secondaryColor')">
-                                <input type="text" id="secondaryColorText" oninput="updateColorFromText('secondaryColor', this.value)" placeholder="#5693ac">
-                                <div class="color-preview" id="secondaryColorPreview"></div>
+                            <div class="form-group">
+                                <label>Secondary Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="secondaryColor" onchange="updateColorText('secondaryColor')">
+                                    <input type="text" id="secondaryColorText" oninput="updateColorFromText('secondaryColor', this.value)" placeholder="#5693ac">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Alert Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="alertColor" onchange="updateColorPreview('alertColor')">
-                                <input type="text" id="alertColorText" oninput="updateColorFromText('alertColor', this.value)" placeholder="#dc3c33">
-                                <div class="color-preview" id="alertColorPreview"></div>
+                            <div class="form-group">
+                                <label>Alert Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="alertColor" onchange="updateColorText('alertColor')">
+                                    <input type="text" id="alertColorText" oninput="updateColorFromText('alertColor', this.value)" placeholder="#dc3c33">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Background Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="backgroundColor" onchange="updateColorPreview('backgroundColor')">
-                                <input type="text" id="backgroundColorText" oninput="updateColorFromText('backgroundColor', this.value)" placeholder="#eee6ca">
-                                <div class="color-preview" id="backgroundColorPreview"></div>
+                            <div class="form-group">
+                                <label>Background Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="backgroundColor" onchange="updateColorText('backgroundColor')">
+                                    <input type="text" id="backgroundColorText" oninput="updateColorFromText('backgroundColor', this.value)" placeholder="#eee6ca">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Text Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="textColor" onchange="updateColorPreview('textColor')">
-                                <input type="text" id="textColorText" oninput="updateColorFromText('textColor', this.value)" placeholder="#2c3e50">
-                                <div class="color-preview" id="textColorPreview"></div>
+                            <div class="form-group">
+                                <label>Text Color</label>
+                                <div class="color-input-group">
+                                    <input type="color" id="textColor" onchange="updateColorText('textColor')">
+                                    <input type="text" id="textColorText" oninput="updateColorFromText('textColor', this.value)" placeholder="#2c3e50">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="section">
-                    <h2>🖼️ Banner & Logo</h2>
-                    <div class="image-url-row">
-                        <div class="form-group">
-                            <label>Banner Logo URL</label>
-                            <input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo')">
+                <!-- Banner & Logo -->
+                <div class="collapsible-card open">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>🖼️ Banner & Logo</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body">
+                        <div class="image-url-row">
+                            <div class="form-group"><label>Banner Logo URL</label><input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo')"></div>
+                            <img class="image-preview" id="bannerLogoPreview">
                         </div>
-                        <img class="image-preview" id="bannerLogoPreview">
-                    </div>
-                    <div class="image-url-row">
-                        <div class="form-group">
-                            <label>Background Image URL</label>
-                            <input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage')">
+                        <div class="image-url-row">
+                            <div class="form-group"><label>Background Image URL</label><input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage')"></div>
+                            <img class="image-preview" id="backgroundImagePreview">
                         </div>
-                        <img class="image-preview" id="backgroundImagePreview">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
-                        <div class="form-group"><label>Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
-                    </div>
-                    <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
-                </div>
-
-                <div class="section">
-                    <h2>📄 Page Titles</h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>Home Page Title</label><input type="text" id="homePageTitle"></div>
-                        <div class="form-group"><label>Order Page Title</label><input type="text" id="orderPageTitle"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>About Page Title</label><input type="text" id="aboutPageTitle"></div>
-                        <div class="form-group"><label>Contact Page Title</label><input type="text" id="contactPageTitle"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
+                            <div class="form-group"><label>Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                        </div>
+                        <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
                     </div>
                 </div>
 
-                <div class="section">
-                    <h2>🔗 Navigation Icons</h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>Home Icon URL</label><input type="text" id="navIconURLHome"></div>
-                        <div class="form-group"><label>About Icon URL</label><input type="text" id="navIconURLAbout"></div>
-                        <div class="form-group"><label>Contact Icon URL</label><input type="text" id="navIconURLContact"></div>
-                        <div class="form-group"><label>LinkedIn Icon URL</label><input type="text" id="navIconURLLinkedIn"></div>
+                <!-- Page Titles -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>📄 Page Titles</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Admin Icon URL</label><input type="text" id="navIconURLAdmin"></div>
-                        <div class="form-group"><label>LinkedIn URL</label><input type="text" id="linkedInURL" placeholder="https://www.linkedin.com/in/..."></div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>Home Page Title</label><input type="text" id="homePageTitle"></div>
+                            <div class="form-group"><label>Order Page Title</label><input type="text" id="orderPageTitle"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>About Page Title</label><input type="text" id="aboutPageTitle"></div>
+                            <div class="form-group"><label>Contact Page Title</label><input type="text" id="contactPageTitle"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="section">
-                    <h2>💳 Payment & Icons</h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>PayPal Logo URL</label><input type="text" id="payPalLogo"></div>
-                        <div class="form-group"><label>Payfast Logo URL</label><input type="text" id="payfastLogo"></div>
-                        <div class="form-group"><label>Location Icon URL</label><input type="text" id="locationIconURL"></div>
-                        <div class="form-group"><label>Maps Icon URL</label><input type="text" id="mapsIconURL"></div>
+                <!-- Navigation Icons -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>🔗 Navigation Icons</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
-                        <div class="form-group"><label>Contact Email</label><input type="email" id="contactEmail"></div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>Home Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLHome" style="flex:1;"><img class="image-preview" id="navIconURLHomePreview"></div></div>
+                            <div class="form-group"><label>About Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAbout" style="flex:1;"><img class="image-preview" id="navIconURLAboutPreview"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Contact Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLContact" style="flex:1;"><img class="image-preview" id="navIconURLContactPreview"></div></div>
+                            <div class="form-group"><label>LinkedIn Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLLinkedIn" style="flex:1;"><img class="image-preview" id="navIconURLLinkedInPreview"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Admin Icon URL</label><div class="image-url-row"><input type="text" id="navIconURLAdmin" style="flex:1;"><img class="image-preview" id="navIconURLAdminPreview"></div></div>
+                            <div class="form-group"><label>LinkedIn URL</label><input type="text" id="linkedInURL" placeholder="https://www.linkedin.com/in/..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment & Icons -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>💳 Payment & Icons</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>PayPal Logo URL</label><div class="image-url-row"><input type="text" id="payPalLogo" style="flex:1;"><img class="image-preview" id="payPalLogoPreview"></div></div>
+                            <div class="form-group"><label>Payfast Logo URL</label><div class="image-url-row"><input type="text" id="payfastLogo" style="flex:1;"><img class="image-preview" id="payfastLogoPreview"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Location Icon URL</label><div class="image-url-row"><input type="text" id="locationIconURL" style="flex:1;"><img class="image-preview" id="locationIconURLPreview"></div></div>
+                            <div class="form-group"><label>Maps Icon URL</label><div class="image-url-row"><input type="text" id="mapsIconURL" style="flex:1;"><img class="image-preview" id="mapsIconURLPreview"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
+                            <div class="form-group"><label>Contact Email</label><input type="email" id="contactEmail"></div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- My Profile -->
-                <div class="section" style="border-left: 4px solid #f29b2a;">
-                    <h2>👤 My Profile <span style="font-weight:400;font-size:0.85rem;color:#888;">(only you can see and edit this)</span></h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>My Name</label><input type="text" id="myProfileName"></div>
-                        <div class="form-group"><label>My Email</label><input type="email" id="myProfileEmail"></div>
-                        <div class="form-group" style="grid-column: 1 / -1;">
+                <div class="collapsible-card open" style="border-left: 4px solid #f29b2a;">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>👤 My Profile <span style="font-weight:400;font-size:0.8rem;color:#888;">(private — only you can edit)</span></h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>My Name</label><input type="text" id="myProfileName"></div>
+                            <div class="form-group"><label>My Email</label><input type="email" id="myProfileEmail"></div>
+                        </div>
+                        <div class="form-group">
                             <label>My Icon URL</label>
                             <div class="image-url-row">
                                 <input type="text" id="myProfileIconURL" oninput="updateImagePreview('myProfileIconURL')" style="flex:1;">
                                 <img class="image-preview" id="myProfileIconURLPreview">
                             </div>
                         </div>
+                        <button class="btn-sm" onclick="saveMyProfile()" style="margin-top:0.8rem;">💾 Save My Profile</button>
                     </div>
-                    <button class="btn-sm" onclick="saveMyProfile()" style="margin-top:0.8rem;">💾 Save My Profile</button>
                 </div>
             </div>
 
             <!-- ==================== PRODUCTS TAB ==================== -->
             <div class="tab-content" id="tab-products">
-                <div class="section">
-                    <h2>📦 Product 1</h2>
-                    <div class="form-row">
-                        <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product1Code"></div>
-                        <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
+                <!-- Product 1 -->
+                <div class="collapsible-card open">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>📦 Product 1</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="form-group"><label>Description</label><textarea id="product1Desc" rows="2"></textarea></div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
-                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
-                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product1Code"></div>
+                            <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
+                        </div>
+                        <div class="form-group"><label>Description</label><textarea id="product1Desc" rows="2" class="auto-height" oninput="autoResizeTextarea(this)"></textarea></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                            <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01" oninput="updateDiscountCalc(1)"></div>
+                            <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold" oninput="updateDiscountCalc(1)"></div>
+                            <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1" oninput="updateDiscountCalc(1)"></div>
+                            <div class="form-group"><label>Discount Amount</label><input type="text" id="product1DiscountAmount" class="calc-field" readonly></div>
+                            <div class="form-group"><label>Discounted Unit Price</label><input type="text" id="product1DiscountedPrice" class="calc-field" readonly></div>
+                        </div>
+                        <div class="image-url-row">
+                            <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL')"></div>
+                            <img class="image-preview" id="product1ImageURLPreview">
+                        </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold"></div>
-                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1"></div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>📦 Product 2</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="image-url-row">
-                        <div class="form-group"><label>Image URL</label><input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL')"></div>
-                        <img class="image-preview" id="product1ImageURLPreview">
-                    </div>
-                    
-                    <h3>📦 Product 2</h3>
-                    <div class="form-row">
-                        <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product2Code"></div>
-                        <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
-                    </div>
-                    <div class="form-group"><label>Description</label><textarea id="product2Desc" rows="2"></textarea></div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
-                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
-                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold"></div>
-                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1"></div>
-                    </div>
-                    <div class="image-url-row">
-                        <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL')"></div>
-                        <img class="image-preview" id="product2ImageURLPreview">
+                    <div class="collapsible-card-body">
+                        <div class="form-row">
+                            <div class="form-group"><label>Product Code (ISBN)</label><input type="text" id="product2Code"></div>
+                            <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
+                        </div>
+                        <div class="form-group"><label>Description</label><textarea id="product2Desc" rows="2" class="auto-height" oninput="autoResizeTextarea(this)"></textarea></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                            <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01" oninput="updateDiscountCalc(2)"></div>
+                            <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold" oninput="updateDiscountCalc(2)"></div>
+                            <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1" oninput="updateDiscountCalc(2)"></div>
+                            <div class="form-group"><label>Discount Amount</label><input type="text" id="product2DiscountAmount" class="calc-field" readonly></div>
+                            <div class="form-group"><label>Discounted Unit Price</label><input type="text" id="product2DiscountedPrice" class="calc-field" readonly></div>
+                        </div>
+                        <div class="image-url-row">
+                            <div class="form-group"><label>Image URL</label><input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL')"></div>
+                            <img class="image-preview" id="product2ImageURLPreview">
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- ==================== HOME PAGE TAB ==================== -->
             <div class="tab-content" id="tab-home">
-                <div class="section">
-                    <h2>🏠 Home Page Content</h2>
-                    <div class="form-group"><label>Book Description 1</label><input type="text" id="homeDesc1"></div>
-                    <div class="form-group"><label>Book Description 2</label><textarea id="homeDesc2" rows="3"></textarea></div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Item 1 - Main Text</label><input type="text" id="homeItem1Main"></div>
-                        <div class="form-group"><label>Item 1 - Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                <!-- Home Page Content -->
+                <div class="collapsible-card open">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>📝 Home Page Content</h4>
+                        <span class="toggle-icon">▾</span>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Item 2 - Main Text</label><input type="text" id="homeItem2Main"></div>
-                        <div class="form-group"><label>Item 2 - Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                    <div class="collapsible-card-body">
+                        <div class="form-group"><label>Book Description 1</label><input type="text" id="homeDesc1"></div>
+                        <div class="form-group"><label>Book Description 2</label><textarea id="homeDesc2" rows="3" class="auto-height" oninput="autoResizeTextarea(this)"></textarea></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Item 1 - Main Text</label><input type="text" id="homeItem1Main"></div>
+                            <div class="form-group"><label>Item 1 - Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Item 2 - Main Text</label><input type="text" id="homeItem2Main"></div>
+                            <div class="form-group"><label>Item 2 - Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                        </div>
                     </div>
-                    <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
-                    <div class="form-group"><label>Carousel Images (one URL per line, up to 9)</label><textarea id="carouselImages" rows="3" placeholder="https://...carousel_1.png&#10;https://...carousel_2.png"></textarea></div>
+                </div>
+
+                <!-- Carousel Images -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>🎠 Carousel Images</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body">
+                        <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
+                        <div id="carouselImagesContainer"></div>
+                        <button class="btn-sm btn-secondary" onclick="addCarouselImage()" style="margin-top:0.5rem;">+ Add Image</button>
+                        <button class="btn-sm btn-danger" onclick="removeCarouselImage()" style="margin-left:0.3rem;">- Remove Last</button>
+                    </div>
                 </div>
             </div>
 
@@ -566,8 +659,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3"></textarea></div>
-                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="5" class="tall"></textarea></div>
+                    <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3" class="auto-height" oninput="autoResizeTextarea(this)"></textarea></div>
+                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="5" class="auto-height" oninput="autoResizeTextarea(this)"></textarea></div>
                 </div>
             </div>
 
@@ -582,14 +675,22 @@
 
             <!-- ==================== LEGAL TAB ==================== -->
             <div class="tab-content" id="tab-legal">
-                <div class="section">
-                    <h2>📄 Legal Pages</h2>
-                    <h3>Privacy Policy</h3>
-                    <div class="form-group"><label>Heading</label><input type="text" id="privacyHeading"></div>
-                    <div class="form-group"><label>Content</label><textarea id="privacyContent" rows="6" placeholder="KeyName: Value text&#10;KeyName: Value text..."></textarea></div>
-                    <h3>Terms of Service</h3>
-                    <div class="form-group"><label>Heading</label><input type="text" id="termsHeading"></div>
-                    <div class="form-group"><label>Content</label><textarea id="termsContent" rows="6" placeholder="KeyName: Value text&#10;KeyName: Value text..."></textarea></div>
+                <!-- Privacy Policy -->
+                <div class="collapsible-card open">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>🔒 Privacy Policy</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body" id="privacyFieldsContainer"></div>
+                </div>
+
+                <!-- Terms of Service -->
+                <div class="collapsible-card">
+                    <div class="collapsible-card-header" onclick="this.parentElement.classList.toggle('open')">
+                        <h4>📋 Terms of Service</h4>
+                        <span class="toggle-icon">▾</span>
+                    </div>
+                    <div class="collapsible-card-body" id="termsFieldsContainer"></div>
                 </div>
             </div>
         </div>
@@ -601,28 +702,25 @@
         let adminNum = '';
         let adminName = '';
         let currentTab = 'tab-settings';
+        let carouselImageCount = 0;
+        let legalPrivacyFields = [];
+        let legalTermsFields = [];
 
-        // ========== COLOR PREVIEW HELPERS ==========
-        function updateColorPreview(colorId) {
+        // ========== COLOR HELPERS ==========
+        function updateColorText(colorId) {
             const colorInput = document.getElementById(colorId);
-            const preview = document.getElementById(colorId + 'Preview');
             const textInput = document.getElementById(colorId + 'Text');
-            if (colorInput && preview) {
-                preview.style.backgroundColor = colorInput.value;
-                if (textInput) textInput.value = colorInput.value;
-            }
+            if (colorInput && textInput) textInput.value = colorInput.value;
         }
         function updateColorFromText(colorId, value) {
             if (value.match(/^#[0-9a-fA-F]{6}$/)) {
                 const colorInput = document.getElementById(colorId);
-                const preview = document.getElementById(colorId + 'Preview');
                 if (colorInput) colorInput.value = value;
-                if (preview) preview.style.backgroundColor = value;
             }
         }
-        function initColorPreviews() {
+        function initColorTexts() {
             ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'].forEach(id => {
-                updateColorPreview(id);
+                updateColorText(id);
             });
         }
 
@@ -639,14 +737,59 @@
                 } else {
                     preview.classList.remove('visible');
                 }
+                updateThumbnailBg(preview);
             }
         }
+        function updateThumbnailBg(preview) {
+            const bgColor = document.getElementById('backgroundColor').value || '#eee6ca';
+            preview.style.backgroundColor = bgColor;
+            preview.style.backgroundImage = 'linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%, #e0e0e0), linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%, #e0e0e0)';
+            preview.style.backgroundSize = '8px 8px';
+            preview.style.backgroundPosition = '0 0, 4px 4px';
+        }
+        function updateAllThumbnailBgs() {
+            document.querySelectorAll('.image-preview').forEach(p => updateThumbnailBg(p));
+        }
         function initImagePreviews() {
-            ['backgroundImage', 'bannerLogo', 'myProfileIconURL',
-             'product1ImageURL', 'product2ImageURL', 'authorImage1', 'authorImage2'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input && input.value) updateImagePreview(id);
+            const bgColor = document.getElementById('backgroundColor');
+            if (bgColor) {
+                bgColor.addEventListener('change', updateAllThumbnailBgs);
+                document.getElementById('backgroundColorText').addEventListener('input', function() {
+                    if (this.value.match(/^#[0-9a-fA-F]{6}$/)) updateAllThumbnailBgs();
+                });
+            }
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.id && document.getElementById(input.id + 'Preview')) {
+                    if (input.value) updateImagePreview(input.id);
+                }
             });
+            // Carousel images
+            document.querySelectorAll('[id^="carouselImageURL"]').forEach(input => {
+                if (input.value) updateImagePreview(input.id);
+            });
+        }
+
+        // ========== AUTO-RESIZE TEXTAREA ==========
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+        function initAutoResize() {
+            document.querySelectorAll('.auto-height').forEach(el => autoResizeTextarea(el));
+        }
+
+        // ========== DISCOUNT CALCULATOR ==========
+        function updateDiscountCalc(num) {
+            const basePrice = parseFloat(document.getElementById('product' + num + 'BasePrice').value) || 0;
+            const percent = parseFloat(document.getElementById('product' + num + 'DiscountPercent').value) || 0;
+            const amount = Math.round(basePrice * percent) / 100;
+            const discounted = Math.round((basePrice - amount) * 100) / 100;
+            document.getElementById('product' + num + 'DiscountAmount').value = amount.toFixed(2);
+            document.getElementById('product' + num + 'DiscountedPrice').value = discounted.toFixed(2);
+        }
+        function initDiscountCalcs() {
+            updateDiscountCalc(1);
+            updateDiscountCalc(2);
         }
 
         // ========== STATUS ==========
@@ -667,6 +810,7 @@
                 btn.classList.add('active');
                 currentTab = btn.dataset.tab;
                 document.getElementById(currentTab).classList.add('active');
+                setTimeout(initAutoResize, 100);
             });
         });
 
@@ -718,11 +862,11 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     await loadAllData();
-                    // Populate profile badge
-                    const scriptProps = await fetchAdminProfile();
-                    updateAdminBadge(scriptProps);
-                    initColorPreviews();
+                    initColorTexts();
                     initImagePreviews();
+                    initAutoResize();
+                    initDiscountCalcs();
+                    updateAllThumbnailBgs();
                     return;
                 } else {
                     document.getElementById('loginPrompt').textContent = 'Session expired: ' + (data.message || 'Please login again.');
@@ -743,16 +887,6 @@
             }
             html += name;
             badge.innerHTML = html;
-        }
-
-        async function fetchAdminProfile() {
-            // We get this from the allData settings which now come from Script Properties
-            const key = 'Admin' + adminNum;
-            return {
-                name: document.getElementById('myProfileName').value || '',
-                email: document.getElementById('myProfileEmail').value || '',
-                iconURL: document.getElementById('myProfileIconURL').value || ''
-            };
         }
 
         function logout() {
@@ -778,8 +912,11 @@
                     populateAbout(data.about || {});
                     populateShipping(data.shippingRegions || [], data.regionRates || []);
                     populateLegal(data.legal || {});
-                    initColorPreviews();
+                    initColorTexts();
                     initImagePreviews();
+                    initAutoResize();
+                    initDiscountCalcs();
+                    updateAllThumbnailBgs();
                 }
             } catch (err) {
                 console.error(err);
@@ -788,39 +925,33 @@
         }
 
         function populateSettings(s) {
-            // Colours
             document.getElementById('primaryColor').value = s.PrimaryColor || '#194373';
             document.getElementById('ctaColor').value = s.CTAColor || '#f29b2a';
             document.getElementById('secondaryColor').value = s.SecondaryColor || '#f29b2a';
             document.getElementById('alertColor').value = s.AlertColor || '#dc3c33';
             document.getElementById('backgroundColor').value = s.BackgroundColor || '#ffffff';
             document.getElementById('textColor').value = s.TextColor || '#000000';
-            // Banner
             document.getElementById('backgroundImage').value = s.BackgroundImage || '';
             document.getElementById('bannerLogo').value = s.BannerLogo || '';
             document.getElementById('bannerBookTitle').value = s.BannerBookTitle || '';
             document.getElementById('bannerBookTitleAbbreviation').value = s.BannerBookTitleAbbreviation || '';
             document.getElementById('bannerBookSubtitle').value = s.BannerBookSubTitle || '';
-            // Page titles
             document.getElementById('homePageTitle').value = s.HomePageTitle || '';
             document.getElementById('orderPageTitle').value = s.OrderPageTitle || '';
             document.getElementById('aboutPageTitle').value = s.AboutPageTitle || '';
             document.getElementById('contactPageTitle').value = s.ContactPageTitle || '';
-            // Nav icons
             document.getElementById('navIconURLHome').value = s.NavIconURLHome || '';
             document.getElementById('navIconURLAbout').value = s.NavIconURLAbout || '';
             document.getElementById('navIconURLContact').value = s.NavIconURLContact || '';
             document.getElementById('navIconURLLinkedIn').value = s.NavIconURLLinkedIn || '';
             document.getElementById('navIconURLAdmin').value = s.NavIconURLAdmin || '';
             document.getElementById('linkedInURL').value = s.LinkedInURL || '';
-            // Payment & icons
             document.getElementById('payPalLogo').value = s.PayPalLogo || '';
             document.getElementById('payfastLogo').value = s.PayfastLogo || '';
             document.getElementById('locationIconURL').value = s.LocationIconURL || '';
             document.getElementById('mapsIconURL').value = s.MapsIconURL || '';
             document.getElementById('googleMapsApiKey').value = s.GoogleMapsApiKey || '';
             document.getElementById('contactEmail').value = s.ContactEmail || '';
-            // My Profile (only current admin's own data)
             const myKey = 'Admin' + adminNum;
             document.getElementById('myProfileName').value = s[myKey + 'Name'] || '';
             document.getElementById('myProfileEmail').value = s[myKey + 'Email'] || '';
@@ -864,12 +995,48 @@
             document.getElementById('homeItem2Main').value = home.HomePageItem2MainText || '';
             document.getElementById('homeItem2Sub').value = home.HomePageItem2SubText || '';
             document.getElementById('carouselInterval').value = home.HomePageCarouselInterval || '3000';
-            let urls = [];
+            
+            // Build carousel image inputs
+            const container = document.getElementById('carouselImagesContainer');
+            container.innerHTML = '';
+            carouselImageCount = 0;
             for (let i = 1; i <= 9; i++) {
                 const url = home['HomePageCarouselImage' + i];
-                if (url) urls.push(url);
+                if (url || i <= 3) { // Show at least 3 slots
+                    addCarouselImageField(url || '');
+                }
             }
-            document.getElementById('carouselImages').value = urls.join('\n');
+        }
+
+        function addCarouselImageField(url) {
+            carouselImageCount++;
+            const container = document.getElementById('carouselImagesContainer');
+            const idx = carouselImageCount;
+            const div = document.createElement('div');
+            div.className = 'image-url-row';
+            div.style.marginBottom = '0.5rem';
+            div.id = 'carouselRow' + idx;
+            div.innerHTML = `
+                <div class="form-group" style="flex:1;margin-bottom:0;">
+                    <label>Image ${idx} URL</label>
+                    <input type="text" id="carouselImageURL${idx}" value="${url || ''}" oninput="updateImagePreview('carouselImageURL${idx}')">
+                </div>
+                <img class="image-preview" id="carouselImageURL${idx}Preview" src="${url || ''}" style="${url ? 'display:block;' : ''}">
+            `;
+            container.appendChild(div);
+            if (url) updateImagePreview('carouselImageURL' + idx);
+        }
+
+        function addCarouselImage() {
+            if (carouselImageCount >= 9) return;
+            addCarouselImageField('');
+        }
+
+        function removeCarouselImage() {
+            if (carouselImageCount <= 1) return;
+            const row = document.getElementById('carouselRow' + carouselImageCount);
+            if (row) row.remove();
+            carouselImageCount--;
         }
 
         function populateAbout(about) {
@@ -883,45 +1050,44 @@
             const container = document.getElementById('shippingRegionsList');
             container.innerHTML = '';
             
-            // Group by region
+            // Group locations by region
             const regionMap = {};
             regions.forEach(r => {
-                if (!regionMap[r.Region]) regionMap[r.Region] = { region: r, locations: [] };
+                if (!regionMap[r.Region]) {
+                    regionMap[r.Region] = { region: r.Region, locations: [], phoneCode: r.PhoneCode || '+1' };
+                }
                 regionMap[r.Region].locations.push(r);
+                if (r.PhoneCode && r.PhoneCode !== '+1') regionMap[r.Region].phoneCode = r.PhoneCode;
             });
             
-            // Also group rates by region
             const ratesByRegion = {};
             rates.forEach(r => {
                 if (!ratesByRegion[r.Region]) ratesByRegion[r.Region] = [];
                 ratesByRegion[r.Region].push(r);
             });
             
-            // Combine all unique region names
             const allRegions = [...new Set([...Object.keys(regionMap), ...Object.keys(ratesByRegion)])];
             
             allRegions.forEach(regionName => {
-                const regionData = regionMap[regionName] || { region: {}, locations: [] };
+                const regionData = regionMap[regionName] || { region: regionName, locations: [], phoneCode: '+1' };
                 const regionRates = ratesByRegion[regionName] || [];
-                const firstLocation = regionData.locations[0] || {};
+                const countryNames = regionData.locations.map(l => l.Location).filter(Boolean).join(', ');
+                const firstFlag = regionData.locations[0]?.FlagURL || '';
                 
                 const card = document.createElement('div');
                 card.className = 'region-card';
                 
-                const flagHtml = firstLocation.FlagURL ? `<img src="${firstLocation.FlagURL}" alt="">` : '';
-                const locationLabel = firstLocation.Location || regionName || 'New Region';
+                const flagHtml = firstFlag ? `<img src="${firstFlag}" alt="">` : '';
                 
                 card.innerHTML = `
                     <div class="region-card-header" onclick="this.parentElement.classList.toggle('open')">
-                        <h4>${flagHtml} ${locationLabel}</h4>
+                        <h4>${flagHtml} ${regionName || 'New Region'} <span class="region-subtitle">(${countryNames || 'No countries'})</span></h4>
                         <span class="toggle-icon">▾</span>
                     </div>
                     <div class="region-card-body">
                         <div class="form-row">
-                            <div class="form-group"><label>Location Name</label><input type="text" class="region-location" value="${firstLocation.Location || ''}"></div>
-                            <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${regionData.region.Region || regionName || ''}"></div>
-                            <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag" value="${firstLocation.FlagURL || ''}"></div>
-                            <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${firstLocation.PhoneCode || '+1'}"></div>
+                            <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${regionName || ''}"></div>
+                            <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${regionData.phoneCode || '+1'}"></div>
                         </div>
                         <h4 style="margin-top:0.8rem;">Rates</h4>
                         <div class="rates-container">
@@ -933,6 +1099,7 @@
                                     <button class="btn-sm btn-danger" onclick="this.closest('.rate-row').remove()">✕</button>
                                 </div>
                             `).join('')}
+                            ${regionRates.length === 0 ? '<p style="color:#888;font-size:0.85rem;">No rates yet.</p>' : ''}
                         </div>
                         <button class="btn-sm btn-secondary" onclick="addRateRow(this)" style="margin-top:0.5rem;">+ Add Rate</button>
                         <button class="btn-sm btn-danger" onclick="this.closest('.region-card').remove()" style="margin-left:0.3rem;">Remove Region</button>
@@ -943,12 +1110,68 @@
         }
 
         function populateLegal(legal) {
+            // Privacy fields
             const privacyKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('privacy') || k.toLowerCase().startsWith('pricacy'));
+            legalPrivacyFields = privacyKeys.sort();
+            buildLegalFieldGroup('privacyFieldsContainer', legal, privacyKeys, 'privacy');
+            
+            // Terms fields
             const termsKeys = Object.keys(legal).filter(k => k.toLowerCase().startsWith('terms'));
-            document.getElementById('privacyHeading').value = legal[privacyKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('privacyContent').value = privacyKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
-            document.getElementById('termsHeading').value = legal[termsKeys.find(k => k.toLowerCase().endsWith('heading'))] || '';
-            document.getElementById('termsContent').value = termsKeys.filter(k => !k.toLowerCase().endsWith('heading')).map(k => k + ': ' + legal[k]).join('\n\n');
+            legalTermsFields = termsKeys.sort();
+            buildLegalFieldGroup('termsFieldsContainer', legal, termsKeys, 'terms');
+        }
+
+        function buildLegalFieldGroup(containerId, legal, keys, prefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            // Separate headings from content
+            const headingKeys = keys.filter(k => k.toLowerCase().endsWith('heading'));
+            const otherKeys = keys.filter(k => !k.toLowerCase().endsWith('heading'));
+            
+            // For each heading, show it followed by its related content
+            const usedContentKeys = new Set();
+            
+            headingKeys.forEach(hKey => {
+                const hValue = legal[hKey] || '';
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `<label>${hKey}</label><input type="text" class="legal-field" data-key="${hKey}" value="${escapeHtml(hValue)}">`;
+                container.appendChild(div);
+                
+                // Find content keys that likely belong to this heading
+                const baseName = hKey.replace(/heading$/i, '');
+                const relatedKeys = otherKeys.filter(k => k.toLowerCase().startsWith(baseName.toLowerCase()) && !usedContentKeys.has(k));
+                relatedKeys.forEach(rKey => {
+                    usedContentKeys.add(rKey);
+                    const rValue = legal[rKey] || '';
+                    const rDiv = document.createElement('div');
+                    rDiv.className = 'form-group';
+                    rDiv.innerHTML = `<label>${rKey}</label><textarea class="legal-field auto-height" data-key="${rKey}" rows="2" oninput="autoResizeTextarea(this)">${escapeHtml(rValue)}</textarea>`;
+                    container.appendChild(rDiv);
+                });
+            });
+            
+            // Any remaining content keys
+            otherKeys.forEach(rKey => {
+                if (!usedContentKeys.has(rKey)) {
+                    const rValue = legal[rKey] || '';
+                    const rDiv = document.createElement('div');
+                    rDiv.className = 'form-group';
+                    rDiv.innerHTML = `<label>${rKey}</label><textarea class="legal-field auto-height" data-key="${rKey}" rows="2" oninput="autoResizeTextarea(this)">${escapeHtml(rValue)}</textarea>`;
+                    container.appendChild(rDiv);
+                }
+            });
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="color:#888;">No entries yet. They will appear here once added in the spreadsheet.</p>';
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
         function addShippingRegion() {
@@ -957,14 +1180,12 @@
             card.className = 'region-card open';
             card.innerHTML = `
                 <div class="region-card-header" onclick="this.parentElement.classList.toggle('open')">
-                    <h4>New Region</h4>
+                    <h4>New Region <span class="region-subtitle"></span></h4>
                     <span class="toggle-icon">▾</span>
                 </div>
                 <div class="region-card-body">
                     <div class="form-row">
-                        <div class="form-group"><label>Location Name</label><input type="text" class="region-location" placeholder="Country name"></div>
-                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code"></div>
-                        <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag"></div>
+                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code" placeholder="e.g. Europe, UK, Middle East"></div>
                         <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="+1"></div>
                     </div>
                     <h4 style="margin-top:0.8rem;">Rates</h4>
@@ -1079,7 +1300,6 @@
         }
 
         async function saveHomePage() {
-            const carouselUrls = document.getElementById('carouselImages').value.split('\n').filter(u => u.trim());
             const home = {
                 HomePageBookDescription1: document.getElementById('homeDesc1').value,
                 HomePageBookDescription2: document.getElementById('homeDesc2').value,
@@ -1089,7 +1309,12 @@
                 HomePageItem2SubText: document.getElementById('homeItem2Sub').value,
                 HomePageCarouselInterval: parseInt(document.getElementById('carouselInterval').value) || 3000
             };
-            carouselUrls.forEach((url, i) => { home['HomePageCarouselImage' + (i + 1)] = url.trim(); });
+            for (let i = 1; i <= carouselImageCount; i++) {
+                const input = document.getElementById('carouselImageURL' + i);
+                if (input && input.value.trim()) {
+                    home['HomePageCarouselImage' + i] = input.value.trim();
+                }
+            }
             await saveData('saveHome', home);
         }
 
@@ -1105,18 +1330,18 @@
         async function saveShipping() {
             const regions = [], rates = [];
             document.querySelectorAll('#shippingRegionsList .region-card').forEach(card => {
-                const location = card.querySelector('.region-location').value.trim();
                 const regionCode = card.querySelector('.region-code').value.trim();
-                if (!location && !regionCode) return;
+                if (!regionCode) return;
+                const phoneCode = card.querySelector('.region-phone').value.trim() || '+1';
                 regions.push({
-                    Location: location || regionCode,
-                    Region: regionCode || location,
-                    FlagURL: card.querySelector('.region-flag').value.trim(),
-                    PhoneCode: card.querySelector('.region-phone').value.trim()
+                    Location: regionCode,
+                    Region: regionCode,
+                    FlagURL: '',
+                    PhoneCode: phoneCode
                 });
                 card.querySelectorAll('.rate-row').forEach(row => {
                     rates.push({
-                        Region: regionCode || location,
+                        Region: regionCode,
                         MaxWeight: parseFloat(row.querySelector('.rate-maxweight').value) || 0,
                         Cost: parseFloat(row.querySelector('.rate-cost').value) || 0,
                         Time: row.querySelector('.rate-time').value.trim()
@@ -1136,26 +1361,12 @@
 
         async function saveLegal() {
             const legal = {};
-            const pH = document.getElementById('privacyHeading').value.trim();
-            if (pH) legal['PrivacyPolicyHeading'] = pH;
-            const pC = document.getElementById('privacyContent').value.trim();
-            if (pC) {
-                pC.split('\n\n').forEach((line, i) => {
-                    const ci = line.indexOf(':');
-                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
-                    else legal['PrivacyPolicyContent' + (i + 1)] = line;
-                });
-            }
-            const tH = document.getElementById('termsHeading').value.trim();
-            if (tH) legal['TermsHeading'] = tH;
-            const tC = document.getElementById('termsContent').value.trim();
-            if (tC) {
-                tC.split('\n\n').forEach((line, i) => {
-                    const ci = line.indexOf(':');
-                    if (ci > 0) legal[line.substring(0, ci).trim()] = line.substring(ci + 1).trim();
-                    else legal['TermsContent' + (i + 1)] = line;
-                });
-            }
+            document.querySelectorAll('#privacyFieldsContainer .legal-field, #termsFieldsContainer .legal-field').forEach(field => {
+                const key = field.dataset.key;
+                if (key && field.value.trim()) {
+                    legal[key] = field.value.trim();
+                }
+            });
             await saveData('saveLegal', legal);
         }
 
