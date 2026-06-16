@@ -69,6 +69,21 @@
             width: 1.5em;
             text-align: left;
         }
+        #splash-screen h2 {
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+        }
+        #splash-screen p {
+            opacity: 0.8;
+        }
+        #splashAdminLink {
+            transition: color 0.2s, border-color 0.2s;
+        }
+        #splashAdminLink:hover {
+            color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
 
         /* ---------- CUSTOM MODAL ---------- */
         .modal-overlay {
@@ -894,10 +909,9 @@
     <!-- ================== SPLASH SCREEN ================== -->
     <div id="splash-screen">
         <img id="splash-logo" src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" alt="Logo">
-        <div class="spinner-row">
-            <div class="spinner"></div>
-            <span>Loading</span><span class="loading-dots" id="loadingDots"></span>
-        </div>
+        <h2 style="color:#ffffff; font-weight:300; margin-top:1rem; letter-spacing:2px;">COMING SOON</h2>
+        <p style="color:rgba(255,255,255,0.7); font-size:0.9rem; margin-top:0.5rem;">This site is currently under construction.</p>
+        <a href="#" id="splashAdminLink" style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:2rem; text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.3);">Admin</a>
     </div>
 
     <!-- ================== CUSTOM MODAL ================== -->
@@ -2006,7 +2020,8 @@
                 loadOrderPage(); setupHamburger(); setupContactForm(); equalizeHeights();
                 splitAllPhoneFields(); setTimeout(splitAllPhoneFields, 800);
                 paymentKeys = await fetchPaymentKeys(); initPayments();
-                setTimeout(hideSplashScreen, 500);
+                // Splash stays until admin bypass — no auto-hide
+                // setTimeout(hideSplashScreen, 500);
             } catch(err) { console.error(err); hideSplashScreen(); }
         }
         init();
