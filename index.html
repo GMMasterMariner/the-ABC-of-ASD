@@ -32,7 +32,7 @@
         /* ---------- SPLASH SCREEN ---------- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(25, 67, 115, 0.9);
+            background: rgba(25, 67, 115, 0.92);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             z-index: 9999; transition: opacity 0.5s ease; opacity: 1;
@@ -48,6 +48,32 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        /* ---- NEW: Coming Soon text on splash ---- */
+        #splash-screen h2 {
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #ffffff;
+            margin-top: 1rem;
+        }
+        #splash-screen p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        #splashAdminLink {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            margin-top: 2rem;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.3);
+            transition: color 0.2s, border-color 0.2s;
+        }
+        #splashAdminLink:hover {
+            color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
+        /* ---- END new ---- */
         .spinner-row {
             display: flex;
             align-items: center;
@@ -68,21 +94,6 @@
             display: inline-block;
             width: 1.5em;
             text-align: left;
-        }
-        #splash-screen h2 {
-            font-size: 1.6rem;
-            font-weight: 300;
-            letter-spacing: 3px;
-        }
-        #splash-screen p {
-            opacity: 0.8;
-        }
-        #splashAdminLink {
-            transition: color 0.2s, border-color 0.2s;
-        }
-        #splashAdminLink:hover {
-            color: #ffffff;
-            border-bottom-color: #ffffff;
         }
 
         /* ---------- CUSTOM MODAL ---------- */
@@ -909,9 +920,9 @@
     <!-- ================== SPLASH SCREEN ================== -->
     <div id="splash-screen">
         <img id="splash-logo" src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" alt="Logo">
-        <h2 style="color:#ffffff; font-weight:300; margin-top:1rem; letter-spacing:2px;">COMING SOON</h2>
-        <p style="color:rgba(255,255,255,0.7); font-size:0.9rem; margin-top:0.5rem;">This site is currently under construction.</p>
-        <a href="#" id="splashAdminLink" style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:2rem; text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.3);">Admin</a>
+        <h2>COMING SOON</h2>
+        <p>This site is currently under construction.</p>
+        <a href="#" id="splashAdminLink">Admin</a>
     </div>
 
     <!-- ================== CUSTOM MODAL ================== -->
@@ -1308,7 +1319,7 @@
             showModal(title, message, 'OK', null, null, null);
         }
     
-        // ========== ADMIN LOGIN (EMAIL CODE) ==========
+        // ========== ADMIN LOGIN (standard, opens admin.html) ==========
         document.getElementById('adminIconLink').addEventListener('click', function(e) {
             e.preventDefault();
             showAdminLoginModal();
@@ -1324,13 +1335,11 @@
     
             const container = document.getElementById('adminSelectButtons');
             
-            // Ensure we have fresh data from the API for admin names/icons
             let admin1Name = appSettings.Admin1Name || '';
             let admin2Name = appSettings.Admin2Name || '';
             let admin1Icon = appSettings.Admin1IconURL || '';
             let admin2Icon = appSettings.Admin2IconURL || '';
             
-            // If settings are empty (data.json fallback), try fetching from API directly
             if (!admin1Name && !admin2Name) {
                 try {
                     const res = await fetch(API_URL + '?combined=true');
@@ -1459,10 +1468,163 @@
                 document.getElementById('adminCodeStatus').textContent = 'Network error.';
             }
         }
+
+        // ========== SPLASH SCREEN ADMIN BYPASS ==========
+        document.getElementById('splashAdminLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAdminLoginModalForSplash();
+        });
+
+        async function showAdminLoginModalForSplash() {
+            const overlay = document.getElementById('adminLoginOverlay');
+            overlay.classList.add('active');
+            document.getElementById('adminSelectStep').style.display = 'block';
+            document.getElementById('adminCodeStep').style.display = 'none';
+            document.getElementById('adminLoginStatus').style.display = 'none';
+            document.getElementById('adminCodeStatus').style.display = 'none';
+
+            const container = document.getElementById('adminSelectButtons');
+            
+            let admin1Name = appSettings.Admin1Name || '';
+            let admin2Name = appSettings.Admin2Name || '';
+            let admin1Icon = appSettings.Admin1IconURL || '';
+            let admin2Icon = appSettings.Admin2IconURL || '';
+            
+            if (!admin1Name && !admin2Name) {
+                try {
+                    const res = await fetch(API_URL + '?combined=true');
+                    const data = await res.json();
+                    if (data.settings) {
+                        admin1Name = data.settings.Admin1Name || '';
+                        admin2Name = data.settings.Admin2Name || '';
+                        admin1Icon = data.settings.Admin1IconURL || '';
+                        admin2Icon = data.settings.Admin2IconURL || '';
+                    }
+                } catch(e) {}
+            }
+            
+            if (!admin1Name) admin1Name = 'Admin 1';
+            if (!admin2Name) admin2Name = 'Admin 2';
+
+            container.innerHTML = '';
+            [
+                { num: 1, name: admin1Name, icon: admin1Icon },
+                { num: 2, name: admin2Name, icon: admin2Icon }
+            ].forEach(admin => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.margin = '0 0.5rem';
+                btn.style.minWidth = '160px';
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.gap = '0.5rem';
+                if (admin.icon) {
+                    const img = document.createElement('img');
+                    img.src = admin.icon;
+                    img.style.height = '28px';
+                    img.style.width = '28px';
+                    img.style.borderRadius = '50%';
+                    img.style.objectFit = 'cover';
+                    btn.appendChild(img);
+                }
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = admin.name;
+                nameSpan.style.fontWeight = '600';
+                btn.appendChild(nameSpan);
+                btn.addEventListener('click', () => requestAdminCodeForSplash(admin.num, admin.name));
+                container.appendChild(btn);
+            });
+
+            document.getElementById('adminCodeCancelBtn').onclick = function() {
+                document.getElementById('adminSelectStep').style.display = 'block';
+                document.getElementById('adminCodeStep').style.display = 'none';
+                document.getElementById('adminCodeStatus').style.display = 'none';
+                document.getElementById('adminCodeInput').value = '';
+            };
+
+            document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('adminVerifyBtn').click();
+                }
+            });
+
+            document.getElementById('adminVerifyBtn').onclick = async function() {
+                const code = document.getElementById('adminCodeInput').value.trim();
+                const adminNum = sessionStorage.getItem('adminNum');
+                if (!code || code.length !== 6) {
+                    document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                    return;
+                }
+            
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'verifyAdminCode');
+                    params.append('admin', adminNum);
+                    params.append('code', code);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        // Splash bypass: set session flag and hide splash
+                        sessionStorage.setItem('splashBypassed', 'true');
+                        document.getElementById('adminLoginOverlay').classList.remove('active');
+                        hideSplashScreen();
+                        // Reload if site not initialized yet
+                        if (!appSettings.PrimaryColor) {
+                            location.reload();
+                        }
+                    } else {
+                        document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                }
+            };
+
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
+
+        async function requestAdminCodeForSplash(adminNum, adminName) {
+            document.getElementById('adminSelectStep').style.display = 'none';
+            document.getElementById('adminCodeStep').style.display = 'block';
+            document.getElementById('adminCodeStatus').style.display = 'block';
+            document.getElementById('adminCodeStatus').textContent = 'Sending code...';
+            document.getElementById('adminCodeInput').value = '';
+            document.getElementById('adminCodeInput').focus();
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', adminNum);
+                
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const rawText = await res.text();
+                
+                let data;
+                try { data = JSON.parse(rawText); } catch (e) {
+                    document.getElementById('adminCodeStatus').textContent = 'Server error.';
+                    return;
+                }
+                
+                if (data.result === 'success') {
+                    document.getElementById('adminCodeStatus').textContent = '';
+                    document.getElementById('adminCodeStatus').style.display = 'none';
+                    sessionStorage.setItem('adminNum', adminNum);
+                    sessionStorage.setItem('adminName', adminName);
+                } else {
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Failed.';
+                }
+            } catch (err) {
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+            }
+        }
         
-        // ... (rest of the JavaScript remains identical to the previous index.html) ...
-        // [Keeping the JS identical to the last version you have — only the changes above are new]
-        
+        // ========== LEGAL MODAL ==========
         function showLegalModal(title, contentObj) {
             document.getElementById('legalModalTitle').textContent = title;
             const contentDiv = document.getElementById('legalModalContent');
@@ -2010,6 +2172,10 @@
         document.querySelectorAll('.footer-col a[data-section]').forEach(l => l.addEventListener('click', (e) => { e.preventDefault(); const s = l.getAttribute('data-section'); if (s) showPage(s); }));
     
         async function init() {
+            // Check if admin already bypassed splash this session
+            if (sessionStorage.getItem('splashBypassed') === 'true') {
+                hideSplashScreen();
+            }
             sessionStorage.removeItem('orderState'); sessionStorage.removeItem('userDetails'); sessionStorage.removeItem('verifiedEmail');
             try {
                 const ad = await fetchAllSiteData(); appSettings = ad.settings || {}; applySettingsDirect(appSettings);
@@ -2022,7 +2188,7 @@
                 paymentKeys = await fetchPaymentKeys(); initPayments();
                 // Splash stays until admin bypass — no auto-hide
                 // setTimeout(hideSplashScreen, 500);
-            } catch(err) { console.error(err); hideSplashScreen(); }
+            } catch(err) { console.error(err); /* splash stays */ }
         }
         init();
     </script>
