@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download – The ABC of ASD</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 420px; width: 90%; text-align: center; }
+    h2 { color: #194373; }
+    input { width: 100%; padding: 0.8rem; margin: 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; text-align: center; letter-spacing: 2px; }
+    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; }
+    button:hover { opacity: 0.9; }
+    #message { margin-top: 1rem; font-size: 0.9rem; }
+    .error { color: #dc3c33; }
+    .success { color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Download Your Book</h2>
+    <p>Enter the license key from your email:</p>
+    <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
+    <button id="downloadBtn">Download</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
+
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+      const key = document.getElementById('licenseKey').value.trim();
+      const msg = document.getElementById('message');
+      const btn = document.getElementById('downloadBtn');
+      
+      if (!key) {
+        msg.className = 'error';
+        msg.textContent = 'Please enter your license key.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      msg.textContent = '';
+
+      const params = new URLSearchParams();
+      params.append('action', 'getDownloadUrl');
+      params.append('licenseKey', key);
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+        if (data.result === 'success' && data.downloadUrl) {
+          msg.className = 'success';
+          msg.innerHTML = 'Download starting… <a href="' + data.downloadUrl + '">Click here if it doesn\'t start</a>';
+          window.location.href = data.downloadUrl;
+        } else {
+          msg.className = 'error';
+          msg.textContent = data.message || 'Invalid license key or download not ready.';
+          btn.disabled = false;
+          btn.textContent = 'Download';
+        }
+      } catch (e) {
+        msg.className = 'error';
+        msg.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Download';
+      }
+    });
+  </script>
+</body>
+</html>
