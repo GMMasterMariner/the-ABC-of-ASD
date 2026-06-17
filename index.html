@@ -2196,8 +2196,9 @@
         (function() {
           const originalShowModal = showModal;
           window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
-            // If the message contains "Coming Soon", we intercept
-            if (message && message.indexOf('Coming Soon') !== -1) {
+            // Intercept "Coming Soon" payment modals – check BOTH title and message
+            if ((title && title.indexOf('Coming Soon') !== -1) ||
+                (message && message.indexOf('Coming Soon') !== -1)) {
               if (!selectedProduct) {
                 showAlertModal('Select Product', 'Please choose a book format first.');
                 return;
@@ -2215,19 +2216,19 @@
               const phoneNumber = document.getElementById('customerPhone').value.trim();
               const phone = phoneCode + ' ' + phoneNumber;
               const orderId = 'TEST-' + Date.now();
-        
+
               const params = new URLSearchParams();
               params.append('action', 'generateLicense');
               params.append('orderId', orderId);
               params.append('customerName', name);
               params.append('customerEmail', lastVerifiedEmail);
               params.append('customerPhone', phone);
-        
+
               fetch(API_URL, { method: 'POST', body: params })
                 .then(r => r.json())
                 .then(data => {
                   if (data.result === 'success') {
-                    showAlertModal('Purchase Successful', 'Your license key is: ' + data.licenseKey + '\n\nCheck your email. You can download your book from the Download page.');
+                    showAlertModal('Thank You!', 'Your purchase was successful. You will receive an email shortly with your license key and download instructions.');
                   } else {
                     showAlertModal('Error', data.message || 'Could not generate license.');
                   }
