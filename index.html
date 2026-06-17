@@ -2238,7 +2238,7 @@
         params.append('orderId', orderId);
         params.append('customerName', name);
         params.append('customerEmail', email);
-        params.append('customerPhone', phone);
+        params.append('customerPhone', "'" + phone);
 
         fetch(API_URL, { method: 'POST', body: params })
           .then(r => r.json())
