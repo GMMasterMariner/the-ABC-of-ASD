@@ -2196,7 +2196,7 @@
         (function() {
           const originalShowModal = showModal;
           window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
-            // Intercept "Coming Soon" payment modals – check BOTH title and message
+            // Intercept "Coming Soon" payment modals
             if ((title && title.indexOf('Coming Soon') !== -1) ||
                 (message && message.indexOf('Coming Soon') !== -1)) {
               if (!selectedProduct) {
@@ -2212,6 +2212,8 @@
                 showAlertModal('Name Required', 'Please enter your full name.');
                 return;
               }
+              // Get email directly from the verified field – always reliable
+              const email = document.getElementById('verifiedEmail').value.trim();
               const phoneCode = document.getElementById('phoneCodeInput').value;
               const phoneNumber = document.getElementById('customerPhone').value.trim();
               const phone = phoneCode + ' ' + phoneNumber;
@@ -2221,7 +2223,7 @@
               params.append('action', 'generateLicense');
               params.append('orderId', orderId);
               params.append('customerName', name);
-              params.append('customerEmail', lastVerifiedEmail);
+              params.append('customerEmail', email);
               params.append('customerPhone', phone);
 
               fetch(API_URL, { method: 'POST', body: params })
