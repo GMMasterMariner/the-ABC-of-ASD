@@ -2192,55 +2192,73 @@
         }
         init();
         
-        // ========== TESTING: Simulate purchase for digital product ==========
-        (function() {
-          const originalShowModal = showModal;
-          window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
-            // Intercept "Coming Soon" payment modals
-            if ((title && title.indexOf('Coming Soon') !== -1) ||
-                (message && message.indexOf('Coming Soon') !== -1)) {
-              if (!selectedProduct) {
-                showAlertModal('Select Product', 'Please choose a book format first.');
-                return;
-              }
-              if (!isEmailVerified) {
-                showAlertModal('Email Required', 'Please verify your email address first.');
-                return;
-              }
-              const name = document.getElementById('customerName').value.trim();
-              if (!name) {
-                showAlertModal('Name Required', 'Please enter your full name.');
-                return;
-              }
-              // Get email directly from the verified field – always reliable
-              const email = document.getElementById('verifiedEmail').value.trim();
-              const phoneCode = document.getElementById('phoneCodeInput').value;
-              const phoneNumber = document.getElementById('customerPhone').value.trim();
-              const phone = phoneCode + ' ' + phoneNumber;
-              const orderId = 'TEST-' + Date.now();
+// ========== TESTING: Simulate purchase for digital product ==========
+(function() {
+  const originalShowModal = showModal;
+  window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
+    // Intercept "Coming Soon" modals
+    if ((title && title.indexOf('Coming Soon') !== -1) ||
+        (message && message.indexOf('Coming Soon') !== -1)) {
+      
+      // Validate fields first
+      if (!selectedProduct) {
+        showAlertModal('Select Product', 'Please choose a book format first.');
+        return;
+      }
+      if (!isEmailVerified) {
+        showAlertModal('Email Required', 'Please verify your email address first.');
+        return;
+      }
+      const name = document.getElementById('customerName').value.trim();
+      if (!name) {
+        showAlertModal('Name Required', 'Please enter your full name.');
+        return;
+      }
+      const email = document.getElementById('verifiedEmail').value.trim();
+      if (!email) {
+        showAlertModal('Email Required', 'Email not found. Please re-verify your email.');
+        return;
+      }
+      
+      // Show confirmation modal
+      const phoneCode = document.getElementById('phoneCodeInput').value;
+      const phoneNumber = document.getElementById('customerPhone').value.trim();
+      const phone = phoneCode + ' ' + phoneNumber;
+      const confirmMsg = `Confirm your purchase:\n\n` +
+                         `Name: ${name}\n` +
+                         `Email: ${email}\n` +
+                         `Phone: ${phone || 'Not provided'}\n\n` +
+                         `Proceed with download?`;
+      
+      // Override the original confirm handler
+      const newOnConfirm = function() {
+        const orderId = 'SIM-' + Date.now();
+        const params = new URLSearchParams();
+        params.append('action', 'generateLicense');
+        params.append('orderId', orderId);
+        params.append('customerName', name);
+        params.append('customerEmail', email);
+        params.append('customerPhone', phone);
 
-              const params = new URLSearchParams();
-              params.append('action', 'generateLicense');
-              params.append('orderId', orderId);
-              params.append('customerName', name);
-              params.append('customerEmail', email);
-              params.append('customerPhone', phone);
-
-              fetch(API_URL, { method: 'POST', body: params })
-                .then(r => r.json())
-                .then(data => {
-                  if (data.result === 'success') {
-                    showAlertModal('Thank You!', 'Your purchase was successful. You will receive an email shortly with your license key and download instructions.');
-                  } else {
-                    showAlertModal('Error', data.message || 'Could not generate license.');
-                  }
-                });
-              return;
+        fetch(API_URL, { method: 'POST', body: params })
+          .then(r => r.json())
+          .then(data => {
+            if (data.result === 'success') {
+              showAlertModal('Thank You!', 'Your purchase was successful. You will receive an email shortly with your license key and download instructions.');
+            } else {
+              showAlertModal('Error', data.message || 'Could not generate license.');
             }
-            // Otherwise, proceed normally
-            originalShowModal(title, message, confirmText, cancelText, onConfirm, onCancel);
-          };
-        })();
+          });
+      };
+      
+      // Show the confirmation dialog
+      originalShowModal('Confirm Purchase', confirmMsg, 'Yes, Download', 'Cancel', newOnConfirm, null);
+      return;
+    }
+    // Otherwise, normal modal
+    originalShowModal(title, message, confirmText, cancelText, onConfirm, onCancel);
+  };
+})();
     </script>
 </body>
 </html>
