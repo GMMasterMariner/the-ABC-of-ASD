@@ -2191,6 +2191,53 @@
             } catch(err) { console.error(err); /* splash stays */ }
         }
         init();
+        
+        // ========== TESTING: Simulate purchase for digital product ==========
+        (function() {
+          const originalShowModal = showModal;
+          window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
+            // If the message contains "Coming Soon", we intercept
+            if (message && message.indexOf('Coming Soon') !== -1) {
+              if (!selectedProduct) {
+                showAlertModal('Select Product', 'Please choose a book format first.');
+                return;
+              }
+              if (!isEmailVerified) {
+                showAlertModal('Email Required', 'Please verify your email address first.');
+                return;
+              }
+              const name = document.getElementById('customerName').value.trim();
+              if (!name) {
+                showAlertModal('Name Required', 'Please enter your full name.');
+                return;
+              }
+              const phoneCode = document.getElementById('phoneCodeInput').value;
+              const phoneNumber = document.getElementById('customerPhone').value.trim();
+              const phone = phoneCode + ' ' + phoneNumber;
+              const orderId = 'TEST-' + Date.now();
+        
+              const params = new URLSearchParams();
+              params.append('action', 'generateLicense');
+              params.append('orderId', orderId);
+              params.append('customerName', name);
+              params.append('customerEmail', lastVerifiedEmail);
+              params.append('customerPhone', phone);
+        
+              fetch(API_URL, { method: 'POST', body: params })
+                .then(r => r.json())
+                .then(data => {
+                  if (data.result === 'success') {
+                    showAlertModal('Purchase Successful', 'Your license key is: ' + data.licenseKey + '\n\nCheck your email. You can download your book from the Download page.');
+                  } else {
+                    showAlertModal('Error', data.message || 'Could not generate license.');
+                  }
+                });
+              return;
+            }
+            // Otherwise, proceed normally
+            originalShowModal(title, message, confirmText, cancelText, onConfirm, onCancel);
+          };
+        })();
     </script>
 </body>
 </html>
