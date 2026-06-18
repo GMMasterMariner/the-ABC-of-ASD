@@ -6,6 +6,12 @@
     <meta name="robots" content="noimageindex">
     <title>The ABC of ASD</title>
 
+    <!-- Browser tab icon (favicon) -->
+    <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png">
+
+    <!-- Preload the logo so it appears faster on the splash screen -->
+    <link rel="preload" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" as="image">
+
     <!-- Google Font: Nunito Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,6 +121,8 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             text-align: center;
             animation: modalSlideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalSlideIn {
             from { transform: translateY(-20px); opacity: 0; }
@@ -697,11 +705,40 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* Red asterisk in required field placeholders */
-        input[required]::placeholder,
-        textarea[required]::placeholder,
-        input.required-placeholder::placeholder {
+        /* ---------- REQUIRED ASTERISK (only the * is red) ---------- */
+        .input-required-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .input-required-wrapper input,
+        .input-required-wrapper textarea {
+            width: 100%;
+        }
+        .required-star {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--alert-color, #dc3c33);
+            font-weight: bold;
+            font-size: 1.2rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        /* For textarea, position star differently */
+        .input-required-wrapper textarea {
+            resize: vertical;
+        }
+        .input-required-wrapper.textarea-wrapper .required-star {
+            top: 0.8rem;
+            transform: none;
+        }
+
+        /* Hide star when input is not required (digital product) */
+        .input-required-wrapper .required-star.hidden {
+            display: none;
         }
 
         /* ---------- STICKY FOOTER (collapsed by default) ---------- */
@@ -925,6 +962,33 @@
             padding: 0.5rem;
             border-radius: 4px;
         }
+
+        /* ----- CONFIRM MODAL TWO-COLUMN LAYOUT ----- */
+        .confirm-two-col {
+            display: flex;
+            gap: 1.5rem;
+            text-align: left;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+        .confirm-col {
+            flex: 1;
+            min-width: 0;
+        }
+        .confirm-col h4 {
+            color: #194373;
+            margin-bottom: 0.5rem;
+        }
+        .confirm-col p {
+            margin-bottom: 0.4rem;
+            line-height: 1.4;
+        }
+        @media (max-width: 600px) {
+            .confirm-two-col {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -943,7 +1007,7 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <h3 id="modalTitle"></h3>
-            <p id="modalMessage"></p>
+            <div id="modalMessage"></div>
             <div id="modalButtons">
                 <button class="btn" id="modalConfirmBtn">OK</button>
                 <button class="btn btn-secondary" id="modalCancelBtn" style="display:none;">Cancel</button>
@@ -1116,7 +1180,10 @@
 
                 <div class="email-verify-wrapper" id="emailVerifyWrapper">
                     <div class="verify-left" id="verifyLeft">
-                        <input type="email" id="orderEmail" placeholder="Email address *" required>
+                        <div class="input-required-wrapper">
+                            <input type="email" id="orderEmail" placeholder="Email address" required>
+                            <span class="required-star">*</span>
+                        </div>
                     </div>
                     <div class="verify-right" id="verifyRight">
                         <button class="btn" id="verifyEmailBtn">Verify Email</button>
@@ -1147,7 +1214,10 @@
                             <span class="email-checkmark" style="display:block;">✔</span>
                         </div>
                         <div class="name-input-wrapper">
-                            <input type="text" id="customerName" placeholder="Full Name or Company *" required>
+                            <div class="input-required-wrapper">
+                                <input type="text" id="customerName" placeholder="Full Name or Company" required>
+                                <span class="required-star">*</span>
+                            </div>
                         </div>
                         <div class="phone-composite" id="orderPhoneComposite">
                             <div class="phone-code-selector" id="phoneCodeSelector">
@@ -1156,12 +1226,15 @@
                                 <div class="phone-code-dropdown" id="phoneCodeDropdown"></div>
                             </div>
                             <div class="phone-number-input">
-                                <input type="tel" id="customerPhone" placeholder="Phone number *" required>
+                                <div class="input-required-wrapper">
+                                    <input type="tel" id="customerPhone" placeholder="Phone number" required>
+                                    <span class="required-star">*</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="order-shipping-address" id="shippingAddressSection" style="display: none;">
+                    <div class="order-shipping-address" id="shippingAddressSection">
                         <div class="shipping-header">
                             <h4>Shipping Address</h4>
                             <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
@@ -1175,14 +1248,23 @@
                         </div>
                         <div class="address-fields-grid">
                             <div class="address-stack">
-                                <input type="text" id="addressLine1" placeholder="Address Line 1 *" required autocomplete="off">
+                                <div class="input-required-wrapper">
+                                    <input type="text" id="addressLine1" placeholder="Address Line 1" autocomplete="off">
+                                    <span class="required-star">*</span>
+                                </div>
                                 <input type="text" id="addressLine2" placeholder="Address Line 2">
                             </div>
                             <div class="address-stack">
                                 <input type="text" id="addressSuburb" placeholder="Suburb">
                                 <div class="city-postcode-combo">
-                                    <input type="text" id="addressCity" placeholder="City *" required>
-                                    <input type="text" id="addressPostcode" placeholder="Postcode *" required>
+                                    <div class="input-required-wrapper">
+                                        <input type="text" id="addressCity" placeholder="City">
+                                        <span class="required-star">*</span>
+                                    </div>
+                                    <div class="input-required-wrapper" style="width:120px;">
+                                        <input type="text" id="addressPostcode" placeholder="Postcode">
+                                        <span class="required-star">*</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="region-country-stack">
@@ -1244,11 +1326,17 @@
             <div class="contact-form" id="contactFormContainer">
                 <form id="contactForm">
                     <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Name *" required>
+                        <div class="input-required-wrapper">
+                            <input type="text" id="name" name="name" placeholder="Name" required>
+                            <span class="required-star">*</span>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Email *" required>
+                            <div class="input-required-wrapper">
+                                <input type="email" id="email" name="email" placeholder="Email" required>
+                                <span class="required-star">*</span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <div class="phone-composite" id="contactPhoneComposite">
@@ -1264,7 +1352,10 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea id="message" name="message" placeholder="Message *" required></textarea>
+                        <div class="input-required-wrapper textarea-wrapper">
+                            <textarea id="message" name="message" placeholder="Message" required></textarea>
+                            <span class="required-star">*</span>
+                        </div>
                     </div>
                     <div class="btn-wrapper">
                         <button type="submit" class="btn" id="sendButton">Send Message</button>
@@ -1331,7 +1422,7 @@
     
         function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
             document.getElementById('modalTitle').textContent = title;
-            // Allow HTML in the message for formatted modals
+            // Allow HTML in the message
             document.getElementById('modalMessage').innerHTML = message;
             const confirmBtn = document.getElementById('modalConfirmBtn');
             const cancelBtn = document.getElementById('modalCancelBtn');
@@ -2174,9 +2265,11 @@
                 document.getElementById('addressPostcode').value = state.addressPostcode || ''; document.getElementById('addressRegion').value = state.addressRegion || '';
                 if (state.selectedShippingCountry) selectedShippingCountry = state.selectedShippingCountry;
                 if (state.userCountryRegion) userCountryRegion = state.userCountryRegion;
-                updateOrderSummary(); if (selectedProduct && selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block';
+                updateOrderSummary();
+                // Show address section always, but adjust required fields based on product type
+                if (selectedProduct) updateAddressRequired();
                 splitAllPhoneFields();
-            } else { document.getElementById('emailVerifyWrapper').style.display = 'flex'; document.getElementById('customerDetails').style.display = 'none'; document.getElementById('shippingAddressSection').style.display = 'none'; }
+            } else { document.getElementById('emailVerifyWrapper').style.display = 'flex'; document.getElementById('customerDetails').style.display = 'none'; }
             return true;
         }
     
@@ -2254,7 +2347,7 @@
                 if (d.result === 'verified') {
                     isEmailVerified = true; document.getElementById('emailVerifyWrapper').style.display = 'none'; document.getElementById('customerDetails').style.display = 'block';
                     document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                    if (selectedProduct) { updateInstructionMessage(); if (selectedProduct.Type === 'Physical') { document.getElementById('shippingAddressSection').style.display = 'block'; if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey); } }
+                    if (selectedProduct) { updateInstructionMessage(); updateAddressRequired(); if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey); }
                     updateOrderSummary(); saveOrderState();
                 } else {
                     showAlertModal('Verification Failed', d.result === 'expired' ? 'Code expired.' : 'Invalid code.');
@@ -2272,7 +2365,33 @@
             document.getElementById('orderQuantity').disabled = false; document.getElementById('qtyUp').disabled = false; document.getElementById('qtyDown').disabled = false;
             if (!isRestore) { const qi = document.getElementById('orderQuantity'); let v = parseInt(qi.value); if (isNaN(v) || v < 1) qi.value = '1'; }
             document.getElementById('formatText').textContent = selectedProduct.Type || 'Physical'; updateInstructionMessage(); updateQuantityTotal(); updateOrderSummary();
-            if (isEmailVerified) { document.getElementById('orderProductType').style.display = 'flex'; const te = document.getElementById('quantityTotalPrice'); te.style.display = 'block'; te.classList.add('price-glow'); if (selectedProduct.Type === 'Physical') document.getElementById('shippingAddressSection').style.display = 'block'; else document.getElementById('shippingAddressSection').style.display = 'none'; }
+            if (isEmailVerified) {
+                document.getElementById('orderProductType').style.display = 'flex'; const te = document.getElementById('quantityTotalPrice'); te.style.display = 'block'; te.classList.add('price-glow');
+                updateAddressRequired();
+            }
+        }
+    
+        function updateAddressRequired() {
+            const isPhysical = selectedProduct && selectedProduct.Type === 'Physical';
+            const addressFields = [
+                { input: document.getElementById('addressLine1'), star: document.querySelector('#addressLine1 + .required-star') },
+                { input: document.getElementById('addressCity'), star: document.querySelector('#addressCity + .required-star') },
+                { input: document.getElementById('addressPostcode'), star: document.querySelector('#addressPostcode + .required-star') }
+            ];
+            addressFields.forEach(f => {
+                if (!f.input) return;
+                if (isPhysical) {
+                    f.input.setAttribute('required', '');
+                    if (f.star) f.star.classList.remove('hidden');
+                } else {
+                    f.input.removeAttribute('required');
+                    if (f.star) f.star.classList.add('hidden');
+                }
+            });
+            // Always show the address section when customer details are visible
+            if (document.getElementById('customerDetails').style.display !== 'none') {
+                document.getElementById('shippingAddressSection').style.display = 'block';
+            }
         }
     
         function updateInstructionMessage() {
@@ -2438,7 +2557,7 @@
         }
         init();
         
-        // ========== TESTING: Simulate purchase with validation, full summary & redirect ==========
+        // ========== TESTING: Simulate purchase with two‑column confirmation ==========
         (function() {
           const originalShowModal = showModal;
           window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
@@ -2471,7 +2590,6 @@
                 return;
               }
               
-              // For physical product, validate address fields
               if (selectedProduct.Type === 'Physical') {
                 const addr1 = document.getElementById('addressLine1').value.trim();
                 const city = document.getElementById('addressCity').value.trim();
@@ -2495,7 +2613,6 @@
                 }
               }
               
-              // Build summary HTML
               const productName = selectedProduct.ProductName || 'Book';
               const typeLabel = selectedProduct.Type === 'Digital' ? 'Digital Edition' : 'Physical Edition';
               const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
@@ -2508,21 +2625,22 @@
               const shippingText = shippingRow.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
               const totalPrice = document.getElementById('sumTotal').textContent;
               
-              let summaryHtml = `
-                <div style="text-align:left; line-height:1.6; font-size:0.95rem;">
-                  <p><strong style="color:#194373;">Order Summary</strong></p>
-                  <p><strong>Product:</strong> ${productName} (${typeLabel})</p>
-                  <p><strong>Quantity:</strong> ${qty}</p>
-                  <p><strong>Unit Price:</strong> ${unitPrice}</p>
-                  ${discountText ? `<p><strong>Discount:</strong> ${discountText} <span style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</span></p>` : ''}
-                  <p><strong>Subtotal:</strong> ${subtotal}</p>
-                  ${shippingText ? `<p><strong>Shipping:</strong> ${shippingText}</p>` : ''}
-                  <p><strong>Total:</strong> ${totalPrice}</p>
-                  <hr style="border:0.5px solid #ddd; margin:1rem 0;">
-                  <p><strong style="color:#194373;">Customer Details</strong></p>
-                  <p><strong>Name:</strong> ${name}</p>
-                  <p><strong>Email:</strong> ${email}</p>
-                  <p><strong>Phone:</strong> ${phone}</p>`;
+              // Build two‑column layout
+              let orderHtml = `
+                <p><strong>Product:</strong> ${productName} (${typeLabel})</p>
+                <p><strong>Quantity:</strong> ${qty}</p>
+                <p><strong>Unit Price:</strong> ${unitPrice}</p>
+                ${discountText ? `<p><strong>Discount:</strong> ${discountText} <span style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</span></p>` : ''}
+                <p><strong>Subtotal:</strong> ${subtotal}</p>
+                ${shippingText ? `<p><strong>Shipping:</strong> ${shippingText}</p>` : ''}
+                <p><strong>Total:</strong> ${totalPrice}</p>
+              `;
+              
+              let customerHtml = `
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+              `;
               
               if (selectedProduct.Type === 'Physical') {
                 const addr1 = document.getElementById('addressLine1').value.trim();
@@ -2540,16 +2658,40 @@
                 if (region) addr += ', ' + region;
                 addr += ', ' + country;
                 
-                summaryHtml += `<p><strong>Shipping Address:</strong><br>${addr}</p>`;
+                customerHtml += `<p><strong>Shipping Address:</strong><br>${addr}</p>`;
               }
               
-              summaryHtml += `
-                  <hr style="border:0.5px solid #ddd; margin:1rem 0;">
-                  <p style="text-align:center; font-weight:600;">Proceed with payment?</p>
+              const fullHtml = `
+                <div class="confirm-two-col">
+                  <div class="confirm-col">
+                    <h4>Order Summary</h4>
+                    ${orderHtml}
+                  </div>
+                  <div class="confirm-col">
+                    <h4>Customer Details</h4>
+                    ${customerHtml}
+                  </div>
                 </div>
+                <p style="text-align:center; font-weight:600; margin-top:0.5rem;">Proceed with payment?</p>
               `;
               
+              // Widen modal box for confirmation and make scrollable
+              const modalBox = document.querySelector('#modalOverlay .modal-box');
+              const origMaxWidth = modalBox.style.maxWidth;
+              const origMaxHeight = modalBox.style.maxHeight;
+              const origOverflow = modalBox.style.overflowY;
+              modalBox.style.maxWidth = '650px';
+              modalBox.style.maxHeight = '80vh';
+              modalBox.style.overflowY = 'auto';
+              
+              const resetModalBox = function() {
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
+              };
+              
               const newOnConfirm = function() {
+                resetModalBox();
                 const orderId = 'SIM-' + Date.now();
                 const params = new URLSearchParams();
                 params.append('action', 'generateLicense');
@@ -2562,7 +2704,6 @@
                   .then(data => {
                     if (data.result === 'success') {
                       showAlertModal('Thank You!', 'Your purchase was successful. You will receive an email shortly with your license key and download instructions.', function() {
-                        // Redirect to home page after OK
                         showPage('home-section');
                       });
                     } else {
@@ -2571,7 +2712,12 @@
                   });
               };
               
-              originalShowModal('Confirm Purchase', summaryHtml, 'Yes, Pay', 'Cancel', newOnConfirm, null);
+              const wrappedOnCancel = function() {
+                resetModalBox();
+                if (onCancel) onCancel();
+              };
+              
+              originalShowModal('Confirm Purchase', fullHtml, 'Yes, Pay', 'Cancel', newOnConfirm, wrappedOnCancel);
               return;
             }
             originalShowModal(title, message, confirmText, cancelText, onConfirm, onCancel);
