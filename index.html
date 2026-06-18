@@ -6,7 +6,11 @@
     <meta name="robots" content="noimageindex">
     <title>The ABC of ASD</title>
 
-    <!-- Browser tab icon (favicon) -->
+    <!-- Favicon – use white logo in dark mode, blue-background logo in light mode -->
+    <!-- Uncomment the next two lines once you've uploaded logo_blue_bg.png -->
+    <!-- <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" media="(prefers-color-scheme: dark)"> -->
+    <!-- <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_blue_bg.png" media="(prefers-color-scheme: light)"> -->
+    <!-- Fallback for browsers that don't support media queries in favicon -->
     <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png">
 
     <!-- Preload the logo so it appears faster on the splash screen -->
@@ -705,40 +709,26 @@
         .phone-code-item img,
         .country-dropdown-item img { width: 20px; height: auto; }
 
-        /* ---------- REQUIRED ASTERISK (only the * is red) ---------- */
+        /* ---------- REQUIRED ASTERISK (only the * is red, placed directly after the input) ---------- */
         .input-required-wrapper {
-            position: relative;
             display: flex;
             align-items: center;
+            gap: 0.3rem;
             width: 100%;
         }
         .input-required-wrapper input,
         .input-required-wrapper textarea {
-            width: 100%;
+            flex: 1;
         }
         .required-star {
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
             color: var(--alert-color, #dc3c33);
             font-weight: bold;
             font-size: 1.2rem;
             line-height: 1;
-            pointer-events: none;
+            flex-shrink: 0;
         }
-        /* For textarea, position star differently */
-        .input-required-wrapper textarea {
-            resize: vertical;
-        }
-        .input-required-wrapper.textarea-wrapper .required-star {
-            top: 0.8rem;
-            transform: none;
-        }
-
-        /* Hide star when input is not required (digital product) */
-        .input-required-wrapper .required-star.hidden {
-            display: none;
+        .input-required-wrapper.textarea-wrapper {
+            align-items: flex-start;
         }
 
         /* ---------- STICKY FOOTER (collapsed by default) ---------- */
@@ -949,6 +939,17 @@
 
             .footer-bottom { padding: 0 1.5rem 0.3rem; }
             .map-modal-box { width: 95vw; }
+
+            /* Admin/Tester button spacing on mobile */
+            .modal-box .btn {
+                margin: 0.5rem 0;
+            }
+            #adminSelectButtons, #testerSelectButtons {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
         }
 
         @media (max-width: 400px) {
@@ -980,7 +981,9 @@
             color: #194373;
             margin-bottom: 0.5rem;
         }
-        .confirm-col p {
+        .confirm-col .summary-row {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 0.4rem;
             line-height: 1.4;
         }
@@ -2266,7 +2269,6 @@
                 if (state.selectedShippingCountry) selectedShippingCountry = state.selectedShippingCountry;
                 if (state.userCountryRegion) userCountryRegion = state.userCountryRegion;
                 updateOrderSummary();
-                // Show address section always, but adjust required fields based on product type
                 if (selectedProduct) updateAddressRequired();
                 splitAllPhoneFields();
             } else { document.getElementById('emailVerifyWrapper').style.display = 'flex'; document.getElementById('customerDetails').style.display = 'none'; }
@@ -2388,7 +2390,6 @@
                     if (f.star) f.star.classList.add('hidden');
                 }
             });
-            // Always show the address section when customer details are visible
             if (document.getElementById('customerDetails').style.display !== 'none') {
                 document.getElementById('shippingAddressSection').style.display = 'block';
             }
@@ -2627,13 +2628,14 @@
               
               // Build two‑column layout
               let orderHtml = `
-                <p><strong>Product:</strong> ${productName} (${typeLabel})</p>
-                <p><strong>Quantity:</strong> ${qty}</p>
-                <p><strong>Unit Price:</strong> ${unitPrice}</p>
-                ${discountText ? `<p><strong>Discount:</strong> ${discountText} <span style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</span></p>` : ''}
-                <p><strong>Subtotal:</strong> ${subtotal}</p>
-                ${shippingText ? `<p><strong>Shipping:</strong> ${shippingText}</p>` : ''}
-                <p><strong>Total:</strong> ${totalPrice}</p>
+                <div class="summary-row"><span>Product:</span><span>${productName} (${typeLabel})</span></div>
+                <div class="summary-row"><span>Quantity:</span><span>${qty}</span></div>
+                <div class="summary-row"><span>Unit Price:</span><span>${unitPrice}</span></div>
+                ${discountText ? `<div class="summary-row"><span>Discount:</span><span class="discount-amount">${discountText}</span></div>
+                <div class="discount-detail" style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</div>` : ''}
+                <div class="summary-row"><span>Subtotal:</span><span>${subtotal}</span></div>
+                ${shippingText ? `<div class="summary-row"><span>Shipping:</span><span>${shippingText}</span></div>` : ''}
+                <div class="summary-row total"><span>Total:</span><span>${totalPrice}</span></div>
               `;
               
               let customerHtml = `
