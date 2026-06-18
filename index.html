@@ -960,6 +960,7 @@
                     <button class="btn" id="adminVerifyBtn">Verify</button>
                     <button class="btn btn-secondary" id="adminCodeCancelBtn">Back</button>
                 </div>
+                <button class="btn btn-secondary" id="adminResendBtn" style="display:none; margin-top:1rem;">Resend Code</button>
                 <p id="adminCodeStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
             </div>
             <p id="adminLoginStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
@@ -982,6 +983,7 @@
                     <button class="btn" id="testerVerifyBtn">Verify</button>
                     <button class="btn btn-secondary" id="testerCodeCancelBtn">Back</button>
                 </div>
+                <button class="btn btn-secondary" id="testerResendBtn" style="display:none; margin-top:1rem;">Resend Code</button>
                 <p id="testerCodeStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
             </div>
             <p id="testerLoginStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
@@ -1362,6 +1364,7 @@
             document.getElementById('adminCodeStep').style.display = 'none';
             document.getElementById('adminLoginStatus').style.display = 'none';
             document.getElementById('adminCodeStatus').style.display = 'none';
+            document.getElementById('adminResendBtn').style.display = 'none';
     
             const container = document.getElementById('adminSelectButtons');
             
@@ -1421,6 +1424,7 @@
                 document.getElementById('adminCodeStep').style.display = 'none';
                 document.getElementById('adminCodeStatus').style.display = 'none';
                 document.getElementById('adminCodeInput').value = '';
+                document.getElementById('adminResendBtn').style.display = 'none';
             };
     
             document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
@@ -1459,6 +1463,13 @@
                 }
             };
     
+            document.getElementById('adminResendBtn').onclick = function() {
+                if (adminResendBtn.disabled) return;
+                const adminNum = sessionStorage.getItem('adminNum');
+                const adminName = sessionStorage.getItem('adminName');
+                if (adminNum) requestAdminCode(adminNum, adminName);
+            };
+    
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
@@ -1471,6 +1482,7 @@
             document.getElementById('adminCodeStatus').textContent = 'Sending code...';
             document.getElementById('adminCodeInput').value = '';
             document.getElementById('adminCodeInput').focus();
+            document.getElementById('adminResendBtn').style.display = 'none';
     
             try {
                 const params = new URLSearchParams();
@@ -1491,6 +1503,10 @@
                     document.getElementById('adminCodeStatus').style.display = 'none';
                     sessionStorage.setItem('adminNum', adminNum);
                     sessionStorage.setItem('adminName', adminName);
+                    // Show resend button and start cooldown
+                    const resendBtn = document.getElementById('adminResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
                 } else {
                     document.getElementById('adminCodeStatus').textContent = data.message || 'Failed.';
                 }
@@ -1512,6 +1528,7 @@
             document.getElementById('adminCodeStep').style.display = 'none';
             document.getElementById('adminLoginStatus').style.display = 'none';
             document.getElementById('adminCodeStatus').style.display = 'none';
+            document.getElementById('adminResendBtn').style.display = 'none';
 
             const container = document.getElementById('adminSelectButtons');
             
@@ -1571,6 +1588,7 @@
                 document.getElementById('adminCodeStep').style.display = 'none';
                 document.getElementById('adminCodeStatus').style.display = 'none';
                 document.getElementById('adminCodeInput').value = '';
+                document.getElementById('adminResendBtn').style.display = 'none';
             };
 
             document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
@@ -1612,6 +1630,13 @@
                 }
             };
 
+            document.getElementById('adminResendBtn').onclick = function() {
+                if (adminResendBtn.disabled) return;
+                const adminNum = sessionStorage.getItem('adminNum');
+                const adminName = sessionStorage.getItem('adminName');
+                if (adminNum) requestAdminCodeForSplash(adminNum, adminName);
+            };
+
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
@@ -1624,6 +1649,7 @@
             document.getElementById('adminCodeStatus').textContent = 'Sending code...';
             document.getElementById('adminCodeInput').value = '';
             document.getElementById('adminCodeInput').focus();
+            document.getElementById('adminResendBtn').style.display = 'none';
 
             try {
                 const params = new URLSearchParams();
@@ -1644,6 +1670,9 @@
                     document.getElementById('adminCodeStatus').style.display = 'none';
                     sessionStorage.setItem('adminNum', adminNum);
                     sessionStorage.setItem('adminName', adminName);
+                    const resendBtn = document.getElementById('adminResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
                 } else {
                     document.getElementById('adminCodeStatus').textContent = data.message || 'Failed.';
                 }
@@ -1665,6 +1694,7 @@
             document.getElementById('testerCodeStep').style.display = 'none';
             document.getElementById('testerLoginStatus').style.display = 'none';
             document.getElementById('testerCodeStatus').style.display = 'none';
+            document.getElementById('testerResendBtn').style.display = 'none';
 
             const container = document.getElementById('testerSelectButtons');
             
@@ -1724,6 +1754,7 @@
                 document.getElementById('testerCodeStep').style.display = 'none';
                 document.getElementById('testerCodeStatus').style.display = 'none';
                 document.getElementById('testerCodeInput').value = '';
+                document.getElementById('testerResendBtn').style.display = 'none';
             };
 
             document.getElementById('testerCodeInput').addEventListener('keydown', function(e) {
@@ -1765,6 +1796,13 @@
                 }
             };
 
+            document.getElementById('testerResendBtn').onclick = function() {
+                if (testerResendBtn.disabled) return;
+                const testerNum = sessionStorage.getItem('testerNum');
+                const testerName = sessionStorage.getItem('testerName');
+                if (testerNum) requestTesterCodeForSplash(testerNum, testerName);
+            };
+
             overlay.onclick = function(e) {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
@@ -1777,6 +1815,7 @@
             document.getElementById('testerCodeStatus').textContent = 'Sending code...';
             document.getElementById('testerCodeInput').value = '';
             document.getElementById('testerCodeInput').focus();
+            document.getElementById('testerResendBtn').style.display = 'none';
 
             try {
                 const params = new URLSearchParams();
@@ -1797,12 +1836,36 @@
                     document.getElementById('testerCodeStatus').style.display = 'none';
                     sessionStorage.setItem('testerNum', testerNum);
                     sessionStorage.setItem('testerName', testerName);
+                    const resendBtn = document.getElementById('testerResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
                 } else {
                     document.getElementById('testerCodeStatus').textContent = data.message || 'Failed.';
                 }
             } catch (err) {
                 document.getElementById('testerCodeStatus').textContent = 'Network error.';
             }
+        }
+        
+        // ========== RESEND COOLDOWN ==========
+        function startResendCooldown(button) {
+            let seconds = 30;
+            button.disabled = true;
+            button.textContent = `Resend Code (${seconds}s)`;
+            const interval = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    button.disabled = false;
+                    button.textContent = 'Resend Code';
+                } else {
+                    button.textContent = `Resend Code (${seconds}s)`;
+                }
+            }, 1000);
+            button.addEventListener('click', function handler() {
+                clearInterval(interval);
+                button.removeEventListener('click', handler);
+            }, { once: true });
         }
         
         // ========== LEGAL MODAL ==========
@@ -2152,7 +2215,7 @@
                 inp.addEventListener('input', (e) => { if (inp.value.length === 1) { inp.classList.add('filled'); if (idx < 5) document.getElementById('code' + (idx+2)).focus(); } else inp.classList.remove('filled'); if (Array.from(document.querySelectorAll('.code-digit')).every(i => i.value.length === 1)) startVerification(Array.from(document.querySelectorAll('.code-digit')).map(i => i.value).join('')); });
                 inp.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && inp.value === '' && idx > 0) document.getElementById('code' + idx).focus(); });
             });
-            document.getElementById('resendBtn').addEventListener('click', () => { if (document.getElementById('resendBtn').disabled) return; for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = ''; document.getElementById('code1').focus(); sendVerificationCode(lastEmailAttempt, true); startResendCooldown(); });
+            document.getElementById('resendBtn').addEventListener('click', () => { if (document.getElementById('resendBtn').disabled) return; for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = ''; document.getElementById('code1').focus(); sendVerificationCode(lastEmailAttempt, true); startResendCooldown(document.getElementById('resendBtn')); });
             document.getElementById('locateBtn').addEventListener('click', () => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(async (pos) => { if (window.google && google.maps) { const gc = new google.maps.Geocoder(); gc.geocode({ location: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude) }, (r, s) => { if (s === 'OK' && r[0]) fillAddressFromPlace(r[0]); else showAlertModal('Error', 'Geolocation unavailable.'); }); } else showAlertModal('Error', 'Geolocation unavailable.'); }, () => showAlertModal('Error', 'Unable to retrieve location.')); else showAlertModal('Error', 'Geolocation not supported.'); });
             document.getElementById('mapBtn').addEventListener('click', () => openMapModal());
             buildCountrySelector(); buildPhoneCodeSelector(); buildContactPhoneCodeSelector();
@@ -2175,7 +2238,6 @@
             const r = await fetch(API_URL, { method: 'POST', body: p }); const d = await r.json();
             if (d.result !== 'success') { showAlertModal('Error', 'Failed to send code.'); if (!silent) { document.getElementById('verifyLeft').style.display = 'block'; document.getElementById('verifyRight').style.display = 'flex'; document.getElementById('codeEntryStack').style.display = 'none'; } }
         }
-        function startResendCooldown() { const b = document.getElementById('resendBtn'); let s = 30; b.disabled = true; b.textContent = `Resend Code (${s}s)`; if (window.resendTimer) clearInterval(window.resendTimer); window.resendTimer = setInterval(() => { s--; if (s <= 0) { clearInterval(window.resendTimer); b.disabled = false; b.textContent = 'Resend Code'; } else b.textContent = `Resend Code (${s}s)`; }, 1000); }
     
         async function startVerification(code) {
             document.getElementById('codeEntryStack').style.display = 'none'; document.getElementById('verifyingMessageRow').style.display = 'flex';
@@ -2370,7 +2432,7 @@
         }
         init();
         
-        // ========== TESTING: Simulate purchase for digital product (with prettier modal) ==========
+        // ========== TESTING: Simulate purchase for digital product (prettier modal) ==========
         (function() {
           const originalShowModal = showModal;
           window.showModal = function(title, message, confirmText, cancelText, onConfirm, onCancel) {
