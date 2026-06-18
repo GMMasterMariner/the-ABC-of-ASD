@@ -14,6 +14,7 @@
     #message { margin-top: 1rem; font-size: 0.9rem; }
     .error { color: #dc3c33; }
     .success { color: #2e7d32; }
+    .btn-secondary { background: #aaa; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -50,10 +51,34 @@
       try {
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
+        
         if (data.result === 'success' && data.downloadUrl) {
+          // Start download but keep page visible
+          const downloadLink = document.createElement('a');
+          downloadLink.href = data.downloadUrl;
+          downloadLink.download = '';
+          downloadLink.style.display = 'none';
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+          
+          // Show success message with Close button
           msg.className = 'success';
-          msg.innerHTML = 'Download starting… <a href="' + data.downloadUrl + '">Click here if it doesn\'t start</a>';
-          window.location.href = data.downloadUrl;
+          msg.innerHTML = 'Thank you for your purchase!<br>Check your download location and run the installer file.';
+          
+          // Replace the download button with a Close button
+          btn.style.display = 'none';
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'btn-secondary';
+          closeBtn.textContent = 'Close';
+          closeBtn.onclick = function() { window.close(); };
+          btn.parentElement.insertBefore(closeBtn, msg);
+          
+          // Optional: record the download server‑side
+          const recParams = new URLSearchParams();
+          recParams.append('action', 'recordDownload');
+          recParams.append('licenseKey', key);
+          fetch(API_URL, { method: 'POST', body: recParams });
         } else {
           msg.className = 'error';
           msg.textContent = data.message || 'Invalid license key or download not ready.';
