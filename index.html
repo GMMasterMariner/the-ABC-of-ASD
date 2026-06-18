@@ -2058,7 +2058,12 @@
         }
     
         async function fetchAllSiteData() {
-            const res = await fetch(API_URL + '?combined=true');
+            // Use POST to avoid CORS issues with GET requests
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'action=combined'   // We'll handle 'combined' action in doPost
+            });
             return await res.json();
         }
     
