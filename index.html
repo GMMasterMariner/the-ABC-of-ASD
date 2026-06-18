@@ -6,16 +6,15 @@
     <meta name="robots" content="noimageindex">
     <title>The ABC of ASD</title>
 
-    <!-- Favicons – white for dark mode, dark blue for light mode -->
+    <!-- Favicons -->
     <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/brand_logo_favicon_white.png" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/brand_logo_favicon_dblue.png" media="(prefers-color-scheme: light)">
-    <!-- Fallback for browsers that don't support media queries in favicon -->
     <link rel="icon" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/brand_logo_favicon_dblue.png">
 
-    <!-- Preload the logo so it appears faster on the splash screen -->
+    <!-- Preload the logo -->
     <link rel="preload" href="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" as="image">
 
-    <!-- Google Font: Nunito Sans -->
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
@@ -1424,7 +1423,6 @@
     
         function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
             document.getElementById('modalTitle').textContent = title;
-            // Allow HTML in the message
             document.getElementById('modalMessage').innerHTML = message;
             const confirmBtn = document.getElementById('modalConfirmBtn');
             const cancelBtn = document.getElementById('modalCancelBtn');
@@ -1451,7 +1449,7 @@
             showModal(title, message, 'OK', null, onConfirm || null, null);
         }
     
-        // ========== ADMIN LOGIN (standard, opens admin.html) ==========
+        // ========== ADMIN LOGIN ==========
         document.getElementById('adminIconLink').addEventListener('click', function(e) {
             e.preventDefault();
             showAdminLoginModal();
@@ -1475,7 +1473,9 @@
             
             if (!admin1Name && !admin2Name) {
                 try {
-                    const res = await fetch(API_URL + '?combined=true');
+                    const params = new URLSearchParams();
+                    params.append('action', 'combined');
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
                     const data = await res.json();
                     if (data.settings) {
                         admin1Name = data.settings.Admin1Name || '';
@@ -1638,7 +1638,9 @@
             
             if (!admin1Name && !admin2Name) {
                 try {
-                    const res = await fetch(API_URL + '?combined=true');
+                    const params = new URLSearchParams();
+                    params.append('action', 'combined');
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
                     const data = await res.json();
                     if (data.settings) {
                         admin1Name = data.settings.Admin1Name || '';
@@ -1804,7 +1806,9 @@
             
             if (!tester1Name && !tester2Name) {
                 try {
-                    const res = await fetch(API_URL + '?combined=true');
+                    const params = new URLSearchParams();
+                    params.append('action', 'combined');
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
                     const data = await res.json();
                     if (data.settings) {
                         tester1Name = data.settings.Tester1Name || '';
@@ -2058,17 +2062,17 @@
         }
     
         async function fetchAllSiteData() {
-            // Use POST to avoid CORS issues with GET requests
-            const res = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'action=combined'   // We'll handle 'combined' action in doPost
-            });
+            const params = new URLSearchParams();
+            params.append('action', 'combined');
+            const res = await fetch(API_URL, { method: 'POST', body: params });
             return await res.json();
         }
     
         async function fetchPaymentKeys() {
-            const res = await fetch(API_URL + '?action=getPaymentKeys'); return await res.json();
+            const params = new URLSearchParams();
+            params.append('action', 'getPaymentKeys');
+            const res = await fetch(API_URL, { method: 'POST', body: params });
+            return await res.json();
         }
     
         function initPayments() {
@@ -2630,7 +2634,6 @@
               const shippingText = shippingRow.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
               const totalPrice = document.getElementById('sumTotal').textContent;
               
-              // Build two‑column layout
               let orderHtml = `
                 <div class="summary-row"><span>Product:</span><span>${productName} (${typeLabel})</span></div>
                 <div class="summary-row"><span>Quantity:</span><span>${qty}</span></div>
@@ -2681,7 +2684,6 @@
                 <p style="text-align:center; font-weight:600; margin-top:0.5rem;">Proceed with payment?</p>
               `;
               
-              // Widen modal box for confirmation and make scrollable
               const modalBox = document.querySelector('#modalOverlay .modal-box');
               const origMaxWidth = modalBox.style.maxWidth;
               const origMaxHeight = modalBox.style.maxHeight;
