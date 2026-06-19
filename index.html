@@ -3000,10 +3000,10 @@
                 equalizeHeights();
                 splitAllPhoneFields();
                 setTimeout(splitAllPhoneFields, 800);
-                initPayments();
+                // Payment keys are not needed yet; skip initPayments
+                // initPayments();
             } catch(err) { console.error(err); }
         }
-        init();
         
         // ========== TESTING: Simulate purchase with two‑column confirmation ==========
         (function() {
