@@ -2064,15 +2064,21 @@
         async function fetchAllSiteData() {
             const params = new URLSearchParams();
             params.append('action', 'combined');
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            return await res.json();
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: params
+            });
+            return await response.json();
         }
     
         async function fetchPaymentKeys() {
             const params = new URLSearchParams();
             params.append('action', 'getPaymentKeys');
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            return await res.json();
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: params
+            });
+            return await response.json();
         }
     
         function initPayments() {
