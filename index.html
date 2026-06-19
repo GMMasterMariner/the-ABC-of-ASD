@@ -2262,21 +2262,6 @@
             let tester1Icon = appSettings.Tester1IconURL || '';
             let tester2Icon = appSettings.Tester2IconURL || '';
             
-            if (!tester1Name && !tester2Name) {
-                try {
-                    const params = new URLSearchParams();
-                    params.append('action', 'combined');
-                    const res = await fetch(API_URL, { method: 'POST', body: params });
-                    const data = await res.json();
-                    if (data.settings) {
-                        tester1Name = data.settings.Tester1Name || '';
-                        tester2Name = data.settings.Tester2Name || '';
-                        tester1Icon = data.settings.Tester1IconURL || '';
-                        tester2Icon = data.settings.Tester2IconURL || '';
-                    }
-                } catch(e) {}
-            }
-            
             if (!tester1Name) tester1Name = 'Tester 1';
             if (!tester2Name) tester2Name = 'Tester 2';
 
