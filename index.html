@@ -2109,21 +2109,6 @@
             let admin1Icon = appSettings.Admin1IconURL || '';
             let admin2Icon = appSettings.Admin2IconURL || '';
             
-            if (!admin1Name && !admin2Name) {
-                try {
-                    const params = new URLSearchParams();
-                    params.append('action', 'combined');
-                    const res = await fetch(API_URL, { method: 'POST', body: params });
-                    const data = await res.json();
-                    if (data.settings) {
-                        admin1Name = data.settings.Admin1Name || '';
-                        admin2Name = data.settings.Admin2Name || '';
-                        admin1Icon = data.settings.Admin1IconURL || '';
-                        admin2Icon = data.settings.Admin2IconURL || '';
-                    }
-                } catch(e) {}
-            }
-            
             if (!admin1Name) admin1Name = 'Admin 1';
             if (!admin2Name) admin2Name = 'Admin 2';
 
