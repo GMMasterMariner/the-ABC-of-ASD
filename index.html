@@ -600,13 +600,26 @@
         .currency-dropdown-item img, .phone-code-item img, .country-dropdown-item img { width: 20px; height: auto; }
 
         /* ---------- REQUIRED ASTERISK ---------- */
-        .input-required-wrapper { display: flex; align-items: center; gap: 0.3rem; width: 100%; }
-        .input-required-wrapper input, .input-required-wrapper textarea { flex: 1; }
-        .required-star {
-            color: var(--alert-color, #dc3c33); font-weight: bold;
-            font-size: 1.2rem; line-height: 1; flex-shrink: 0;
+        .input-required-wrapper {
+            position: relative;
+            width: 100%;
         }
-        .input-required-wrapper.textarea-wrapper { align-items: flex-start; }
+        .input-required-wrapper input,
+        .input-required-wrapper textarea {
+            width: 100%;
+            padding-right: 1.5rem;
+        }
+        .required-star {
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--alert-color, #dc3c33);
+            font-weight: bold;
+            font-size: 1.2rem;
+            line-height: 1;
+            pointer-events: none;
+        }
 
         /* ---------- STICKY FOOTER ---------- */
         .site-footer {
