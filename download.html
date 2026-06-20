@@ -7,8 +7,9 @@
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
     .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 480px; width: 90%; text-align: center; }
+    .logo { max-width: 180px; margin-bottom: 0.8rem; }
     h2 { color: #194373; margin-bottom: 0.5rem; }
-    p { color: #555; margin-bottom: 1.5rem; }
+    p { color: #555; margin-bottom: 1rem; }
     input { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; text-align: center; letter-spacing: 2px; box-sizing: border-box; }
     button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; }
     button:hover { opacity: 0.9; }
@@ -17,8 +18,19 @@
     .error { color: #dc3c33; }
     .success { color: #2e7d32; }
     .info { color: #194373; }
-    .btn-secondary { background: #aaa; margin-top: 0.5rem; }
-    .btn-secondary:hover { background: #888; }
+
+    .downloads-badge {
+      display: inline-block;
+      background: #f29b2a;
+      color: white;
+      font-weight: 700;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+    }
+    .downloads-badge.low { background: #dc3c33; }
+    .downloads-badge.none { background: #888; }
 
     .os-selection { display: none; margin: 1.5rem 0; }
     .os-selection.visible { display: block; }
@@ -44,25 +56,39 @@
       100% { width: 10%; }
     }
 
-    .download-ready { display: none; margin: 1.5rem 0; }
-    .download-ready.visible { display: block; }
+    .limit-reached { display: none; margin: 1.5rem 0; }
+    .limit-reached.visible { display: block; }
+    .limit-reached .limit-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+
+    .btn-secondary { background: #aaa; margin-top: 0.5rem; }
+    .btn-secondary:hover { background: #888; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/GM_Logo_DBlue.png" alt="GM Master Mariner" style="max-width:180px;margin-bottom:1rem;">
-    <h2>Download Your Book</h2>
+    <img src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/GM_Logo_DBlue.png" alt="GM Master Mariner" class="logo">
 
     <!-- Step 1: Enter License Key -->
     <div id="stepLicense">
+      <h2>Download Your Book</h2>
       <p>Enter the license key from your email:</p>
       <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
       <button id="checkLicenseBtn">Continue</button>
       <div id="message"></div>
     </div>
 
+    <!-- Limit Reached -->
+    <div class="limit-reached" id="stepLimitReached">
+      <span class="limit-icon">🚫</span>
+      <h2>No Downloads Remaining</h2>
+      <p>You have used all your available downloads for this license key.</p>
+      <p style="font-size:0.85rem;color:#888;">If you believe this is an error, please contact <a href="mailto:gm.mastermariner@gmail.com">gm.mastermariner@gmail.com</a></p>
+    </div>
+
     <!-- Step 2: Choose OS -->
     <div class="os-selection" id="stepOS">
+      <h2>Download Your Book</h2>
+      <div class="downloads-badge" id="downloadsBadgeOS">0 downloads remaining</div>
       <p>Choose your operating system:</p>
       <div class="os-options">
         <div class="os-option" data-os="Windows">
@@ -83,12 +109,13 @@
         </div>
       </div>
       <button id="requestBuildBtn" disabled>Request Download</button>
-      <p id="remainingText" style="font-size:0.85rem;color:#888;margin-top:0.5rem;"></p>
       <div id="messageOS"></div>
     </div>
 
     <!-- Step 3: Build in Progress -->
     <div class="progress-container" id="stepProgress">
+      <h2>Building Your Installer</h2>
+      <div class="downloads-badge" id="downloadsBadgeProgress">0 downloads remaining</div>
       <p id="progressText">Your download is being prepared...</p>
       <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
       <p style="font-size:0.8rem;color:#888;">This may take a few minutes. You'll receive an email when it's ready.</p>
@@ -96,11 +123,15 @@
       <div id="messageProgress"></div>
     </div>
 
-    <!-- Step 4: Download Ready -->
-    <div class="download-ready" id="stepReady">
-      <p style="color:#2e7d32;font-weight:600;">✅ Your download is ready!</p>
-      <button id="downloadNowBtn">Download Now</button>
-      <p id="remainingTextReady" style="font-size:0.85rem;color:#888;margin-top:0.5rem;"></p>
+    <!-- Step 4: Download Complete -->
+    <div class="os-selection" id="stepDownloadComplete" style="display:none;">
+      <h2>✅ Download Started</h2>
+      <div class="downloads-badge" id="downloadsBadgeComplete">0 downloads remaining</div>
+      <p>Your download should begin shortly. If it doesn't, click below.</p>
+      <button id="retryDownloadBtn">Download Again</button>
+      <p style="margin-top:1rem;">Need a different operating system?</p>
+      <button class="btn-secondary" id="switchOSBtn">Choose Different OS</button>
+      <div id="messageComplete"></div>
     </div>
   </div>
 
@@ -110,6 +141,34 @@
     let currentLicenseKey = '';
     let selectedOS = '';
     let remainingDownloads = 0;
+    let lastDownloadUrl = '';
+
+    // ========== Helper: Update downloads badge ==========
+    function updateBadge(badgeId, remaining) {
+      const badge = document.getElementById(badgeId);
+      if (!badge) return;
+      badge.textContent = remaining + ' download' + (remaining !== 1 ? 's' : '') + ' remaining';
+      badge.className = 'downloads-badge';
+      if (remaining <= 0) badge.classList.add('none');
+      else if (remaining <= 2) badge.classList.add('low');
+    }
+
+    // ========== Helper: Show a section, hide others ==========
+    function showSection(sectionId) {
+      ['stepLicense', 'stepLimitReached', 'stepOS', 'stepProgress', 'stepDownloadComplete'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === sectionId) {
+            el.style.display = 'block';
+            if (id === 'stepOS' || id === 'stepDownloadComplete') el.classList.add('visible');
+            if (id === 'stepProgress') el.classList.add('visible');
+          } else {
+            el.style.display = 'none';
+            el.classList.remove('visible');
+          }
+        }
+      });
+    }
 
     // ========== STEP 1: Check License Key ==========
     document.getElementById('checkLicenseBtn').addEventListener('click', async () => {
@@ -136,27 +195,31 @@
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
 
+        currentLicenseKey = key;
+        remainingDownloads = data.remainingDownloads || 0;
+
         if (data.result === 'error' && data.message && data.message.indexOf('Download limit reached') !== -1) {
-          msg.className = 'error';
-          msg.textContent = data.message;
+          showSection('stepLimitReached');
           btn.disabled = false;
           btn.textContent = 'Continue';
           return;
         }
 
-        // Whether download is ready or not, move to OS selection
-        currentLicenseKey = key;
-        remainingDownloads = data.remainingDownloads || 0;
-
-        document.getElementById('stepLicense').style.display = 'none';
-        document.getElementById('stepOS').classList.add('visible');
-        document.getElementById('remainingText').textContent = 
-          remainingDownloads > 0 ? remainingDownloads + ' download(s) remaining' : '';
-
-        // If download was already ready, show it
-        if (data.result === 'success' && data.downloadUrl && data.ready !== false) {
-          showDownloadReady(data.downloadUrl, data.remainingDownloads || 0);
+        if (remainingDownloads <= 0) {
+          showSection('stepLimitReached');
+          btn.disabled = false;
+          btn.textContent = 'Continue';
+          return;
         }
+
+        // Move to OS selection
+        showSection('stepOS');
+        updateBadge('downloadsBadgeOS', remainingDownloads);
+        document.getElementById('requestBuildBtn').disabled = true;
+        document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
+        selectedOS = '';
+        document.getElementById('messageOS').textContent = '';
+        document.getElementById('messageOS').className = '';
 
         btn.disabled = false;
         btn.textContent = 'Continue';
@@ -168,7 +231,6 @@
       }
     });
 
-    // Allow Enter key on license input
     document.getElementById('licenseKey').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('checkLicenseBtn').click();
     });
@@ -204,14 +266,19 @@
         const data = await res.json();
 
         if (data.result === 'success') {
-          if (data.ready) {
-            // Already built
-            showDownloadReady(data.downloadUrl, data.remainingDownloads);
+          remainingDownloads = data.remainingDownloads || 0;
+
+          if (data.ready && data.downloadUrl) {
+            // Already built — trigger download immediately
+            lastDownloadUrl = data.downloadUrl;
+            triggerDownload(data.downloadUrl);
           } else {
             // Build in progress
-            document.getElementById('stepOS').classList.remove('visible');
-            document.getElementById('stepProgress').classList.add('visible');
-            document.getElementById('progressText').textContent = 'Your ' + selectedOS + ' download is being prepared...';
+            showSection('stepProgress');
+            updateBadge('downloadsBadgeProgress', remainingDownloads);
+            document.getElementById('progressText').textContent = 'Your ' + selectedOS + ' installer is being built...';
+            document.getElementById('messageProgress').textContent = '';
+            document.getElementById('messageProgress').className = '';
           }
         } else {
           msg.className = 'error';
@@ -234,8 +301,6 @@
 
       btn.disabled = true;
       btn.textContent = 'Checking...';
-      msg.textContent = '';
-      msg.className = '';
 
       try {
         const params = new URLSearchParams();
@@ -245,11 +310,15 @@
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
 
+        remainingDownloads = data.remainingDownloads || 0;
+        updateBadge('downloadsBadgeProgress', remainingDownloads);
+
         if (data.result === 'success' && data.downloadUrl) {
-          showDownloadReady(data.downloadUrl, data.remainingDownloads || 0);
+          lastDownloadUrl = data.downloadUrl;
+          triggerDownload(data.downloadUrl);
         } else {
           msg.className = 'info';
-          msg.textContent = data.message || 'Not ready yet. Please check again shortly.';
+          msg.textContent = data.message || 'Still building. Check again shortly.';
         }
       } catch (e) {
         msg.className = 'error';
@@ -260,41 +329,72 @@
       btn.textContent = 'Check if Ready';
     });
 
-    // ========== STEP 4: Download Ready ==========
-    function showDownloadReady(url, remaining) {
-      document.getElementById('stepOS').classList.remove('visible');
-      document.getElementById('stepProgress').classList.remove('visible');
-      document.getElementById('stepReady').classList.add('visible');
-      document.getElementById('remainingTextReady').textContent = 
-        remaining + ' download(s) remaining';
+    // ========== Trigger download and record it ==========
+    function triggerDownload(url) {
+      // Start the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Record the download
+      const recParams = new URLSearchParams();
+      recParams.append('action', 'recordDownload');
+      recParams.append('licenseKey', currentLicenseKey);
       
-      document.getElementById('downloadNowBtn').onclick = function() {
-        // Trigger download
+      fetch(API_URL, { method: 'POST', body: recParams })
+        .then(r => r.json())
+        .then(data => {
+          remainingDownloads = data.remainingDownloads || 0;
+          
+          if (remainingDownloads <= 0) {
+            showSection('stepLimitReached');
+          } else {
+            showSection('stepDownloadComplete');
+            updateBadge('downloadsBadgeComplete', remainingDownloads);
+          }
+        })
+        .catch(() => {
+          // Even if record fails, estimate remaining
+          remainingDownloads = Math.max(0, remainingDownloads - 1);
+          if (remainingDownloads <= 0) {
+            showSection('stepLimitReached');
+          } else {
+            showSection('stepDownloadComplete');
+            updateBadge('downloadsBadgeComplete', remainingDownloads);
+          }
+        });
+
+      // Show download complete section immediately
+      showSection('stepDownloadComplete');
+      updateBadge('downloadsBadgeComplete', Math.max(0, remainingDownloads - 1));
+    }
+
+    // ========== STEP 4: Download Complete — Retry or Switch OS ==========
+    document.getElementById('retryDownloadBtn').addEventListener('click', () => {
+      if (lastDownloadUrl) {
         const a = document.createElement('a');
-        a.href = url;
+        a.href = lastDownloadUrl;
         a.download = '';
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+      }
+    });
 
-        // Record the download
-        const recParams = new URLSearchParams();
-        recParams.append('action', 'recordDownload');
-        recParams.append('licenseKey', currentLicenseKey);
-        fetch(API_URL, { method: 'POST', body: recParams });
-
-        // Update remaining count
-        remaining--;
-        document.getElementById('remainingTextReady').textContent = 
-          remaining + ' download(s) remaining';
-        
-        if (remaining <= 0) {
-          document.getElementById('downloadNowBtn').disabled = true;
-          document.getElementById('downloadNowBtn').textContent = 'No Downloads Remaining';
-        }
-      };
-    }
+    document.getElementById('switchOSBtn').addEventListener('click', () => {
+      document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
+      selectedOS = '';
+      document.getElementById('requestBuildBtn').disabled = true;
+      document.getElementById('messageOS').textContent = '';
+      document.getElementById('messageOS').className = '';
+      showSection('stepOS');
+      updateBadge('downloadsBadgeOS', remainingDownloads);
+    });
   </script>
 </body>
 </html>
