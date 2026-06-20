@@ -2389,12 +2389,21 @@
               const newOnConfirm = function() {
                 resetModalBox();
                 const orderId = 'SIM-' + Date.now();
+                const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+                const totalText = document.getElementById('sumTotal').textContent;
+                const currencyCode = selectedCurrency ? selectedCurrency.CurrencyCode : 'USD';
                 const params = new URLSearchParams();
                 params.append('action', 'generateLicense');
                 params.append('orderId', orderId);
                 params.append('customerName', name);
                 params.append('customerEmail', email);
-                params.append('customerPhone', "'" + phone);
+                params.append('customerPhone', phone);
+                params.append('quantity', qty);
+                params.append('total', totalText.replace(/[^0-9.]/g, ''));
+                params.append('currency', currencyCode);
+                params.append('paymentGateway', 'Simulated');
+                params.append('paymentStatus', 'Simulated');
+                params.append('productType', selectedProduct.Type || 'Digital');
                 fetch(API_URL, { method: 'POST', body: params })
                   .then(r => r.json())
                   .then(data => {
