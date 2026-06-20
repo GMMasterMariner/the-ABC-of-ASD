@@ -1,97 +1,729 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Download – The ABC of ASD</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 420px; width: 90%; text-align: center; }
-    h2 { color: #194373; }
-    input { width: 100%; padding: 0.8rem; margin: 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; text-align: center; letter-spacing: 2px; }
-    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; }
-    button:hover { opacity: 0.9; }
-    #message { margin-top: 1rem; font-size: 0.9rem; }
-    .error { color: #dc3c33; }
-    .success { color: #2e7d32; }
-    .btn-secondary { background: #aaa; margin-top: 1rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - The ABC of ASD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Sticky Header */
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #194373;
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .admin-header h1 { font-size: 1.3rem; white-space: nowrap; }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        /* Tab buttons in header */
+        .tab-nav {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .tab-btn.active {
+            background: #f29b2a;
+            color: white;
+            border-color: #f29b2a;
+        }
+        
+        /* Save button in header */
+        .header-save-btn {
+            background: #f29b2a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .header-save-btn:hover { background: #e08a1a; }
+        .header-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        /* Status message in header */
+        .header-status {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            display: none;
+            white-space: nowrap;
+            animation: fadeIn 0.3s ease;
+        }
+        .header-status.success {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+        }
+        .header-status.error {
+            display: inline-block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .header-status.saving {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section h2 { color: #194373; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; }
+        .section h3 { color: #194373; margin: 1.5rem 0 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 1rem; font-family: inherit;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        
+        /* Color input with preview */
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .color-input-group input[type="color"] {
+            width: 50px;
+            height: 40px;
+            padding: 2px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .color-input-group input[type="text"] {
+            flex: 1;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            flex-shrink: 0;
+        }
+        
+        /* Image preview */
+        .image-preview {
+            max-width: 120px;
+            max-height: 80px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            margin-top: 0.5rem;
+            display: none;
+            object-fit: contain;
+        }
+        .image-preview.visible { display: block; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        #loginScreen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; background: #194373;
+        }
+        .login-box {
+            background: white; border-radius: 12px; padding: 3rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center;
+            max-width: 400px; width: 90%;
+        }
+        .login-box h2 { color: #194373; margin-bottom: 0.5rem; }
+        .login-box p { color: #666; margin-bottom: 1.5rem; }
+        #adminPanel { display: none; }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            background: #f29b2a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-sm:hover { background: #e08a1a; }
+        .btn-secondary { background: #aaa; }
+        .btn-secondary:hover { background: #888; }
+        .btn-danger { background: #dc3c33; }
+        .btn-danger:hover { background: #c53030; }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.6rem 1rem;
+            }
+            .header-center { order: 2; }
+            .header-right { order: 1; width: 100%; justify-content: space-between; }
+            .tab-nav { justify-content: center; }
+            .tab-btn { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .admin-container { padding: 0 1rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Download Your Book</h2>
-    <p>Enter the license key from your email:</p>
-    <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
-    <button id="downloadBtn">Download</button>
-    <div id="message"></div>
-  </div>
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <p id="loginPrompt">Verifying access...</p>
+        </div>
+    </div>
 
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwj6LL4O16_EfTpoT_5-T0kQD6WiO5abNx9iIRNSisYu4zCKglcD_fO2yCqj0pvfWa1/exec';
+    <div id="adminPanel">
+        <header class="admin-header">
+            <h1>⚙️ Admin</h1>
+            <div class="header-center">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="tab-settings">Site Settings</button>
+                    <button class="tab-btn" data-tab="tab-products">Products</button>
+                    <button class="tab-btn" data-tab="tab-home">Home Page</button>
+                    <button class="tab-btn" data-tab="tab-about">About</button>
+                    <button class="tab-btn" data-tab="tab-shipping">Shipping</button>
+                    <button class="tab-btn" data-tab="tab-legal">Legal</button>
+                </div>
+                <button class="header-save-btn" id="headerSaveBtn" onclick="saveCurrentTab()">💾 Save</button>
+                <span class="header-status" id="headerStatus"></span>
+            </div>
+            <div class="header-right">
+                <span id="adminNameDisplay"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </header>
 
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
-      const key = document.getElementById('licenseKey').value.trim();
-      const msg = document.getElementById('message');
-      const btn = document.getElementById('downloadBtn');
-      
-      if (!key) {
-        msg.className = 'error';
-        msg.textContent = 'Please enter your license key.';
-        return;
-      }
+        <div class="admin-container">
+            <div class="tab-content active" id="tab-settings">
+                <div class="section">
+                    <h2>🎨 Site Settings</h2>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Primary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="primaryColor" onchange="updateColorPreview('primaryColor', 'primaryColorPreview')">
+                                <div class="color-preview" id="primaryColorPreview"></div>
+                                <input type="text" id="primaryColorText" placeholder="#194373" oninput="updateColorFromText('primaryColor', 'primaryColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>CTA Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="ctaColor" onchange="updateColorPreview('ctaColor', 'ctaColorPreview')">
+                                <div class="color-preview" id="ctaColorPreview"></div>
+                                <input type="text" id="ctaColorText" placeholder="#f29b2a" oninput="updateColorFromText('ctaColor', 'ctaColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="secondaryColor" onchange="updateColorPreview('secondaryColor', 'secondaryColorPreview')">
+                                <div class="color-preview" id="secondaryColorPreview"></div>
+                                <input type="text" id="secondaryColorText" placeholder="#f29b2a" oninput="updateColorFromText('secondaryColor', 'secondaryColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Alert Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="alertColor" onchange="updateColorPreview('alertColor', 'alertColorPreview')">
+                                <div class="color-preview" id="alertColorPreview"></div>
+                                <input type="text" id="alertColorText" placeholder="#dc3c33" oninput="updateColorFromText('alertColor', 'alertColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="backgroundColor" onchange="updateColorPreview('backgroundColor', 'backgroundColorPreview')">
+                                <div class="color-preview" id="backgroundColorPreview"></div>
+                                <input type="text" id="backgroundColorText" placeholder="#ffffff" oninput="updateColorFromText('backgroundColor', 'backgroundColorPreview', this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="textColor" onchange="updateColorPreview('textColor', 'textColorPreview')">
+                                <div class="color-preview" id="textColorPreview"></div>
+                                <input type="text" id="textColorText" placeholder="#000000" oninput="updateColorFromText('textColor', 'textColorPreview', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Background Image URL</label>
+                        <input type="text" id="backgroundImage" oninput="updateImagePreview('backgroundImage', 'bgImagePreview')">
+                        <img class="image-preview" id="bgImagePreview" alt="Background preview">
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Logo URL</label>
+                        <input type="text" id="bannerLogo" oninput="updateImagePreview('bannerLogo', 'bannerLogoPreview')">
+                        <img class="image-preview" id="bannerLogoPreview" alt="Logo preview">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Banner Book Title</label><input type="text" id="bannerBookTitle"></div>
+                        <div class="form-group"><label>Banner Book Title Abbreviation</label><input type="text" id="bannerBookTitleAbbreviation"></div>
+                    </div>
+                    <div class="form-group"><label>Banner Book Subtitle</label><input type="text" id="bannerBookSubtitle"></div>
+                    
+                    <h3>👤 Admin Accounts</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Admin 1 Name</label><input type="text" id="admin1Name"></div>
+                        <div class="form-group"><label>Admin 1 Email</label><input type="email" id="admin1Email"></div>
+                        <div class="form-group">
+                            <label>Admin 1 Icon URL</label>
+                            <input type="text" id="admin1IconURL" oninput="updateImagePreview('admin1IconURL', 'admin1IconPreview')">
+                            <img class="image-preview" id="admin1IconPreview" alt="Admin 1 icon">
+                        </div>
+                        <div class="form-group"><label>Admin 2 Name</label><input type="text" id="admin2Name"></div>
+                        <div class="form-group"><label>Admin 2 Email</label><input type="email" id="admin2Email"></div>
+                        <div class="form-group">
+                            <label>Admin 2 Icon URL</label>
+                            <input type="text" id="admin2IconURL" oninput="updateImagePreview('admin2IconURL', 'admin2IconPreview')">
+                            <img class="image-preview" id="admin2IconPreview" alt="Admin 2 icon">
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Google Maps API Key</label><input type="text" id="googleMapsApiKey"></div>
+                </div>
+            </div>
 
-      btn.disabled = true;
-      btn.textContent = 'Checking...';
-      msg.textContent = '';
+            <div class="tab-content" id="tab-products">
+                <div class="section">
+                    <h2>📦 Product 1</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Product Name</label><input type="text" id="product1Name"></div>
+                        <div class="form-group"><label>Type</label><select id="product1Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product1BasePrice" step="0.01"></div>
+                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product1Weight" step="0.01"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="product1ImageURL" oninput="updateImagePreview('product1ImageURL', 'product1ImagePreview')">
+                        <img class="image-preview" id="product1ImagePreview" alt="Product 1 image">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product1DiscountThreshold"></div>
+                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product1DiscountPercent" step="0.1"></div>
+                    </div>
+                    
+                    <h3>📦 Product 2</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Product Name</label><input type="text" id="product2Name"></div>
+                        <div class="form-group"><label>Type</label><select id="product2Type"><option value="Physical">Physical</option><option value="Digital">Digital</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Base Price (ZAR)</label><input type="number" id="product2BasePrice" step="0.01"></div>
+                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="product2Weight" step="0.01"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="product2ImageURL" oninput="updateImagePreview('product2ImageURL', 'product2ImagePreview')">
+                        <img class="image-preview" id="product2ImagePreview" alt="Product 2 image">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Discount Threshold</label><input type="number" id="product2DiscountThreshold"></div>
+                        <div class="form-group"><label>Discount Percent</label><input type="number" id="product2DiscountPercent" step="0.1"></div>
+                    </div>
+                </div>
+            </div>
 
-      const params = new URLSearchParams();
-      params.append('action', 'getDownloadUrl');
-      params.append('licenseKey', key);
+            <div class="tab-content" id="tab-home">
+                <div class="section">
+                    <h2>🏠 Home Page Content</h2>
+                    <div class="form-group"><label>Home Page Book Headline</label><input type="text" id="homeHeadline"></div>
+                    <div class="form-group"><label>Home Page Book Description 1</label><textarea id="homeDesc1"></textarea></div>
+                    <div class="form-group"><label>Home Page Book Description 2</label><textarea id="homeDesc2"></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Home Page Item 1 Main Text</label><input type="text" id="homeItem1Main"></div>
+                        <div class="form-group"><label>Home Page Item 1 Sub Text</label><input type="text" id="homeItem1Sub"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Home Page Item 2 Main Text</label><input type="text" id="homeItem2Main"></div>
+                        <div class="form-group"><label>Home Page Item 2 Sub Text</label><input type="text" id="homeItem2Sub"></div>
+                    </div>
+                    <div class="form-group"><label>Carousel Interval (ms)</label><input type="number" id="carouselInterval" value="3000"></div>
+                    <div class="form-group"><label>Carousel Images (one per line, up to 9)</label><textarea id="carouselImages" rows="4"></textarea></div>
+                </div>
+            </div>
 
-      try {
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
-        
-        if (data.result === 'success' && data.downloadUrl) {
-          // Start download but keep page visible
-          const downloadLink = document.createElement('a');
-          downloadLink.href = data.downloadUrl;
-          downloadLink.download = '';
-          downloadLink.style.display = 'none';
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          
-          // Show success message with Close button
-          msg.className = 'success';
-          msg.innerHTML = 'Thank you for your purchase!<br>Check your download location and run the installer file.';
-          
-          // Replace the download button with a Close button
-          btn.style.display = 'none';
-          const closeBtn = document.createElement('button');
-          closeBtn.className = 'btn-secondary';
-          closeBtn.textContent = 'Close';
-          closeBtn.onclick = function() { window.close(); };
-          btn.parentElement.insertBefore(closeBtn, msg);
-          
-          // Optional: record the download server‑side
-          const recParams = new URLSearchParams();
-          recParams.append('action', 'recordDownload');
-          recParams.append('licenseKey', key);
-          fetch(API_URL, { method: 'POST', body: recParams });
-        } else {
-          msg.className = 'error';
-          msg.textContent = data.message || 'Invalid license key or download not ready.';
-          btn.disabled = false;
-          btn.textContent = 'Download';
+            <div class="tab-content" id="tab-about">
+                <div class="section">
+                    <h2>👤 About Section</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Author Image 1 URL</label>
+                            <input type="text" id="authorImage1" oninput="updateImagePreview('authorImage1', 'authorImage1Preview')">
+                            <img class="image-preview" id="authorImage1Preview" alt="Author image 1">
+                        </div>
+                        <div class="form-group">
+                            <label>Author Image 2 URL</label>
+                            <input type="text" id="authorImage2" oninput="updateImagePreview('authorImage2', 'authorImage2Preview')">
+                            <img class="image-preview" id="authorImage2Preview" alt="Author image 2">
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Author Short Bio</label><textarea id="authorShortBio" rows="3"></textarea></div>
+                    <div class="form-group"><label>Author Extended Bio</label><textarea id="authorExtendedBio" rows="6"></textarea></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-shipping">
+                <div class="section">
+                    <h2>🚚 Shipping Regions & Rates</h2>
+                    <div id="shippingRegionsList"></div>
+                    <button class="btn-sm" onclick="addShippingRegion()" style="margin-top:1rem;">+ Add Region</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-legal">
+                <div class="section">
+                    <h2>📄 Legal Pages</h2>
+                    <h3>Privacy Policy</h3>
+                    <div class="form-group"><label>Privacy Policy Heading</label><input type="text" id="privacyHeading"></div>
+                    <div class="form-group"><label>Privacy Policy Content</label><textarea id="privacyContent" rows="8"></textarea></div>
+                    <h3>Terms of Service</h3>
+                    <div class="form-group"><label>Terms of Service Heading</label><input type="text" id="termsHeading"></div>
+                    <div class="form-group"><label>Terms of Service Content</label><textarea id="termsContent" rows="8"></textarea></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbytTE9HDnZa8IV38wAYXAYDCdNszha_mV5LOeR3kBZLyqjbaBjdkp791BeaYjh1df2t/exec';
+        let adminToken = '';
+        let adminNum = '';
+        let adminName = '';
+        let currentTab = 'tab-settings';
+
+        // Color preview functions
+        function updateColorPreview(colorInputId, previewId) {
+            const colorInput = document.getElementById(colorInputId);
+            const preview = document.getElementById(previewId);
+            const textInput = document.getElementById(colorInputId + 'Text');
+            if (colorInput && preview) {
+                preview.style.backgroundColor = colorInput.value;
+                if (textInput) textInput.value = colorInput.value;
+            }
         }
-      } catch (e) {
-        msg.className = 'error';
-        msg.textContent = 'Network error. Please try again.';
-        btn.disabled = false;
-        btn.textContent = 'Download';
-      }
-    });
-  </script>
-</body>
-</html>
+
+        function updateColorFromText(colorInputId, previewId, value) {
+            const colorInput = document.getElementById(colorInputId);
+            const preview = document.getElementById(previewId);
+            if (value.match(/^#[0-9a-fA-F]{6}$/)) {
+                if (colorInput) colorInput.value = value;
+                if (preview) preview.style.backgroundColor = value;
+            }
+        }
+
+        function initColorPreviews() {
+            const colorFields = ['primaryColor', 'ctaColor', 'secondaryColor', 'alertColor', 'backgroundColor', 'textColor'];
+            colorFields.forEach(field => {
+                const colorInput = document.getElementById(field);
+                const preview = document.getElementById(field + 'Preview');
+                const textInput = document.getElementById(field + 'Text');
+                if (colorInput && preview) {
+                    preview.style.backgroundColor = colorInput.value || '#000000';
+                    if (textInput) textInput.value = colorInput.value || '';
+                }
+            });
+        }
+
+        // Image preview function
+        function updateImagePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            if (input && preview) {
+                const url = input.value.trim();
+                if (url && (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/'))) {
+                    preview.src = url;
+                    preview.classList.add('visible');
+                    preview.onerror = function() { this.classList.remove('visible'); };
+                } else {
+                    preview.classList.remove('visible');
+                }
+            }
+        }
+
+        function initImagePreviews() {
+            const imageFields = ['backgroundImage', 'bannerLogo', 'admin1IconURL', 'admin2IconURL', 
+                                 'product1ImageURL', 'product2ImageURL', 'authorImage1', 'authorImage2'];
+            imageFields.forEach(field => {
+                const input = document.getElementById(field);
+                const previewId = field + 'Preview';
+                if (input && input.value) {
+                    updateImagePreview(field, previewId);
+                }
+            });
+        }
+
+        // Status message in header
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('headerStatus');
+            statusEl.textContent = message;
+            statusEl.className = 'header-status ' + type;
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => { statusEl.className = 'header-status'; }, 3000);
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                document.getElementById(currentTab).classList.add('active');
+            });
+        });
+
+        // Save current tab
+        async function saveCurrentTab() {
+            const saveBtn = document.getElementById('headerSaveBtn');
+            saveBtn.disabled = true;
+            showStatus('Saving...', 'saving');
+            
+            try {
+                switch(currentTab) {
+                    case 'tab-settings': await saveSettings(); break;
+                    case 'tab-products': await saveProducts(); break;
+                    case 'tab-home': await saveHomePage(); break;
+                    case 'tab-about': await saveAbout(); break;
+                    case 'tab-shipping': await saveShipping(); break;
+                    case 'tab-legal': await saveLegal(); break;
+                }
+            } catch(err) {
+                showStatus('Error!', 'error');
+            }
+            
+            saveBtn.disabled = false;
+        }
+
+async function init() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const admin = params.get('admin');
+
+    console.log('Admin page - token:', token, 'admin:', admin);
+
+    if (!token || !admin) {
+        document.getElementById('loginPrompt').textContent = 'Invalid access. Please login from the main site.';
+        return;
+    }
+
+    adminToken = token;
+    adminNum = admin;
+
+    try {
+        const url = API_URL + '?action=getAdminInfo&token=' + encodeURIComponent(token) + '&admin=' + encodeURIComponent(admin);
+        console.log('Fetching:', url);
+        
+        const res = await fetch(url);
+        const rawText = await res.text();
+        console.log('Raw response:', rawText);
+        
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            document.getElementById('loginPrompt').textContent = 'Server error. Please try again.';
+            return;
+        }
+
+        console.log('Parsed data:', data);
+
+        if (data.result === 'success') {
+            adminName = data.adminName;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminNameDisplay').textContent = '👤 ' + adminName;
+            await loadAllData();
+            initColorPreviews();
+            initImagePreviews();
+            return;
+        } else {
+            document.getElementById('loginPrompt').textContent = 'Session expired: ' + (data.message || 'Please login again from the main site.');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        document.getElementById('loginPrompt').textContent = 'Network error. Please check your connection and try again.';
+    }
+}
+
+        function logout() {
+            window.close();
+        }
+
+        async function loadAllData() {
+            try {
+                const res = await fetch(API_URL + '?action=getAllAdminData&token=' + encodeURIComponent(adminToken) + '&admin=' + encodeURIComponent(adminNum));
+                const data = await res.json();
+                
+                if (data.settings) {
+                    populateSettings(data.settings);
+                    populateProducts(data.products || []);
+                    populateHome(data.home || {});
+                    populateAbout(data.about || {});
+                    populateShipping(data.shippingRegions || [], data.regionRates || []);
+                    populateLegal(data.legal || {});
+                    initColorPreviews();
+                    initImagePreviews();
+                }
+            } catch (err) {
+                console.error(err);
+                showStatus('Error loading data', 'error');
+            }
+        }
+
+        function populateSettings(s) {
+            document.getElementById('primaryColor').value = s.PrimaryColor || '#194373';
+            document.getElementById('ctaColor').value = s.CTAColor || '#f29b2a';
+            document.getElementById('secondaryColor').value = s.SecondaryColor || '#f29b2a';
+            document.getElementById('alertColor').value = s.AlertColour || '#dc3c33';
+            document.getElementById('backgroundColor').value = s.BackgroundColor || '#ffffff';
+            document.getElementById('textColor').value = s.TextColor || '#000000';
+            document.getElementById('backgroundImage').value = s.BackgroundImage || '';
+            document.getElementById('bannerLogo').value = s.BannerLogo || '';
+            document.getElementById('bannerBookTitle').value = s.BannerBookTitle || '';
+            document.getElementById('bannerBookTitleAbbreviation').value = s.BannerBookTitleAbbreviation || '';
+            document.getElementById('bannerBookSubtitle').value = s.BannerBookSubTitile || '';
+            document.getElementById('admin1Name').value = s.Admin1Name || '';
+            document.getElementById('admin1Email').value = s.Admin1Email || '';
+            document.getElementById('admin1IconURL').value = s.Admin1IconURL || '';
+            document.getElementById('admin2Name').value = s.Admin2Name || '';
+            document.getElementById('admin2Email').value = s.Admin2Email || '';
+            document.getElementById('admin2IconURL').value = s.Admin2IconURL || '';
+            document.getElementById('googleMapsApiKey').value = s.GoogleMapsApiKey || '';
+        }
+
+        function populateProducts(products) {
+            if (products[0]) {
+                document.getElementById('product1Name').value = products[0].ProductName || '';
+                document.getElementById('product1Type').value = products[0].Type || 'Physical';
+                document.getElementById('product1BasePrice').value = products[0].BasePrice || '';
+                document.getElementById('product1Weight').value = products[0].Weight || '';
+                document.getElementById('product1ImageURL').value = products[0].ImageURL || '';
+                document.getElementById('product1DiscountThreshold').value = products[0].DiscountThreshold || '';
+                document.getElementById('product1DiscountPercent').value = products[0].DiscountPercent || '';
+            }
+            if (products[1]) {
+                document.getElementById('product2Name').value = products[1].ProductName || '';
+                document.getElementById('product2Type').value = products[1].Type || 'Physical';
+                document.getElementById('product2BasePrice').value = products[1].BasePrice || '';
+                document.getElementById('product2Weight').value = products[1].Weight || '';
+                document.getElementById('product2ImageURL').value = products[1].ImageURL || '';
+                document.getElementById('product2DiscountThreshold').value = products[1].DiscountThreshold || '';
+                document.getElementById('product2DiscountPercent').value = products[1].DiscountPercent || '';
+            }
+        }
+
+        function populateHome(home) {
+            document.getElementById('homeHeadline').value = home.HomePageBookHeadline || '';
+            document.getElementById('homeDesc1').value = home.HomePageBookDescription1 || '';
+            document.getElementById('homeDesc2').value = home.HomePageBookDescription2 || '';
+            document.getElementById('homeItem1Main').value = home.HomePageItem1MainText || '';
+            document.getElementById('homeItem1Sub').value = home.HomePageItem1SubText || '';
+            document.getElementById('homeItem2Main').value = home.HomePageItem2MainText || '';
+            document.getElementById('homeItem2Sub').value = home.HomePageItem2SubText || '';
+            document.getElementById('carouselInterval').value = home.HomePageCarouselInterval || '3000';
+            let urls = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['HomePageCarouselImage' + i];
+                if (url) urls.push(url);
+            }
+            document.getElementById('carouselImages').value = urls.join('\n');
+        }
+
+        function populateAbout(about) {
+            document.getElementById('authorImage1').value = about.AuthorImage1URL || '';
+            document.getElementById('authorImage2').value = about.AuthorImage2URL || '';
+            document.getElementById('authorShortBio').value = about.AuthorShortBio || '';
+            document.getElementById('authorExtendedBio').value = about.AuthorExtendedBio || '';
+        }
+
+        function populateShipping(regions, rates) {
+            const container = document.getElementById('shippingRegionsList');
+            container.innerHTML = '';
+            const allLocations = [...new Set([...regions.map(r => r.Location), ...rates.map(r => r.Location)])];
+            allLocations.forEach(loc => {
+                const region = regions.find(r => r.Location === loc) || {};
+                const regionRates = rates.filter(r => r.Location === loc);
+                const div = document.createElement('div');
+                div.className = 'section';
+                div.style.marginBottom = '1rem';
+                div.innerHTML = `
+                    <h3>${loc || 'New Region'}</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Location</label><input type="text" class="region-location" value="${loc || ''}"></div>
+                        <div class="form-group"><label>Region Code</label><input type="text" class="region-code" value="${region.Region || ''}"></div>
+                        <div class="form-group"><label>Flag URL</label><input type="text" class="region-flag" value="${region.FlagURL || ''}"></div>
+                        <div class="form-group"><label>Phone Code</label><input type="text" class="region-phone" value="${region.PhoneCode || '+1'}"></div>
+                    </div>
+                    <div class="rates-container">
+                        ${regionRates.map(rate => `
+                            <div class="form-row rate-row" style="margin-bottom:0.5rem;">
+                                <div class="form-group"><label>Max Weight (kg)</label><input type="number" class="rate-maxweight" value="${rate.MaxWeight || ''}" step="0.01"></div>
+                                <div class="form-group"><label>Cost (ZAR)</label><input type="number" class="rate-cost" value="${rate.Cost || ''}" step="0.01"></div>
+                                <div class="form-group"><label>Time</label><input type="text" class="rate-time" value="${rate.Time || ''}"></div>
+                                <div class="form-group"><button class="btn-sm btn
