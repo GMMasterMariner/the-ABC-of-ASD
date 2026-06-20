@@ -17,9 +17,7 @@ jobs:
 
       - name: Fetch site data from Apps Script
         run: |
-          curl -s -L -X POST "${{ secrets.APPS_SCRIPT_URL }}" \
-            -d "action=getSiteData" \
-            -o site-data.json
+          curl -s -L "${{ secrets.APPS_SCRIPT_URL }}?action=getSiteData" -o site-data.json
           echo "File size: $(wc -c < site-data.json) bytes"
           head -c 200 site-data.json
 
