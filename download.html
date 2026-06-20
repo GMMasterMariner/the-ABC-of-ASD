@@ -24,10 +24,10 @@
       background: #f29b2a;
       color: white;
       font-weight: 700;
-      padding: 0.4rem 1rem;
+      padding: 0.4rem 1.2rem;
       border-radius: 20px;
-      font-size: 0.9rem;
-      margin: 0.5rem 0;
+      font-size: 1rem;
+      margin: 0.5rem 0 1rem 0;
     }
     .downloads-badge.low { background: #dc3c33; }
     .downloads-badge.none { background: #888; }
@@ -125,11 +125,10 @@
 
     <!-- Step 4: Download Complete -->
     <div class="os-selection" id="stepDownloadComplete" style="display:none;">
-      <h2>✅ Download Started</h2>
+      <h2>✅ Download Complete</h2>
       <div class="downloads-badge" id="downloadsBadgeComplete">0 downloads remaining</div>
-      <p>Your download should begin shortly. If it doesn't, click below.</p>
-      <button id="retryDownloadBtn">Download Again</button>
-      <p style="margin-top:1rem;">Need a different operating system?</p>
+      <p>Your file has been downloaded.</p>
+      <p style="margin-top:1rem;">Need to download for a different operating system?</p>
       <button class="btn-secondary" id="switchOSBtn">Choose Different OS</button>
       <div id="messageComplete"></div>
     </div>
@@ -160,8 +159,9 @@
         if (el) {
           if (id === sectionId) {
             el.style.display = 'block';
-            if (id === 'stepOS' || id === 'stepDownloadComplete') el.classList.add('visible');
+            if (['stepOS', 'stepDownloadComplete'].includes(id)) el.classList.add('visible');
             if (id === 'stepProgress') el.classList.add('visible');
+            if (id === 'stepLimitReached') el.classList.add('visible');
           } else {
             el.style.display = 'none';
             el.classList.remove('visible');
@@ -188,22 +188,17 @@
       msg.className = '';
 
       try {
+        // Check status WITHOUT recording a download
         const params = new URLSearchParams();
         params.append('action', 'getDownloadUrl');
         params.append('licenseKey', key);
+        params.append('record', 'false');
 
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
 
         currentLicenseKey = key;
         remainingDownloads = data.remainingDownloads || 0;
-
-        if (data.result === 'error' && data.message && data.message.indexOf('Download limit reached') !== -1) {
-          showSection('stepLimitReached');
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
-        }
 
         if (remainingDownloads <= 0) {
           showSection('stepLimitReached');
@@ -269,9 +264,9 @@
           remainingDownloads = data.remainingDownloads || 0;
 
           if (data.ready && data.downloadUrl) {
-            // Already built — trigger download immediately
+            // Already built — go straight to download
             lastDownloadUrl = data.downloadUrl;
-            triggerDownload(data.downloadUrl);
+            performDownload(data.downloadUrl);
           } else {
             // Build in progress
             showSection('stepProgress');
@@ -303,9 +298,11 @@
       btn.textContent = 'Checking...';
 
       try {
+        // Poll WITHOUT recording a download
         const params = new URLSearchParams();
         params.append('action', 'getDownloadUrl');
         params.append('licenseKey', currentLicenseKey);
+        params.append('record', 'false');
 
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
@@ -315,7 +312,7 @@
 
         if (data.result === 'success' && data.downloadUrl) {
           lastDownloadUrl = data.downloadUrl;
-          triggerDownload(data.downloadUrl);
+          performDownload(data.downloadUrl);
         } else {
           msg.className = 'info';
           msg.textContent = data.message || 'Still building. Check again shortly.';
@@ -329,9 +326,29 @@
       btn.textContent = 'Check if Ready';
     });
 
-    // ========== Trigger download and record it ==========
-    function triggerDownload(url) {
-      // Start the download
+    // ========== Perform download (counts as one use) ==========
+    async function performDownload(url) {
+      // Record the download server-side BEFORE triggering the save dialog
+      try {
+        const recParams = new URLSearchParams();
+        recParams.append('action', 'getDownloadUrl');
+        recParams.append('licenseKey', currentLicenseKey);
+        recParams.append('record', 'true');
+
+        const recRes = await fetch(API_URL, { method: 'POST', body: recParams });
+        const recData = await recRes.json();
+        remainingDownloads = recData.remainingDownloads || 0;
+
+        if (recData.result === 'error') {
+          // Limit reached or other error
+          showSection('stepLimitReached');
+          return;
+        }
+      } catch (e) {
+        // If record fails, still try to download but don't decrement
+      }
+
+      // Trigger the file save dialog
       const a = document.createElement('a');
       a.href = url;
       a.download = '';
@@ -340,52 +357,16 @@
       a.click();
       document.body.removeChild(a);
 
-      // Record the download
-      const recParams = new URLSearchParams();
-      recParams.append('action', 'recordDownload');
-      recParams.append('licenseKey', currentLicenseKey);
-      
-      fetch(API_URL, { method: 'POST', body: recParams })
-        .then(r => r.json())
-        .then(data => {
-          remainingDownloads = data.remainingDownloads || 0;
-          
-          if (remainingDownloads <= 0) {
-            showSection('stepLimitReached');
-          } else {
-            showSection('stepDownloadComplete');
-            updateBadge('downloadsBadgeComplete', remainingDownloads);
-          }
-        })
-        .catch(() => {
-          // Even if record fails, estimate remaining
-          remainingDownloads = Math.max(0, remainingDownloads - 1);
-          if (remainingDownloads <= 0) {
-            showSection('stepLimitReached');
-          } else {
-            showSection('stepDownloadComplete');
-            updateBadge('downloadsBadgeComplete', remainingDownloads);
-          }
-        });
-
-      // Show download complete section immediately
-      showSection('stepDownloadComplete');
-      updateBadge('downloadsBadgeComplete', Math.max(0, remainingDownloads - 1));
+      // Show appropriate next screen
+      if (remainingDownloads <= 0) {
+        showSection('stepLimitReached');
+      } else {
+        showSection('stepDownloadComplete');
+        updateBadge('downloadsBadgeComplete', remainingDownloads);
+      }
     }
 
-    // ========== STEP 4: Download Complete — Retry or Switch OS ==========
-    document.getElementById('retryDownloadBtn').addEventListener('click', () => {
-      if (lastDownloadUrl) {
-        const a = document.createElement('a');
-        a.href = lastDownloadUrl;
-        a.download = '';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    });
-
+    // ========== STEP 4: Switch OS ==========
     document.getElementById('switchOSBtn').addEventListener('click', () => {
       document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
       selectedOS = '';
