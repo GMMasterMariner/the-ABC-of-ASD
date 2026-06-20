@@ -6,34 +6,116 @@
   <title>Download – The ABC of ASD</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 420px; width: 90%; text-align: center; }
-    h2 { color: #194373; }
-    input { width: 100%; padding: 0.8rem; margin: 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; text-align: center; letter-spacing: 2px; }
+    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 480px; width: 90%; text-align: center; }
+    h2 { color: #194373; margin-bottom: 0.5rem; }
+    p { color: #555; margin-bottom: 1.5rem; }
+    input { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; text-align: center; letter-spacing: 2px; box-sizing: border-box; }
     button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; }
     button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
     #message { margin-top: 1rem; font-size: 0.9rem; }
     .error { color: #dc3c33; }
     .success { color: #2e7d32; }
-    .btn-secondary { background: #aaa; margin-top: 1rem; }
+    .info { color: #194373; }
+    .btn-secondary { background: #aaa; margin-top: 0.5rem; }
+    .btn-secondary:hover { background: #888; }
+
+    .os-selection { display: none; margin: 1.5rem 0; }
+    .os-selection.visible { display: block; }
+    .os-options { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .os-option {
+      flex: 1; min-width: 90px; max-width: 110px;
+      padding: 1rem 0.5rem; border: 2px solid #ddd; border-radius: 10px;
+      cursor: pointer; text-align: center; transition: all 0.2s;
+      background: #fafafa;
+    }
+    .os-option:hover { border-color: #194373; background: #f0f4f8; }
+    .os-option.selected { border-color: #194373; background: #e8f0f8; box-shadow: 0 0 0 3px rgba(25,67,115,0.2); }
+    .os-option .os-icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+    .os-option .os-name { font-size: 0.85rem; font-weight: 600; color: #333; }
+
+    .progress-container { display: none; margin: 1.5rem 0; }
+    .progress-container.visible { display: block; }
+    .progress-bar-bg { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 0.5rem 0 1rem 0; overflow: hidden; }
+    .progress-bar-fill { background: #194373; height: 100%; width: 0%; border-radius: 10px; animation: progress 2s ease-in-out infinite; }
+    @keyframes progress {
+      0% { width: 10%; }
+      50% { width: 70%; }
+      100% { width: 10%; }
+    }
+
+    .download-ready { display: none; margin: 1.5rem 0; }
+    .download-ready.visible { display: block; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Download Your Book</h2>
-    <p>Enter the license key from your email:</p>
-    <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
-    <button id="downloadBtn">Download</button>
-    <div id="message"></div>
+
+    <!-- Step 1: Enter License Key -->
+    <div id="stepLicense">
+      <p>Enter the license key from your email:</p>
+      <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
+      <button id="checkLicenseBtn">Continue</button>
+      <div id="message"></div>
+    </div>
+
+    <!-- Step 2: Choose OS -->
+    <div class="os-selection" id="stepOS">
+      <p>Choose your operating system:</p>
+      <div class="os-options">
+        <div class="os-option" data-os="Windows">
+          <span class="os-icon">🪟</span>
+          <span class="os-name">Windows</span>
+        </div>
+        <div class="os-option" data-os="macOS">
+          <span class="os-icon">🍎</span>
+          <span class="os-name">macOS</span>
+        </div>
+        <div class="os-option" data-os="Linux">
+          <span class="os-icon">🐧</span>
+          <span class="os-name">Linux</span>
+        </div>
+        <div class="os-option" data-os="Android">
+          <span class="os-icon">📱</span>
+          <span class="os-name">Android</span>
+        </div>
+      </div>
+      <button id="requestBuildBtn" disabled>Request Download</button>
+      <p id="remainingText" style="font-size:0.85rem;color:#888;margin-top:0.5rem;"></p>
+      <div id="messageOS"></div>
+    </div>
+
+    <!-- Step 3: Build in Progress -->
+    <div class="progress-container" id="stepProgress">
+      <p id="progressText">Your download is being prepared...</p>
+      <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
+      <p style="font-size:0.8rem;color:#888;">This may take a few minutes. You'll receive an email when it's ready.</p>
+      <button class="btn-secondary" id="checkReadyBtn">Check if Ready</button>
+      <div id="messageProgress"></div>
+    </div>
+
+    <!-- Step 4: Download Ready -->
+    <div class="download-ready" id="stepReady">
+      <p style="color:#2e7d32;font-weight:600;">✅ Your download is ready!</p>
+      <button id="downloadNowBtn">Download Now</button>
+      <p id="remainingTextReady" style="font-size:0.85rem;color:#888;margin-top:0.5rem;"></p>
+    </div>
   </div>
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbwj6LL4O16_EfTpoT_5-T0kQD6WiO5abNx9iIRNSisYu4zCKglcD_fO2yCqj0pvfWa1/exec';
 
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
+    let currentLicenseKey = '';
+    let selectedOS = '';
+    let remainingDownloads = 0;
+
+    // ========== STEP 1: Check License Key ==========
+    document.getElementById('checkLicenseBtn').addEventListener('click', async () => {
       const key = document.getElementById('licenseKey').value.trim();
       const msg = document.getElementById('message');
-      const btn = document.getElementById('downloadBtn');
-      
+      const btn = document.getElementById('checkLicenseBtn');
+
       if (!key) {
         msg.className = 'error';
         msg.textContent = 'Please enter your license key.';
@@ -43,55 +125,175 @@
       btn.disabled = true;
       btn.textContent = 'Checking...';
       msg.textContent = '';
-
-      const params = new URLSearchParams();
-      params.append('action', 'getDownloadUrl');
-      params.append('licenseKey', key);
+      msg.className = '';
 
       try {
+        const params = new URLSearchParams();
+        params.append('action', 'getDownloadUrl');
+        params.append('licenseKey', key);
+
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
-        
-        if (data.result === 'success' && data.downloadUrl) {
-          // Start download but keep page visible
-          const downloadLink = document.createElement('a');
-          downloadLink.href = data.downloadUrl;
-          downloadLink.download = '';
-          downloadLink.style.display = 'none';
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          
-          // Show success message with Close button
-          msg.className = 'success';
-          msg.innerHTML = 'Thank you for your purchase!<br>Check your download location and run the installer file.';
-          
-          // Replace the download button with a Close button
-          btn.style.display = 'none';
-          const closeBtn = document.createElement('button');
-          closeBtn.className = 'btn-secondary';
-          closeBtn.textContent = 'Close';
-          closeBtn.onclick = function() { window.close(); };
-          btn.parentElement.insertBefore(closeBtn, msg);
-          
-          // Optional: record the download server‑side
-          const recParams = new URLSearchParams();
-          recParams.append('action', 'recordDownload');
-          recParams.append('licenseKey', key);
-          fetch(API_URL, { method: 'POST', body: recParams });
+
+        if (data.result === 'error' && data.message && data.message.indexOf('Download limit reached') !== -1) {
+          msg.className = 'error';
+          msg.textContent = data.message;
+          btn.disabled = false;
+          btn.textContent = 'Continue';
+          return;
+        }
+
+        // Whether download is ready or not, move to OS selection
+        currentLicenseKey = key;
+        remainingDownloads = data.remainingDownloads || 0;
+
+        document.getElementById('stepLicense').style.display = 'none';
+        document.getElementById('stepOS').classList.add('visible');
+        document.getElementById('remainingText').textContent = 
+          remainingDownloads > 0 ? remainingDownloads + ' download(s) remaining' : '';
+
+        // If download was already ready, show it
+        if (data.result === 'success' && data.downloadUrl && data.ready !== false) {
+          showDownloadReady(data.downloadUrl, data.remainingDownloads || 0);
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Continue';
+      } catch (e) {
+        msg.className = 'error';
+        msg.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Continue';
+      }
+    });
+
+    // Allow Enter key on license input
+    document.getElementById('licenseKey').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('checkLicenseBtn').click();
+    });
+
+    // ========== STEP 2: OS Selection ==========
+    document.querySelectorAll('.os-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedOS = opt.dataset.os;
+        document.getElementById('requestBuildBtn').disabled = false;
+      });
+    });
+
+    document.getElementById('requestBuildBtn').addEventListener('click', async () => {
+      if (!selectedOS) return;
+
+      const msg = document.getElementById('messageOS');
+      const btn = document.getElementById('requestBuildBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Requesting...';
+      msg.textContent = '';
+      msg.className = '';
+
+      try {
+        const params = new URLSearchParams();
+        params.append('action', 'requestDownload');
+        params.append('licenseKey', currentLicenseKey);
+        params.append('os', selectedOS);
+
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+
+        if (data.result === 'success') {
+          if (data.ready) {
+            // Already built
+            showDownloadReady(data.downloadUrl, data.remainingDownloads);
+          } else {
+            // Build in progress
+            document.getElementById('stepOS').classList.remove('visible');
+            document.getElementById('stepProgress').classList.add('visible');
+            document.getElementById('progressText').textContent = 'Your ' + selectedOS + ' download is being prepared...';
+          }
         } else {
           msg.className = 'error';
-          msg.textContent = data.message || 'Invalid license key or download not ready.';
+          msg.textContent = data.message || 'Request failed.';
           btn.disabled = false;
-          btn.textContent = 'Download';
+          btn.textContent = 'Request Download';
         }
       } catch (e) {
         msg.className = 'error';
         msg.textContent = 'Network error. Please try again.';
         btn.disabled = false;
-        btn.textContent = 'Download';
+        btn.textContent = 'Request Download';
       }
     });
+
+    // ========== STEP 3: Poll for readiness ==========
+    document.getElementById('checkReadyBtn').addEventListener('click', async () => {
+      const msg = document.getElementById('messageProgress');
+      const btn = document.getElementById('checkReadyBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      msg.textContent = '';
+      msg.className = '';
+
+      try {
+        const params = new URLSearchParams();
+        params.append('action', 'getDownloadUrl');
+        params.append('licenseKey', currentLicenseKey);
+
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+
+        if (data.result === 'success' && data.downloadUrl) {
+          showDownloadReady(data.downloadUrl, data.remainingDownloads || 0);
+        } else {
+          msg.className = 'info';
+          msg.textContent = data.message || 'Not ready yet. Please check again shortly.';
+        }
+      } catch (e) {
+        msg.className = 'error';
+        msg.textContent = 'Network error.';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Check if Ready';
+    });
+
+    // ========== STEP 4: Download Ready ==========
+    function showDownloadReady(url, remaining) {
+      document.getElementById('stepOS').classList.remove('visible');
+      document.getElementById('stepProgress').classList.remove('visible');
+      document.getElementById('stepReady').classList.add('visible');
+      document.getElementById('remainingTextReady').textContent = 
+        remaining + ' download(s) remaining';
+      
+      document.getElementById('downloadNowBtn').onclick = function() {
+        // Trigger download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Record the download
+        const recParams = new URLSearchParams();
+        recParams.append('action', 'recordDownload');
+        recParams.append('licenseKey', currentLicenseKey);
+        fetch(API_URL, { method: 'POST', body: recParams });
+
+        // Update remaining count
+        remaining--;
+        document.getElementById('remainingTextReady').textContent = 
+          remaining + ' download(s) remaining';
+        
+        if (remaining <= 0) {
+          document.getElementById('downloadNowBtn').disabled = true;
+          document.getElementById('downloadNowBtn').textContent = 'No Downloads Remaining';
+        }
+      };
+    }
   </script>
 </body>
 </html>
