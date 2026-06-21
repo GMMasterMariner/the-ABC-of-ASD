@@ -46,6 +46,20 @@
     .os-option .os-icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
     .os-option .os-name { font-size: 0.85rem; font-weight: 600; color: #333; }
 
+    .os-option.disabled-option {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+      position: relative;
+    }
+    .coming-soon {
+      display: block;
+      font-size: 0.6rem;
+      color: #999;
+      margin-top: 0.2rem;
+      font-style: italic;
+    }
+
     .progress-container { display: none; margin: 1.5rem 0; }
     .progress-container.visible { display: block; }
     .progress-bar-bg { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 0.5rem 0 1rem 0; overflow: hidden; }
@@ -62,20 +76,6 @@
 
     .btn-secondary { background: #aaa; margin-top: 0.5rem; }
     .btn-secondary:hover { background: #888; }
-    
-    .os-option.disabled-option {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
-      position: relative;
-    }
-    .coming-soon {
-      display: block;
-      font-size: 0.6rem;
-      color: #999;
-      margin-top: 0.2rem;
-      font-style: italic;
-    }
   </style>
 </head>
 <body>
@@ -84,7 +84,7 @@
 
     <!-- Step 1: Enter License Key -->
     <div id="stepLicense">
-      <h2>Download Your eBook</h2>
+      <h2>Download Your Book</h2>
       <p>Enter the license key from your email:</p>
       <input type="text" id="licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
       <button id="checkLicenseBtn">Continue</button>
@@ -101,7 +101,7 @@
 
     <!-- Step 2: Choose OS -->
     <div class="os-selection" id="stepOS">
-      <h2>Download Your eBook</h2>
+      <h2>Download Your Book</h2>
       <div class="downloads-badge" id="downloadsBadgeOS">0 downloads remaining</div>
       <p>Choose your operating system:</p>
       <div class="os-options">
@@ -109,14 +109,14 @@
           <span class="os-icon">🪟</span>
           <span class="os-name">Windows</span>
         </div>
+        <div class="os-option" data-os="Linux">
+          <span class="os-icon">🐧</span>
+          <span class="os-name">Linux</span>
+        </div>
         <div class="os-option disabled-option">
           <span class="os-icon">🍎</span>
           <span class="os-name">macOS</span>
           <span class="coming-soon">Coming Soon</span>
-        </div>
-        <div class="os-option" data-os="Linux">
-          <span class="os-icon">🐧</span>
-          <span class="os-name">Linux</span>
         </div>
         <div class="os-option disabled-option">
           <span class="os-icon">📱</span>
@@ -158,7 +158,6 @@
     let remainingDownloads = 0;
     let lastDownloadUrl = '';
 
-    // ========== Helper: Update downloads badge ==========
     function updateBadge(badgeId, remaining) {
       const badge = document.getElementById(badgeId);
       if (!badge) return;
@@ -168,7 +167,6 @@
       else if (remaining <= 2) badge.classList.add('low');
     }
 
-    // ========== Helper: Show a section, hide others ==========
     function showSection(sectionId) {
       ['stepLicense', 'stepLimitReached', 'stepOS', 'stepProgress', 'stepDownloadComplete'].forEach(id => {
         const el = document.getElementById(id);
@@ -204,7 +202,6 @@
       msg.className = '';
 
       try {
-        // Check status WITHOUT recording a download
         const params = new URLSearchParams();
         params.append('action', 'getDownloadUrl');
         params.append('licenseKey', key);
@@ -223,7 +220,6 @@
           return;
         }
 
-        // Move to OS selection
         showSection('stepOS');
         updateBadge('downloadsBadgeOS', remainingDownloads);
         document.getElementById('requestBuildBtn').disabled = true;
@@ -247,7 +243,7 @@
     });
 
     // ========== STEP 2: OS Selection ==========
-    document.querySelectorAll('.os-option').forEach(opt => {
+    document.querySelectorAll('.os-option:not(.disabled-option)').forEach(opt => {
       opt.addEventListener('click', () => {
         document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
@@ -280,11 +276,9 @@
           remainingDownloads = data.remainingDownloads || 0;
 
           if (data.ready && data.downloadUrl) {
-            // Already built — go straight to download
             lastDownloadUrl = data.downloadUrl;
             performDownload(data.downloadUrl);
           } else {
-            // Build in progress
             showSection('stepProgress');
             updateBadge('downloadsBadgeProgress', remainingDownloads);
             document.getElementById('progressText').textContent = 'Your ' + selectedOS + ' installer is being built...';
@@ -314,7 +308,6 @@
       btn.textContent = 'Checking...';
 
       try {
-        // Poll WITHOUT recording a download
         const params = new URLSearchParams();
         params.append('action', 'getDownloadUrl');
         params.append('licenseKey', currentLicenseKey);
@@ -344,7 +337,6 @@
 
     // ========== Perform download (counts as one use) ==========
     async function performDownload(url) {
-      // Record the download server-side BEFORE triggering the save dialog
       try {
         const recParams = new URLSearchParams();
         recParams.append('action', 'getDownloadUrl');
@@ -356,26 +348,44 @@
         remainingDownloads = recData.remainingDownloads || 0;
 
         if (recData.result === 'error') {
-          // Limit reached or other error
           showSection('stepLimitReached');
           return;
         }
       } catch (e) {
-        // If record fails, still try to download but don't decrement
+        // Continue even if record fails
       }
 
-      // Trigger the file save dialog
-      const a = document.createElement('a');
-      a.href = url;
-      if (selectedOS === 'Linux') {
-        a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
-      } else {
-        a.download = 'the-ABC-of-ASD-Installer.exe';
+      // Force download by fetching as blob then creating a local URL
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        if (selectedOS === 'Linux') {
+          a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
+        } else {
+          a.download = 'the-ABC-of-ASD-Installer.exe';
+        }
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (e) {
+        // Fallback: direct link
+        const a = document.createElement('a');
+        a.href = url;
+        if (selectedOS === 'Linux') {
+          a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
+        } else {
+          a.download = 'the-ABC-of-ASD-Installer.exe';
+        }
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
 
       // Show appropriate next screen
       if (remainingDownloads <= 0) {
