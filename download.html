@@ -367,7 +367,11 @@
       // Trigger the file save dialog
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Install The ABC of ASD.exe';
+      if (selectedOS === 'Linux') {
+        a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
+      } else {
+        a.download = 'the-ABC-of-ASD-Installer.exe';
+      }
       a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
