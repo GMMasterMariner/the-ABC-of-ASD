@@ -6,7 +6,7 @@
   <title>Download – The ABC of ASD</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 480px; width: 90%; text-align: center; }
+    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 520px; width: 90%; text-align: center; }
     .logo { max-width: 180px; margin-bottom: 0.8rem; }
     h2 { color: #194373; margin-bottom: 0.5rem; }
     p { color: #555; margin-bottom: 1rem; }
@@ -74,6 +74,34 @@
     .limit-reached.visible { display: block; }
     .limit-reached .limit-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
 
+    .terminal-instructions { display: none; margin: 1.5rem 0; text-align: left; }
+    .terminal-instructions.visible { display: block; }
+    .terminal-box {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin: 8px 0;
+      word-break: break-all;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      width: auto;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.3); }
+
     .btn-secondary { background: #aaa; margin-top: 0.5rem; }
     .btn-secondary:hover { background: #888; }
   </style>
@@ -139,7 +167,33 @@
       <div id="messageProgress"></div>
     </div>
 
-    <!-- Step 4: Download Complete -->
+    <!-- Step 4: Linux Terminal Instructions -->
+    <div class="terminal-instructions" id="stepLinuxInstructions">
+      <h2>🐧 Linux Download</h2>
+      <div class="downloads-badge" id="downloadsBadgeLinux">0 downloads remaining</div>
+      <p>Run these commands in your terminal:</p>
+      <p style="font-weight:600;margin:5px 0;">1. Download the installer:</p>
+      <div class="terminal-box" id="wgetBox">
+        <button class="copy-btn" onclick="copyCommand('wgetBox')">Copy</button>
+        <span id="wgetCommand">wget -O the-ABC-of-ASD-Installer.sh "URL"</span>
+      </div>
+      <p style="font-weight:600;margin:15px 0 5px 0;">2. Make it executable:</p>
+      <div class="terminal-box">
+        <button class="copy-btn" onclick="copyCommand('chmodBox')">Copy</button>
+        <span id="chmodCommand">chmod +x the-ABC-of-ASD-Installer.sh</span>
+      </div>
+      <p style="font-weight:600;margin:15px 0 5px 0;">3. Run the installer:</p>
+      <div class="terminal-box">
+        <button class="copy-btn" onclick="copyCommand('runBox')">Copy</button>
+        <span id="runCommand">bash the-ABC-of-ASD-Installer.sh</span>
+      </div>
+      <p style="font-size:0.8rem;color:#888;margin-top:1rem;">The installer will ask for your license key and install silently.</p>
+      <p style="margin-top:1rem;">Need a different operating system?</p>
+      <button class="btn-secondary" id="switchOSFromLinuxBtn">Choose Different OS</button>
+      <div id="messageLinux"></div>
+    </div>
+
+    <!-- Step 5: Windows Download Complete -->
     <div class="os-selection" id="stepDownloadComplete" style="display:none;">
       <h2>✅ Download Complete</h2>
       <div class="downloads-badge" id="downloadsBadgeComplete">0 downloads remaining</div>
@@ -168,19 +222,30 @@
     }
 
     function showSection(sectionId) {
-      ['stepLicense', 'stepLimitReached', 'stepOS', 'stepProgress', 'stepDownloadComplete'].forEach(id => {
+      ['stepLicense', 'stepLimitReached', 'stepOS', 'stepProgress', 'stepLinuxInstructions', 'stepDownloadComplete'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           if (id === sectionId) {
             el.style.display = 'block';
             if (['stepOS', 'stepDownloadComplete'].includes(id)) el.classList.add('visible');
-            if (id === 'stepProgress') el.classList.add('visible');
+            if (['stepProgress', 'stepLinuxInstructions'].includes(id)) el.classList.add('visible');
             if (id === 'stepLimitReached') el.classList.add('visible');
           } else {
             el.style.display = 'none';
             el.classList.remove('visible');
           }
         }
+      });
+    }
+
+    // ========== Copy command helper ==========
+    function copyCommand(boxId) {
+      const box = document.getElementById(boxId);
+      const text = box.querySelector('span').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = box.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
       });
     }
 
@@ -277,7 +342,11 @@
 
           if (data.ready && data.downloadUrl) {
             lastDownloadUrl = data.downloadUrl;
-            performDownload(data.downloadUrl);
+            if (selectedOS === 'Linux') {
+              showLinuxInstructions(data.downloadUrl);
+            } else {
+              performWindowsDownload(data.downloadUrl);
+            }
           } else {
             showSection('stepProgress');
             updateBadge('downloadsBadgeProgress', remainingDownloads);
@@ -321,7 +390,11 @@
 
         if (data.result === 'success' && data.downloadUrl) {
           lastDownloadUrl = data.downloadUrl;
-          performDownload(data.downloadUrl);
+          if (selectedOS === 'Linux') {
+            showLinuxInstructions(data.downloadUrl);
+          } else {
+            performWindowsDownload(data.downloadUrl);
+          }
         } else {
           msg.className = 'info';
           msg.textContent = data.message || 'Still building. Check again shortly.';
@@ -335,8 +408,52 @@
       btn.textContent = 'Check if Ready';
     });
 
-    // ========== Perform download (counts as one use) ==========
-    async function performDownload(url) {
+    // ========== Linux: Show terminal instructions ==========
+    function showLinuxInstructions(url) {
+      document.getElementById('wgetCommand').textContent = 'wget -O the-ABC-of-ASD-Installer.sh "' + url + '"';
+      showSection('stepLinuxInstructions');
+      updateBadge('downloadsBadgeLinux', remainingDownloads);
+      
+      // Record the download
+      recordDownload();
+    }
+
+    // ========== Windows: Trigger download ==========
+    async function performWindowsDownload(url) {
+      await recordDownload();
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'the-ABC-of-ASD-Installer.exe';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (e) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'the-ABC-of-ASD-Installer.exe';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      if (remainingDownloads <= 0) {
+        showSection('stepLimitReached');
+      } else {
+        showSection('stepDownloadComplete');
+        updateBadge('downloadsBadgeComplete', remainingDownloads);
+      }
+    }
+
+    // ========== Record download ==========
+    async function recordDownload() {
       try {
         const recParams = new URLSearchParams();
         recParams.append('action', 'getDownloadUrl');
@@ -346,58 +463,16 @@
         const recRes = await fetch(API_URL, { method: 'POST', body: recParams });
         const recData = await recRes.json();
         remainingDownloads = recData.remainingDownloads || 0;
-
-        if (recData.result === 'error') {
-          showSection('stepLimitReached');
-          return;
-        }
       } catch (e) {
-        // Continue even if record fails
-      }
-
-      // Force download by fetching as blob then creating a local URL
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        if (selectedOS === 'Linux') {
-          a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
-        } else {
-          a.download = 'the-ABC-of-ASD-Installer.exe';
-        }
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (e) {
-        // Fallback: direct link
-        const a = document.createElement('a');
-        a.href = url;
-        if (selectedOS === 'Linux') {
-          a.download = 'the-ABC-of-ASD-Linux-Installer.sh';
-        } else {
-          a.download = 'the-ABC-of-ASD-Installer.exe';
-        }
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-
-      // Show appropriate next screen
-      if (remainingDownloads <= 0) {
-        showSection('stepLimitReached');
-      } else {
-        showSection('stepDownloadComplete');
-        updateBadge('downloadsBadgeComplete', remainingDownloads);
+        // Continue even if recording fails
       }
     }
 
-    // ========== STEP 4: Switch OS ==========
-    document.getElementById('switchOSBtn').addEventListener('click', () => {
+    // ========== Switch OS buttons ==========
+    document.getElementById('switchOSBtn').addEventListener('click', goBackToOSSelection);
+    document.getElementById('switchOSFromLinuxBtn').addEventListener('click', goBackToOSSelection);
+
+    function goBackToOSSelection() {
       document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
       selectedOS = '';
       document.getElementById('requestBuildBtn').disabled = true;
@@ -405,7 +480,7 @@
       document.getElementById('messageOS').className = '';
       showSection('stepOS');
       updateBadge('downloadsBadgeOS', remainingDownloads);
-    });
+    }
   </script>
 </body>
 </html>
