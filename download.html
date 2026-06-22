@@ -434,3 +434,27 @@
     async function recordDownload() {
       try {
         const recParams = new URLSearchParams();
+        recParams.append('action', 'getDownloadUrl');
+        recParams.append('licenseKey', currentLicenseKey);
+        recParams.append('record', 'true');
+
+        const recRes = await fetch(API_URL, { method: 'POST', body: recParams });
+        const recData = await recRes.json();
+        remainingDownloads = recData.remainingDownloads || 0;
+      } catch (e) {}
+    }
+
+    // ========== Switch OS ==========
+    document.getElementById('switchOSBtn').addEventListener('click', () => {
+      document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
+      selectedOS = '';
+      document.getElementById('requestBuildBtn').disabled = true;
+      document.getElementById('messageOS').textContent = '';
+      document.getElementById('messageOS').className = '';
+      document.getElementById('wineNote').classList.remove('visible');
+      showSection('stepOS');
+      updateBadge('downloadsBadgeOS', remainingDownloads);
+    });
+  </script>
+</body>
+</html>
