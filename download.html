@@ -182,6 +182,31 @@
     let remainingDownloads = 0;
     let lastDownloadUrl = '';
 
+    // ========== AUTO-FILL FROM URL PARAMETERS ==========
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const license = params.get('license');
+      const email = params.get('email');
+      const phone = params.get('phone');
+      
+      if (license) {
+        document.getElementById('licenseKey').value = license;
+      }
+      if (email) {
+        document.getElementById('userEmail').value = email;
+      }
+      if (phone) {
+        document.getElementById('userPhone').value = phone;
+      }
+      
+      // If all three are filled, auto-validate after a short delay
+      if (license && email && phone) {
+        setTimeout(function() {
+          document.getElementById('validateBtn').click();
+        }, 800);
+      }
+    })();
+
     function updateBadge(badgeId, remaining) {
       const badge = document.getElementById(badgeId);
       if (!badge) return;
@@ -248,8 +273,17 @@
         currentPhone = phone;
         remainingDownloads = data.remainingDownloads || 0;
 
-        if (data.result === 'error' && data.message && data.message.indexOf('Download limit') !== -1) {
-          showSection('stepLimitReached');
+        // Check for specific error messages
+        if (data.result === 'error') {
+          if (data.message && data.message.indexOf('download') !== -1 && data.message.indexOf('limit') !== -1) {
+            showSection('stepLimitReached');
+            btn.disabled = false;
+            btn.textContent = 'Continue';
+            return;
+          }
+          // For other errors (phone/email mismatch)
+          msg.className = 'message error';
+          msg.textContent = data.message || 'Validation failed. Please check your details.';
           btn.disabled = false;
           btn.textContent = 'Continue';
           return;
@@ -262,6 +296,43 @@
           return;
         }
 
+        // If we need OS selection
+        if (data.needsOS) {
+          showSection('stepOS');
+          updateBadge('downloadsBadgeOS', remainingDownloads);
+          document.getElementById('confirmOSBtn').disabled = true;
+          document.querySelectorAll('.os-option:not(.disabled-option)').forEach(o => o.classList.remove('selected'));
+          selectedOS = '';
+          document.getElementById('messageOS').textContent = '';
+          document.getElementById('messageOS').className = 'message';
+          document.getElementById('wineNote').classList.remove('visible');
+          btn.disabled = false;
+          btn.textContent = 'Continue';
+          return;
+        }
+
+        // If build is in progress
+        if (!data.ready) {
+          showSection('stepProgress');
+          updateBadge('downloadsBadgeProgress', remainingDownloads);
+          document.getElementById('progressText').textContent = data.message || 'Your installer is being prepared...';
+          document.getElementById('messageProgress').textContent = '';
+          document.getElementById('messageProgress').className = 'message';
+          btn.disabled = false;
+          btn.textContent = 'Continue';
+          return;
+        }
+
+        // If download is ready
+        if (data.ready && data.downloadUrl) {
+          lastDownloadUrl = data.downloadUrl;
+          performDownload(data.downloadUrl);
+          btn.disabled = false;
+          btn.textContent = 'Continue';
+          return;
+        }
+
+        // If no URL and no OS selected, show OS selection
         showSection('stepOS');
         updateBadge('downloadsBadgeOS', remainingDownloads);
         document.getElementById('confirmOSBtn').disabled = true;
