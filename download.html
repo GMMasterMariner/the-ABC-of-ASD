@@ -173,7 +173,7 @@
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxgDDkaf625TF2pisHr_UEaTgKFilch9P2vwiBDfyFq8KFs4N8USe7g4xgfx79w-v3qyQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
     let currentLicenseKey = '';
     let currentEmail = '';
@@ -191,12 +191,15 @@
       
       if (license) {
         document.getElementById('licenseKey').value = license;
+        currentLicenseKey = license;
       }
       if (email) {
         document.getElementById('userEmail').value = email;
+        currentEmail = email;
       }
       if (phone) {
         document.getElementById('userPhone').value = phone;
+        currentPhone = phone;
       }
       
       // If all three are filled, auto-validate after a short delay
@@ -267,6 +270,8 @@
 
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
+
+        console.log('validateBtn response:', data);
 
         currentLicenseKey = key;
         currentEmail = email;
@@ -345,6 +350,7 @@
         btn.disabled = false;
         btn.textContent = 'Continue';
       } catch (e) {
+        console.error('Validate error:', e);
         msg.className = 'message error';
         msg.textContent = 'Network error. Please try again.';
         btn.disabled = false;
@@ -419,6 +425,8 @@
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
 
+        console.log('requestDownload response:', data);
+
         if (data.result === 'success') {
           remainingDownloads = data.remainingDownloads || 0;
 
@@ -439,6 +447,7 @@
           btn.textContent = 'Yes, Build My Installer';
         }
       } catch (e) {
+        console.error('Build error:', e);
         msg.className = 'message error';
         msg.textContent = 'Network error.';
         btn.disabled = false;
@@ -465,6 +474,8 @@
         const res = await fetch(API_URL, { method: 'POST', body: params });
         const data = await res.json();
 
+        console.log('checkReadyBtn response:', data);
+
         remainingDownloads = data.remainingDownloads || 0;
         updateBadge('downloadsBadgeProgress', remainingDownloads);
 
@@ -473,9 +484,10 @@
           performDownload(data.downloadUrl);
         } else {
           msg.className = 'message info';
-          msg.textContent = data.message || 'Still building. Check again shortly.';
+          msg.textContent = 'Still building. Check again shortly.';
         }
       } catch (e) {
+        console.error('Check ready error:', e);
         msg.className = 'message error';
         msg.textContent = 'Network error.';
       }
@@ -486,10 +498,20 @@
 
     // ========== Perform download ==========
     async function performDownload(url) {
+      console.log('performDownload called with URL:', url);
+      
+      if (!url || url.trim() === '') {
+        console.error('No URL provided to performDownload');
+        return;
+      }
+
       await recordDownload();
 
       try {
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Download failed: ' + response.status);
+        }
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -501,6 +523,8 @@
         document.body.removeChild(a);
         window.URL.revokeObjectURL(blobUrl);
       } catch (e) {
+        console.error('Download error:', e);
+        // Fallback: open the URL directly
         const a = document.createElement('a');
         a.href = url;
         a.download = 'the-ABC-of-ASD-Installer.exe';
@@ -540,8 +564,11 @@
 
         const recRes = await fetch(API_URL, { method: 'POST', body: recParams });
         const recData = await recRes.json();
+        console.log('recordDownload response:', recData);
         remainingDownloads = recData.remainingDownloads || 0;
-      } catch (e) {}
+      } catch (e) {
+        console.error('Record download error:', e);
+      }
     }
 
     // ========== Switch OS ==========
