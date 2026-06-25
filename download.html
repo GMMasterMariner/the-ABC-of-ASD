@@ -13,7 +13,7 @@
     .greeting { font-size: 1.1rem; color: #194373; font-weight: 600; margin-bottom: 1.5rem; }
     input { width: 100%; padding: 0.8rem; margin: 0.4rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
     input.license-input { text-align: center; letter-spacing: 2px; text-transform: uppercase; }
-    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
+    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; transition: opacity 0.2s; }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
     .message { margin-top: 1rem; font-size: 0.9rem; }
@@ -40,6 +40,10 @@
     }
     .divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
     .note { font-size: 0.85rem; color: #888; background: #f8f8f8; padding: 0.8rem; border-radius: 6px; margin-top: 1rem; }
+    .input-label { text-align: left; font-weight: 600; font-size: 0.85rem; color: #555; }
+    .btn-secondary { background: #aaa; }
+    .btn-secondary:hover { background: #888; }
+    @keyframes pulse-text { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
   </style>
 </head>
 <body>
@@ -51,7 +55,7 @@
   <div class="step-section visible" id="stepValidate">
     <h2>Download Your Book</h2>
     <p>Enter your license key to get started.</p>
-    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;">License Key</div>
+    <div class="input-label">License Key</div>
     <input type="text" id="licenseKey" class="license-input" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
     <button id="validateBtn">Continue</button>
     <div class="message" id="messageValidate"></div>
@@ -62,9 +66,9 @@
     <h2>Set Your Password</h2>
     <div class="greeting" id="greetingMessage"></div>
     <p>Create a password to protect your PDF. You'll need this password every time you open the book.</p>
-    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;">Password</div>
+    <div class="input-label">Password</div>
     <input type="password" id="password" placeholder="Create a password" autocomplete="new-password">
-    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;margin-top:0.5rem;">Confirm Password</div>
+    <div class="input-label" style="margin-top:0.5rem;">Confirm Password</div>
     <input type="password" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password">
     <div class="password-match" id="passwordMatch"></div>
     <div class="password-requirements">
@@ -87,7 +91,10 @@
     <h2>Generating Your Book</h2>
     <p>Your personalized, watermarked book is being prepared...</p>
     <div class="badge">⏳ Please wait</div>
-    <p style="font-size:0.85rem;color:#888;">This takes about 1-2 minutes. You'll receive an email when ready.</p>
+    <p style="font-size:0.85rem;color:#888;margin-top:0.5rem;">
+      This can take a few minutes. You can stay on this page or close it – 
+      you'll receive an email when your book is ready.
+    </p>
     <button id="checkReadyBtn" class="btn-secondary" style="background:#aaa;">Check if Ready</button>
     <div class="message" id="messageProcessing"></div>
   </div>
@@ -110,6 +117,9 @@
 </div>
 
 <script>
+  // ============================================================
+  // UPDATE THIS URL WITH YOUR ACTUAL APPS SCRIPT URL
+  // ============================================================
   const API_URL = 'https://script.google.com/macros/s/AKfycbxgDDkaf625TF2pisHr_UEaTgKFilch9P2vwiBDfyFq8KFs4N8USe7g4xgfx79w-v3qyQ/exec';
 
   let currentLicenseKey = '';
@@ -129,12 +139,7 @@
       currentLicenseKey = license;
     }
     
-    // Auto-click validate if license is present
-    if (license) {
-      setTimeout(function() {
-        document.getElementById('validateBtn').click();
-      }, 500);
-    }
+    // DO NOT auto-click. User must click the button themselves.
   })();
 
   function showSection(sectionId) {
@@ -173,13 +178,11 @@
         currentLicenseKey = key;
         currentOrderDetails = data;
         
-        // Show password step with greeting
         document.getElementById('greetingMessage').textContent = 'Welcome back, ' + data.name + '!';
         showSection('stepPassword');
         document.getElementById('messagePassword').textContent = '';
         document.getElementById('messagePassword').className = 'message';
         
-        // Check if password already exists (re-download)
         if (data.hasPassword) {
           document.getElementById('messagePassword').className = 'message info';
           document.getElementById('messagePassword').textContent = '✅ You already have a password set. Enter it again to generate a new download link, or use your existing link.';
@@ -194,6 +197,7 @@
         btn.textContent = 'Continue';
       }
     } catch (e) {
+      console.error('Validate error:', e);
       msg.className = 'message error';
       msg.textContent = 'Network error. Please try again.';
       btn.disabled = false;
@@ -210,15 +214,21 @@
     const confirm = document.getElementById('confirmPassword').value;
     const matchEl = document.getElementById('passwordMatch');
     
+    const isValidLength = pwd.length >= 4;
+    const doPasswordsMatch = pwd === confirm && pwd.length > 0;
+    
     if (!pwd && !confirm) {
       matchEl.textContent = '';
       matchEl.className = 'password-match';
       return;
     }
     
-    if (pwd && confirm && pwd === confirm) {
-      matchEl.textContent = '✅ Passwords match';
+    if (isValidLength && doPasswordsMatch) {
+      matchEl.textContent = '✅ Passwords match and meet requirements';
       matchEl.className = 'password-match match';
+    } else if (pwd.length > 0 && pwd.length < 4) {
+      matchEl.textContent = '❌ Password must be at least 4 characters';
+      matchEl.className = 'password-match nomatch';
     } else if (pwd && confirm && pwd !== confirm) {
       matchEl.textContent = '❌ Passwords do not match';
       matchEl.className = 'password-match nomatch';
@@ -247,7 +257,8 @@
     }
 
     btn.disabled = true;
-    btn.textContent = 'Setting password...';
+    btn.textContent = '⏳ Processing...';
+    btn.style.animation = 'pulse-text 1.5s infinite';
     msg.textContent = '';
     msg.className = 'message';
 
@@ -267,19 +278,24 @@
         document.getElementById('checkReadyBtn').disabled = false;
         document.getElementById('checkReadyBtn').textContent = 'Check if Ready';
         
-        // Start checking automatically
-        setTimeout(checkReady, 3000);
+        // Auto-check after 5, 15, and 30 seconds
+        setTimeout(checkReady, 5000);
+        setTimeout(checkReady, 15000);
+        setTimeout(checkReady, 30000);
       } else {
         msg.className = 'message error';
         msg.textContent = data.message || 'Failed to set password.';
         btn.disabled = false;
         btn.textContent = 'Set Password & Generate Book';
+        btn.style.animation = 'none';
       }
     } catch (e) {
+      console.error('Set password error:', e);
       msg.className = 'message error';
       msg.textContent = 'Network error.';
       btn.disabled = false;
       btn.textContent = 'Set Password & Generate Book';
+      btn.style.animation = 'none';
     }
   });
 
@@ -304,8 +320,6 @@
       const data = await res.json();
 
       if (data.result === 'success' && data.hasPassword) {
-        // Check if there's a download URL in the sheet
-        // We need to check the DownloadURL column
         const checkParams = new URLSearchParams();
         checkParams.append('action', 'getDownloadUrl');
         checkParams.append('licenseKey', currentLicenseKey);
@@ -319,6 +333,11 @@
           showSection('stepComplete');
           document.getElementById('messageComplete').textContent = '';
           document.getElementById('messageComplete').className = 'message';
+          
+          // Auto-download after 1 second
+          setTimeout(() => {
+            document.getElementById('downloadBtn').click();
+          }, 1000);
           return;
         }
       }
@@ -328,6 +347,7 @@
       btn.disabled = false;
       btn.textContent = 'Check if Ready';
     } catch (e) {
+      console.error('Check ready error:', e);
       msg.className = 'message error';
       msg.textContent = 'Network error.';
       btn.disabled = false;
@@ -338,12 +358,7 @@
   // ========== STEP 4: Download ==========
   document.getElementById('downloadBtn').addEventListener('click', function() {
     if (downloadUrl) {
-      // Get the password for the download
-      const password = document.getElementById('password').value;
-      
-      // Open the download URL
       window.open(downloadUrl, '_blank');
-      
       document.getElementById('messageComplete').className = 'message success';
       document.getElementById('messageComplete').textContent = '✅ Download started!';
     } else {
