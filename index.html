@@ -2071,23 +2071,28 @@
     
         function updateAddressRequired() {
             const isPhysical = selectedProduct && selectedProduct.Type === 'Physical';
-            const addressFields = [
-                { input: document.getElementById('addressLine1'), star: document.querySelector('#addressLine1 + .required-star') },
-                { input: document.getElementById('addressCity'), star: document.querySelector('#addressCity + .required-star') },
-                { input: document.getElementById('addressPostcode'), star: document.querySelector('#addressPostcode + .required-star') }
-            ];
-            addressFields.forEach(f => {
-                if (!f.input) return;
-                if (isPhysical) {
-                    f.input.setAttribute('required', '');
-                    if (f.star) f.star.classList.remove('hidden');
-                } else {
-                    f.input.removeAttribute('required');
-                    if (f.star) f.star.classList.add('hidden');
-                }
-            });
-            if (document.getElementById('customerDetails').style.display !== 'none') {
-                document.getElementById('shippingAddressSection').style.display = 'block';
+            
+            // Find all required star indicators in the address section
+            const addressStars = document.querySelectorAll('#shippingAddressSection .required-star');
+            const addressInputs = {
+                line1: document.getElementById('addressLine1'),
+                city: document.getElementById('addressCity'),
+                postcode: document.getElementById('addressPostcode')
+            };
+            
+            // Show/hide asterisks and set required attribute
+            if (isPhysical) {
+                // Physical: show asterisks and mark as required
+                addressStars.forEach(star => star.style.display = 'block');
+                if (addressInputs.line1) addressInputs.line1.setAttribute('required', '');
+                if (addressInputs.city) addressInputs.city.setAttribute('required', '');
+                if (addressInputs.postcode) addressInputs.postcode.setAttribute('required', '');
+            } else {
+                // Digital: hide asterisks and remove required
+                addressStars.forEach(star => star.style.display = 'none');
+                if (addressInputs.line1) addressInputs.line1.removeAttribute('required');
+                if (addressInputs.city) addressInputs.city.removeAttribute('required');
+                if (addressInputs.postcode) addressInputs.postcode.removeAttribute('required');
             }
         }
     
