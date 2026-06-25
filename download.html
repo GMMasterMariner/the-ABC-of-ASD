@@ -5,583 +5,363 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Download – The ABC of ASD</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 520px; width: 90%; text-align: center; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; }
+    .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 520px; width: 100%; text-align: center; }
     .logo { max-width: 180px; margin-bottom: 0.8rem; }
     h2 { color: #194373; margin-bottom: 0.5rem; }
     p { color: #555; margin-bottom: 0.8rem; }
+    .greeting { font-size: 1.1rem; color: #194373; font-weight: 600; margin-bottom: 1.5rem; }
     input { width: 100%; padding: 0.8rem; margin: 0.4rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
-    input.license-input { text-align: center; letter-spacing: 2px; }
-    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; }
+    input.license-input { text-align: center; letter-spacing: 2px; text-transform: uppercase; }
+    button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
     .message { margin-top: 1rem; font-size: 0.9rem; }
     .error { color: #dc3c33; }
     .success { color: #2e7d32; }
     .info { color: #194373; }
-
-    .downloads-badge {
+    .step-section { display: none; margin: 1.5rem 0; }
+    .step-section.visible { display: block; }
+    .password-requirements { font-size: 0.8rem; color: #888; text-align: left; margin: 0.3rem 0; }
+    .password-requirements ul { padding-left: 1.2rem; margin: 0.3rem 0; }
+    .password-requirements li { list-style-type: disc; }
+    .password-match { font-size: 0.85rem; margin-top: 0.3rem; }
+    .password-match.match { color: #2e7d32; }
+    .password-match.nomatch { color: #dc3c33; }
+    .badge {
       display: inline-block;
       background: #f29b2a;
       color: white;
       font-weight: 700;
-      padding: 0.4rem 1.2rem;
+      padding: 0.3rem 1rem;
       border-radius: 20px;
-      font-size: 1rem;
-      margin: 0.5rem 0 1rem 0;
+      font-size: 0.85rem;
+      margin: 0.5rem 0;
     }
-    .downloads-badge.low { background: #dc3c33; }
-    .downloads-badge.none { background: #888; }
-
-    .step-section { display: none; margin: 1.5rem 0; }
-    .step-section.visible { display: block; }
-
-    .os-options { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
-    .os-option {
-      flex: 1; min-width: 100px; max-width: 120px;
-      padding: 1rem 0.5rem; border: 2px solid #ddd; border-radius: 10px;
-      cursor: pointer; text-align: center; transition: all 0.2s;
-      background: #fafafa;
-    }
-    .os-option:hover { border-color: #194373; background: #f0f4f8; }
-    .os-option.selected { border-color: #194373; background: #e8f0f8; box-shadow: 0 0 0 3px rgba(25,67,115,0.2); }
-    .os-option .os-icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
-    .os-option .os-name { font-size: 0.8rem; font-weight: 600; color: #333; }
-    .os-option .os-sub { font-size: 0.6rem; color: #888; display: block; margin-top: 0.1rem; }
-
-    .os-option.disabled-option {
-      opacity: 0.4; cursor: not-allowed; pointer-events: none;
-    }
-    .coming-soon { display: block; font-size: 0.6rem; color: #999; margin-top: 0.2rem; font-style: italic; }
-
-    .wine-note {
-      display: none;
-      background: #fef9e7; border: 1px solid #f9e79f; border-radius: 8px;
-      padding: 12px; margin: 1rem 0; font-size: 0.8rem; color: #7d6608;
-      text-align: left; line-height: 1.5;
-    }
-    .wine-note.visible { display: block; }
-    .wine-note strong { color: #194373; }
-
-    .progress-bar-bg { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 0.5rem 0 1rem 0; overflow: hidden; }
-    .progress-bar-fill { background: #194373; height: 100%; width: 0%; border-radius: 10px; animation: progress 2s ease-in-out infinite; }
-    @keyframes progress { 0% { width: 10%; } 50% { width: 70%; } 100% { width: 10%; } }
-
-    .btn-secondary { background: #aaa; margin-top: 0.5rem; }
-    .btn-secondary:hover { background: #888; }
-
-    .confirm-box {
-      background: #f8f8f8; border: 1px solid #ddd; border-radius: 8px;
-      padding: 15px; margin: 1rem 0; text-align: left; font-size: 0.9rem;
-    }
-    .confirm-box strong { color: #194373; }
-
-    .input-label {
-      text-align: left; font-weight: 600; font-size: 0.85rem;
-      color: #555; margin-bottom: 0.2rem;
-    }
+    .divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
+    .note { font-size: 0.85rem; color: #888; background: #f8f8f8; padding: 0.8rem; border-radius: 6px; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/GM_Logo_DBlue.png" alt="GM Master Mariner" class="logo">
 
-    <!-- Step 1: Enter License Key + Email + Phone -->
-    <div class="step-section visible" id="stepCredentials">
-      <h2>Download Your Book</h2>
-      <p>Enter the details from your purchase email:</p>
-      <div class="input-label">License Key</div>
-      <input type="text" id="licenseKey" class="license-input" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
-      <div class="input-label">Email Address</div>
-      <input type="email" id="userEmail" placeholder="you@example.com" autocomplete="off">
-      <div class="input-label">Phone Number</div>
-      <input type="tel" id="userPhone" placeholder="+27 123 456 7890" autocomplete="off">
-      <button id="validateBtn">Continue</button>
-      <div class="message" id="messageCredentials"></div>
+<div class="container">
+  <img src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/GM_Logo_DBlue.png" alt="GM Master Mariner" class="logo">
+
+  <!-- Step 1: Validate License -->
+  <div class="step-section visible" id="stepValidate">
+    <h2>Download Your Book</h2>
+    <p>Enter your license key to get started.</p>
+    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;">License Key</div>
+    <input type="text" id="licenseKey" class="license-input" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off">
+    <button id="validateBtn">Continue</button>
+    <div class="message" id="messageValidate"></div>
+  </div>
+
+  <!-- Step 2: Set Password -->
+  <div class="step-section" id="stepPassword">
+    <h2>Set Your Password</h2>
+    <div class="greeting" id="greetingMessage"></div>
+    <p>Create a password to protect your PDF. You'll need this password every time you open the book.</p>
+    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;">Password</div>
+    <input type="password" id="password" placeholder="Create a password" autocomplete="new-password">
+    <div class="input-label" style="text-align:left;font-weight:600;font-size:0.85rem;color:#555;margin-top:0.5rem;">Confirm Password</div>
+    <input type="password" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password">
+    <div class="password-match" id="passwordMatch"></div>
+    <div class="password-requirements">
+      <ul>
+        <li>Minimum 4 characters</li>
+        <li>Use something you'll remember</li>
+        <li>This password cannot be recovered if lost</li>
+      </ul>
     </div>
-
-    <!-- No downloads remaining -->
-    <div class="step-section" id="stepLimitReached">
-      <span style="font-size:3rem;display:block;margin-bottom:0.5rem;">🚫</span>
-      <h2>No Downloads Remaining</h2>
-      <p>You have used all your available downloads for this license key.</p>
-      <p style="font-size:0.85rem;color:#888;">Contact <a href="mailto:gm.mastermariner@gmail.com">gm.mastermariner@gmail.com</a> for help.</p>
-    </div>
-
-    <!-- Step 2: Choose OS -->
-    <div class="step-section" id="stepOS">
-      <h2>Choose Your Platform</h2>
-      <div class="downloads-badge" id="downloadsBadgeOS">0 downloads remaining</div>
-      <div class="os-options">
-        <div class="os-option" data-os="Windows">
-          <span class="os-icon">🪟</span>
-          <span class="os-name">Windows</span>
-        </div>
-        <div class="os-option" data-os="Linux">
-          <span class="os-icon">🐧</span>
-          <span class="os-name">Linux</span>
-          <span class="os-sub">via Wine</span>
-        </div>
-        <div class="os-option" data-os="macOS">
-          <span class="os-icon">🍎</span>
-          <span class="os-name">macOS</span>
-          <span class="os-sub">via Bottles</span>
-        </div>
-        <div class="os-option disabled-option">
-          <span class="os-icon">📱</span>
-          <span class="os-name">Android</span>
-          <span class="coming-soon">Coming Soon</span>
-        </div>
-      </div>
-      <div class="wine-note" id="wineNote"></div>
-      <button id="confirmOSBtn" disabled>Confirm and Build</button>
-      <button class="btn-secondary" id="backToCredentialsBtn">Back</button>
-      <div class="message" id="messageOS"></div>
-    </div>
-
-    <!-- Step 3: Confirm build -->
-    <div class="step-section" id="stepConfirm">
-      <h2>Confirm Download</h2>
-      <div class="downloads-badge" id="downloadsBadgeConfirm">0 downloads remaining</div>
-      <div class="confirm-box" id="confirmBox"></div>
-      <button id="requestBuildBtn">Yes, Build My Installer</button>
-      <button class="btn-secondary" id="backToOSBtn">Change Platform</button>
-      <div class="message" id="messageConfirm"></div>
-    </div>
-
-    <!-- Step 4: Build in Progress -->
-    <div class="step-section" id="stepProgress">
-      <h2>Building Your Installer</h2>
-      <div class="downloads-badge" id="downloadsBadgeProgress">0 downloads remaining</div>
-      <p id="progressText">Your installer is being built...</p>
-      <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
-      <p style="font-size:0.8rem;color:#888;">This takes about 2 minutes. You'll receive an email when ready.</p>
-      <button class="btn-secondary" id="checkReadyBtn">Check if Ready</button>
-      <div class="message" id="messageProgress"></div>
-    </div>
-
-    <!-- Step 5: Download Complete -->
-    <div class="step-section" id="stepDownloadComplete">
-      <h2>✅ Download Complete</h2>
-      <div class="downloads-badge" id="downloadsBadgeComplete">0 downloads remaining</div>
-      <p>Your file has been saved as <strong>the-ABC-of-ASD-Installer.exe</strong></p>
-      <div class="wine-note" id="wineNoteComplete" style="display:none;"></div>
-      <p style="margin-top:1rem;">Need to download for a different platform?</p>
-      <button class="btn-secondary" id="switchOSBtn">Choose Different Platform</button>
-      <div class="message" id="messageComplete"></div>
+    <button id="setPasswordBtn">Set Password &amp; Generate Book</button>
+    <div class="message" id="messagePassword"></div>
+    <div class="note">
+      <strong>📌 Important:</strong> Your password is required to open the PDF. 
+      Save it somewhere safe. If you lose it, you'll need to request a new download link.
     </div>
   </div>
 
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxgDDkaf625TF2pisHr_UEaTgKFilch9P2vwiBDfyFq8KFs4N8USe7g4xgfx79w-v3qyQ/exec';
+  <!-- Step 3: Processing -->
+  <div class="step-section" id="stepProcessing">
+    <h2>Generating Your Book</h2>
+    <p>Your personalized, watermarked book is being prepared...</p>
+    <div class="badge">⏳ Please wait</div>
+    <p style="font-size:0.85rem;color:#888;">This takes about 1-2 minutes. You'll receive an email when ready.</p>
+    <button id="checkReadyBtn" class="btn-secondary" style="background:#aaa;">Check if Ready</button>
+    <div class="message" id="messageProcessing"></div>
+  </div>
 
-    let currentLicenseKey = '';
-    let currentEmail = '';
-    let currentPhone = '';
-    let selectedOS = '';
-    let remainingDownloads = 0;
-    let lastDownloadUrl = '';
+  <!-- Step 4: Download Complete -->
+  <div class="step-section" id="stepComplete">
+    <h2>✅ Ready to Download</h2>
+    <p>Your book has been generated and is ready for you.</p>
+    <div class="badge" style="background:#2e7d32;">📥 Download Available</div>
+    <p style="font-size:0.85rem;color:#888;margin-top:1rem;">
+      Your PDF is watermarked with your name, email, and phone.<br>
+      You'll need the password you created to open it.
+    </p>
+    <button id="downloadBtn">Download Your Book</button>
+    <div class="message" id="messageComplete"></div>
+    <div class="note">
+      <strong>📌 This link expires in 7 days.</strong> Please save your book and keep your password safe.
+    </div>
+  </div>
+</div>
 
-    // ========== AUTO-FILL FROM URL PARAMETERS ==========
-    (function() {
-      const params = new URLSearchParams(window.location.search);
-      const license = params.get('license');
-      const email = params.get('email');
-      const phone = params.get('phone');
-      
-      if (license) {
-        document.getElementById('licenseKey').value = license;
-        currentLicenseKey = license;
-      }
-      if (email) {
-        document.getElementById('userEmail').value = email;
-        currentEmail = email;
-      }
-      if (phone) {
-        document.getElementById('userPhone').value = phone;
-        currentPhone = phone;
-      }
-      
-      // If all three are filled, auto-validate after a short delay
-      if (license && email && phone) {
-        setTimeout(function() {
-          document.getElementById('validateBtn').click();
-        }, 800);
-      }
-    })();
+<script>
+  const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
-    function updateBadge(badgeId, remaining) {
-      const badge = document.getElementById(badgeId);
-      if (!badge) return;
-      badge.textContent = remaining + ' download' + (remaining !== 1 ? 's' : '') + ' remaining';
-      badge.className = 'downloads-badge';
-      if (remaining <= 0) badge.classList.add('none');
-      else if (remaining <= 2) badge.classList.add('low');
+  let currentLicenseKey = '';
+  let currentOrderDetails = null;
+  let downloadUrl = '';
+
+  // ========== AUTO-FILL FROM URL ==========
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const license = params.get('license');
+    const email = params.get('email');
+    const phone = params.get('phone');
+    const name = params.get('name');
+    
+    if (license) {
+      document.getElementById('licenseKey').value = license;
+      currentLicenseKey = license;
+    }
+    
+    // Auto-click validate if license is present
+    if (license) {
+      setTimeout(function() {
+        document.getElementById('validateBtn').click();
+      }, 500);
+    }
+  })();
+
+  function showSection(sectionId) {
+    ['stepValidate', 'stepPassword', 'stepProcessing', 'stepComplete'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('visible', id === sectionId);
+    });
+  }
+
+  // ========== STEP 1: Validate License ==========
+  document.getElementById('validateBtn').addEventListener('click', async function() {
+    const key = document.getElementById('licenseKey').value.trim().toUpperCase();
+    const msg = document.getElementById('messageValidate');
+    const btn = this;
+
+    if (!key) {
+      msg.className = 'message error';
+      msg.textContent = 'Please enter your license key.';
+      return;
     }
 
-    function showSection(sectionId) {
-      ['stepCredentials', 'stepLimitReached', 'stepOS', 'stepConfirm', 'stepProgress', 'stepDownloadComplete'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.toggle('visible', id === sectionId);
-        }
-      });
-    }
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    msg.textContent = '';
+    msg.className = 'message';
 
-    function showWineNote(os) {
-      const note = document.getElementById('wineNote');
-      if (os === 'Linux') {
-        note.classList.add('visible');
-        note.innerHTML = '<strong>🐧 Running on Linux</strong><br>Install Wine (<code>sudo apt install wine</code>) or Bottles, then run the .exe installer.';
-      } else if (os === 'macOS') {
-        note.classList.add('visible');
-        note.innerHTML = '<strong>🍎 Running on macOS</strong><br>Install Bottles from usebottles.com (free), create a bottle, and run the .exe inside it.';
-      } else {
-        note.classList.remove('visible');
-      }
-    }
+    try {
+      const params = new URLSearchParams();
+      params.append('action', 'getOrderDetails');
+      params.append('licenseKey', key);
 
-    // ========== STEP 1: Validate credentials ==========
-    document.getElementById('validateBtn').addEventListener('click', async () => {
-      const key = document.getElementById('licenseKey').value.trim();
-      const email = document.getElementById('userEmail').value.trim();
-      const phone = document.getElementById('userPhone').value.trim();
-      const msg = document.getElementById('messageCredentials');
-      const btn = document.getElementById('validateBtn');
+      const res = await fetch(API_URL, { method: 'POST', body: params });
+      const data = await res.json();
 
-      if (!key || !email || !phone) {
-        msg.className = 'message error';
-        msg.textContent = 'All fields are required.';
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = 'Checking...';
-      msg.textContent = '';
-      msg.className = 'message';
-
-      try {
-        const params = new URLSearchParams();
-        params.append('action', 'getDownloadUrl');
-        params.append('licenseKey', key);
-        params.append('email', email);
-        params.append('phone', phone);
-        params.append('record', 'false');
-
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
-
-        console.log('validateBtn response:', data);
-
+      if (data.result === 'success') {
         currentLicenseKey = key;
-        currentEmail = email;
-        currentPhone = phone;
-        remainingDownloads = data.remainingDownloads || 0;
-
-        // Check for specific error messages
-        if (data.result === 'error') {
-          if (data.message && data.message.indexOf('download') !== -1 && data.message.indexOf('limit') !== -1) {
-            showSection('stepLimitReached');
-            btn.disabled = false;
-            btn.textContent = 'Continue';
-            return;
-          }
-          // For other errors (phone/email mismatch)
-          msg.className = 'message error';
-          msg.textContent = data.message || 'Validation failed. Please check your details.';
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
+        currentOrderDetails = data;
+        
+        // Show password step with greeting
+        document.getElementById('greetingMessage').textContent = 'Welcome back, ' + data.name + '!';
+        showSection('stepPassword');
+        document.getElementById('messagePassword').textContent = '';
+        document.getElementById('messagePassword').className = 'message';
+        
+        // Check if password already exists (re-download)
+        if (data.hasPassword) {
+          document.getElementById('messagePassword').className = 'message info';
+          document.getElementById('messagePassword').textContent = '✅ You already have a password set. Enter it again to generate a new download link, or use your existing link.';
         }
-
-        if (remainingDownloads <= 0) {
-          showSection('stepLimitReached');
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
-        }
-
-        // If we need OS selection
-        if (data.needsOS) {
-          showSection('stepOS');
-          updateBadge('downloadsBadgeOS', remainingDownloads);
-          document.getElementById('confirmOSBtn').disabled = true;
-          document.querySelectorAll('.os-option:not(.disabled-option)').forEach(o => o.classList.remove('selected'));
-          selectedOS = '';
-          document.getElementById('messageOS').textContent = '';
-          document.getElementById('messageOS').className = 'message';
-          document.getElementById('wineNote').classList.remove('visible');
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
-        }
-
-        // If build is in progress
-        if (!data.ready) {
-          showSection('stepProgress');
-          updateBadge('downloadsBadgeProgress', remainingDownloads);
-          document.getElementById('progressText').textContent = data.message || 'Your installer is being prepared...';
-          document.getElementById('messageProgress').textContent = '';
-          document.getElementById('messageProgress').className = 'message';
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
-        }
-
-        // If download is ready
-        if (data.ready && data.downloadUrl) {
-          lastDownloadUrl = data.downloadUrl;
-          performDownload(data.downloadUrl);
-          btn.disabled = false;
-          btn.textContent = 'Continue';
-          return;
-        }
-
-        // If no URL and no OS selected, show OS selection
-        showSection('stepOS');
-        updateBadge('downloadsBadgeOS', remainingDownloads);
-        document.getElementById('confirmOSBtn').disabled = true;
-        document.querySelectorAll('.os-option:not(.disabled-option)').forEach(o => o.classList.remove('selected'));
-        selectedOS = '';
-        document.getElementById('messageOS').textContent = '';
-        document.getElementById('messageOS').className = 'message';
-        document.getElementById('wineNote').classList.remove('visible');
-
+        
         btn.disabled = false;
         btn.textContent = 'Continue';
-      } catch (e) {
-        console.error('Validate error:', e);
+      } else {
         msg.className = 'message error';
-        msg.textContent = 'Network error. Please try again.';
+        msg.textContent = data.message || 'Invalid license key.';
         btn.disabled = false;
         btn.textContent = 'Continue';
       }
-    });
+    } catch (e) {
+      msg.className = 'message error';
+      msg.textContent = 'Network error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Continue';
+    }
+  });
 
-    document.getElementById('licenseKey').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('validateBtn').click();
-    });
+  // ========== STEP 2: Set Password ==========
+  document.getElementById('password').addEventListener('input', checkPasswordMatch);
+  document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
 
-    // ========== STEP 2: OS Selection ==========
-    document.querySelectorAll('.os-option:not(.disabled-option)').forEach(opt => {
-      opt.addEventListener('click', () => {
-        document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        selectedOS = opt.dataset.os;
-        document.getElementById('confirmOSBtn').disabled = false;
-        showWineNote(selectedOS);
-      });
-    });
+  function checkPasswordMatch() {
+    const pwd = document.getElementById('password').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const matchEl = document.getElementById('passwordMatch');
+    
+    if (!pwd && !confirm) {
+      matchEl.textContent = '';
+      matchEl.className = 'password-match';
+      return;
+    }
+    
+    if (pwd && confirm && pwd === confirm) {
+      matchEl.textContent = '✅ Passwords match';
+      matchEl.className = 'password-match match';
+    } else if (pwd && confirm && pwd !== confirm) {
+      matchEl.textContent = '❌ Passwords do not match';
+      matchEl.className = 'password-match nomatch';
+    } else if (pwd && !confirm) {
+      matchEl.textContent = '';
+      matchEl.className = 'password-match';
+    }
+  }
 
-    document.getElementById('confirmOSBtn').addEventListener('click', () => {
-      if (!selectedOS) return;
-      
-      // Show confirmation
-      showSection('stepConfirm');
-      updateBadge('downloadsBadgeConfirm', remainingDownloads);
-      
-      let confirmText = '<p><strong>Platform:</strong> ' + selectedOS + '</p>';
-      if (selectedOS === 'Linux') {
-        confirmText += '<p style="font-size:0.8rem;color:#888;">Runs via Wine — <code>sudo apt install wine</code></p>';
-      } else if (selectedOS === 'macOS') {
-        confirmText += '<p style="font-size:0.8rem;color:#888;">Runs via Bottles — free from usebottles.com</p>';
-      }
-      confirmText += '<p><strong>File:</strong> the-ABC-of-ASD-Installer.exe</p>';
-      confirmText += '<p><strong>Downloads remaining:</strong> ' + remainingDownloads + '</p>';
-      document.getElementById('confirmBox').innerHTML = confirmText;
-      document.getElementById('messageConfirm').textContent = '';
-      document.getElementById('messageConfirm').className = 'message';
-    });
+  document.getElementById('setPasswordBtn').addEventListener('click', async function() {
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const msg = document.getElementById('messagePassword');
+    const btn = this;
 
-    document.getElementById('backToCredentialsBtn').addEventListener('click', () => {
-      showSection('stepCredentials');
-    });
+    if (!password || password.length < 4) {
+      msg.className = 'message error';
+      msg.textContent = 'Password must be at least 4 characters.';
+      return;
+    }
 
-    document.getElementById('backToOSBtn').addEventListener('click', () => {
-      showSection('stepOS');
-      updateBadge('downloadsBadgeOS', remainingDownloads);
-    });
+    if (password !== confirm) {
+      msg.className = 'message error';
+      msg.textContent = 'Passwords do not match.';
+      return;
+    }
 
-    // ========== STEP 3: Confirm and Build ==========
-    document.getElementById('requestBuildBtn').addEventListener('click', async () => {
-      if (!selectedOS) return;
+    btn.disabled = true;
+    btn.textContent = 'Setting password...';
+    msg.textContent = '';
+    msg.className = 'message';
 
-      const msg = document.getElementById('messageConfirm');
-      const btn = document.getElementById('requestBuildBtn');
+    try {
+      const params = new URLSearchParams();
+      params.append('action', 'setPassword');
+      params.append('licenseKey', currentLicenseKey);
+      params.append('password', password);
 
-      btn.disabled = true;
-      btn.textContent = 'Starting build...';
-      msg.textContent = '';
-      msg.className = 'message';
+      const res = await fetch(API_URL, { method: 'POST', body: params });
+      const data = await res.json();
 
-      try {
-        const params = new URLSearchParams();
-        params.append('action', 'requestDownload');
-        params.append('licenseKey', currentLicenseKey);
-        params.append('email', currentEmail);
-        params.append('phone', currentPhone);
-        params.append('os', selectedOS);
-
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
-
-        console.log('requestDownload response:', data);
-
-        if (data.result === 'success') {
-          remainingDownloads = data.remainingDownloads || 0;
-
-          if (data.ready && data.downloadUrl) {
-            lastDownloadUrl = data.downloadUrl;
-            performDownload(data.downloadUrl);
-          } else {
-            showSection('stepProgress');
-            updateBadge('downloadsBadgeProgress', remainingDownloads);
-            document.getElementById('progressText').textContent = 'Your ' + selectedOS + ' installer is being built...';
-            document.getElementById('messageProgress').textContent = '';
-            document.getElementById('messageProgress').className = 'message';
-          }
-        } else {
-          msg.className = 'message error';
-          msg.textContent = data.message || 'Request failed.';
-          btn.disabled = false;
-          btn.textContent = 'Yes, Build My Installer';
-        }
-      } catch (e) {
-        console.error('Build error:', e);
+      if (data.result === 'success') {
+        showSection('stepProcessing');
+        document.getElementById('messageProcessing').textContent = '';
+        document.getElementById('messageProcessing').className = 'message';
+        document.getElementById('checkReadyBtn').disabled = false;
+        document.getElementById('checkReadyBtn').textContent = 'Check if Ready';
+        
+        // Start checking automatically
+        setTimeout(checkReady, 3000);
+      } else {
         msg.className = 'message error';
-        msg.textContent = 'Network error.';
+        msg.textContent = data.message || 'Failed to set password.';
         btn.disabled = false;
-        btn.textContent = 'Yes, Build My Installer';
+        btn.textContent = 'Set Password & Generate Book';
       }
-    });
+    } catch (e) {
+      msg.className = 'message error';
+      msg.textContent = 'Network error.';
+      btn.disabled = false;
+      btn.textContent = 'Set Password & Generate Book';
+    }
+  });
 
-    // ========== STEP 4: Poll for readiness ==========
-    document.getElementById('checkReadyBtn').addEventListener('click', async () => {
-      const msg = document.getElementById('messageProgress');
-      const btn = document.getElementById('checkReadyBtn');
+  // ========== STEP 3: Check if Ready ==========
+  document.getElementById('checkReadyBtn').addEventListener('click', checkReady);
 
-      btn.disabled = true;
-      btn.textContent = 'Checking...';
+  async function checkReady() {
+    const msg = document.getElementById('messageProcessing');
+    const btn = document.getElementById('checkReadyBtn');
 
-      try {
-        const params = new URLSearchParams();
-        params.append('action', 'getDownloadUrl');
-        params.append('licenseKey', currentLicenseKey);
-        params.append('email', currentEmail);
-        params.append('phone', currentPhone);
-        params.append('record', 'false');
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    msg.textContent = '';
+    msg.className = 'message';
 
-        const res = await fetch(API_URL, { method: 'POST', body: params });
-        const data = await res.json();
+    try {
+      const params = new URLSearchParams();
+      params.append('action', 'getOrderDetails');
+      params.append('licenseKey', currentLicenseKey);
 
-        console.log('checkReadyBtn response:', data);
+      const res = await fetch(API_URL, { method: 'POST', body: params });
+      const data = await res.json();
 
-        remainingDownloads = data.remainingDownloads || 0;
-        updateBadge('downloadsBadgeProgress', remainingDownloads);
+      if (data.result === 'success' && data.hasPassword) {
+        // Check if there's a download URL in the sheet
+        // We need to check the DownloadURL column
+        const checkParams = new URLSearchParams();
+        checkParams.append('action', 'getDownloadUrl');
+        checkParams.append('licenseKey', currentLicenseKey);
+        checkParams.append('record', 'false');
 
-        if (data.result === 'success' && data.downloadUrl) {
-          lastDownloadUrl = data.downloadUrl;
-          performDownload(data.downloadUrl);
-        } else {
-          msg.className = 'message info';
-          msg.textContent = 'Still building. Check again shortly.';
+        const checkRes = await fetch(API_URL, { method: 'POST', body: checkParams });
+        const checkData = await checkRes.json();
+
+        if (checkData.result === 'success' && checkData.downloadUrl) {
+          downloadUrl = checkData.downloadUrl;
+          showSection('stepComplete');
+          document.getElementById('messageComplete').textContent = '';
+          document.getElementById('messageComplete').className = 'message';
+          return;
         }
-      } catch (e) {
-        console.error('Check ready error:', e);
-        msg.className = 'message error';
-        msg.textContent = 'Network error.';
       }
 
+      msg.className = 'message info';
+      msg.textContent = 'Still processing. Check again in 30 seconds.';
       btn.disabled = false;
       btn.textContent = 'Check if Ready';
-    });
+    } catch (e) {
+      msg.className = 'message error';
+      msg.textContent = 'Network error.';
+      btn.disabled = false;
+      btn.textContent = 'Check if Ready';
+    }
+  }
 
-    // ========== Perform download ==========
-    async function performDownload(url) {
-      console.log('performDownload called with URL:', url);
+  // ========== STEP 4: Download ==========
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    if (downloadUrl) {
+      // Get the password for the download
+      const password = document.getElementById('password').value;
       
-      if (!url || url.trim() === '') {
-        console.error('No URL provided to performDownload');
-        return;
-      }
-
-      await recordDownload();
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Download failed: ' + response.status);
-        }
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = 'the-ABC-of-ASD-Installer.exe';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (e) {
-        console.error('Download error:', e);
-        // Fallback: open the URL directly
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'the-ABC-of-ASD-Installer.exe';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-
-      if (remainingDownloads <= 0) {
-        showSection('stepLimitReached');
-      } else {
-        showSection('stepDownloadComplete');
-        updateBadge('downloadsBadgeComplete', remainingDownloads);
-        
-        const noteComplete = document.getElementById('wineNoteComplete');
-        if (selectedOS === 'Linux') {
-          noteComplete.style.display = 'block';
-          noteComplete.innerHTML = '<strong>🐧 Linux:</strong> Install Wine (<code>sudo apt install wine</code>) or Bottles, then right-click the .exe → Open with Wine.';
-        } else if (selectedOS === 'macOS') {
-          noteComplete.style.display = 'block';
-          noteComplete.innerHTML = '<strong>🍎 macOS:</strong> Install Bottles from usebottles.com, create a bottle, and run the .exe inside it.';
-        } else {
-          noteComplete.style.display = 'none';
-        }
-      }
+      // Open the download URL
+      window.open(downloadUrl, '_blank');
+      
+      document.getElementById('messageComplete').className = 'message success';
+      document.getElementById('messageComplete').textContent = '✅ Download started!';
+    } else {
+      document.getElementById('messageComplete').className = 'message error';
+      document.getElementById('messageComplete').textContent = 'Download URL not available. Please check again.';
     }
+  });
 
-    async function recordDownload() {
-      try {
-        const recParams = new URLSearchParams();
-        recParams.append('action', 'getDownloadUrl');
-        recParams.append('licenseKey', currentLicenseKey);
-        recParams.append('email', currentEmail);
-        recParams.append('phone', currentPhone);
-        recParams.append('record', 'true');
-
-        const recRes = await fetch(API_URL, { method: 'POST', body: recParams });
-        const recData = await recRes.json();
-        console.log('recordDownload response:', recData);
-        remainingDownloads = recData.remainingDownloads || 0;
-      } catch (e) {
-        console.error('Record download error:', e);
-      }
-    }
-
-    // ========== Switch OS ==========
-    document.getElementById('switchOSBtn').addEventListener('click', () => {
-      document.querySelectorAll('.os-option').forEach(o => o.classList.remove('selected'));
-      selectedOS = '';
-      document.getElementById('confirmOSBtn').disabled = true;
-      document.getElementById('messageOS').textContent = '';
-      document.getElementById('messageOS').className = 'message';
-      document.getElementById('wineNote').classList.remove('visible');
-      showSection('stepOS');
-      updateBadge('downloadsBadgeOS', remainingDownloads);
-    });
-  </script>
+  // Enter key support
+  document.getElementById('licenseKey').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('validateBtn').click();
+  });
+  document.getElementById('password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('setPasswordBtn').click();
+  });
+  document.getElementById('confirmPassword').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('setPasswordBtn').click();
+  });
+</script>
 </body>
 </html>
