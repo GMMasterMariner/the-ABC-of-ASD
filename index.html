@@ -2307,7 +2307,20 @@
                 sb.disabled = true; sb.textContent = 'Sending...';
                 const pc = document.getElementById('contactPhoneCodeInput').value, fp = pc ? pc + ' ' + ph : ph;
                 const p = new URLSearchParams(); p.append('action', 'sendContact'); p.append('name', n); p.append('email', em); p.append('phone', fp); p.append('message', msg);
-                try { const r = await fetch(API_URL, { method: 'POST', body: p }); const d = await r.json(); if (d.result === 'success') { form.style.display = 'none'; showAlertModal('Thank You!', '✅ Thank you! I\'ll reply soon.'); } else { showAlertModal('Error', 'Error. Please try again.'); sb.disabled = false; sb.textContent = 'Send Message'; } }
+                try { 
+                    const r = await fetch(API_URL, { method: 'POST', body: p }); 
+                    const d = await r.json(); 
+                    if (d.result === 'success') { 
+                        form.reset();
+                        showAlertModal('Thank You!', '✅ Thank you! I\'ll reply soon.', function() {
+                            showPage('home-section');
+                        }); 
+                    } else { 
+                        showAlertModal('Error', 'Error. Please try again.'); 
+                        sb.disabled = false; 
+                        sb.textContent = 'Send Message'; 
+                    } 
+                }
                 catch(err) { showAlertModal('Network Error', 'Network error.'); sb.disabled = false; sb.textContent = 'Send Message'; }
             });
         }
