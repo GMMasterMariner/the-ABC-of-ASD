@@ -2333,8 +2333,32 @@
             hide();
         })();
 
-        (function() { const f = document.getElementById('siteFooter'); let p = false; function ex() { f.classList.remove('collapsed'); } function co() { f.classList.add('collapsed'); } f.addEventListener('mouseenter', () => { if (!p) ex(); }); f.addEventListener('mouseleave', () => { if (!p) co(); }); f.addEventListener('click', () => { p = !p; if (p) ex(); else co(); }); co(); })();
-
+        (function() { 
+            const f = document.getElementById('siteFooter'); 
+            let p = false; 
+            function ex() { f.classList.remove('collapsed'); } 
+            function co() { f.classList.add('collapsed'); } 
+            f.addEventListener('mouseenter', () => { if (!p) ex(); }); 
+            f.addEventListener('mouseleave', () => { if (!p) co(); }); 
+            f.addEventListener('click', () => { p = !p; if (p) ex(); else co(); }); 
+            
+            // Collapse footer when any legal modal closes
+            function collapseFooterOnModalClose() {
+                p = false;
+                co();
+            }
+            
+            // Hook into legal modal close
+            document.getElementById('legalModalCloseBtn').addEventListener('click', collapseFooterOnModalClose);
+            document.getElementById('legalModalOverlay').addEventListener('click', function(e) {
+                if (e.target === document.getElementById('legalModalOverlay')) {
+                    collapseFooterOnModalClose();
+                }
+            });
+            
+            co(); 
+        })();
+        
         function hideSplashScreen() { const s = document.getElementById('splash-screen'); if (s) { s.classList.add('hidden'); setTimeout(() => s.style.display = 'none', 500); } }
 
         document.getElementById('currentYear').textContent = new Date().getFullYear();
