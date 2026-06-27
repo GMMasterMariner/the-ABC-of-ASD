@@ -97,13 +97,13 @@
     <div class="email-sent-icon">📤</div>
     <p>Your personalized book is being prepared.</p>
     <div class="badge">⏳ Building your book...</div>
-    <p style="font-size:0.9rem;color:#555;margin-top:1rem;">
+    <p style="font-size:1.05rem;color:#333;margin-top:1rem;">
       We'll send an email to <strong id="waitingEmail"></strong> as soon as your book is ready.
     </p>
-    <p style="font-size:0.85rem;color:#888;">
+    <p style="font-size:1rem;color:#444;">
       This usually takes 2–5 minutes. The email will contain a <strong>Download Now</strong> button.
     </p>
-    <div class="note">
+    <div class="note" style="font-size:0.95rem;color:#444;">
       <strong>💡 Tip:</strong> Keep this page open or just wait for the email. 
       When it arrives, click the big orange button and you'll be back here to download instantly.
     </div>
@@ -198,7 +198,6 @@
       const params = new URLSearchParams();
       params.append('action', 'getOrderDetails');
       params.append('licenseKey', key);
-      // Pass pre-filled email/phone if available
       if (window._prefillEmail) params.append('email', window._prefillEmail);
       if (window._prefillPhone) params.append('phone', window._prefillPhone);
 
@@ -211,9 +210,7 @@
         
         document.getElementById('greetingMessage').textContent = 'Welcome, ' + data.name + '!';
         
-        // Check if download is already ready
         if (data.downloadReady && data.downloadUrl) {
-          // Book is ready — go straight to download
           currentDownloadUrl = data.downloadUrl;
           currentRemainingDownloads = data.remainingDownloads;
           document.getElementById('downloadGreeting').textContent = 'Welcome back, ' + data.name + '!';
@@ -222,13 +219,10 @@
           showSection('stepDownload');
           document.getElementById('downloadPassword').focus();
         } else if (data.hasPassword) {
-          // Password set but book not ready yet — waiting
           document.getElementById('waitingEmail').textContent = data.email;
           showSection('stepWaiting');
-          // Poll every 15 seconds to check if build is done
           startPollingForBuild();
         } else {
-          // No password set yet — go to password step
           showSection('stepPassword');
           document.getElementById('messagePassword').textContent = '';
           document.getElementById('messagePassword').className = 'message';
@@ -317,12 +311,9 @@
       const data = await res.json();
 
       if (data.result === 'success') {
-        // Show waiting screen
         document.getElementById('waitingEmail').textContent = 
           currentOrderDetails ? currentOrderDetails.email : 'your email';
         showSection('stepWaiting');
-        
-        // Start polling for build completion
         startPollingForBuild();
       } else {
         msg.className = 'message error';
@@ -343,10 +334,8 @@
   let pollingInterval = null;
 
   function startPollingForBuild() {
-    // Clear any existing interval
     if (pollingInterval) clearInterval(pollingInterval);
     
-    // Poll every 15 seconds
     pollingInterval = setInterval(async () => {
       try {
         const params = new URLSearchParams();
@@ -359,7 +348,6 @@
         const data = await res.json();
 
         if (data.result === 'success' && data.downloadReady && data.downloadUrl) {
-          // Build is done!
           clearInterval(pollingInterval);
           pollingInterval = null;
           
@@ -372,12 +360,10 @@
           document.getElementById('downloadPassword').focus();
         }
       } catch (e) {
-        // Silently retry on next interval
         console.log('Poll attempt failed, will retry...');
       }
-    }, 15000); // Every 15 seconds
+    }, 15000);
     
-    // Stop polling after 15 minutes
     setTimeout(() => {
       if (pollingInterval) {
         clearInterval(pollingInterval);
@@ -392,6 +378,14 @@
     const msg = document.getElementById('messageDownloadPassword');
     const btn = this;
 
+    if (currentRemainingDownloads <= 0) {
+      msg.className = 'message error';
+      msg.textContent = 'You have no downloads remaining. Please contact support if you need assistance.';
+      btn.disabled = true;
+      btn.textContent = 'No Downloads Remaining';
+      return;
+    }
+
     if (!password || password.length < 4) {
       msg.className = 'message error';
       msg.textContent = 'Please enter your password (minimum 4 characters).';
@@ -404,7 +398,6 @@
     msg.className = 'message';
 
     try {
-      // Record the download and get the URL
       const params = new URLSearchParams();
       params.append('action', 'getDownloadUrl');
       params.append('licenseKey', currentLicenseKey);
@@ -418,18 +411,20 @@
         currentDownloadUrl = data.downloadUrl;
         currentRemainingDownloads = data.remainingDownloads;
         
-        // Show complete screen
         document.getElementById('downloadsRemainingComplete').textContent = 
           data.remainingDownloads + ' download(s) remaining';
         showSection('stepComplete');
         
-        // Auto-trigger download
         setTimeout(() => {
           window.open(currentDownloadUrl, '_blank');
         }, 500);
         
         document.getElementById('messageComplete').className = 'message success';
-        document.getElementById('messageComplete').textContent = '✅ Download started!';
+        document.getElementById('messageComplete').textContent = '✅ Download started! This tab will close in a few seconds.';
+        
+        setTimeout(() => {
+          window.close();
+        }, 4000);
       } else if (data.result === 'pending') {
         msg.className = 'message info';
         msg.textContent = 'Your book is still being prepared. Check your email for updates.';
@@ -452,10 +447,18 @@
 
   // ========== STEP 5: Retry Download ==========
   document.getElementById('retryDownloadBtn').addEventListener('click', function() {
+    if (currentRemainingDownloads <= 0) {
+      document.getElementById('messageComplete').className = 'message error';
+      document.getElementById('messageComplete').textContent = 'No downloads remaining.';
+      return;
+    }
     if (currentDownloadUrl) {
       window.open(currentDownloadUrl, '_blank');
       document.getElementById('messageComplete').className = 'message success';
-      document.getElementById('messageComplete').textContent = '✅ Download started!';
+      document.getElementById('messageComplete').textContent = '✅ Download started! This tab will close in a few seconds.';
+      setTimeout(() => {
+        window.close();
+      }, 4000);
     }
   });
 
