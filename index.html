@@ -2532,7 +2532,24 @@
                   </div>
                 </div>
               `;
-                
+
+              // Save the original modal box styles before we modify them
+              const modalBox = document.querySelector('#modalOverlay .modal-box');
+              const origMaxWidth = modalBox.style.maxWidth || '';
+              const origMaxHeight = modalBox.style.maxHeight || '';
+              const origOverflow = modalBox.style.overflowY || '';
+
+              // Widen the modal for the two-column layout
+              modalBox.style.maxWidth = '650px';
+              modalBox.style.maxHeight = '80vh';
+              modalBox.style.overflowY = 'auto';
+
+              const resetModalBox = function() {
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
+              };
+
               const newOnConfirm = function() {
                 resetModalBox();
                 const orderId = 'SIM-' + Date.now();
@@ -2564,6 +2581,9 @@
                     } else {
                       showAlertModal('Error', data.message || 'Could not generate license.');
                     }
+                  })
+                  .catch(err => {
+                    showAlertModal('Error', 'Network error. Please try again.');
                   });
               };
 
