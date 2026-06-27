@@ -16,6 +16,8 @@
     button { background: #194373; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; transition: opacity 0.2s; }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
+    button.download-btn { background: #f29b2a; font-size: 1.2rem; padding: 1rem 2rem; }
+    button.download-btn:hover { background: #e08a1a; }
     .message { margin-top: 1rem; font-size: 0.9rem; }
     .error { color: #dc3c33; }
     .success { color: #2e7d32; }
@@ -38,12 +40,15 @@
       font-size: 0.85rem;
       margin: 0.5rem 0;
     }
+    .badge.ready { background: #2e7d32; }
     .divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
     .note { font-size: 0.85rem; color: #888; background: #f8f8f8; padding: 0.8rem; border-radius: 6px; margin-top: 1rem; }
     .input-label { text-align: left; font-weight: 600; font-size: 0.85rem; color: #555; }
     .btn-secondary { background: #aaa; }
     .btn-secondary:hover { background: #888; }
+    .downloads-remaining { font-size: 0.85rem; color: #888; margin-top: 0.5rem; }
     @keyframes pulse-text { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+    .email-sent-icon { font-size: 4rem; margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
@@ -51,7 +56,7 @@
 <div class="container">
   <img src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/GM_Logo_DBlue.png" alt="GM Master Mariner" class="logo">
 
-  <!-- Step 1: Validate License -->
+  <!-- Step 1: Enter License Key -->
   <div class="step-section visible" id="stepValidate">
     <h2>Download Your Book</h2>
     <p>Enter your license key to get started.</p>
@@ -78,7 +83,7 @@
         <li>This password cannot be recovered if lost</li>
       </ul>
     </div>
-    <button id="setPasswordBtn">Set Password &amp; Generate Book</button>
+    <button id="setPasswordBtn">Set Password &amp; Build My Book</button>
     <div class="message" id="messagePassword"></div>
     <div class="note">
       <strong>📌 Important:</strong> Your password is required to open the PDF. 
@@ -86,45 +91,65 @@
     </div>
   </div>
 
-  <!-- Step 3: Processing -->
-  <div class="step-section" id="stepProcessing">
-    <h2>Generating Your Book</h2>
-    <p>Your personalized, watermarked book is being prepared...</p>
-    <div class="badge">⏳ Please wait</div>
-    <p style="font-size:0.85rem;color:#888;margin-top:0.5rem;">
-      This can take a few minutes. You can stay on this page or close it – 
-      you'll receive an email when your book is ready.
+  <!-- Step 3: Waiting for Build -->
+  <div class="step-section" id="stepWaiting">
+    <h2>📧 Check Your Email</h2>
+    <div class="email-sent-icon">📤</div>
+    <p>Your personalized book is being prepared.</p>
+    <div class="badge">⏳ Building your book...</div>
+    <p style="font-size:0.9rem;color:#555;margin-top:1rem;">
+      We'll send an email to <strong id="waitingEmail"></strong> as soon as your book is ready.
     </p>
-    <button id="checkReadyBtn" class="btn-secondary" style="background:#aaa;">Check if Ready</button>
-    <div class="message" id="messageProcessing"></div>
+    <p style="font-size:0.85rem;color:#888;">
+      This usually takes 2–5 minutes. The email will contain a <strong>Download Now</strong> button.
+    </p>
+    <div class="note">
+      <strong>💡 Tip:</strong> Keep this page open or just wait for the email. 
+      When it arrives, click the big orange button and you'll be back here to download instantly.
+    </div>
   </div>
 
-  <!-- Step 4: Download Complete -->
-  <div class="step-section" id="stepComplete">
-    <h2>✅ Ready to Download</h2>
-    <p>Your book has been generated and is ready for you.</p>
-    <div class="badge" style="background:#2e7d32;">📥 Download Available</div>
-    <p style="font-size:0.85rem;color:#888;margin-top:1rem;">
-      Your PDF is watermarked with your name, email, and phone.<br>
-      You'll need the password you created to open it.
-    </p>
-    <button id="downloadBtn">Download Your Book</button>
-    <div class="message" id="messageComplete"></div>
+  <!-- Step 4: Download Ready -->
+  <div class="step-section" id="stepDownload">
+    <h2>✅ Your Book is Ready</h2>
+    <p>Your personalized, watermarked book is ready for download.</p>
+    <div class="badge ready">📥 Ready to Download</div>
+    <div class="greeting" id="downloadGreeting"></div>
+    <div class="input-label">Enter your password to download</div>
+    <input type="password" id="downloadPassword" placeholder="Your PDF password" autocomplete="off">
+    <div class="message" id="messageDownloadPassword"></div>
+    <button class="download-btn" id="downloadNowBtn">⬇️ Download Your Book</button>
+    <div class="downloads-remaining" id="downloadsRemaining"></div>
+    <div class="message" id="messageDownload"></div>
     <div class="note">
       <strong>📌 This link expires in 7 days.</strong> Please save your book and keep your password safe.
     </div>
+  </div>
+
+  <!-- Step 5: Download Complete -->
+  <div class="step-section" id="stepComplete">
+    <h2>✅ Download Started</h2>
+    <p>Your download should begin automatically.</p>
+    <div class="badge ready">📥 Downloading...</div>
+    <p style="font-size:0.85rem;color:#888;margin-top:1rem;">
+      If the download doesn't start, click the button below.
+    </p>
+    <button class="download-btn" id="retryDownloadBtn">⬇️ Download Again</button>
+    <div class="message" id="messageComplete"></div>
+    <div class="downloads-remaining" id="downloadsRemainingComplete"></div>
   </div>
 </div>
 
 <script>
   // ============================================================
-  // UPDATE THIS URL WITH YOUR ACTUAL APPS SCRIPT URL
+  // CONFIGURATION
   // ============================================================
   const API_URL = 'https://script.google.com/macros/s/AKfycbxgDDkaf625TF2pisHr_UEaTgKFilch9P2vwiBDfyFq8KFs4N8USe7g4xgfx79w-v3qyQ/exec';
 
   let currentLicenseKey = '';
   let currentOrderDetails = null;
-  let downloadUrl = '';
+  let currentDownloadUrl = '';
+  let currentRemainingDownloads = 0;
 
   // ========== AUTO-FILL FROM URL ==========
   (function() {
@@ -139,11 +164,14 @@
       currentLicenseKey = license;
     }
     
-    // DO NOT auto-click. User must click the button themselves.
+    // Store email and phone for later use
+    if (email) window._prefillEmail = email;
+    if (phone) window._prefillPhone = phone;
+    if (name) window._prefillName = name;
   })();
 
   function showSection(sectionId) {
-    ['stepValidate', 'stepPassword', 'stepProcessing', 'stepComplete'].forEach(id => {
+    ['stepValidate', 'stepPassword', 'stepWaiting', 'stepDownload', 'stepComplete'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('visible', id === sectionId);
     });
@@ -170,6 +198,9 @@
       const params = new URLSearchParams();
       params.append('action', 'getOrderDetails');
       params.append('licenseKey', key);
+      // Pass pre-filled email/phone if available
+      if (window._prefillEmail) params.append('email', window._prefillEmail);
+      if (window._prefillPhone) params.append('phone', window._prefillPhone);
 
       const res = await fetch(API_URL, { method: 'POST', body: params });
       const data = await res.json();
@@ -178,14 +209,29 @@
         currentLicenseKey = key;
         currentOrderDetails = data;
         
-        document.getElementById('greetingMessage').textContent = 'Welcome back, ' + data.name + '!';
-        showSection('stepPassword');
-        document.getElementById('messagePassword').textContent = '';
-        document.getElementById('messagePassword').className = 'message';
+        document.getElementById('greetingMessage').textContent = 'Welcome, ' + data.name + '!';
         
-        if (data.hasPassword) {
-          document.getElementById('messagePassword').className = 'message info';
-          document.getElementById('messagePassword').textContent = '✅ You already have a password set. Enter it again to generate a new download link, or use your existing link.';
+        // Check if download is already ready
+        if (data.downloadReady && data.downloadUrl) {
+          // Book is ready — go straight to download
+          currentDownloadUrl = data.downloadUrl;
+          currentRemainingDownloads = data.remainingDownloads;
+          document.getElementById('downloadGreeting').textContent = 'Welcome back, ' + data.name + '!';
+          document.getElementById('downloadsRemaining').textContent = 
+            data.remainingDownloads + ' download(s) remaining';
+          showSection('stepDownload');
+          document.getElementById('downloadPassword').focus();
+        } else if (data.hasPassword) {
+          // Password set but book not ready yet — waiting
+          document.getElementById('waitingEmail').textContent = data.email;
+          showSection('stepWaiting');
+          // Poll every 15 seconds to check if build is done
+          startPollingForBuild();
+        } else {
+          // No password set yet — go to password step
+          showSection('stepPassword');
+          document.getElementById('messagePassword').textContent = '';
+          document.getElementById('messagePassword').className = 'message';
         }
         
         btn.disabled = false;
@@ -258,7 +304,6 @@
 
     btn.disabled = true;
     btn.textContent = '⏳ Processing...';
-    btn.style.animation = 'pulse-text 1.5s infinite';
     msg.textContent = '';
     msg.className = 'message';
 
@@ -272,102 +317,149 @@
       const data = await res.json();
 
       if (data.result === 'success') {
-        showSection('stepProcessing');
-        document.getElementById('messageProcessing').textContent = '';
-        document.getElementById('messageProcessing').className = 'message';
-        document.getElementById('checkReadyBtn').disabled = false;
-        document.getElementById('checkReadyBtn').textContent = 'Check if Ready';
+        // Show waiting screen
+        document.getElementById('waitingEmail').textContent = 
+          currentOrderDetails ? currentOrderDetails.email : 'your email';
+        showSection('stepWaiting');
         
-        // Auto-check after 5, 15, and 30 seconds
-        setTimeout(checkReady, 5000);
-        setTimeout(checkReady, 15000);
-        setTimeout(checkReady, 30000);
+        // Start polling for build completion
+        startPollingForBuild();
       } else {
         msg.className = 'message error';
         msg.textContent = data.message || 'Failed to set password.';
         btn.disabled = false;
-        btn.textContent = 'Set Password & Generate Book';
-        btn.style.animation = 'none';
+        btn.textContent = 'Set Password & Build My Book';
       }
     } catch (e) {
       console.error('Set password error:', e);
       msg.className = 'message error';
       msg.textContent = 'Network error.';
       btn.disabled = false;
-      btn.textContent = 'Set Password & Generate Book';
-      btn.style.animation = 'none';
+      btn.textContent = 'Set Password & Build My Book';
     }
   });
 
-  // ========== STEP 3: Check if Ready ==========
-  document.getElementById('checkReadyBtn').addEventListener('click', checkReady);
+  // ========== STEP 3: Poll for Build Completion ==========
+  let pollingInterval = null;
 
-  async function checkReady() {
-    const msg = document.getElementById('messageProcessing');
-    const btn = document.getElementById('checkReadyBtn');
+  function startPollingForBuild() {
+    // Clear any existing interval
+    if (pollingInterval) clearInterval(pollingInterval);
+    
+    // Poll every 15 seconds
+    pollingInterval = setInterval(async () => {
+      try {
+        const params = new URLSearchParams();
+        params.append('action', 'getOrderDetails');
+        params.append('licenseKey', currentLicenseKey);
+        if (window._prefillEmail) params.append('email', window._prefillEmail);
+        if (window._prefillPhone) params.append('phone', window._prefillPhone);
+
+        const res = await fetch(API_URL, { method: 'POST', body: params });
+        const data = await res.json();
+
+        if (data.result === 'success' && data.downloadReady && data.downloadUrl) {
+          // Build is done!
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+          
+          currentDownloadUrl = data.downloadUrl;
+          currentRemainingDownloads = data.remainingDownloads;
+          document.getElementById('downloadGreeting').textContent = 'Welcome back, ' + data.name + '!';
+          document.getElementById('downloadsRemaining').textContent = 
+            data.remainingDownloads + ' download(s) remaining';
+          showSection('stepDownload');
+          document.getElementById('downloadPassword').focus();
+        }
+      } catch (e) {
+        // Silently retry on next interval
+        console.log('Poll attempt failed, will retry...');
+      }
+    }, 15000); // Every 15 seconds
+    
+    // Stop polling after 15 minutes
+    setTimeout(() => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
+    }, 900000);
+  }
+
+  // ========== STEP 4: Download ==========
+  document.getElementById('downloadNowBtn').addEventListener('click', async function() {
+    const password = document.getElementById('downloadPassword').value;
+    const msg = document.getElementById('messageDownloadPassword');
+    const btn = this;
+
+    if (!password || password.length < 4) {
+      msg.className = 'message error';
+      msg.textContent = 'Please enter your password (minimum 4 characters).';
+      return;
+    }
 
     btn.disabled = true;
-    btn.textContent = 'Checking...';
+    btn.textContent = '⏳ Verifying...';
     msg.textContent = '';
     msg.className = 'message';
 
     try {
+      // Record the download and get the URL
       const params = new URLSearchParams();
-      params.append('action', 'getOrderDetails');
+      params.append('action', 'getDownloadUrl');
       params.append('licenseKey', currentLicenseKey);
+      params.append('email', window._prefillEmail || (currentOrderDetails ? currentOrderDetails.email : ''));
+      params.append('phone', window._prefillPhone || (currentOrderDetails ? currentOrderDetails.phone : ''));
 
       const res = await fetch(API_URL, { method: 'POST', body: params });
       const data = await res.json();
 
-      if (data.result === 'success' && data.hasPassword) {
-        const checkParams = new URLSearchParams();
-        checkParams.append('action', 'getDownloadUrl');
-        checkParams.append('licenseKey', currentLicenseKey);
-        checkParams.append('record', 'false');
-
-        const checkRes = await fetch(API_URL, { method: 'POST', body: checkParams });
-        const checkData = await checkRes.json();
-
-        if (checkData.result === 'success' && checkData.downloadUrl) {
-          downloadUrl = checkData.downloadUrl;
-          showSection('stepComplete');
-          document.getElementById('messageComplete').textContent = '';
-          document.getElementById('messageComplete').className = 'message';
-          
-          // Auto-download after 1 second
-          setTimeout(() => {
-            document.getElementById('downloadBtn').click();
-          }, 1000);
-          return;
-        }
+      if (data.result === 'success' && data.downloadUrl) {
+        currentDownloadUrl = data.downloadUrl;
+        currentRemainingDownloads = data.remainingDownloads;
+        
+        // Show complete screen
+        document.getElementById('downloadsRemainingComplete').textContent = 
+          data.remainingDownloads + ' download(s) remaining';
+        showSection('stepComplete');
+        
+        // Auto-trigger download
+        setTimeout(() => {
+          window.open(currentDownloadUrl, '_blank');
+        }, 500);
+        
+        document.getElementById('messageComplete').className = 'message success';
+        document.getElementById('messageComplete').textContent = '✅ Download started!';
+      } else if (data.result === 'pending') {
+        msg.className = 'message info';
+        msg.textContent = 'Your book is still being prepared. Check your email for updates.';
+        btn.disabled = false;
+        btn.textContent = '⬇️ Download Your Book';
+      } else {
+        msg.className = 'message error';
+        msg.textContent = data.message || 'Unable to download.';
+        btn.disabled = false;
+        btn.textContent = '⬇️ Download Your Book';
       }
-
-      msg.className = 'message info';
-      msg.textContent = 'Still processing. Check again in 30 seconds.';
-      btn.disabled = false;
-      btn.textContent = 'Check if Ready';
     } catch (e) {
-      console.error('Check ready error:', e);
+      console.error('Download error:', e);
       msg.className = 'message error';
-      msg.textContent = 'Network error.';
+      msg.textContent = 'Network error. Please try again.';
       btn.disabled = false;
-      btn.textContent = 'Check if Ready';
-    }
-  }
-
-  // ========== STEP 4: Download ==========
-  document.getElementById('downloadBtn').addEventListener('click', function() {
-    if (downloadUrl) {
-      window.open(downloadUrl, '_blank');
-      document.getElementById('messageComplete').className = 'message success';
-      document.getElementById('messageComplete').textContent = '✅ Download started!';
-    } else {
-      document.getElementById('messageComplete').className = 'message error';
-      document.getElementById('messageComplete').textContent = 'Download URL not available. Please check again.';
+      btn.textContent = '⬇️ Download Your Book';
     }
   });
 
-  // Enter key support
+  // ========== STEP 5: Retry Download ==========
+  document.getElementById('retryDownloadBtn').addEventListener('click', function() {
+    if (currentDownloadUrl) {
+      window.open(currentDownloadUrl, '_blank');
+      document.getElementById('messageComplete').className = 'message success';
+      document.getElementById('messageComplete').textContent = '✅ Download started!';
+    }
+  });
+
+  // ========== Enter key support ==========
   document.getElementById('licenseKey').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('validateBtn').click();
   });
@@ -376,6 +468,14 @@
   });
   document.getElementById('confirmPassword').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('setPasswordBtn').click();
+  });
+  document.getElementById('downloadPassword').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('downloadNowBtn').click();
+  });
+
+  // ========== Clean up polling on page unload ==========
+  window.addEventListener('beforeunload', () => {
+    if (pollingInterval) clearInterval(pollingInterval);
   });
 </script>
 </body>
