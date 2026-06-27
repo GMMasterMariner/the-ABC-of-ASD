@@ -2435,7 +2435,7 @@
                 return;
               }
 
-              // Get shipping address if entered (for both physical and digital)
+              // Get address fields
               const addr1 = document.getElementById('addressLine1').value.trim();
               const addr2 = document.getElementById('addressLine2').value.trim();
               const suburb = document.getElementById('addressSuburb').value.trim();
@@ -2444,7 +2444,7 @@
               const region = document.getElementById('addressRegion').value.trim();
               const country = document.getElementById('countryNameDisplay').textContent.trim();
 
-              let shippingAddress = '';
+              // Validate physical orders
               if (selectedProduct.Type === 'Physical') {
                 if (!addr1) {
                   showAlertModal('Address Required', 'Please fill in Address Line 1.');
@@ -2464,7 +2464,7 @@
                 }
               }
 
-              // Build shipping address if physical
+              // Build shipping address string (physical only, digital stays empty)
               let shippingAddress = '';
               if (selectedProduct.Type === 'Physical') {
                 let addr = addr1;
