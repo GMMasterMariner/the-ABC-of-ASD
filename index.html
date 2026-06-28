@@ -1726,94 +1726,26 @@
             }, { once: true });
         }
 
-        // ========== LEGAL MODAL ==========
-        function showLegalModal(title, contentObj) {
-            document.getElementById('legalModalTitle').textContent = title;
-            const contentDiv = document.getElementById('legalModalContent');
-            contentDiv.innerHTML = contentObj.html;
-            contentDiv.scrollTop = 0;
-            setTimeout(() => { contentDiv.scrollTop = 0; }, 10);
-            document.getElementById('legalModalOverlay').classList.add('active');
-        }
+        
+        // ========== PAYMENT FUNCTIONS ==========
 
-        document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
-            document.getElementById('legalModalOverlay').classList.remove('active');
-        });
-        document.getElementById('legalModalOverlay').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('legalModalOverlay')) {
-                document.getElementById('legalModalOverlay').classList.remove('active');
-            }
-        });
-
-        function getKnownPhoneCodes() {
-            if (!shippingRegions || !shippingRegions.length) return [];
-            return shippingRegions.map(r => (r.PhoneCode || '').replace(/^\+/, '')).filter(code => code.length > 0).sort((a,b) => b.length - a.length);
-        }
-
-        function extractCountryCode(fullNumber) {
-            if (!fullNumber.startsWith('+')) return null;
-            const codes = getKnownPhoneCodes();
-            if (codes.length === 0) return null;
-            for (const code of codes) {
-                if (fullNumber.startsWith('+' + code)) {
-                    let rest = fullNumber.slice(('+' + code).length).trim();
-                    if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
-                    return { code: '+' + code, number: rest };
-                }
-            }
-            const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
-            if (match) {
-                let rest = (match[2] || '').trim();
-                if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
-                return { code: '+' + match[1], number: rest };
-            }
-            return null;
-        }
-
-        function setupPhoneSplitter(numberInputId, codeInputId) {
-            const numInput = document.getElementById(numberInputId);
-            const codeInput = document.getElementById(codeInputId);
-            if (!numInput || !codeInput) return;
-            function stripLeadingZeroIfNeeded() {
-                const numVal = numInput.value.trim();
-                const codeVal = codeInput.value.trim();
-                if (numVal.startsWith('0') && codeVal.startsWith('+') && codeVal.length > 1) numInput.value = numVal.slice(1).trim();
-            }
-            function splitNumberField() {
-                const val = numInput.value.trim();
-                const extracted = extractCountryCode(val);
-                if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); numInput.value = extracted.number; }
-                stripLeadingZeroIfNeeded();
-            }
-            function splitCodeField() {
-                const val = codeInput.value.trim();
-                if (val.startsWith('+') && val.length > 5) {
-                    const extracted = extractCountryCode(val);
-                    if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); if (extracted.number && !numInput.value.trim()) numInput.value = extracted.number; }
-                }
-                stripLeadingZeroIfNeeded();
-            }
-            numInput.addEventListener('input', splitNumberField);
-            numInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
-            numInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
-            codeInput.addEventListener('input', splitCodeField);
-            codeInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
-            codeInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
-        }
-
-        function splitAllPhoneFields() {
-            if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
-                const num = document.getElementById('customerPhone'), code = document.getElementById('phoneCodeInput');
-                const e = extractCountryCode(num.value.trim());
-                if (e) { code.value = e.code; autoResizePhoneCodeInput('phoneCodeInput'); num.value = e.number; }
-                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
-            }
-            if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
-                const num = document.getElementById('phone'), code = document.getElementById('contactPhoneCodeInput');
-                const e = extractCountryCode(num.value.trim());
-                if (e) { code.value = e.code; autoResizePhoneCodeInput('contactPhoneCodeInput'); num.value = e.number; }
-                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
-            }
+        function getShippingAddressString() {
+          const parts = [];
+          const addr1 = document.getElementById('addressLine1').value.trim();
+          const addr2 = document.getElementById('addressLine2').value.trim();
+          const suburb = document.getElementById('addressSuburb').value.trim();
+          const city = document.getElementById('addressCity').value.trim();
+          const postcode = document.getElementById('addressPostcode').value.trim();
+          const region = document.getElementById('addressRegion').value.trim();
+          const country = document.getElementById('countryNameDisplay').textContent.trim();
+          if (addr1) parts.push(addr1);
+          if (addr2) parts.push(addr2);
+          if (suburb) parts.push(suburb);
+          if (city) parts.push(city);
+          if (postcode) parts.push(postcode);
+          if (region) parts.push(region);
+          if (country && country !== 'Country') parts.push(country);
+          return parts.join(', ');
         }
 
         function initPayments() {
@@ -1923,38 +1855,7 @@
             );
           }
           
-          async function processPayment(gateway, transactionId) {
-            const order = getOrderSummary();
-            const params = new URLSearchParams();
-            params.append('action', 'generateLicense');
-            params.append('orderId', transactionId);
-            params.append('customerName', order.name);
-            params.append('customerEmail', order.email);
-            params.append('customerPhone', order.phone);
-            params.append('quantity', order.qty);
-            params.append('total', order.totalValue);
-            params.append('currency', selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR');
-            params.append('paymentGateway', gateway);
-            params.append('paymentStatus', 'Completed');
-            params.append('productType', selectedProduct ? selectedProduct.Type : 'Digital');
-            params.append('shippingAddress', order.shippingAddress);
-            
-            try {
-              const res = await fetch(API_URL, { method: 'POST', body: params });
-              const data = await res.json();
-              if (data.result === 'success') {
-                showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
-                  showPage('home-section');
-                });
-              } else {
-                showAlertModal('Error', data.message || 'Could not process order. Please contact support.');
-              }
-            } catch (e) {
-              showAlertModal('Error', 'Network error. Please contact support.');
-            }
-          }
-          
-          // ========== PAYPAL ==========
+          // ========== PAYPAL (Redirect Flow) ==========
           if (paypalBtn) {
             paypalBtn.addEventListener('click', function() {
               if (!validateOrder()) return;
@@ -1965,69 +1866,40 @@
                   if (!keys.paypalClientId) { showAlertModal('Error', 'PayPal is not configured.'); return; }
                   
                   showConfirmationModal('PayPal', function() {
-                    // Build PayPal popup URL manually
-                    const order = getOrderSummary();
-                    const amount = Math.max(0.01, parseFloat(order.totalValue) || 1.00).toFixed(2);
-                    const returnUrl = window.location.origin + window.location.pathname + '?paypal=success';
-                    const cancelUrl = window.location.origin + window.location.pathname + '?paypal=cancelled';
+                    var order = getOrderSummary();
+                    var amount = Math.max(0.01, parseFloat(order.totalValue) || 1.00).toFixed(2);
+                    var returnUrl = window.location.origin + window.location.pathname + '?paypal=success';
+                    var cancelUrl = window.location.origin + window.location.pathname + '?paypal=cancelled';
                     
-                    // Create order first, then redirect to PayPal
+                    sessionStorage.setItem('paypalOrder', JSON.stringify({
+                      name: order.name,
+                      email: order.email,
+                      phone: order.phone,
+                      qty: order.qty,
+                      totalValue: order.totalValue,
+                      shippingAddress: order.shippingAddress
+                    }));
+                    
                     fetch(API_URL, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                      body: 'action=createPayPalOrder&amount=' + amount
+                      body: 'action=createPayPalOrder&amount=' + amount + '&returnUrl=' + encodeURIComponent(returnUrl) + '&cancelUrl=' + encodeURIComponent(cancelUrl)
                     })
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
                       if (data.result === 'success' && data.approvalUrl) {
                         window.location.href = data.approvalUrl;
-                      } else if (data.result === 'success' && data.orderID) {
-                        // Open PayPal checkout in a new window
-                        var w = window.open('', 'PayPal', 'width=500,height=650,top=100,left=100');
-                        if (w) {
-                          w.document.write('<html><head><title>PayPal</title></head><body style="margin:0;padding:0;"><div id="paypal-button-container"></div><script src="https://www.paypal.com/sdk/js?client-id=' + keys.paypalClientId + '&currency=USD&intent=capture"></script><script>paypal.Buttons({createOrder:function(){return "' + data.orderID + '";},onApprove:function(d){window.opener.paypalCallback(d.orderID);window.close();},onCancel:function(){window.opener.paypalCancelled();window.close();},onError:function(){window.opener.paypalCancelled();window.close();}}).render("#paypal-button-container");</script></body></html>');
-                          w.document.close();
-                        } else {
-                          showAlertModal('Popup Blocked', 'Please allow popups for this site to pay with PayPal.');
-                        }
                       } else {
-                        showAlertModal('Error', 'Could not create PayPal order. Please try again.');
+                        showAlertModal('Error', 'Could not connect to PayPal. Please try again.');
                       }
                     })
                     .catch(function() {
                       showAlertModal('Error', 'Could not connect to PayPal. Please try again.');
                     });
                   });
-                })
-                .catch(function() {
-                  showAlertModal('Error', 'Could not load payment settings.');
                 });
             });
           }
-          
-          // PayPal callback functions
-          window.paypalCallback = function(orderID) {
-            fetch(API_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(orderID)
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-              if (data.result === 'success') {
-                processPayment('PayPal', orderID);
-              } else {
-                showAlertModal('Payment Failed', 'Payment capture failed. Please contact support.');
-              }
-            })
-            .catch(function() {
-              showAlertModal('Error', 'Network error. Please contact support.');
-            });
-          };
-          
-          window.paypalCancelled = function() {
-            showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
-          };
           
           // ========== PAYFAST ==========
           if (payfastBtn) {
@@ -2086,31 +1958,102 @@
                       })
                       .catch(function() { showAlertModal('Error', 'Failed to connect to Payfast.'); });
                   });
-                })
-                .catch(function() { showAlertModal('Error', 'Could not load payment settings.'); });
+                });
             });
           }
         }
+
         
-        function getShippingAddressString() {
-          const parts = [];
-          const addr1 = document.getElementById('addressLine1').value.trim();
-          const addr2 = document.getElementById('addressLine2').value.trim();
-          const suburb = document.getElementById('addressSuburb').value.trim();
-          const city = document.getElementById('addressCity').value.trim();
-          const postcode = document.getElementById('addressPostcode').value.trim();
-          const region = document.getElementById('addressRegion').value.trim();
-          const country = document.getElementById('countryNameDisplay').textContent.trim();
-          if (addr1) parts.push(addr1);
-          if (addr2) parts.push(addr2);
-          if (suburb) parts.push(suburb);
-          if (city) parts.push(city);
-          if (postcode) parts.push(postcode);
-          if (region) parts.push(region);
-          if (country && country !== 'Country') parts.push(country);
-          return parts.join(', ');
+        // ========== LEGAL MODAL ==========
+        function showLegalModal(title, contentObj) {
+            document.getElementById('legalModalTitle').textContent = title;
+            const contentDiv = document.getElementById('legalModalContent');
+            contentDiv.innerHTML = contentObj.html;
+            contentDiv.scrollTop = 0;
+            setTimeout(() => { contentDiv.scrollTop = 0; }, 10);
+            document.getElementById('legalModalOverlay').classList.add('active');
         }
-        
+
+        document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
+            document.getElementById('legalModalOverlay').classList.remove('active');
+        });
+        document.getElementById('legalModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('legalModalOverlay')) {
+                document.getElementById('legalModalOverlay').classList.remove('active');
+            }
+        });
+
+        function getKnownPhoneCodes() {
+            if (!shippingRegions || !shippingRegions.length) return [];
+            return shippingRegions.map(r => (r.PhoneCode || '').replace(/^\+/, '')).filter(code => code.length > 0).sort((a,b) => b.length - a.length);
+        }
+
+        function extractCountryCode(fullNumber) {
+            if (!fullNumber.startsWith('+')) return null;
+            const codes = getKnownPhoneCodes();
+            if (codes.length === 0) return null;
+            for (const code of codes) {
+                if (fullNumber.startsWith('+' + code)) {
+                    let rest = fullNumber.slice(('+' + code).length).trim();
+                    if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
+                    return { code: '+' + code, number: rest };
+                }
+            }
+            const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
+            if (match) {
+                let rest = (match[2] || '').trim();
+                if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
+                return { code: '+' + match[1], number: rest };
+            }
+            return null;
+        }
+
+        function setupPhoneSplitter(numberInputId, codeInputId) {
+            const numInput = document.getElementById(numberInputId);
+            const codeInput = document.getElementById(codeInputId);
+            if (!numInput || !codeInput) return;
+            function stripLeadingZeroIfNeeded() {
+                const numVal = numInput.value.trim();
+                const codeVal = codeInput.value.trim();
+                if (numVal.startsWith('0') && codeVal.startsWith('+') && codeVal.length > 1) numInput.value = numVal.slice(1).trim();
+            }
+            function splitNumberField() {
+                const val = numInput.value.trim();
+                const extracted = extractCountryCode(val);
+                if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); numInput.value = extracted.number; }
+                stripLeadingZeroIfNeeded();
+            }
+            function splitCodeField() {
+                const val = codeInput.value.trim();
+                if (val.startsWith('+') && val.length > 5) {
+                    const extracted = extractCountryCode(val);
+                    if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); if (extracted.number && !numInput.value.trim()) numInput.value = extracted.number; }
+                }
+                stripLeadingZeroIfNeeded();
+            }
+            numInput.addEventListener('input', splitNumberField);
+            numInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
+            numInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
+            codeInput.addEventListener('input', splitCodeField);
+            codeInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
+            codeInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
+        }
+
+        function splitAllPhoneFields() {
+            if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
+                const num = document.getElementById('customerPhone'), code = document.getElementById('phoneCodeInput');
+                const e = extractCountryCode(num.value.trim());
+                if (e) { code.value = e.code; autoResizePhoneCodeInput('phoneCodeInput'); num.value = e.number; }
+                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
+            }
+            if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
+                const num = document.getElementById('phone'), code = document.getElementById('contactPhoneCodeInput');
+                const e = extractCountryCode(num.value.trim());
+                if (e) { code.value = e.code; autoResizePhoneCodeInput('contactPhoneCodeInput'); num.value = e.number; }
+                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
+            }
+        }
+
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2374,6 +2317,7 @@
 
         function autoResizePhoneCodeInput(id) { const i = document.getElementById(id); if (!i) return; const s = document.createElement('span'); s.style.font = window.getComputedStyle(i).font; s.style.visibility = 'hidden'; s.style.position = 'absolute'; s.style.whiteSpace = 'nowrap'; document.body.appendChild(s); s.textContent = i.value || i.placeholder || '+1'; i.style.width = (s.offsetWidth + 4) + 'px'; document.body.removeChild(s); }
 
+        
         let lastEmailAttempt = '';
         async function sendVerificationCode(email, silent) {
             lastEmailAttempt = email;
@@ -2401,10 +2345,7 @@
                     document.getElementById('customerDetails').style.display = 'block';
                     document.getElementById('shippingAddressSection').style.display = 'block';
                     document.getElementById('verifiedEmail').value = lastEmailAttempt;
-                    
-                    // Always update address requirements when email is verified
                     updateAddressRequired();
-                    
                     if (selectedProduct) {
                         updateInstructionMessage();
                         if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
@@ -2445,41 +2386,21 @@
                 te.style.display = 'block';
                 te.classList.add('price-glow');
             }
-            // Always update address requirements when product changes
             updateAddressRequired();
         }
 
         function updateAddressRequired() {
             const isPhysical = selectedProduct && selectedProduct.Type === 'Physical';
             const section = document.getElementById('shippingAddressSection');
-        
-            // Make sure the section is visible first
-            if (section) {
-                section.style.display = 'block';
-            }
-        
-            // Address fields and their asterisks
+            if (section) { section.style.display = 'block'; }
             const addressFields = ['addressLine1', 'addressCity', 'addressPostcode'];
             const starIds = ['starAddressLine1', 'starAddressCity', 'starAddressPostcode'];
-        
             if (isPhysical) {
-                addressFields.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.setAttribute('required', '');
-                });
-                starIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.style.display = 'inline-block';
-                });
+                addressFields.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required', ''); });
+                starIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
             } else {
-                addressFields.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.removeAttribute('required');
-                });
-                starIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.style.display = 'none';
-                });
+                addressFields.forEach(id => { const el = document.getElementById(id); if (el) el.removeAttribute('required'); });
+                starIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
             }
         }
 
@@ -2640,21 +2561,16 @@
             f.addEventListener('mouseenter', () => { if (!p) ex(); }); 
             f.addEventListener('mouseleave', () => { if (!p) co(); }); 
             f.addEventListener('click', () => { p = !p; if (p) ex(); else co(); }); 
-            
-            // Collapse footer when any legal modal closes
             function collapseFooterOnModalClose() {
                 p = false;
                 co();
             }
-            
-            // Hook into legal modal close
             document.getElementById('legalModalCloseBtn').addEventListener('click', collapseFooterOnModalClose);
             document.getElementById('legalModalOverlay').addEventListener('click', function(e) {
                 if (e.target === document.getElementById('legalModalOverlay')) {
                     collapseFooterOnModalClose();
                 }
             });
-            
             co(); 
         })();
         
@@ -2687,35 +2603,89 @@
                 splitAllPhoneFields();
                 setTimeout(splitAllPhoneFields, 800);
                 initPayments();
+                
+                // Handle payment returns
+                (function() {
+                  var params = new URLSearchParams(window.location.search);
+                  
+                  // Payfast return
+                  if (params.get('payment') === 'success') {
+                    setTimeout(function() {
+                      showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                        showPage('home-section');
+                      });
+                    }, 500);
+                  }
+                  if (params.get('payment') === 'cancelled') {
+                    setTimeout(function() {
+                      showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                    }, 500);
+                  }
+                  
+                  // PayPal return
+                  if (params.get('paypal') === 'success') {
+                    var paypalOrderId = params.get('token');
+                    var storedOrder = sessionStorage.getItem('paypalOrder');
+                    
+                    if (paypalOrderId && storedOrder) {
+                      try {
+                        var order = JSON.parse(storedOrder);
+                        sessionStorage.removeItem('paypalOrder');
+                        
+                        fetch(API_URL, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                          body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(paypalOrderId)
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                          if (data.result === 'success') {
+                            var licParams = new URLSearchParams();
+                            licParams.append('action', 'generateLicense');
+                            licParams.append('orderId', paypalOrderId);
+                            licParams.append('customerName', order.name);
+                            licParams.append('customerEmail', order.email);
+                            licParams.append('customerPhone', order.phone);
+                            licParams.append('quantity', order.qty);
+                            licParams.append('total', order.totalValue);
+                            licParams.append('currency', 'USD');
+                            licParams.append('paymentGateway', 'PayPal');
+                            licParams.append('paymentStatus', 'Completed');
+                            licParams.append('productType', selectedProduct ? selectedProduct.Type : 'Digital');
+                            licParams.append('shippingAddress', order.shippingAddress || '');
+                            
+                            return fetch(API_URL, { method: 'POST', body: licParams });
+                          }
+                          throw new Error('Capture failed');
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(licData) {
+                          if (licData.result === 'success') {
+                            showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                              showPage('home-section');
+                            });
+                          } else {
+                            showAlertModal('Error', 'Payment processed but there was an issue with your order. Please contact support.');
+                          }
+                        })
+                        .catch(function() {
+                          showAlertModal('Error', 'Payment could not be verified. Please contact support with this reference: ' + paypalOrderId);
+                        });
+                      } catch(e) {
+                        showAlertModal('Error', 'Could not process your order. Please contact support.');
+                      }
+                    } else {
+                      showAlertModal('Payment Returned', 'You returned from PayPal but we could not find your order details. Please contact support.');
+                    }
+                  }
+                  if (params.get('paypal') === 'cancelled') {
+                    sessionStorage.removeItem('paypalOrder');
+                    setTimeout(function() {
+                      showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                    }, 500);
+                  }
+                })();
             } catch(err) { console.error(err); }
-                        // Check for payment return from gateways
-            (function() {
-              const urlParams = new URLSearchParams(window.location.search);
-              if (urlParams.get('payment') === 'success') {
-                setTimeout(function() {
-                  showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
-                    showPage('home-section');
-                  });
-                }, 500);
-              }
-              if (urlParams.get('payment') === 'cancelled') {
-                setTimeout(function() {
-                  showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
-                }, 500);
-              }
-              if (urlParams.get('paypal') === 'success') {
-                setTimeout(function() {
-                  showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
-                    showPage('home-section');
-                  });
-                }, 500);
-              }
-              if (urlParams.get('paypal') === 'cancelled') {
-                setTimeout(function() {
-                  showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
-                }, 500);
-              }
-            })();
         }
         init();
     </script>
