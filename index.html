@@ -1824,7 +1824,6 @@
           let payfastMerchantKey = '';
           let paymentKeysLoaded = false;
           
-          // Load payment keys once
           async function loadPaymentKeys() {
             if (paymentKeysLoaded) return;
             try {
@@ -1839,7 +1838,6 @@
             }
           }
           
-          // Validate the order before showing confirmation
           function validateOrder() {
             if (!selectedProduct) {
               showAlertModal('Select Product', 'Please choose a book format first.');
@@ -1864,8 +1862,6 @@
               showAlertModal('Phone Required', 'Please enter your phone number.');
               return false;
             }
-            
-            // Validate address for physical orders
             if (selectedProduct.Type === 'Physical') {
               const addr1 = document.getElementById('addressLine1').value.trim();
               const city = document.getElementById('addressCity').value.trim();
@@ -1876,11 +1872,9 @@
               if (!postcode) { showAlertModal('Address Required', 'Please fill in Postcode.'); return false; }
               if (country === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return false; }
             }
-            
             return true;
           }
           
-          // Build the confirmation modal HTML
           function showConfirmationModal(gateway, onProceed) {
             const name = document.getElementById('customerName').value.trim();
             const email = document.getElementById('verifiedEmail').value.trim();
@@ -1942,7 +1936,6 @@
               </div>
             `;
             
-            // Widen the modal
             const modalBox = document.querySelector('#modalOverlay .modal-box');
             const origMaxWidth = modalBox.style.maxWidth || '';
             const origMaxHeight = modalBox.style.maxHeight || '';
@@ -1974,26 +1967,20 @@
             paypalBtn.addEventListener('click', async function() {
               if (!validateOrder()) return;
               await loadPaymentKeys();
-              
               if (!paypalClientId) {
                 showAlertModal('Error', 'PayPal is not configured yet.');
                 return;
               }
-              
-              // Show confirmation first
               showConfirmationModal('PayPal', function() {
-                // Load PayPal SDK and open popup
                 initPayPalPopup();
               });
             });
           }
           
           async function initPayPalPopup() {
-            // Remove any existing PayPal button container
             const existing = document.getElementById('paypal-popup-container');
             if (existing) existing.remove();
             
-            // Create a hidden container for the PayPal button
             const container = document.createElement('div');
             container.id = 'paypal-popup-container';
             container.style.position = 'fixed';
@@ -2002,6 +1989,12 @@
             container.style.transform = 'translate(-50%, -50%)';
             container.style.zIndex = '99999';
             container.style.display = 'block';
+            container.style.width = '400px';
+            container.style.height = '500px';
+            container.style.background = 'white';
+            container.style.borderRadius = '12px';
+            container.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+            container.style.padding = '20px';
             document.body.appendChild(container);
             
             if (!window.paypal) {
@@ -2047,7 +2040,6 @@
                 .then(function(res) { return res.json(); })
                 .then(function(captureData) {
                   if (captureData.result === 'success') {
-                    // Remove popup container
                     const popup = document.getElementById('paypal-popup-container');
                     if (popup) popup.remove();
                     return handleSuccessfulPayment('PayPal', data.orderID, name, email, phone);
@@ -2074,13 +2066,10 @@
             payfastBtn.addEventListener('click', async function() {
               if (!validateOrder()) return;
               await loadPaymentKeys();
-              
               if (!payfastMerchantId || !payfastMerchantKey) {
                 showAlertModal('Error', 'Payfast is not configured yet.');
                 return;
               }
-              
-              // Show confirmation first
               showConfirmationModal('Payfast', function() {
                 submitPayfastForm();
               });
@@ -2130,7 +2119,6 @@
               form.appendChild(input);
             }
             
-            // Get signature from backend
             fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString())
               .then(function(res) { return res.json(); })
               .then(function(data) {
@@ -2139,7 +2127,6 @@
                 sigInput.name = 'signature';
                 sigInput.value = data.signature;
                 form.appendChild(sigInput);
-                
                 document.body.appendChild(form);
                 form.submit();
                 document.body.removeChild(form);
@@ -2149,63 +2136,61 @@
               });
           }
         
-        // Helper function for successful payments
-        async function handleSuccessfulPayment(gateway, transactionId, name, email, phone) {
-          const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-          const totalText = document.getElementById('sumTotal').textContent;
-          const currencyCode = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-          const shippingAddress = getShippingAddressString();
-          
-          const params = new URLSearchParams();
-          params.append('action', 'generateLicense');
-          params.append('orderId', transactionId);
-          params.append('customerName', name);
-          params.append('customerEmail', email);
-          params.append('customerPhone', phone);
-          params.append('quantity', qty);
-          params.append('total', totalText.replace(/[^0-9.]/g, ''));
-          params.append('currency', currencyCode);
-          params.append('paymentGateway', gateway);
-          params.append('paymentStatus', 'Completed');
-          params.append('productType', selectedProduct.Type || 'Digital');
-          params.append('shippingAddress', shippingAddress);
-          
-          try {
-            const res = await fetch(API_URL, { method: 'POST', body: params });
-            const data = await res.json();
-            if (data.result === 'success') {
-              showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your license key and download instructions.', function() {
-                showPage('home-section');
-              });
-            } else {
-              showAlertModal('Error', data.message || 'Could not generate license.');
+          async function handleSuccessfulPayment(gateway, transactionId, name, email, phone) {
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalText = document.getElementById('sumTotal').textContent;
+            const currencyCode = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
+            const shippingAddress = getShippingAddressString();
+            
+            const params = new URLSearchParams();
+            params.append('action', 'generateLicense');
+            params.append('orderId', transactionId);
+            params.append('customerName', name);
+            params.append('customerEmail', email);
+            params.append('customerPhone', phone);
+            params.append('quantity', qty);
+            params.append('total', totalText.replace(/[^0-9.]/g, ''));
+            params.append('currency', currencyCode);
+            params.append('paymentGateway', gateway);
+            params.append('paymentStatus', 'Completed');
+            params.append('productType', selectedProduct.Type || 'Digital');
+            params.append('shippingAddress', shippingAddress);
+            
+            try {
+              const res = await fetch(API_URL, { method: 'POST', body: params });
+              const data = await res.json();
+              if (data.result === 'success') {
+                showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                  showPage('home-section');
+                });
+              } else {
+                showAlertModal('Error', data.message || 'Could not generate license.');
+              }
+            } catch (e) {
+              showAlertModal('Error', 'Network error. Please contact support.');
             }
-          } catch (e) {
-            showAlertModal('Error', 'Network error. Please contact support.');
+          }
+          
+          function getShippingAddressString() {
+            const addr1 = document.getElementById('addressLine1').value.trim();
+            const addr2 = document.getElementById('addressLine2').value.trim();
+            const suburb = document.getElementById('addressSuburb').value.trim();
+            const city = document.getElementById('addressCity').value.trim();
+            const postcode = document.getElementById('addressPostcode').value.trim();
+            const region = document.getElementById('addressRegion').value.trim();
+            const country = document.getElementById('countryNameDisplay').textContent.trim();
+            let parts = [];
+            if (addr1) parts.push(addr1);
+            if (addr2) parts.push(addr2);
+            if (suburb) parts.push(suburb);
+            if (city) parts.push(city);
+            if (postcode) parts.push(postcode);
+            if (region) parts.push(region);
+            if (country && country !== 'Country') parts.push(country);
+            return parts.join(', ');
           }
         }
         
-        function getShippingAddressString() {
-          const addr1 = document.getElementById('addressLine1').value.trim();
-          const addr2 = document.getElementById('addressLine2').value.trim();
-          const suburb = document.getElementById('addressSuburb').value.trim();
-          const city = document.getElementById('addressCity').value.trim();
-          const postcode = document.getElementById('addressPostcode').value.trim();
-          const region = document.getElementById('addressRegion').value.trim();
-          const country = document.getElementById('countryNameDisplay').textContent.trim();
-          
-          let parts = [];
-          if (addr1) parts.push(addr1);
-          if (addr2) parts.push(addr2);
-          if (suburb) parts.push(suburb);
-          if (city) parts.push(city);
-          if (postcode) parts.push(postcode);
-          if (region) parts.push(region);
-          if (country && country !== 'Country') parts.push(country);
-          
-          return parts.join(', ');
-        }
-
         function setupDropdown(trigger, dropdown) {
             trigger.addEventListener('click', (e) => {
                 e.stopPropagation();
