@@ -1843,7 +1843,7 @@
                 // Load PayPal SDK
                 await new Promise((resolve, reject) => {
                   const script = document.createElement('script');
-                  script.src = 'https://www.paypal.com/sdk/js?client-id=' + paypalClientId + '&currency=ZAR&intent=capture';
+                  script.src = 'https://www.paypal.com/sdk/js?client-id=' + paypalClientId + '&currency=USD&intent=capture';
                   script.onload = resolve;
                   script.onerror = reject;
                   document.head.appendChild(script);
@@ -1867,7 +1867,7 @@
                     const totalValue = totalText.replace(/[^0-9.]/g, '');
                     return actions.order.create({
                       purchase_units: [{
-                        amount: { value: totalValue }
+                        amount: { value: '1.00' }
                       }]
                     });
                   },
