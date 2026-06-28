@@ -1819,202 +1819,331 @@
         function initPayments() {
           const paypalBtn = document.getElementById('paypalBtn');
           const payfastBtn = document.getElementById('payfastBtn');
+          let paypalClientId = '';
+          let payfastMerchantId = '';
+          let payfastMerchantKey = '';
+          let paymentKeysLoaded = false;
           
-          // ========== PAYPAL SANDBOX ==========
-          if (paypalBtn) {
-            // Replace the PayPal button with a div container for the PayPal SDK
-            const paypalContainer = document.createElement('div');
-            paypalContainer.id = 'paypal-button-container';
-            paypalContainer.style.width = '200px';
-            paypalContainer.style.minWidth = '200px';
-            paypalBtn.parentNode.replaceChild(paypalContainer, paypalBtn);
-            
-            // Load PayPal SDK and render button
-            async function initPaypal() {
-              try {
-                const keysRes = await fetch(API_URL + '?action=getPaymentKeys');
-                const keysData = await keysRes.json();
-                const paypalClientId = keysData.paypalClientId;
-                if (!paypalClientId) {
-                  document.getElementById('paypal-button-container').innerHTML = '<button class="pay-btn" disabled>PayPal N/A</button>';
-                  return;
-                }
-                
-                // Load PayPal SDK
-                await new Promise((resolve, reject) => {
-                  const script = document.createElement('script');
-                  script.src = 'https://www.paypal.com/sdk/js?client-id=' + paypalClientId + '&currency=USD&intent=capture';
-                  script.onload = resolve;
-                  script.onerror = reject;
-                  document.head.appendChild(script);
-                });
-                
-                // Render PayPal buttons into the div
-                paypal.Buttons({
-                  style: {
-                    layout: 'horizontal',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'pay'
-                  },
-                  createOrder: function(data, actions) {
-                    // Validate order
-                    if (!selectedProduct || !isEmailVerified) {
-                      showAlertModal('Incomplete', 'Please complete all required fields before paying.');
-                      return;
-                    }
-                    const totalText = document.getElementById('sumTotal').textContent;
-                    const totalValue = totalText.replace(/[^0-9.]/g, '');
-                    return actions.order.create({
-                      purchase_units: [{
-                        amount: { value: '1.00' }
-                      }]
-                    });
-                  },
-                  onApprove: async function(data, actions) {
-                    const name = document.getElementById('customerName').value.trim();
-                    const email = document.getElementById('verifiedEmail').value.trim();
-                    const phoneCode = document.getElementById('phoneCodeInput').value;
-                    const phoneNumber = document.getElementById('customerPhone').value.trim();
-                    const phone = phoneCode + ' ' + phoneNumber;
-                    
-                    // Validate shipping for physical orders
-                    if (selectedProduct.Type === 'Physical') {
-                      const addr1 = document.getElementById('addressLine1').value.trim();
-                      const city = document.getElementById('addressCity').value.trim();
-                      const postcode = document.getElementById('addressPostcode').value.trim();
-                      const country = document.getElementById('countryNameDisplay').textContent.trim();
-                      if (!addr1 || !city || !postcode || country === 'Country') {
-                        showAlertModal('Address Required', 'Please fill in all required address fields.');
-                        return;
-                      }
-                    }
-                    
-                    await handleSuccessfulPayment('PayPal', data.orderID, name, email, phone);
-                  },
-                  onCancel: function() {
-                    showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
-                  },
-                  onError: function(err) {
-                    console.error('PayPal error:', err);
-                    showAlertModal('Payment Error', 'An error occurred during payment. Please try again.');
-                  }
-                }).render('#paypal-button-container');
-                
-              } catch (e) {
-                console.error('PayPal init error:', e);
-                document.getElementById('paypal-button-container').innerHTML = '<button class="pay-btn" disabled>PayPal Error</button>';
-              }
+          // Load payment keys once
+          async function loadPaymentKeys() {
+            if (paymentKeysLoaded) return;
+            try {
+              const res = await fetch(API_URL + '?action=getPaymentKeys');
+              const data = await res.json();
+              paypalClientId = data.paypalClientId || '';
+              payfastMerchantId = data.payfastMerchantId || '';
+              payfastMerchantKey = data.payfastMerchantKey || '';
+              paymentKeysLoaded = true;
+            } catch(e) {
+              console.error('Failed to load payment keys:', e);
             }
-            
-            initPaypal();
           }
           
-          // ========== PAYFAST SANDBOX ==========
+          // Validate the order before showing confirmation
+          function validateOrder() {
+            if (!selectedProduct) {
+              showAlertModal('Select Product', 'Please choose a book format first.');
+              return false;
+            }
+            if (!isEmailVerified) {
+              showAlertModal('Email Required', 'Please verify your email address first.');
+              return false;
+            }
+            const name = document.getElementById('customerName').value.trim();
+            if (!name) {
+              showAlertModal('Name Required', 'Please enter your full name or company.');
+              return false;
+            }
+            const email = document.getElementById('verifiedEmail').value.trim();
+            if (!email) {
+              showAlertModal('Email Required', 'Email not found. Please re-verify your email.');
+              return false;
+            }
+            const phoneNumber = document.getElementById('customerPhone').value.trim();
+            if (!phoneNumber) {
+              showAlertModal('Phone Required', 'Please enter your phone number.');
+              return false;
+            }
+            
+            // Validate address for physical orders
+            if (selectedProduct.Type === 'Physical') {
+              const addr1 = document.getElementById('addressLine1').value.trim();
+              const city = document.getElementById('addressCity').value.trim();
+              const postcode = document.getElementById('addressPostcode').value.trim();
+              const country = document.getElementById('countryNameDisplay').textContent.trim();
+              if (!addr1) { showAlertModal('Address Required', 'Please fill in Address Line 1.'); return false; }
+              if (!city) { showAlertModal('Address Required', 'Please fill in City.'); return false; }
+              if (!postcode) { showAlertModal('Address Required', 'Please fill in Postcode.'); return false; }
+              if (country === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return false; }
+            }
+            
+            return true;
+          }
+          
+          // Build the confirmation modal HTML
+          function showConfirmationModal(gateway, onProceed) {
+            const name = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('verifiedEmail').value.trim();
+            const phoneCode = document.getElementById('phoneCodeInput').value;
+            const phoneNumber = document.getElementById('customerPhone').value.trim();
+            const phone = phoneCode + ' ' + phoneNumber;
+            const productName = selectedProduct.ProductName || 'Book';
+            const typeLabel = selectedProduct.Type === 'Digital' ? 'Digital Edition' : 'Physical Edition';
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const unitPrice = document.getElementById('sumUnitPrice').textContent;
+            const subtotal = document.getElementById('sumSubtotal').textContent;
+            const discountRow = document.getElementById('discountRow');
+            const discountText = discountRow.style.display !== 'none' ? document.getElementById('sumDiscount').textContent : null;
+            const discountDetail = document.getElementById('discountDetail').textContent;
+            const shippingRow = document.getElementById('shippingRow');
+            const shippingText = shippingRow.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
+            const totalPrice = document.getElementById('sumTotal').textContent;
+            const shippingAddress = getShippingAddressString();
+            
+            let orderHtml = `
+              <div class="summary-row"><span>Product:</span><span>${productName} (${typeLabel})</span></div>
+              <div class="summary-row"><span>Quantity:</span><span>${qty}</span></div>
+              <div class="summary-row"><span>Unit Price:</span><span>${unitPrice}</span></div>
+              ${discountText ? `<div class="summary-row"><span>Discount:</span><span class="discount-amount">${discountText}</span></div>
+              <div class="discount-detail" style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</div>` : ''}
+              <div class="summary-row"><span>Subtotal:</span><span>${subtotal}</span></div>
+              ${shippingText ? `<div class="summary-row"><span>Shipping:</span><span>${shippingText}</span></div>` : ''}
+              <div class="summary-row total"><span>Total:</span><span>${totalPrice}</span></div>
+            `;
+            
+            let customerHtml = `
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Phone:</strong> ${phone}</p>
+            `;
+            
+            if (selectedProduct.Type === 'Physical') {
+              if (shippingAddress) {
+                customerHtml += `<p><strong>Shipping Address:</strong><br>${shippingAddress}</p>`;
+              }
+              const deliveryDetails = document.getElementById('deliveryDetails');
+              if (deliveryDetails && deliveryDetails.value.trim()) {
+                customerHtml += `<p><strong>Delivery Details:</strong><br>${deliveryDetails.value.trim()}</p>`;
+              }
+            } else {
+              customerHtml += `<p style="margin-top:0.8rem;font-size:0.9rem;color:#555;">You'll receive an email with your download link for the PDF file.</p>`;
+            }
+            
+            const fullHtml = `
+              <div class="confirm-two-col">
+                <div class="confirm-col">
+                  <h4>Order Summary</h4>
+                  ${orderHtml}
+                </div>
+                <div class="confirm-col">
+                  <h4>Customer Details</h4>
+                  ${customerHtml}
+                </div>
+              </div>
+            `;
+            
+            // Widen the modal
+            const modalBox = document.querySelector('#modalOverlay .modal-box');
+            const origMaxWidth = modalBox.style.maxWidth || '';
+            const origMaxHeight = modalBox.style.maxHeight || '';
+            const origOverflow = modalBox.style.overflowY || '';
+            
+            modalBox.style.maxWidth = '650px';
+            modalBox.style.maxHeight = '80vh';
+            modalBox.style.overflowY = 'auto';
+            
+            const resetModalBox = function() {
+              modalBox.style.maxWidth = origMaxWidth;
+              modalBox.style.maxHeight = origMaxHeight;
+              modalBox.style.overflowY = origOverflow;
+            };
+            
+            showModal('Confirm Purchase', fullHtml, 'Proceed with ' + gateway, 'Cancel', 
+              function() {
+                resetModalBox();
+                if (onProceed) onProceed();
+              },
+              function() {
+                resetModalBox();
+              }
+            );
+          }
+          
+          // ========== PAYPAL ==========
+          if (paypalBtn) {
+            paypalBtn.addEventListener('click', async function() {
+              if (!validateOrder()) return;
+              await loadPaymentKeys();
+              
+              if (!paypalClientId) {
+                showAlertModal('Error', 'PayPal is not configured yet.');
+                return;
+              }
+              
+              // Show confirmation first
+              showConfirmationModal('PayPal', function() {
+                // Load PayPal SDK and open popup
+                initPayPalPopup();
+              });
+            });
+          }
+          
+          async function initPayPalPopup() {
+            // Remove any existing PayPal button container
+            const existing = document.getElementById('paypal-popup-container');
+            if (existing) existing.remove();
+            
+            // Create a hidden container for the PayPal button
+            const container = document.createElement('div');
+            container.id = 'paypal-popup-container';
+            container.style.display = 'none';
+            document.body.appendChild(container);
+            
+            if (!window.paypal) {
+              await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://www.paypal.com/sdk/js?client-id=' + paypalClientId + '&currency=USD&intent=capture';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+              });
+            }
+            
+            const totalText = document.getElementById('sumTotal').textContent;
+            const totalValue = totalText.replace(/[^0-9.]/g, '');
+            
+            paypal.Buttons({
+              style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+              createOrder: function() {
+                const amount = Math.max(0.01, parseFloat(totalValue) || 1.00).toFixed(2);
+                return fetch(API_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: 'action=createPayPalOrder&amount=' + amount
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                  if (data.result === 'success' && data.orderID) return data.orderID;
+                  throw new Error('Could not create order');
+                });
+              },
+              onApprove: function(data) {
+                const name = document.getElementById('customerName').value.trim();
+                const email = document.getElementById('verifiedEmail').value.trim();
+                const phoneCode = document.getElementById('phoneCodeInput').value;
+                const phoneNumber = document.getElementById('customerPhone').value.trim();
+                const phone = phoneCode + ' ' + phoneNumber;
+                
+                return fetch(API_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(data.orderID)
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(captureData) {
+                  if (captureData.result === 'success') {
+                    return handleSuccessfulPayment('PayPal', data.orderID, name, email, phone);
+                  }
+                  throw new Error('Payment capture failed');
+                });
+              },
+              onCancel: function() {
+                showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+              },
+              onError: function(err) {
+                console.error('PayPal error:', err);
+                showAlertModal('Payment Error', 'An error occurred. Please try again.');
+              }
+            }).render('#paypal-popup-container');
+            
+            // Auto-click the PayPal button to open the popup after a short delay
+            setTimeout(function() {
+              const paypalIframe = document.querySelector('#paypal-popup-container iframe');
+              if (!paypalIframe) {
+                const btn = document.querySelector('#paypal-popup-container .paypal-buttons button');
+                if (btn) btn.click();
+              }
+            }, 800);
+          }
+          
+          // ========== PAYFAST ==========
           if (payfastBtn) {
             payfastBtn.addEventListener('click', async function() {
-              // Validate order first
-              if (!selectedProduct) {
-                showAlertModal('Select Product', 'Please choose a book format first.');
-                return;
-              }
-              if (!isEmailVerified) {
-                showAlertModal('Email Required', 'Please verify your email address first.');
-                return;
-              }
-              const name = document.getElementById('customerName').value.trim();
-              if (!name) {
-                showAlertModal('Name Required', 'Please enter your full name or company.');
-                return;
-              }
-              const email = document.getElementById('verifiedEmail').value.trim();
-              if (!email) {
-                showAlertModal('Email Required', 'Email not found. Please re-verify your email.');
-                return;
-              }
-              const phoneCode = document.getElementById('phoneCodeInput').value;
-              const phoneNumber = document.getElementById('customerPhone').value.trim();
-              if (!phoneNumber) {
-                showAlertModal('Phone Required', 'Please enter your phone number.');
+              if (!validateOrder()) return;
+              await loadPaymentKeys();
+              
+              if (!payfastMerchantId || !payfastMerchantKey) {
+                showAlertModal('Error', 'Payfast is not configured yet.');
                 return;
               }
               
-              // Validate address for physical orders
-              if (selectedProduct.Type === 'Physical') {
-                const addr1 = document.getElementById('addressLine1').value.trim();
-                const city = document.getElementById('addressCity').value.trim();
-                const postcode = document.getElementById('addressPostcode').value.trim();
-                const country = document.getElementById('countryNameDisplay').textContent.trim();
-                if (!addr1) { showAlertModal('Address Required', 'Please fill in Address Line 1.'); return; }
-                if (!city) { showAlertModal('Address Required', 'Please fill in City.'); return; }
-                if (!postcode) { showAlertModal('Address Required', 'Please fill in Postcode.'); return; }
-                if (country === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return; }
-              }
-              
-              // Get Payfast keys
-              try {
-                const keysRes = await fetch(API_URL + '?action=getPaymentKeys');
-                const keysData = await keysRes.json();
-                const merchantId = keysData.payfastMerchantId;
-                const merchantKey = keysData.payfastMerchantKey;
-                
-                if (!merchantId || !merchantKey) {
-                  showAlertModal('Error', 'Payfast is not configured yet.');
-                  return;
-                }
-                
-                const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-                const totalText = document.getElementById('sumTotal').textContent;
-                const totalValue = totalText.replace(/[^0-9.]/g, '');
-                const productName = selectedProduct.ProductName || 'The ABC of ASD';
-                const orderId = 'PF-' + Date.now();
-                
-                // Build Payfast form
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'https://sandbox.payfast.co.za/eng/process';
-                
-                const fields = {
-                  merchant_id: merchantId,
-                  merchant_key: merchantKey,
-                  return_url: 'https://gmmastermariner.github.io/the-ABC-of-ASD/?payment=success&orderId=' + orderId,
-                  cancel_url: 'https://gmmastermariner.github.io/the-ABC-of-ASD/?payment=cancelled',
-                  notify_url: API_URL,
-                  name_first: name.split(' ')[0],
-                  name_last: name.split(' ').slice(1).join(' ') || name,
-                  email_address: email,
-                  m_payment_id: orderId,
-                  amount: totalValue,
-                  item_name: productName,
-                  item_description: qty + ' x ' + selectedProduct.Type + ' Edition'
-                };
-                
-                for (const [key, value] of Object.entries(fields)) {
-                  const input = document.createElement('input');
-                  input.type = 'hidden';
-                  input.name = key;
-                  input.value = value;
-                  form.appendChild(input);
-                }
-                
-                // Generate signature
-                const sigRes = await fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString());
-                const sigData = await sigRes.json();
-                
+              // Show confirmation first
+              showConfirmationModal('Payfast', function() {
+                submitPayfastForm();
+              });
+            });
+          }
+          
+          function submitPayfastForm() {
+            const name = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('verifiedEmail').value.trim();
+            const phoneCode = document.getElementById('phoneCodeInput').value;
+            const phoneNumber = document.getElementById('customerPhone').value.trim();
+            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const totalText = document.getElementById('sumTotal').textContent;
+            const totalValue = totalText.replace(/[^0-9.]/g, '');
+            const productName = selectedProduct ? selectedProduct.ProductName : 'The ABC of ASD';
+            const orderId = 'PF-' + Date.now();
+            
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || name;
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://sandbox.payfast.co.za/eng/process';
+            form.style.display = 'none';
+            
+            const fields = {
+              merchant_id: payfastMerchantId,
+              merchant_key: payfastMerchantKey,
+              return_url: window.location.origin + window.location.pathname + '?payment=success&orderId=' + orderId,
+              cancel_url: window.location.origin + window.location.pathname + '?payment=cancelled',
+              notify_url: API_URL,
+              name_first: firstName,
+              name_last: lastName,
+              email_address: email,
+              m_payment_id: orderId,
+              amount: totalValue,
+              item_name: productName,
+              item_description: qty + ' x ' + (selectedProduct ? selectedProduct.Type : 'Digital') + ' Edition'
+            };
+            
+            for (const [key, value] of Object.entries(fields)) {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = value;
+              form.appendChild(input);
+            }
+            
+            // Get signature from backend
+            fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString())
+              .then(function(res) { return res.json(); })
+              .then(function(data) {
                 const sigInput = document.createElement('input');
                 sigInput.type = 'hidden';
                 sigInput.name = 'signature';
-                sigInput.value = sigData.signature;
+                sigInput.value = data.signature;
                 form.appendChild(sigInput);
                 
                 document.body.appendChild(form);
                 form.submit();
                 document.body.removeChild(form);
-                
-              } catch (e) {
+              })
+              .catch(function() {
                 showAlertModal('Error', 'Failed to connect to Payfast.');
-              }
-            });
+              });
           }
         }
         
