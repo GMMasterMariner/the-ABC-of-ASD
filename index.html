@@ -2068,16 +2068,6 @@
               }
             }).render('#paypal-popup-container');
           }
-            
-            // Auto-click the PayPal button to open the popup after a short delay
-            setTimeout(function() {
-              const paypalIframe = document.querySelector('#paypal-popup-container iframe');
-              if (!paypalIframe) {
-                const btn = document.querySelector('#paypal-popup-container .paypal-buttons button');
-                if (btn) btn.click();
-              }
-            }, 800);
-          }
           
           // ========== PAYFAST ==========
           if (payfastBtn) {
