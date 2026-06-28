@@ -1996,7 +1996,12 @@
             // Create a hidden container for the PayPal button
             const container = document.createElement('div');
             container.id = 'paypal-popup-container';
-            container.style.display = 'none';
+            container.style.position = 'fixed';
+            container.style.top = '50%';
+            container.style.left = '50%';
+            container.style.transform = 'translate(-50%, -50%)';
+            container.style.zIndex = '99999';
+            container.style.display = 'block';
             document.body.appendChild(container);
             
             if (!window.paypal) {
@@ -2042,19 +2047,27 @@
                 .then(function(res) { return res.json(); })
                 .then(function(captureData) {
                   if (captureData.result === 'success') {
+                    // Remove popup container
+                    const popup = document.getElementById('paypal-popup-container');
+                    if (popup) popup.remove();
                     return handleSuccessfulPayment('PayPal', data.orderID, name, email, phone);
                   }
                   throw new Error('Payment capture failed');
                 });
               },
               onCancel: function() {
+                const popup = document.getElementById('paypal-popup-container');
+                if (popup) popup.remove();
                 showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
               },
               onError: function(err) {
+                const popup = document.getElementById('paypal-popup-container');
+                if (popup) popup.remove();
                 console.error('PayPal error:', err);
                 showAlertModal('Payment Error', 'An error occurred. Please try again.');
               }
             }).render('#paypal-popup-container');
+          }
             
             // Auto-click the PayPal button to open the popup after a short delay
             setTimeout(function() {
