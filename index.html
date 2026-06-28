@@ -2688,6 +2688,34 @@
                 setTimeout(splitAllPhoneFields, 800);
                 initPayments();
             } catch(err) { console.error(err); }
+                        // Check for payment return from gateways
+            (function() {
+              const urlParams = new URLSearchParams(window.location.search);
+              if (urlParams.get('payment') === 'success') {
+                setTimeout(function() {
+                  showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                    showPage('home-section');
+                  });
+                }, 500);
+              }
+              if (urlParams.get('payment') === 'cancelled') {
+                setTimeout(function() {
+                  showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                }, 500);
+              }
+              if (urlParams.get('paypal') === 'success') {
+                setTimeout(function() {
+                  showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                    showPage('home-section');
+                  });
+                }, 500);
+              }
+              if (urlParams.get('paypal') === 'cancelled') {
+                setTimeout(function() {
+                  showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                }, 500);
+              }
+            })();
         }
         init();
     </script>
