@@ -1819,120 +1819,84 @@
         function initPayments() {
           const paypalBtn = document.getElementById('paypalBtn');
           const payfastBtn = document.getElementById('payfastBtn');
-          let paypalClientId = '';
-          let payfastMerchantId = '';
-          let payfastMerchantKey = '';
-          let paymentKeysLoaded = false;
           
-          async function loadPaymentKeys() {
-            if (paymentKeysLoaded) return;
-            try {
-              const res = await fetch(API_URL + '?action=getPaymentKeys');
-              const data = await res.json();
-              paypalClientId = data.paypalClientId || '';
-              payfastMerchantId = data.payfastMerchantId || '';
-              payfastMerchantKey = data.payfastMerchantKey || '';
-              paymentKeysLoaded = true;
-            } catch(e) {
-              console.error('Failed to load payment keys:', e);
-            }
+          function getOrderSummary() {
+            return {
+              name: document.getElementById('customerName').value.trim(),
+              email: document.getElementById('verifiedEmail').value.trim(),
+              phone: (document.getElementById('phoneCodeInput').value + ' ' + document.getElementById('customerPhone').value.trim()).trim(),
+              productName: selectedProduct ? selectedProduct.ProductName : 'Book',
+              typeLabel: selectedProduct && selectedProduct.Type === 'Digital' ? 'Digital Edition' : 'Physical Edition',
+              qty: parseInt(document.getElementById('orderQuantity').value) || 1,
+              unitPrice: document.getElementById('sumUnitPrice').textContent,
+              subtotal: document.getElementById('sumSubtotal').textContent,
+              discountText: (function() {
+                const dr = document.getElementById('discountRow');
+                return dr.style.display !== 'none' ? document.getElementById('sumDiscount').textContent : null;
+              })(),
+              discountDetail: document.getElementById('discountDetail').textContent,
+              shippingText: (function() {
+                const sr = document.getElementById('shippingRow');
+                return sr.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
+              })(),
+              totalPrice: document.getElementById('sumTotal').textContent,
+              totalValue: document.getElementById('sumTotal').textContent.replace(/[^0-9.]/g, ''),
+              shippingAddress: getShippingAddressString(),
+              deliveryDetails: (function() {
+                const dd = document.getElementById('deliveryDetails');
+                return dd && dd.value.trim() ? dd.value.trim() : '';
+              })()
+            };
           }
           
           function validateOrder() {
-            if (!selectedProduct) {
-              showAlertModal('Select Product', 'Please choose a book format first.');
-              return false;
-            }
-            if (!isEmailVerified) {
-              showAlertModal('Email Required', 'Please verify your email address first.');
-              return false;
-            }
+            if (!selectedProduct) { showAlertModal('Select Product', 'Please choose a book format first.'); return false; }
+            if (!isEmailVerified) { showAlertModal('Email Required', 'Please verify your email address first.'); return false; }
             const name = document.getElementById('customerName').value.trim();
-            if (!name) {
-              showAlertModal('Name Required', 'Please enter your full name or company.');
-              return false;
-            }
+            if (!name) { showAlertModal('Name Required', 'Please enter your full name or company.'); return false; }
             const email = document.getElementById('verifiedEmail').value.trim();
-            if (!email) {
-              showAlertModal('Email Required', 'Email not found. Please re-verify your email.');
-              return false;
-            }
-            const phoneNumber = document.getElementById('customerPhone').value.trim();
-            if (!phoneNumber) {
-              showAlertModal('Phone Required', 'Please enter your phone number.');
-              return false;
-            }
+            if (!email) { showAlertModal('Email Required', 'Email not found. Please re-verify your email.'); return false; }
+            if (!document.getElementById('customerPhone').value.trim()) { showAlertModal('Phone Required', 'Please enter your phone number.'); return false; }
             if (selectedProduct.Type === 'Physical') {
-              const addr1 = document.getElementById('addressLine1').value.trim();
-              const city = document.getElementById('addressCity').value.trim();
-              const postcode = document.getElementById('addressPostcode').value.trim();
-              const country = document.getElementById('countryNameDisplay').textContent.trim();
-              if (!addr1) { showAlertModal('Address Required', 'Please fill in Address Line 1.'); return false; }
-              if (!city) { showAlertModal('Address Required', 'Please fill in City.'); return false; }
-              if (!postcode) { showAlertModal('Address Required', 'Please fill in Postcode.'); return false; }
-              if (country === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return false; }
+              if (!document.getElementById('addressLine1').value.trim()) { showAlertModal('Address Required', 'Please fill in Address Line 1.'); return false; }
+              if (!document.getElementById('addressCity').value.trim()) { showAlertModal('Address Required', 'Please fill in City.'); return false; }
+              if (!document.getElementById('addressPostcode').value.trim()) { showAlertModal('Address Required', 'Please fill in Postcode.'); return false; }
+              if (document.getElementById('countryNameDisplay').textContent.trim() === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return false; }
             }
             return true;
           }
           
           function showConfirmationModal(gateway, onProceed) {
-            const name = document.getElementById('customerName').value.trim();
-            const email = document.getElementById('verifiedEmail').value.trim();
-            const phoneCode = document.getElementById('phoneCodeInput').value;
-            const phoneNumber = document.getElementById('customerPhone').value.trim();
-            const phone = phoneCode + ' ' + phoneNumber;
-            const productName = selectedProduct.ProductName || 'Book';
-            const typeLabel = selectedProduct.Type === 'Digital' ? 'Digital Edition' : 'Physical Edition';
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const unitPrice = document.getElementById('sumUnitPrice').textContent;
-            const subtotal = document.getElementById('sumSubtotal').textContent;
-            const discountRow = document.getElementById('discountRow');
-            const discountText = discountRow.style.display !== 'none' ? document.getElementById('sumDiscount').textContent : null;
-            const discountDetail = document.getElementById('discountDetail').textContent;
-            const shippingRow = document.getElementById('shippingRow');
-            const shippingText = shippingRow.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
-            const totalPrice = document.getElementById('sumTotal').textContent;
-            const shippingAddress = getShippingAddressString();
+            const order = getOrderSummary();
             
             let orderHtml = `
-              <div class="summary-row"><span>Product:</span><span>${productName} (${typeLabel})</span></div>
-              <div class="summary-row"><span>Quantity:</span><span>${qty}</span></div>
-              <div class="summary-row"><span>Unit Price:</span><span>${unitPrice}</span></div>
-              ${discountText ? `<div class="summary-row"><span>Discount:</span><span class="discount-amount">${discountText}</span></div>
-              <div class="discount-detail" style="font-size:0.85rem;color:#dc3c33;">(${discountDetail})</div>` : ''}
-              <div class="summary-row"><span>Subtotal:</span><span>${subtotal}</span></div>
-              ${shippingText ? `<div class="summary-row"><span>Shipping:</span><span>${shippingText}</span></div>` : ''}
-              <div class="summary-row total"><span>Total:</span><span>${totalPrice}</span></div>
+              <div class="summary-row"><span>Product:</span><span>${order.productName} (${order.typeLabel})</span></div>
+              <div class="summary-row"><span>Quantity:</span><span>${order.qty}</span></div>
+              <div class="summary-row"><span>Unit Price:</span><span>${order.unitPrice}</span></div>
+              ${order.discountText ? `<div class="summary-row"><span>Discount:</span><span class="discount-amount">${order.discountText}</span></div>
+              <div class="discount-detail" style="font-size:0.85rem;color:#dc3c33;">(${order.discountDetail})</div>` : ''}
+              <div class="summary-row"><span>Subtotal:</span><span>${order.subtotal}</span></div>
+              ${order.shippingText ? `<div class="summary-row"><span>Shipping:</span><span>${order.shippingText}</span></div>` : ''}
+              <div class="summary-row total"><span>Total:</span><span>${order.totalPrice}</span></div>
             `;
             
             let customerHtml = `
-              <p><strong>Name:</strong> ${name}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Phone:</strong> ${phone}</p>
+              <p><strong>Name:</strong> ${order.name}</p>
+              <p><strong>Email:</strong> ${order.email}</p>
+              <p><strong>Phone:</strong> ${order.phone}</p>
             `;
             
             if (selectedProduct.Type === 'Physical') {
-              if (shippingAddress) {
-                customerHtml += `<p><strong>Shipping Address:</strong><br>${shippingAddress}</p>`;
-              }
-              const deliveryDetails = document.getElementById('deliveryDetails');
-              if (deliveryDetails && deliveryDetails.value.trim()) {
-                customerHtml += `<p><strong>Delivery Details:</strong><br>${deliveryDetails.value.trim()}</p>`;
-              }
+              if (order.shippingAddress) customerHtml += `<p><strong>Shipping Address:</strong><br>${order.shippingAddress}</p>`;
+              if (order.deliveryDetails) customerHtml += `<p><strong>Delivery Details:</strong><br>${order.deliveryDetails}</p>`;
             } else {
               customerHtml += `<p style="margin-top:0.8rem;font-size:0.9rem;color:#555;">You'll receive an email with your download link for the PDF file.</p>`;
             }
             
             const fullHtml = `
               <div class="confirm-two-col">
-                <div class="confirm-col">
-                  <h4>Order Summary</h4>
-                  ${orderHtml}
-                </div>
-                <div class="confirm-col">
-                  <h4>Customer Details</h4>
-                  ${customerHtml}
-                </div>
+                <div class="confirm-col"><h4>Order Summary</h4>${orderHtml}</div>
+                <div class="confirm-col"><h4>Customer Details</h4>${customerHtml}</div>
               </div>
             `;
             
@@ -1940,215 +1904,40 @@
             const origMaxWidth = modalBox.style.maxWidth || '';
             const origMaxHeight = modalBox.style.maxHeight || '';
             const origOverflow = modalBox.style.overflowY || '';
-            
             modalBox.style.maxWidth = '650px';
             modalBox.style.maxHeight = '80vh';
             modalBox.style.overflowY = 'auto';
             
-            const resetModalBox = function() {
-              modalBox.style.maxWidth = origMaxWidth;
-              modalBox.style.maxHeight = origMaxHeight;
-              modalBox.style.overflowY = origOverflow;
-            };
-            
             showModal('Confirm Purchase', fullHtml, 'Proceed with ' + gateway, 'Cancel', 
               function() {
-                resetModalBox();
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
                 if (onProceed) onProceed();
               },
               function() {
-                resetModalBox();
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
               }
             );
           }
           
-          // ========== PAYPAL ==========
-          if (paypalBtn) {
-            paypalBtn.addEventListener('click', async function() {
-              if (!validateOrder()) return;
-              await loadPaymentKeys();
-              if (!paypalClientId) {
-                showAlertModal('Error', 'PayPal is not configured yet.');
-                return;
-              }
-              showConfirmationModal('PayPal', function() {
-                initPayPalPopup();
-              });
-            });
-          }
-          
-          async function initPayPalPopup() {
-            const existing = document.getElementById('paypal-popup-container');
-            if (existing) existing.remove();
-            
-            const container = document.createElement('div');
-            container.id = 'paypal-popup-container';
-            container.style.display = 'none';
-            document.body.appendChild(container);
-            
-            if (!window.paypal) {
-              await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://www.paypal.com/sdk/js?client-id=' + paypalClientId + '&currency=USD&intent=capture&disable-funding=card,credit';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-              });
-            }
-            
-            const totalText = document.getElementById('sumTotal').textContent;
-            const totalValue = totalText.replace(/[^0-9.]/g, '');
-            
-            paypal.Buttons({
-              createOrder: function() {
-                const amount = Math.max(0.01, parseFloat(totalValue) || 1.00).toFixed(2);
-                return fetch(API_URL, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  body: 'action=createPayPalOrder&amount=' + amount
-                })
-                .then(function(res) { return res.json(); })
-                .then(function(data) {
-                  if (data.result === 'success' && data.orderID) return data.orderID;
-                  throw new Error('Could not create order');
-                });
-              },
-              onApprove: function(data) {
-                const name = document.getElementById('customerName').value.trim();
-                const email = document.getElementById('verifiedEmail').value.trim();
-                const phoneCode = document.getElementById('phoneCodeInput').value;
-                const phoneNumber = document.getElementById('customerPhone').value.trim();
-                const phone = phoneCode + ' ' + phoneNumber;
-                
-                return fetch(API_URL, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(data.orderID)
-                })
-                .then(function(res) { return res.json(); })
-                .then(function(captureData) {
-                  if (captureData.result === 'success') {
-                    const popup = document.getElementById('paypal-popup-container');
-                    if (popup) popup.remove();
-                    return handleSuccessfulPayment('PayPal', data.orderID, name, email, phone);
-                  }
-                  throw new Error('Payment capture failed');
-                });
-              },
-              onCancel: function() {
-                const popup = document.getElementById('paypal-popup-container');
-                if (popup) popup.remove();
-                showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
-              },
-              onError: function(err) {
-                const popup = document.getElementById('paypal-popup-container');
-                if (popup) popup.remove();
-                console.error('PayPal error:', err);
-                showAlertModal('Payment Error', 'An error occurred. Please try again.');
-              }
-            }).render('#paypal-popup-container');
-            
-            // Auto-click the PayPal button to open the popup
-            setTimeout(function() {
-              const btn = document.querySelector('#paypal-popup-container .paypal-buttons button');
-              if (btn) btn.click();
-            }, 1000);
-          }
-          
-          // ========== PAYFAST ==========
-          if (payfastBtn) {
-            payfastBtn.addEventListener('click', async function() {
-              if (!validateOrder()) return;
-              await loadPaymentKeys();
-              if (!payfastMerchantId || !payfastMerchantKey) {
-                showAlertModal('Error', 'Payfast is not configured yet.');
-                return;
-              }
-              showConfirmationModal('Payfast', function() {
-                submitPayfastForm();
-              });
-            });
-          }
-          
-          function submitPayfastForm() {
-            const name = document.getElementById('customerName').value.trim();
-            const email = document.getElementById('verifiedEmail').value.trim();
-            const phoneCode = document.getElementById('phoneCodeInput').value;
-            const phoneNumber = document.getElementById('customerPhone').value.trim();
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const totalText = document.getElementById('sumTotal').textContent;
-            const totalValue = totalText.replace(/[^0-9.]/g, '');
-            const productName = selectedProduct ? selectedProduct.ProductName : 'The ABC of ASD';
-            const orderId = 'PF-' + Date.now();
-            
-            const nameParts = name.split(' ');
-            const firstName = nameParts[0];
-            const lastName = nameParts.slice(1).join(' ') || name;
-            
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'https://sandbox.payfast.co.za/eng/process';
-            form.style.display = 'none';
-            
-            const fields = {
-              merchant_id: payfastMerchantId,
-              merchant_key: payfastMerchantKey,
-              return_url: window.location.origin + window.location.pathname + '?payment=success&orderId=' + orderId,
-              cancel_url: window.location.origin + window.location.pathname + '?payment=cancelled',
-              notify_url: API_URL,
-              name_first: firstName,
-              name_last: lastName,
-              email_address: email,
-              m_payment_id: orderId,
-              amount: totalValue,
-              item_name: productName,
-              item_description: qty + ' x ' + (selectedProduct ? selectedProduct.Type : 'Digital') + ' Edition'
-            };
-            
-            for (const [key, value] of Object.entries(fields)) {
-              const input = document.createElement('input');
-              input.type = 'hidden';
-              input.name = key;
-              input.value = value;
-              form.appendChild(input);
-            }
-            
-            fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString())
-              .then(function(res) { return res.json(); })
-              .then(function(data) {
-                const sigInput = document.createElement('input');
-                sigInput.type = 'hidden';
-                sigInput.name = 'signature';
-                sigInput.value = data.signature;
-                form.appendChild(sigInput);
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-              })
-              .catch(function() {
-                showAlertModal('Error', 'Failed to connect to Payfast.');
-              });
-          }
-        
-          async function handleSuccessfulPayment(gateway, transactionId, name, email, phone) {
-            const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
-            const totalText = document.getElementById('sumTotal').textContent;
-            const currencyCode = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR';
-            const shippingAddress = getShippingAddressString();
-            
+          async function processPayment(gateway, transactionId) {
+            const order = getOrderSummary();
             const params = new URLSearchParams();
             params.append('action', 'generateLicense');
             params.append('orderId', transactionId);
-            params.append('customerName', name);
-            params.append('customerEmail', email);
-            params.append('customerPhone', phone);
-            params.append('quantity', qty);
-            params.append('total', totalText.replace(/[^0-9.]/g, ''));
-            params.append('currency', currencyCode);
+            params.append('customerName', order.name);
+            params.append('customerEmail', order.email);
+            params.append('customerPhone', order.phone);
+            params.append('quantity', order.qty);
+            params.append('total', order.totalValue);
+            params.append('currency', selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR');
             params.append('paymentGateway', gateway);
             params.append('paymentStatus', 'Completed');
-            params.append('productType', selectedProduct.Type || 'Digital');
-            params.append('shippingAddress', shippingAddress);
+            params.append('productType', selectedProduct ? selectedProduct.Type : 'Digital');
+            params.append('shippingAddress', order.shippingAddress);
             
             try {
               const res = await fetch(API_URL, { method: 'POST', body: params });
@@ -2158,31 +1947,168 @@
                   showPage('home-section');
                 });
               } else {
-                showAlertModal('Error', data.message || 'Could not generate license.');
+                showAlertModal('Error', data.message || 'Could not process order. Please contact support.');
               }
             } catch (e) {
               showAlertModal('Error', 'Network error. Please contact support.');
             }
           }
           
-          function getShippingAddressString() {
-            const addr1 = document.getElementById('addressLine1').value.trim();
-            const addr2 = document.getElementById('addressLine2').value.trim();
-            const suburb = document.getElementById('addressSuburb').value.trim();
-            const city = document.getElementById('addressCity').value.trim();
-            const postcode = document.getElementById('addressPostcode').value.trim();
-            const region = document.getElementById('addressRegion').value.trim();
-            const country = document.getElementById('countryNameDisplay').textContent.trim();
-            let parts = [];
-            if (addr1) parts.push(addr1);
-            if (addr2) parts.push(addr2);
-            if (suburb) parts.push(suburb);
-            if (city) parts.push(city);
-            if (postcode) parts.push(postcode);
-            if (region) parts.push(region);
-            if (country && country !== 'Country') parts.push(country);
-            return parts.join(', ');
+          // ========== PAYPAL ==========
+          if (paypalBtn) {
+            paypalBtn.addEventListener('click', function() {
+              if (!validateOrder()) return;
+              
+              fetch(API_URL + '?action=getPaymentKeys')
+                .then(function(r) { return r.json(); })
+                .then(function(keys) {
+                  if (!keys.paypalClientId) { showAlertModal('Error', 'PayPal is not configured.'); return; }
+                  
+                  showConfirmationModal('PayPal', function() {
+                    // Build PayPal popup URL manually
+                    const order = getOrderSummary();
+                    const amount = Math.max(0.01, parseFloat(order.totalValue) || 1.00).toFixed(2);
+                    const returnUrl = window.location.origin + window.location.pathname + '?paypal=success';
+                    const cancelUrl = window.location.origin + window.location.pathname + '?paypal=cancelled';
+                    
+                    // Create order first, then redirect to PayPal
+                    fetch(API_URL, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                      body: 'action=createPayPalOrder&amount=' + amount
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                      if (data.result === 'success' && data.approvalUrl) {
+                        window.location.href = data.approvalUrl;
+                      } else if (data.result === 'success' && data.orderID) {
+                        // Open PayPal checkout in a new window
+                        var w = window.open('', 'PayPal', 'width=500,height=650,top=100,left=100');
+                        if (w) {
+                          w.document.write('<html><head><title>PayPal</title></head><body style="margin:0;padding:0;"><div id="paypal-button-container"></div><script src="https://www.paypal.com/sdk/js?client-id=' + keys.paypalClientId + '&currency=USD&intent=capture"></script><script>paypal.Buttons({createOrder:function(){return "' + data.orderID + '";},onApprove:function(d){window.opener.paypalCallback(d.orderID);window.close();},onCancel:function(){window.opener.paypalCancelled();window.close();},onError:function(){window.opener.paypalCancelled();window.close();}}).render("#paypal-button-container");</script></body></html>');
+                          w.document.close();
+                        } else {
+                          showAlertModal('Popup Blocked', 'Please allow popups for this site to pay with PayPal.');
+                        }
+                      } else {
+                        showAlertModal('Error', 'Could not create PayPal order. Please try again.');
+                      }
+                    })
+                    .catch(function() {
+                      showAlertModal('Error', 'Could not connect to PayPal. Please try again.');
+                    });
+                  });
+                })
+                .catch(function() {
+                  showAlertModal('Error', 'Could not load payment settings.');
+                });
+            });
           }
+          
+          // PayPal callback functions
+          window.paypalCallback = function(orderID) {
+            fetch(API_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(orderID)
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.result === 'success') {
+                processPayment('PayPal', orderID);
+              } else {
+                showAlertModal('Payment Failed', 'Payment capture failed. Please contact support.');
+              }
+            })
+            .catch(function() {
+              showAlertModal('Error', 'Network error. Please contact support.');
+            });
+          };
+          
+          window.paypalCancelled = function() {
+            showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+          };
+          
+          // ========== PAYFAST ==========
+          if (payfastBtn) {
+            payfastBtn.addEventListener('click', function() {
+              if (!validateOrder()) return;
+              
+              fetch(API_URL + '?action=getPaymentKeys')
+                .then(function(r) { return r.json(); })
+                .then(function(keys) {
+                  if (!keys.payfastMerchantId || !keys.payfastMerchantKey) { showAlertModal('Error', 'Payfast is not configured.'); return; }
+                  
+                  showConfirmationModal('Payfast', function() {
+                    const order = getOrderSummary();
+                    const orderId = 'PF-' + Date.now();
+                    const nameParts = order.name.split(' ');
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://sandbox.payfast.co.za/eng/process';
+                    form.style.display = 'none';
+                    
+                    const fields = {
+                      merchant_id: keys.payfastMerchantId,
+                      merchant_key: keys.payfastMerchantKey,
+                      return_url: window.location.origin + window.location.pathname + '?payment=success&orderId=' + orderId,
+                      cancel_url: window.location.origin + window.location.pathname + '?payment=cancelled',
+                      notify_url: API_URL,
+                      name_first: nameParts[0],
+                      name_last: nameParts.slice(1).join(' ') || order.name,
+                      email_address: order.email,
+                      m_payment_id: orderId,
+                      amount: order.totalValue,
+                      item_name: order.productName,
+                      item_description: order.qty + ' x ' + order.typeLabel
+                    };
+                    
+                    for (var key in fields) {
+                      var input = document.createElement('input');
+                      input.type = 'hidden';
+                      input.name = key;
+                      input.value = fields[key];
+                      form.appendChild(input);
+                    }
+                    
+                    fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString())
+                      .then(function(r) { return r.json(); })
+                      .then(function(data) {
+                        var sigInput = document.createElement('input');
+                        sigInput.type = 'hidden';
+                        sigInput.name = 'signature';
+                        sigInput.value = data.signature;
+                        form.appendChild(sigInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                        document.body.removeChild(form);
+                      })
+                      .catch(function() { showAlertModal('Error', 'Failed to connect to Payfast.'); });
+                  });
+                })
+                .catch(function() { showAlertModal('Error', 'Could not load payment settings.'); });
+            });
+          }
+        }
+        
+        function getShippingAddressString() {
+          const parts = [];
+          const addr1 = document.getElementById('addressLine1').value.trim();
+          const addr2 = document.getElementById('addressLine2').value.trim();
+          const suburb = document.getElementById('addressSuburb').value.trim();
+          const city = document.getElementById('addressCity').value.trim();
+          const postcode = document.getElementById('addressPostcode').value.trim();
+          const region = document.getElementById('addressRegion').value.trim();
+          const country = document.getElementById('countryNameDisplay').textContent.trim();
+          if (addr1) parts.push(addr1);
+          if (addr2) parts.push(addr2);
+          if (suburb) parts.push(suburb);
+          if (city) parts.push(city);
+          if (postcode) parts.push(postcode);
+          if (region) parts.push(region);
+          if (country && country !== 'Country') parts.push(country);
+          return parts.join(', ');
         }
         
         function setupDropdown(trigger, dropdown) {
