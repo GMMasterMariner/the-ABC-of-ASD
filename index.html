@@ -1890,7 +1890,8 @@
                       phone: order.phone,
                       qty: order.qty,
                       totalValue: order.totalValue,
-                      shippingAddress: order.shippingAddress
+                      shippingAddress: order.shippingAddress,
+                      productType: selectedProduct ? selectedProduct.Type : 'Digital'
                     }));
                     
                     fetch(API_URL, {
@@ -1928,6 +1929,17 @@
                     const order = getOrderSummary();
                     const orderId = 'PF-' + Date.now();
                     const nameParts = order.name.split(' ');
+                    
+                    // Store order for return handling
+                    sessionStorage.setItem('payfastOrder', JSON.stringify({
+                      name: order.name,
+                      email: order.email,
+                      phone: order.phone,
+                      qty: order.qty,
+                      totalValue: order.totalValue,
+                      shippingAddress: order.shippingAddress,
+                      productType: selectedProduct ? selectedProduct.Type : 'Digital'
+                    }));
                     
                     const form = document.createElement('form');
                     form.method = 'POST';
@@ -1975,7 +1987,6 @@
             });
           }
         }
-
         
         // ========== LEGAL MODAL ==========
         function showLegalModal(title, contentObj) {
@@ -2625,17 +2636,51 @@
                   
                   // Payfast return
                   if (params.get('payment') === 'success') {
-                    setTimeout(function() {
-                      showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
-                        showPage('home-section');
-                      });
-                      // Clean URL so refresh doesn't show modal again
-                      if (window.history && window.history.replaceState) {
-                        window.history.replaceState({}, document.title, window.location.pathname);
+                    var payfastOrderId = params.get('orderId');
+                    var storedOrder = sessionStorage.getItem('payfastOrder');
+                    
+                    if (payfastOrderId && storedOrder) {
+                      try {
+                        var order = JSON.parse(storedOrder);
+                        sessionStorage.removeItem('payfastOrder');
+                        
+                        var licParams = new URLSearchParams();
+                        licParams.append('action', 'generateLicense');
+                        licParams.append('orderId', payfastOrderId);
+                        licParams.append('customerName', order.name);
+                        licParams.append('customerEmail', order.email);
+                        licParams.append('customerPhone', order.phone);
+                        licParams.append('quantity', order.qty);
+                        licParams.append('total', order.totalValue);
+                        licParams.append('currency', selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR');
+                        licParams.append('paymentGateway', 'Payfast');
+                        licParams.append('paymentStatus', 'Completed');
+                        licParams.append('productType', order.productType || 'Digital');
+                        licParams.append('shippingAddress', order.shippingAddress || '');
+                        
+                        fetch(API_URL, { method: 'POST', body: licParams })
+                          .then(function(r) { return r.json(); })
+                          .then(function(licData) {
+                            if (licData.result === 'success') {
+                              showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                                showPage('home-section');
+                              });
+                            } else {
+                              showAlertModal('Error', 'Payment processed but there was an issue with your order. Please contact support.');
+                            }
+                            if (window.history && window.history.replaceState) {
+                              window.history.replaceState({}, document.title, window.location.pathname);
+                            }
+                          });
+                      } catch(e) {
+                        showAlertModal('Error', 'Could not process your order. Please contact support.');
                       }
-                    }, 500);
+                    } else {
+                      showAlertModal('Payment Returned', 'You returned from Payfast but we could not find your order details. Please contact support.');
+                    }
                   }
                   if (params.get('payment') === 'cancelled') {
+                    sessionStorage.removeItem('payfastOrder');
                     setTimeout(function() {
                       showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
                       if (window.history && window.history.replaceState) {
@@ -2673,7 +2718,7 @@
                             licParams.append('currency', 'USD');
                             licParams.append('paymentGateway', 'PayPal');
                             licParams.append('paymentStatus', 'Completed');
-                            licParams.append('productType', selectedProduct ? selectedProduct.Type : 'Digital');
+                            licParams.append('productType', order.productType || 'Digital');
                             licParams.append('shippingAddress', order.shippingAddress || '');
                             
                             return fetch(API_URL, { method: 'POST', body: licParams });
@@ -2686,7 +2731,6 @@
                             showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
                               showPage('home-section');
                             });
-                            // Clean URL so refresh doesn't show modal again
                             if (window.history && window.history.replaceState) {
                               window.history.replaceState({}, document.title, window.location.pathname);
                             }
