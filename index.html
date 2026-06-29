@@ -2198,7 +2198,7 @@
             document.documentElement.style.setProperty('--bg-color', s.BackgroundColor || '#eee6ca');
             const logo = document.getElementById('bannerLogo'), splashLogo = document.getElementById('splash-logo');
             if (s.BannerLogo) { logo.src = s.BannerLogo; logo.style.display = 'block'; splashLogo.src = s.BannerLogo; } else logo.style.display = 'none';
-            if (s.NavIconURLAdmin) document.getElementById('adminIconImg').src = s.NavIconURLAdmin;
+            document.getElementById('adminIconImg').src = 'https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_admin.png';
             const titleEl = document.getElementById('bannerTitle'), mt = s.BannerTitle || '', ab = s.BannerTitleAbbr || '';
             if (mt && ab) titleEl.innerHTML = `${mt} <span class="abbreviation">${ab}</span>`; else if (mt) titleEl.textContent = mt; else titleEl.textContent = '';
             document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitle || '';
