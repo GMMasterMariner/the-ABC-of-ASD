@@ -353,6 +353,14 @@
         .central-order-btn { margin: 2rem 0; text-align: center; }
         .central-order-btn .btn { width: auto; min-width: 180px; }
 
+        .product-description {
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: #555;
+            margin: 0.3rem 0 0.5rem 0;
+            line-height: 1.3;
+        }
+
         /* ---- About (floats) ---- */
         .about-section-content { overflow: hidden; }
         .about-img-1 {
@@ -945,6 +953,7 @@
                         <span class="selected-checkmark">✓</span>
                         <img id="prod1Img" src="" alt="" style="display:none;">
                         <h4 id="prod1Name"></h4>
+                        <p class="product-description" id="prod1Desc"></p>
                         <p class="product-price" id="prod1Price" data-zar="0"></p>
                     </div>
                     <div class="order-quantity-center">
@@ -969,6 +978,7 @@
                         <span class="selected-checkmark">✓</span>
                         <img id="prod2Img" src="" alt="" style="display:none;">
                         <h4 id="prod2Name"></h4>
+                        <p class="product-description" id="prod2Desc"></p>
                         <p class="product-price" id="prod2Price" data-zar="0"></p>
                     </div>
                     <span class="copyright-mark">© GM Master Mariner</span>
@@ -2288,6 +2298,8 @@
             document.getElementById('prod1Name').textContent = p1.ProductName; document.getElementById('prod1Price').textContent = formatPrice(p1.BasePrice); document.getElementById('prod1Price').setAttribute('data-zar', p1.BasePrice);
             document.getElementById('prod2Img').src = p2.ImageURL || ''; document.getElementById('prod2Img').style.display = p2.ImageURL ? 'block' : 'none';
             document.getElementById('prod2Name').textContent = p2.ProductName; document.getElementById('prod2Price').textContent = formatPrice(p2.BasePrice); document.getElementById('prod2Price').setAttribute('data-zar', p2.BasePrice);
+            document.getElementById('prod1Desc').textContent = p1.ProductDescription || '';
+            document.getElementById('prod2Desc').textContent = p2.ProductDescription || '';
             document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
             document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
             const qi = document.getElementById('orderQuantity'), qu = document.getElementById('qtyUp'), qd = document.getElementById('qtyDown');
