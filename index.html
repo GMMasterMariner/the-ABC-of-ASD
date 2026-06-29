@@ -2527,6 +2527,13 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); const t = document.getElementById(sid); if (t) t.classList.add('active');
             document.getElementById('topBarRight').classList.remove('open'); document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
             if (sid === 'home-section') setTimeout(equalizeHeights, 50); if (sid === 'order-section') { loadOrderState(); splitAllPhoneFields(); }
+            if (sid === 'contact-section') {
+                const sb = document.getElementById('sendButton');
+                if (sb) {
+                    sb.disabled = false;
+                    sb.textContent = 'Send Message';
+                }
+            }
             window.scrollTo(0, 0);
         }
 
@@ -2548,11 +2555,13 @@
                 try { 
                     const r = await fetch(API_URL, { method: 'POST', body: p }); 
                     const d = await r.json(); 
-                    if (d.result === 'success') { 
-                        form.reset();
-                        showAlertModal('Thank You!', '✅ Thank you! I\'ll reply soon.', function() {
-                            showPage('home-section');
-                        }); 
+                if (d.result === 'success') { 
+                    form.reset();
+                    sb.disabled = false;
+                    sb.textContent = 'Send Message';
+                    showAlertModal('Thank You!', '✅ Thank you! I\'ll reply soon.', function() {
+                        showPage('home-section');
+                    }); 
                     } else { 
                         showAlertModal('Error', 'Error. Please try again.'); 
                         sb.disabled = false; 
