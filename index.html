@@ -1939,7 +1939,8 @@
                       qty: order.qty,
                       totalValue: order.totalValue,
                       shippingAddress: order.shippingAddress,
-                      productType: selectedProduct ? selectedProduct.Type : 'Digital'
+                      productType: selectedProduct ? selectedProduct.Type : 'Digital',
+                      deliveryDetails: order.deliveryDetails
                     }));
                     
                     const form = document.createElement('form');
