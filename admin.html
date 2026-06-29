@@ -491,40 +491,74 @@
                 const l = data.legal || {};
                 const p = data.products || [];
 
-                const settingFields = [
-                    'PrimaryColor','SecondaryColor','BackgroundColor','CTAColor','AlertColor','TextColor',
-                    'ContactEmail','BackgroundImage','BannerLogo','BannerBookTitle','BannerBookTitleAbbreviation','BannerBookSubTitile',
-                    'NavIconURLHome','NavIconURLAbout','NavIconURLContact','NavIconURLLinkedIn',
-                    'LinkedInURL','PayPalLogo','PayfastLogo','LocationIconURL','MapsIconURL','GoogleMapsApiKey',
-                    'Admin1IconURL','Admin2IconURL'
-                ];
-                for (const f of settingFields) setVal(f, s[f]);
+                // Site Settings – using the EXACT same names as the admin form fields
+                setVal('PrimaryColor', s.PrimaryColor);
+                setVal('SecondaryColor', s.SecondaryColor);
+                setVal('BackgroundColor', s.BackgroundColor);
+                setVal('CTAColor', s.CTAColor);
+                setVal('AlertColor', s.AlertColor);
+                setVal('TextColor', s.TextColor);
+                setVal('ContactEmail', s.ContactEmail);
+                setVal('BackgroundImage', s.BackgroundImage);
+                setVal('BannerLogo', s.BannerLogo);
+                setVal('BannerBookTitle', s.BannerTitle);                // note: BannerTitle in JSON
+                setVal('BannerBookTitleAbbreviation', s.BannerTitleAbbr);
+                setVal('BannerBookSubTitile', s.BannerBookSubTitle);
+                setVal('NavIconURLHome', s.NavIconURLHome);
+                setVal('NavIconURLAbout', s.NavIconURLAbout);
+                setVal('NavIconURLContact', s.NavIconURLContact);
+                setVal('NavIconURLLinkedIn', s.NavIconURLLinkedIn);
+                setVal('LinkedInURL', s.LinkedInURL);
+                setVal('PayPalLogo', s.PayPalLogo);
+                setVal('PayfastLogo', s.PayfastLogo);
+                setVal('LocationIconURL', s.LocationIconURL);
+                setVal('MapsIconURL', s.MapsIconURL);
+                setVal('GoogleMapsApiKey', s.GoogleMapsApiKey);
+                setVal('Admin1IconURL', s.Admin1IconURL);
+                setVal('Admin2IconURL', s.Admin2IconURL);
+                setVal('HomePageBookHeadline', s.HomePageTitle);        // headline comes from HomePageTitle
 
-                setVal('HomePageBookHeadline', h.HomePageBookHeadline);
-                setVal('HomePageBookDescription1', h.HomePageBookDescription1);
-                setVal('HomePageBookDescription2', h.HomePageBookDescription2);
-                setVal('HomePageCarouselInterval', h.HomePageCarouselInterval);
-                for (let i = 1; i <= 9; i++) setVal('HomePageCarouselImage' + i, h['HomePageCarouselImage' + i]);
-                setVal('HomePageItem1MainText', h.HomePageItem1MainText);
-                setVal('HomePageItem1SubText', h.HomePageItem1SubText);
-                setVal('HomePageItem2MainText', h.HomePageItem2MainText);
-                setVal('HomePageItem2SubText', h.HomePageItem2SubText);
+                // Home
+                setVal('HomePageBookDescription1', h.Home_Description1);
+                setVal('HomePageBookDescription2', h.Home_Description2);
+                setVal('HomePageCarouselInterval', h.Home_CarouseTimer);
+                for (let i = 1; i <= 9; i++) setVal('HomePageCarouselImage' + i, h['Home_CarouselImage' + i]);
+                setVal('HomePageItem1MainText', h.Home_ProductCard1MainText);
+                setVal('HomePageItem1SubText', h.Home_ProductCard1SubText);
+                setVal('HomePageItem2MainText', h.Home_ProductCard2MainText);
+                setVal('HomePageItem2SubText', h.Home_ProductCard2SubText);
 
+                // Products
                 if (p[0]) {
-                    for (const pf of ['ProductName','ProductID','Type','Weight','BasePrice','DiscountThreshold','DiscountPercent','Description','ImageURL']) {
-                        setVal('prod1_' + pf, p[0][pf]);
-                    }
+                    setVal('prod1_ProductName', p[0].ProductName);
+                    setVal('prod1_ProductID', p[0].ProductCode);
+                    setVal('prod1_Weight', p[0].Weight);
+                    setVal('prod1_BasePrice', p[0].BasePrice);
+                    setVal('prod1_DiscountThreshold', p[0].DiscountThreshold);
+                    setVal('prod1_DiscountPercent', p[0].DiscountPercent);
+                    setVal('prod1_Description', p[0].ProductDescription);
+                    setVal('prod1_ImageURL', p[0].ImageURL);
                 }
                 if (p[1]) {
-                    for (const pf of ['ProductName','ProductID','Type','Weight','BasePrice','DiscountThreshold','DiscountPercent','Description','ImageURL']) {
-                        setVal('prod2_' + pf, p[1][pf]);
-                    }
+                    setVal('prod2_ProductName', p[1].ProductName);
+                    setVal('prod2_ProductID', p[1].ProductCode);
+                    setVal('prod2_Weight', p[1].Weight);
+                    setVal('prod2_BasePrice', p[1].BasePrice);
+                    setVal('prod2_DiscountThreshold', p[1].DiscountThreshold);
+                    setVal('prod2_DiscountPercent', p[1].DiscountPercent);
+                    setVal('prod2_Description', p[1].ProductDescription);
+                    setVal('prod2_ImageURL', p[1].ImageURL);
                 }
 
-                for (const af of ['AuthorName','AuthorTitle','AuthorShortBio','AuthorExtendedBio','AuthorImage1URL','AuthorImage2URL']) {
-                    setVal(af, a[af]);
-                }
+                // About
+                setVal('AuthorName', a.About_AuthorName || '');
+                setVal('AuthorTitle', a.About_AuthorTitle || '');
+                setVal('AuthorImage1URL', a.About_Image1URL);
+                setVal('AuthorImage2URL', a.About_Image2URL);
+                setVal('AuthorShortBio', a.About_ShortBio);
+                setVal('AuthorExtendedBio', a.About_ExtendedBio);
 
+                // Legal
                 for (const key of Object.keys(l)) setVal(key, l[key]);
 
                 attachImagePreviewListeners();
