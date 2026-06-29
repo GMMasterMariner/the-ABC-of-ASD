@@ -273,7 +273,7 @@
         async function loadLoginScreen() {
             // Fetch admin names and icons from data.json
             try {
-                const res = await fetch(MAIN_SITE + 'data.json');
+                const res = await fetch(MAIN_SITE + 'site-data.json');
                 const data = await res.json();
                 const s = data.settings || {};
                 const admin1Name = s.Admin1Name || 'Admin 1';
@@ -488,7 +488,7 @@
 
         async function loadData() {
             try {
-                const res = await fetch(MAIN_SITE + 'data.json');
+                const res = await fetch(MAIN_SITE + 'site-data.json');
                 const data = await res.json();
                 const s = data.settings || {};
                 const h = data.home || {};
