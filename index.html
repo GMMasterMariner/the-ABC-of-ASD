@@ -2202,7 +2202,7 @@
             const titleEl = document.getElementById('bannerTitle'), mt = s.BannerTitle || '', ab = s.BannerTitleAbbr || '';
             if (mt && ab) titleEl.innerHTML = `${mt} <span class="abbreviation">${ab}</span>`; else if (mt) titleEl.textContent = mt; else titleEl.textContent = '';
             document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitle || '';
-            document.getElementById('aboutPageHeading').textContent = s.AboutPageTitle || 'About me';
+            document.getElementById('aboutPageHeading').textContent = s.AboutPageTitle || 'About this book, and me';
             document.getElementById('contactPageHeading').textContent = s.ContactPageTitle || 'Get in touch';
             if (s.PayPalLogo) document.getElementById('paypalLogoImg').src = s.PayPalLogo;
             if (s.PayfastLogo) document.getElementById('payfastLogoImg').src = s.PayfastLogo;
