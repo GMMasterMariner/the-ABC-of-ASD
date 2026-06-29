@@ -271,7 +271,6 @@
 
         // ========== LOGIN ==========
         async function loadLoginScreen() {
-            // Fetch admin names and icons from data.json
             try {
                 const res = await fetch(MAIN_SITE + 'site-data.json');
                 const data = await res.json();
@@ -310,7 +309,6 @@
                 const data = await res.json();
                 if (data.result === 'success') {
                     document.getElementById('codeStatus').textContent = '';
-                    // Store admin info for later
                     sessionStorage.setItem('adminNum', num);
                     sessionStorage.setItem('adminName', name);
                     sessionStorage.setItem('adminIcon', icon);
@@ -339,6 +337,7 @@
                 const data = await res.json();
                 if (data.result === 'success') {
                     currentAdmin = adminNum;
+                    sessionStorage.setItem('adminToken', 'manual');
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('editorScreen').style.display = 'block';
                     initEditor();
@@ -365,13 +364,11 @@
                 document.getElementById('bannerAdminIcon').src = adminIcon;
             }
 
-            // Build admin icons section (only show own icon)
             const adminIconsSection = document.getElementById('adminIconsSection');
             adminIconsSection.innerHTML = `
                 <label>Your Icon (${adminName}) <div class="image-field"><img id="thumb_Admin${currentAdmin}IconURL" src="" onerror="this.style.display='none'"><input type="url" id="Admin${currentAdmin}IconURL" name="Admin${currentAdmin}IconURL"></div></label>
             `;
 
-            // Build carousel images
             const carouselDiv = document.getElementById('carouselImages');
             let carouselHTML = '';
             for (let i = 1; i <= 9; i++) {
@@ -379,7 +376,6 @@
             }
             carouselDiv.innerHTML = carouselHTML;
 
-            // Build legal section
             const legalDiv = document.getElementById('legalSection');
             const legalFields = [
                 ['PrivacyPolicyHeading','Privacy Policy Heading'],
@@ -459,7 +455,6 @@
                             thumb.style.display = 'none';
                         }
                     });
-                    // Initial load
                     if (input.value) {
                         thumb.src = input.value;
                         thumb.style.display = 'block';
@@ -496,7 +491,6 @@
                 const l = data.legal || {};
                 const p = data.products || [];
 
-                // Settings
                 const settingFields = [
                     'PrimaryColor','SecondaryColor','BackgroundColor','CTAColor','AlertColor','TextColor',
                     'ContactEmail','BackgroundImage','BannerLogo','BannerBookTitle','BannerBookTitleAbbreviation','BannerBookSubTitile',
@@ -506,7 +500,6 @@
                 ];
                 for (const f of settingFields) setVal(f, s[f]);
 
-                // Home
                 setVal('HomePageBookHeadline', h.HomePageBookHeadline);
                 setVal('HomePageBookDescription1', h.HomePageBookDescription1);
                 setVal('HomePageBookDescription2', h.HomePageBookDescription2);
@@ -517,7 +510,6 @@
                 setVal('HomePageItem2MainText', h.HomePageItem2MainText);
                 setVal('HomePageItem2SubText', h.HomePageItem2SubText);
 
-                // Products
                 if (p[0]) {
                     for (const pf of ['ProductName','ProductID','Type','Weight','BasePrice','DiscountThreshold','DiscountPercent','Description','ImageURL']) {
                         setVal('prod1_' + pf, p[0][pf]);
@@ -529,15 +521,12 @@
                     }
                 }
 
-                // About
                 for (const af of ['AuthorName','AuthorTitle','AuthorShortBio','AuthorExtendedBio','AuthorImage1URL','AuthorImage2URL']) {
                     setVal(af, a[af]);
                 }
 
-                // Legal
                 for (const key of Object.keys(l)) setVal(key, l[key]);
 
-                // Refresh thumbnails and swatches
                 attachImagePreviewListeners();
                 attachColourSwatchListeners();
 
@@ -555,6 +544,8 @@
             document.getElementById('saveStatus').textContent = 'Saving...';
             const formData = new FormData(this);
             formData.append('action', 'admin');
+            formData.append('token', sessionStorage.getItem('adminToken') || '');
+            formData.append('admin', currentAdmin || sessionStorage.getItem('adminNum') || '');
             const params = new URLSearchParams();
             for (const [key, value] of formData.entries()) params.append(key, value);
             try {
@@ -586,8 +577,36 @@
             window.location.href = MAIN_SITE;
         });
 
-        // Init
-        loadLoginScreen();
+        // ========== AUTO-LOGIN FROM MAIN SITE ==========
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const admin = urlParams.get('admin');
+            
+            if (token && admin) {
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'getAdminInfo');
+                    params.append('token', token);
+                    params.append('admin', admin);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        currentAdmin = admin;
+                        sessionStorage.setItem('adminNum', admin);
+                        sessionStorage.setItem('adminName', data.adminName);
+                        sessionStorage.setItem('adminIcon', '');
+                        sessionStorage.setItem('adminToken', token);
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('editorScreen').style.display = 'block';
+                        initEditor();
+                        return;
+                    }
+                } catch(e) {}
+            }
+            // Fallback to manual login
+            loadLoginScreen();
+        })();
     </script>
 </body>
 </html>
