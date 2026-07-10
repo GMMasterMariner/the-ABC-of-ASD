@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Nunito Sans', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #2c3e50;
+            padding: 1rem;
+            padding-top: 70px;
+        }
+        .admin-sticky-bar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: #194373; color: white;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.5rem 1.5rem; z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .admin-sticky-bar .admin-info { display: flex; align-items: center; gap: 0.8rem; }
+        .admin-sticky-bar .admin-info img { height: 32px; width: 32px; border-radius: 50%; object-fit: cover; background: white; }
+        .admin-sticky-bar h1 { font-size: 1.2rem; margin: 0; color: white; }
+        .admin-sticky-bar .btn-group { display: flex; gap: 0.5rem; align-items: center; }
+        .admin-sticky-bar button {
+            margin: 0; padding: 0.4rem 1rem; font-size: 0.9rem;
+            background: #f29b2a; border: none; border-radius: 4px;
+            color: white; cursor: pointer;
+        }
+        .admin-sticky-bar button:hover { opacity: 0.9; }
+        .admin-sticky-bar .btn-exit { background: #aaa; }
+        .admin-sticky-bar .btn-exit:hover { background: #888; }
+        #saveStatus { font-size: 0.9rem; color: #ddd; }
+
+        h2 {
+            background: #194373; color: white;
+            padding: 0.5rem 1rem; margin: 2rem 0 1rem 0;
+            border-radius: 6px; font-size: 1.1rem;
+            cursor: pointer; user-select: none;
+        }
+        h2::after { content: ' ▼'; float: right; }
+        h2.collapsed::after { content: ' ▶'; }
+        .section { display: block; }
+        .section.collapsed { display: none; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        label {
+            display: block; margin-top: 0.8rem;
+            font-weight: 600; font-size: 0.85rem; color: #194373;
+        }
+        input[type="text"], input[type="url"], input[type="number"], textarea, select {
+            width: 100%; padding: 0.5rem; border: 1px solid #ccc;
+            border-radius: 4px; font-family: inherit; font-size: 0.9rem; margin-top: 0.2rem;
+        }
+        textarea { min-height: 80px; resize: vertical; }
+
+        /* Colour swatch */
+        .colour-field { display: flex; align-items: center; gap: 0.5rem; }
+        .colour-swatch {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2px solid #ccc; flex-shrink: 0;
+        }
+        .colour-field input[type="text"] { flex: 1; }
+
+        /* Image thumbnail */
+        .image-field { display: flex; align-items: center; gap: 0.5rem; }
+        .image-field img {
+            width: 48px; height: 48px; object-fit: contain;
+            border: 1px solid #ddd; border-radius: 4px; flex-shrink: 0;
+            background: #fafafa;
+        }
+        .image-field input[type="url"] { flex: 1; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            z-index: 10000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white; border-radius: 12px;
+            max-width: 420px; width: 90%; padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-box h3 { font-size: 1.2rem; margin-bottom: 1rem; color: #194373; }
+        .modal-box p { margin-bottom: 1.5rem; }
+        .modal-box button {
+            margin: 0.5rem;
+            min-width: 100px;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+            color: white;
+            background: #194373;
+        }
+        .modal-box button.btn-exit {
+            background: #aaa;
+        }
+        .modal-box button.btn-exit:hover {
+            background: #888;
+        }
+        #saveReturnBtn {
+            background: #f29b2a;
+        }
+        #saveReturnBtn:hover {
+            background: #e08a1a;
+        }
+
+        /* Login */
+        #loginScreen { text-align: center; padding-top: 3rem; }
+        #loginScreen h1 { margin-bottom: 2rem; color: #194373; }
+        .admin-btn {
+            display: inline-block; padding: 1.5rem 2rem; margin: 1rem;
+            background: white; border: 2px solid #194373; border-radius: 12px;
+            cursor: pointer; font-size: 1.1rem; font-weight: 600; color: #194373;
+            transition: all 0.2s;
+        }
+        .admin-btn:hover { background: #194373; color: white; }
+        .admin-btn img { display: block; width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 0.5rem; object-fit: cover; }
+        #codeEntry { display: none; text-align: center; margin-top: 2rem; }
+        #codeEntry input { font-size: 1.5rem; letter-spacing: 4px; text-align: center; width: 150px; padding: 0.5rem; }
+        #codeEntry button { margin-top: 1rem; }
+        .back-link { color: #194373; cursor: pointer; margin-top: 1rem; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div id="loginScreen">
+        <h1>⚙️ Admin Login</h1>
+        <p>Select your name to receive a verification code by email</p>
+        <div id="adminButtons"></div>
+        <div id="codeEntry">
+            <p>A verification code has been sent to <strong id="codeEmail"></strong></p>
+            <input type="text" id="codeInput" maxlength="6" placeholder="000000">
+            <br>
+            <button onclick="verifyCode()">Verify</button>
+            <br>
+            <span class="back-link" onclick="showLogin()">← Back</span>
+            <p id="codeStatus" style="margin-top: 1rem; color: #dc3c33;"></p>
+        </div>
+    </div>
+
+    <!-- ========== ADMIN EDITOR (hidden until login) ========== -->
+    <div id="editorScreen" style="display:none;">
+        <div class="admin-sticky-bar">
+            <div class="admin-info">
+                <img id="bannerAdminIcon" src="" alt="Admin">
+                <h1 id="bannerAdminName">Admin Panel</h1>
+            </div>
+            <div class="btn-group">
+                <span id="saveStatus"></span>
+                <button type="submit" form="adminForm">💾 Save Changes</button>
+                <button type="button" class="btn-exit" onclick="window.close()">✕ Exit</button>
+            </div>
+        </div>
+
+        <form id="adminForm">
+            <!-- ========== SITE SETTINGS ========== -->
+            <h2 onclick="toggleSection(this)">Site Settings</h2>
+            <div class="section">
+                <div class="grid-3">
+                    <label>Primary <div class="colour-field"><div class="colour-swatch" id="swatch_PrimaryColor"></div><input type="text" id="PrimaryColor" name="PrimaryColor"></div></label>
+                    <label>Secondary <div class="colour-field"><div class="colour-swatch" id="swatch_SecondaryColor"></div><input type="text" id="SecondaryColor" name="SecondaryColor"></div></label>
+                    <label>Background <div class="colour-field"><div class="colour-swatch" id="swatch_BackgroundColor"></div><input type="text" id="BackgroundColor" name="BackgroundColor"></div></label>
+                    <label>CTA <div class="colour-field"><div class="colour-swatch" id="swatch_CTAColor"></div><input type="text" id="CTAColor" name="CTAColor"></div></label>
+                    <label>Alert <div class="colour-field"><div class="colour-swatch" id="swatch_AlertColor"></div><input type="text" id="AlertColor" name="AlertColor"></div></label>
+                    <label>Text <div class="colour-field"><div class="colour-swatch" id="swatch_TextColor"></div><input type="text" id="TextColor" name="TextColor"></div></label>
+                </div>
+                <div class="grid-2">
+                    <label>Contact Email <input type="text" id="ContactEmail" name="ContactEmail"></label>
+                    <label>Banner Logo <div class="image-field"><img id="thumb_BannerLogo" src="" onerror="this.style.display='none'"><input type="url" id="BannerLogo" name="BannerLogo"></div></label>
+                    <label>Background Image <div class="image-field"><img id="thumb_BackgroundImage" src="" onerror="this.style.display='none'"><input type="url" id="BackgroundImage" name="BackgroundImage"></div></label>
+                    <label>Book Title <input type="text" id="BannerBookTitle" name="BannerBookTitle"></label>
+                    <label>Book Title Abbreviation <input type="text" id="BannerBookTitleAbbreviation" name="BannerBookTitleAbbreviation"></label>
+                    <label>Book Subtitle <input type="text" id="BannerBookSubTitile" name="BannerBookSubTitile"></label>
+                </div>
+                <div class="grid-2">
+                    <label>PayPal Logo <div class="image-field"><img id="thumb_PayPalLogo" src="" onerror="this.style.display='none'"><input type="url" id="PayPalLogo" name="PayPalLogo"></div></label>
+                    <label>Payfast Logo <div class="image-field"><img id="thumb_PayfastLogo" src="" onerror="this.style.display='none'"><input type="url" id="PayfastLogo" name="PayfastLogo"></div></label>
+                    <label>Location Icon <div class="image-field"><img id="thumb_LocationIconURL" src="" onerror="this.style.display='none'"><input type="url" id="LocationIconURL" name="LocationIconURL"></div></label>
+                    <label>Maps Icon <div class="image-field"><img id="thumb_MapsIconURL" src="" onerror="this.style.display='none'"><input type="url" id="MapsIconURL" name="MapsIconURL"></div></label>
+                </div>
+                <h3 style="color:#194373; margin-top:1rem;">Navigation Icons</h3>
+                <div class="grid-2">
+                    <label>Home <div class="image-field"><img id="thumb_NavIconURLHome" src="" onerror="this.style.display='none'"><input type="url" id="NavIconURLHome" name="NavIconURLHome"></div></label>
+                    <label>About <div class="image-field"><img id="thumb_NavIconURLAbout" src="" onerror="this.style.display='none'"><input type="url" id="NavIconURLAbout" name="NavIconURLAbout"></div></label>
+                    <label>Contact <div class="image-field"><img id="thumb_NavIconURLContact" src="" onerror="this.style.display='none'"><input type="url" id="NavIconURLContact" name="NavIconURLContact"></div></label>
+                    <label>LinkedIn <div class="image-field"><img id="thumb_NavIconURLLinkedIn" src="" onerror="this.style.display='none'"><input type="url" id="NavIconURLLinkedIn" name="NavIconURLLinkedIn"></div></label>
+                    <label>LinkedIn URL <input type="url" id="LinkedInURL" name="LinkedInURL"></label>
+                </div>
+                <h3 style="color:#194373; margin-top:1rem;">Admin Icons</h3>
+                <div class="grid-2" id="adminIconsSection">
+                    <!-- Populated dynamically -->
+                </div>
+                <label>Google Maps API Key <input type="text" id="GoogleMapsApiKey" name="GoogleMapsApiKey" placeholder="Stored in Script Properties"></label>
+            </div>
+
+            <!-- ========== HOME PAGE ========== -->
+            <h2 onclick="toggleSection(this)">Home Page</h2>
+            <div class="section">
+                <label>Headline <input type="text" id="HomePageBookHeadline" name="HomePageBookHeadline"></label>
+                <div class="grid-2">
+                    <label>Description 1 <input type="text" id="HomePageBookDescription1" name="HomePageBookDescription1"></label>
+                    <label>Carousel Interval (ms) <input type="number" id="HomePageCarouselInterval" name="HomePageCarouselInterval"></label>
+                </div>
+                <label>Description 2 <textarea id="HomePageBookDescription2" name="HomePageBookDescription2"></textarea></label>
+                <h3 style="color:#194373; margin-top:1rem;">Carousel Images</h3>
+                <div class="grid-2" id="carouselImages"></div>
+                <h3 style="color:#194373; margin-top:1rem;">Product Cards</h3>
+                <div class="grid-2">
+                    <label>Card 1 - Main <input type="text" id="HomePageItem1MainText" name="HomePageItem1MainText"></label>
+                    <label>Card 1 - Sub <textarea id="HomePageItem1SubText" name="HomePageItem1SubText"></textarea></label>
+                    <label>Card 2 - Main <input type="text" id="HomePageItem2MainText" name="HomePageItem2MainText"></label>
+                    <label>Card 2 - Sub <textarea id="HomePageItem2SubText" name="HomePageItem2SubText"></textarea></label>
+                </div>
+            </div>
+
+            <!-- ========== PRODUCTS ========== -->
+            <h2 onclick="toggleSection(this)">Products</h2>
+            <div class="section">
+                <h3 style="color:#194373;">Product 1 - Physical</h3>
+                <div class="grid-2">
+                    <label>Name <input type="text" id="prod1_ProductName" name="prod1_ProductName"></label>
+                    <label>ID <input type="text" id="prod1_ProductID" name="prod1_ProductID"></label>
+                    <label>Weight (kg) <input type="number" id="prod1_Weight" name="prod1_Weight" step="0.1"></label>
+                    <label>Base Price (ZAR) <input type="number" id="prod1_BasePrice" name="prod1_BasePrice"></label>
+                    <label>Discount Threshold <input type="number" id="prod1_DiscountThreshold" name="prod1_DiscountThreshold"></label>
+                    <label>Discount % <input type="number" id="prod1_DiscountPercent" name="prod1_DiscountPercent"></label>
+                </div>
+                <label>Description <textarea id="prod1_Description" name="prod1_Description"></textarea></label>
+                <label>Image <div class="image-field"><img id="thumb_prod1_ImageURL" src="" onerror="this.style.display='none'"><input type="url" id="prod1_ImageURL" name="prod1_ImageURL"></div></label>
+
+                <h3 style="color:#194373;">Product 2 - Digital</h3>
+                <div class="grid-2">
+                    <label>Name <input type="text" id="prod2_ProductName" name="prod2_ProductName"></label>
+                    <label>ID <input type="text" id="prod2_ProductID" name="prod2_ProductID"></label>
+                    <label>Weight (kg) <input type="number" id="prod2_Weight" name="prod2_Weight" step="0.1"></label>
+                    <label>Base Price (ZAR) <input type="number" id="prod2_BasePrice" name="prod2_BasePrice"></label>
+                    <label>Discount Threshold <input type="number" id="prod2_DiscountThreshold" name="prod2_DiscountThreshold"></label>
+                    <label>Discount % <input type="number" id="prod2_DiscountPercent" name="prod2_DiscountPercent"></label>
+                </div>
+                <label>Description <textarea id="prod2_Description" name="prod2_Description"></textarea></label>
+                <label>Image <div class="image-field"><img id="thumb_prod2_ImageURL" src="" onerror="this.style.display='none'"><input type="url" id="prod2_ImageURL" name="prod2_ImageURL"></div></label>
+            </div>
+
+            <!-- ========== ABOUT ========== -->
+            <h2 onclick="toggleSection(this)">About</h2>
+            <div class="section">
+                <div class="grid-2">
+                    <label>Author Name <input type="text" id="AuthorName" name="AuthorName"></label>
+                    <label>Author Title <input type="text" id="AuthorTitle" name="AuthorTitle"></label>
+                    <label>Image 1 <div class="image-field"><img id="thumb_AuthorImage1URL" src="" onerror="this.style.display='none'"><input type="url" id="AuthorImage1URL" name="AuthorImage1URL"></div></label>
+                    <label>Image 2 <div class="image-field"><img id="thumb_AuthorImage2URL" src="" onerror="this.style.display='none'"><input type="url" id="AuthorImage2URL" name="AuthorImage2URL"></div></label>
+                </div>
+                <label>Short Bio <textarea id="AuthorShortBio" name="AuthorShortBio"></textarea></label>
+                <label>Extended Bio <textarea id="AuthorExtendedBio" name="AuthorExtendedBio" rows="6"></textarea></label>
+            </div>
+
+            <!-- ========== LEGAL ========== -->
+            <h2 onclick="toggleSection(this)">Legal</h2>
+            <div class="section" id="legalSection">
+                <!-- Populated dynamically -->
+            </div>
+        </form>
+    </div>
+
+    <!-- Save Result Modal -->
+    <div class="modal-overlay" id="saveModalOverlay">
+        <div class="modal-box">
+            <h3 id="saveModalTitle"></h3>
+            <p id="saveModalMessage"></p>
+            <button class="btn-exit" id="saveContinueBtn">Continue Editing</button>
+            <button id="saveReturnBtn">Return to Site</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxfbaq0TDTRxj7sHU9doYh5BtPX5120Y5NoWGpAiGwJZdEmTl2O_oueHnKNvhvFe6lWHA/exec';
+        const MAIN_SITE = 'https://gmmastermariner.github.io/the-ABC-of-ASD/';
+        let currentAdmin = null;
+
+        // ========== LOGIN ==========
+        async function loadLoginScreen() {
+            try {
+                const res = await fetch(MAIN_SITE + 'site-data.json');
+                const data = await res.json();
+                const s = data.settings || {};
+                const admin1Name = s.Admin1Name || 'Admin 1';
+                const admin2Name = s.Admin2Name || 'Admin 2';
+                const admin1Icon = s.Admin1IconURL || '';
+                const admin2Icon = s.Admin2IconURL || '';
+
+                const container = document.getElementById('adminButtons');
+                container.innerHTML = `
+                    <div class="admin-btn" onclick="requestCode(1, '${admin1Name}', '${admin1Icon}')">
+                        ${admin1Icon ? `<img src="${admin1Icon}" alt="">` : ''}
+                        ${admin1Name}
+                    </div>
+                    <div class="admin-btn" onclick="requestCode(2, '${admin2Name}', '${admin2Icon}')">
+                        ${admin2Icon ? `<img src="${admin2Icon}" alt="">` : ''}
+                        ${admin2Name}
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Failed to load admin info:', err);
+            }
+        }
+
+        async function requestCode(num, name, icon) {
+            document.getElementById('adminButtons').style.display = 'none';
+            document.getElementById('codeEntry').style.display = 'block';
+            document.getElementById('codeStatus').textContent = 'Sending code...';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', num);
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    document.getElementById('codeStatus').textContent = '';
+                    sessionStorage.setItem('adminNum', num);
+                    sessionStorage.setItem('adminName', name);
+                    sessionStorage.setItem('adminIcon', icon);
+                } else {
+                    document.getElementById('codeStatus').textContent = 'Failed to send code. Please try again.';
+                }
+            } catch (err) {
+                document.getElementById('codeStatus').textContent = 'Network error.';
+            }
+        }
+
+        async function verifyCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            const adminNum = sessionStorage.getItem('adminNum');
+            if (!code || code.length !== 6) {
+                document.getElementById('codeStatus').textContent = 'Please enter a 6‑digit code.';
+                return;
+            }
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'verifyAdminCode');
+                params.append('admin', adminNum);
+                params.append('code', code);
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    currentAdmin = adminNum;
+                    sessionStorage.setItem('adminToken', 'manual');
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('editorScreen').style.display = 'block';
+                    initEditor();
+                } else {
+                    document.getElementById('codeStatus').textContent = data.message || 'Invalid code.';
+                }
+            } catch (err) {
+                document.getElementById('codeStatus').textContent = 'Network error.';
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('adminButtons').style.display = 'block';
+            document.getElementById('codeEntry').style.display = 'none';
+            document.getElementById('codeInput').value = '';
+        }
+
+        // ========== EDITOR ==========
+        function initEditor() {
+            const adminName = sessionStorage.getItem('adminName') || 'Admin';
+            const adminIcon = sessionStorage.getItem('adminIcon') || '';
+            document.getElementById('bannerAdminName').textContent = '⚙️ ' + adminName;
+            if (adminIcon) {
+                document.getElementById('bannerAdminIcon').src = adminIcon;
+            }
+
+            const adminIconsSection = document.getElementById('adminIconsSection');
+            adminIconsSection.innerHTML = `
+                <label>Your Icon (${adminName}) <div class="image-field"><img id="thumb_Admin${currentAdmin}IconURL" src="" onerror="this.style.display='none'"><input type="url" id="Admin${currentAdmin}IconURL" name="Admin${currentAdmin}IconURL"></div></label>
+            `;
+
+            const carouselDiv = document.getElementById('carouselImages');
+            let carouselHTML = '';
+            for (let i = 1; i <= 9; i++) {
+                carouselHTML += `<label>Image ${i} <div class="image-field"><img id="thumb_HomePageCarouselImage${i}" src="" onerror="this.style.display='none'"><input type="url" id="HomePageCarouselImage${i}" name="HomePageCarouselImage${i}"></div></label>`;
+            }
+            carouselDiv.innerHTML = carouselHTML;
+
+            const legalDiv = document.getElementById('legalSection');
+            const legalFields = [
+                ['PrivacyPolicyHeading','Privacy Policy Heading'],
+                ['PrivacyIntroText','Privacy Intro'],
+                ['PrivacyDataCollectionHeading','Data Collection Heading'],
+                ['PrivacyDataCollectionText','Data Collection Text'],
+                ['PrivacyDataUseHeading','Data Use Heading'],
+                ['PrivacyDataUseText','Data Use Text'],
+                ['PrivacyDataStorageHeading','Data Storage Heading'],
+                ['PrivacyDataStorageText','Data Storage Text'],
+                ['PrivacyCookiesHeading','Cookies Heading'],
+                ['PrivacyCookiesText','Cookies Text'],
+                ['PrivacyRightsHeading','Your Rights Heading'],
+                ['PrivacyRightsText','Your Rights Text'],
+                ['PrivacyPolicyCangesHeading','Changes Heading'],
+                ['PrivacyPolicyCangesText','Changes Text'],
+                ['PrivacyLastUpdatedHeading','Last Updated Heading'],
+                ['PrivacyLastUpdatedText','Last Updated Text'],
+                ['TermsofServiceHeading','Terms Heading'],
+                ['TermsIntroText','Terms Intro'],
+                ['TermsOrdersHeading','Orders Heading'],
+                ['TermsOrdersText','Orders Text'],
+                ['TermsPaymentHeading','Payment Heading'],
+                ['TermsPaymentText','Payment Text'],
+                ['TermsShippingHeading','Shipping Heading'],
+                ['TermsShippingText','Shipping Text'],
+                ['TermsReturnsRefundsHeading','Returns & Refunds Heading'],
+                ['TermsReturnsRefundsText','Returns & Refunds Text'],
+                ['TermsIntellectualPropertyHeading','Intellectual Property Heading'],
+                ['TermsIntellectualPropertyText','Intellectual Property Text'],
+                ['TermsLiabilityHeading','Limitation of Liability Heading'],
+                ['TermsLiabilityText','Limitation of Liability Text'],
+                ['TermsLawHeading','Governing Law Heading'],
+                ['TermsLawText','Governing Law Text'],
+                ['TermsContactHeading','Contact Heading'],
+                ['TermsContactText','Contact Text'],
+                ['TermsLastUpdatedHeading','Last Updated Heading'],
+                ['TermsLastUpdatedText','Last Updated Text']
+            ];
+            let legalHTML = '<h3 style="color:#194373;">Privacy Policy</h3>';
+            for (const [id, label] of legalFields) {
+                if (id.startsWith('Privacy')) {
+                    if (id.endsWith('Text')) {
+                        legalHTML += `<label>${label} <textarea id="${id}" name="${id}"></textarea></label>`;
+                    } else {
+                        legalHTML += `<label>${label} <input type="text" id="${id}" name="${id}"></label>`;
+                    }
+                }
+            }
+            legalHTML += '<h3 style="color:#194373;">Terms of Service</h3>';
+            for (const [id, label] of legalFields) {
+                if (id.startsWith('Terms')) {
+                    if (id.endsWith('Text')) {
+                        legalHTML += `<label>${label} <textarea id="${id}" name="${id}"></textarea></label>`;
+                    } else {
+                        legalHTML += `<label>${label} <input type="text" id="${id}" name="${id}"></label>`;
+                    }
+                }
+            }
+            legalDiv.innerHTML = legalHTML;
+
+            loadData();
+            attachImagePreviewListeners();
+            attachColourSwatchListeners();
+        }
+
+        function attachImagePreviewListeners() {
+            document.querySelectorAll('input[type="url"]').forEach(input => {
+                const thumbId = 'thumb_' + input.id;
+                const thumb = document.getElementById(thumbId);
+                if (thumb) {
+                    input.addEventListener('input', function() {
+                        if (this.value) {
+                            thumb.src = this.value;
+                            thumb.style.display = 'block';
+                        } else {
+                            thumb.style.display = 'none';
+                        }
+                    });
+                    if (input.value) {
+                        thumb.src = input.value;
+                        thumb.style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        function attachColourSwatchListeners() {
+            document.querySelectorAll('.colour-field input[type="text"]').forEach(input => {
+                const swatchId = 'swatch_' + input.id;
+                const swatch = document.getElementById(swatchId);
+                if (swatch) {
+                    input.addEventListener('input', function() {
+                        swatch.style.backgroundColor = this.value || '#ffffff';
+                    });
+                    if (input.value) swatch.style.backgroundColor = input.value;
+                }
+            });
+        }
+
+        function toggleSection(h2) {
+            h2.classList.toggle('collapsed');
+            h2.nextElementSibling.classList.toggle('collapsed');
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(MAIN_SITE + 'site-data.json');
+                const data = await res.json();
+                const s = data.settings || {};
+                const h = data.home || {};
+                const a = data.about || {};
+                const l = data.legal || {};
+                const p = data.products || [];
+
+                // Site Settings – using the EXACT same names as the admin form fields
+                setVal('PrimaryColor', s.PrimaryColor);
+                setVal('SecondaryColor', s.SecondaryColor);
+                setVal('BackgroundColor', s.BackgroundColor);
+                setVal('CTAColor', s.CTAColor);
+                setVal('AlertColor', s.AlertColor);
+                setVal('TextColor', s.TextColor);
+                setVal('ContactEmail', s.ContactEmail);
+                setVal('BackgroundImage', s.BackgroundImage);
+                setVal('BannerLogo', s.BannerLogo);
+                setVal('BannerBookTitle', s.BannerTitle);                // note: BannerTitle in JSON
+                setVal('BannerBookTitleAbbreviation', s.BannerTitleAbbr);
+                setVal('BannerBookSubTitile', s.BannerBookSubTitle);
+                setVal('NavIconURLHome', s.NavIconURLHome);
+                setVal('NavIconURLAbout', s.NavIconURLAbout);
+                setVal('NavIconURLContact', s.NavIconURLContact);
+                setVal('NavIconURLLinkedIn', s.NavIconURLLinkedIn);
+                setVal('LinkedInURL', s.LinkedInURL);
+                setVal('PayPalLogo', s.PayPalLogo);
+                setVal('PayfastLogo', s.PayfastLogo);
+                setVal('LocationIconURL', s.LocationIconURL);
+                setVal('MapsIconURL', s.MapsIconURL);
+                setVal('GoogleMapsApiKey', s.GoogleMapsApiKey);
+                setVal('Admin1IconURL', s.Admin1IconURL);
+                setVal('Admin2IconURL', s.Admin2IconURL);
+                setVal('HomePageBookHeadline', s.HomePageTitle);        // headline comes from HomePageTitle
+
+                // Home
+                setVal('HomePageBookDescription1', h.Home_Description1);
+                setVal('HomePageBookDescription2', h.Home_Description2);
+                setVal('HomePageCarouselInterval', h.Home_CarouseTimer);
+                for (let i = 1; i <= 9; i++) setVal('HomePageCarouselImage' + i, h['Home_CarouselImage' + i]);
+                setVal('HomePageItem1MainText', h.Home_ProductCard1MainText);
+                setVal('HomePageItem1SubText', h.Home_ProductCard1SubText);
+                setVal('HomePageItem2MainText', h.Home_ProductCard2MainText);
+                setVal('HomePageItem2SubText', h.Home_ProductCard2SubText);
+
+                // Products
+                if (p[0]) {
+                    setVal('prod1_ProductName', p[0].ProductName);
+                    setVal('prod1_ProductID', p[0].ProductCode);
+                    setVal('prod1_Weight', p[0].Weight);
+                    setVal('prod1_BasePrice', p[0].BasePrice);
+                    setVal('prod1_DiscountThreshold', p[0].DiscountThreshold);
+                    setVal('prod1_DiscountPercent', p[0].DiscountPercent);
+                    setVal('prod1_Description', p[0].ProductDescription);
+                    setVal('prod1_ImageURL', p[0].ImageURL);
+                }
+                if (p[1]) {
+                    setVal('prod2_ProductName', p[1].ProductName);
+                    setVal('prod2_ProductID', p[1].ProductCode);
+                    setVal('prod2_Weight', p[1].Weight);
+                    setVal('prod2_BasePrice', p[1].BasePrice);
+                    setVal('prod2_DiscountThreshold', p[1].DiscountThreshold);
+                    setVal('prod2_DiscountPercent', p[1].DiscountPercent);
+                    setVal('prod2_Description', p[1].ProductDescription);
+                    setVal('prod2_ImageURL', p[1].ImageURL);
+                }
+
+                // About
+                setVal('AuthorName', a.About_AuthorName || '');
+                setVal('AuthorTitle', a.About_AuthorTitle || '');
+                setVal('AuthorImage1URL', a.About_Image1URL);
+                setVal('AuthorImage2URL', a.About_Image2URL);
+                setVal('AuthorShortBio', a.About_ShortBio);
+                setVal('AuthorExtendedBio', a.About_ExtendedBio);
+
+                // Legal
+                for (const key of Object.keys(l)) setVal(key, l[key]);
+
+                attachImagePreviewListeners();
+                attachColourSwatchListeners();
+
+            } catch (err) { console.error('Failed to load data:', err); }
+        }
+
+        function setVal(id, val) {
+            const el = document.getElementById(id);
+            if (el && val !== undefined && val !== null) el.value = val;
+        }
+
+        // Save
+        document.getElementById('adminForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            document.getElementById('saveStatus').textContent = 'Saving...';
+            const formData = new FormData(this);
+            formData.append('action', 'admin');
+            formData.append('token', sessionStorage.getItem('adminToken') || '');
+            formData.append('admin', currentAdmin || sessionStorage.getItem('adminNum') || '');
+            const params = new URLSearchParams();
+            for (const [key, value] of formData.entries()) params.append(key, value);
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const data = await res.json();
+                if (data.result === 'success') {
+                    showSaveResult(true, 'Changes saved successfully! The site will update in a few seconds.');
+                } else {
+                    showSaveResult(false, 'Error: ' + (data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                showSaveResult(false, 'Network error. Please try again.');
+            }
+            document.getElementById('saveStatus').textContent = '';
+        });
+
+        function showSaveResult(success, message) {
+            document.getElementById('saveModalTitle').textContent = success ? '✅ Success' : '❌ Error';
+            document.getElementById('saveModalMessage').textContent = message;
+            document.getElementById('saveModalOverlay').classList.add('active');
+        }
+
+        document.getElementById('saveContinueBtn').addEventListener('click', function() {
+            document.getElementById('saveModalOverlay').classList.remove('active');
+        });
+
+        document.getElementById('saveReturnBtn').addEventListener('click', function() {
+            if (window.opener && !window.opener.closed) window.opener.close();
+            window.location.href = MAIN_SITE;
+        });
+
+        // ========== AUTO-LOGIN FROM MAIN SITE ==========
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const admin = urlParams.get('admin');
+            
+            if (token && admin) {
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'getAdminInfo');
+                    params.append('token', token);
+                    params.append('admin', admin);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        currentAdmin = admin;
+                        sessionStorage.setItem('adminNum', admin);
+                        sessionStorage.setItem('adminName', data.adminName);
+                        sessionStorage.setItem('adminIcon', '');
+                        sessionStorage.setItem('adminToken', token);
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('editorScreen').style.display = 'block';
+                        initEditor();
+                        return;
+                    }
+                } catch(e) {}
+            }
+            // Fallback to manual login
+            loadLoginScreen();
+        })();
+    </script>
+</body>
+</html>

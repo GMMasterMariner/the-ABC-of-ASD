@@ -1,0 +1,1978 @@
+<body>
+    <!-- ================== SPLASH SCREEN ================== -->
+    <div id="splash-screen">
+        <img id="splash-logo" src="https://gmmastermariner.github.io/the-ABC-of-ASD/images/logo_white.png" alt="Logo">
+        <h2>COMING SOON</h2>
+        <p>This site is currently under construction.</p>
+        <div class="splash-links">
+            <a href="#" id="splashAdminLink">Admin</a>
+            <a href="#" id="splashTesterLink">Tester</a>
+        </div>
+    </div>
+
+    <!-- ================== CUSTOM MODAL ================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h3 id="modalTitle"></h3>
+            <div id="modalMessage"></div>
+            <div id="modalButtons">
+                <button class="btn" id="modalConfirmBtn">OK</button>
+                <button class="btn btn-secondary" id="modalCancelBtn" style="display:none;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== ADMIN LOGIN MODAL ================== -->
+    <div class="modal-overlay" id="adminLoginOverlay">
+        <div class="modal-box admin-login-box">
+            <div id="adminSelectStep">
+                <h3>Admin</h3>
+                <p>Choose your account to continue</p>
+                <div id="adminSelectButtons"></div>
+            </div>
+            <div id="adminCodeStep" style="display:none;">
+                <h3>Enter Verification Code</h3>
+                <p>A 6-digit code has been sent to your email</p>
+                <input type="text" id="adminCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <div style="margin-top:1rem;">
+                    <button class="btn" id="adminVerifyBtn">Verify</button>
+                    <button class="btn btn-secondary" id="adminCodeCancelBtn">Back</button>
+                </div>
+                <button class="btn btn-secondary" id="adminResendBtn" style="display:none; margin-top:1rem;">Resend Code</button>
+                <p id="adminCodeStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
+            </div>
+            <p id="adminLoginStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
+        </div>
+    </div>
+
+    <!-- ================== TESTER LOGIN MODAL ================== -->
+    <div class="modal-overlay" id="testerLoginOverlay">
+        <div class="modal-box tester-login-box">
+            <div id="testerSelectStep">
+                <h3>Tester</h3>
+                <p>Choose your account to continue</p>
+                <div id="testerSelectButtons"></div>
+            </div>
+            <div id="testerCodeStep" style="display:none;">
+                <h3>Enter Verification Code</h3>
+                <p>A 6-digit code has been sent to your email</p>
+                <input type="text" id="testerCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <div style="margin-top:1rem;">
+                    <button class="btn" id="testerVerifyBtn">Verify</button>
+                    <button class="btn btn-secondary" id="testerCodeCancelBtn">Back</button>
+                </div>
+                <button class="btn btn-secondary" id="testerResendBtn" style="display:none; margin-top:1rem;">Resend Code</button>
+                <p id="testerCodeStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
+            </div>
+            <p id="testerLoginStatus" style="margin-top:1rem; color:#dc3c33; display:none;"></p>
+        </div>
+    </div>
+
+    <!-- ================== LEGAL MODAL ================== -->
+    <div class="modal-overlay" id="legalModalOverlay">
+        <div class="modal-box legal-modal-box">
+            <h3 id="legalModalTitle"></h3>
+            <div class="legal-content" id="legalModalContent"></div>
+            <button class="btn" id="legalModalCloseBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- ================== MAP MODAL ================== -->
+    <div class="modal-overlay" id="mapModalOverlay">
+        <div class="map-modal-box">
+            <h3>Pick a location on the map</h3>
+            <div id="mapContainer"></div>
+            <button class="btn" id="mapCloseBtn">Done</button>
+        </div>
+    </div>
+
+    <!-- ================== COMBINED TOP BAR ================== -->
+    <header class="top-bar" id="topBar">
+        <div class="top-bar-left">
+            <div class="banner-logo"><img id="bannerLogo" src="" alt="Logo"></div>
+            <a href="#" id="adminIconLink" title="Admin" style="margin-left: 1rem; opacity: 0.4; transition: opacity 0.2s; display: none !important;"
+               onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'">
+                <img id="adminIconImg" src="" alt="Admin" style="height: 22px; filter: brightness(0) invert(1);">
+            </a>
+        </div>
+        <div class="banner-text"><h1 id="bannerTitle"></h1><h2 id="bannerSubtitle"></h2></div>
+        <div class="top-bar-right" id="topBarRight">
+            <div class="nav-icons" id="navIcons"></div>
+            <div id="currencySelectorContainer"></div>
+        </div>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
+    </header>
+
+    <!-- ================== PAGE SECTIONS ================== -->
+    <div class="content">
+        <!-- Home -->
+        <div class="page-section active" id="home-section">
+            <h2 class="home-headline" id="homeHeadline"></h2>
+            <div class="home-columns">
+                <div class="home-col home-col-left">
+                    <div class="home-col-left-box" id="leftBox">
+                        <h3 id="homeDesc1"></h3>
+                        <p id="homeDesc2"></p>
+                        <span class="copyright-mark">© GM Master Mariner</span>
+                    </div>
+                </div>
+                <div class="home-col home-col-center">
+                    <div class="carousel-wrapper" id="carouselWrapper">
+                        <div class="carousel-track" id="carouselTrack"></div>
+                        <button class="carousel-arrow prev" id="prevBtn" aria-label="Previous">‹</button>
+                        <button class="carousel-arrow next" id="nextBtn" aria-label="Next">›</button>
+                        <div class="carousel-dots" id="carouselDots"></div>
+                    </div>
+                </div>
+                <div class="home-col home-col-right" id="productCardsColumn"></div>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="page-section" id="about-section">
+            <h2 class="page-heading" id="aboutPageHeading">About this book, and me</h2>
+            <div class="about-section-content clearfix">
+                <img class="about-img-1" id="aboutImg1" src="" alt="Author image 1" style="display:none;">
+                <img class="about-img-2" id="aboutImg2" src="" alt="Author image 2" style="display:none;">
+                <div class="about-text">
+                    <p id="aboutShortBioParagraph">
+                        <span id="aboutShortBioText"></span>
+                        <span class="bio-toggle" id="bioToggleMore"> read more...</span>
+                    </p>
+                    <div class="bio-extended" id="bioExtended">
+                        <p id="aboutExtendedBioText">
+                            <span id="aboutExtendedBioContent"></span><span class="bio-toggle" id="bioToggleLess"> read less...</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order -->
+        <div class="page-section" id="order-section">
+            <div class="order-wrapper" id="orderFormContainer">
+                <div class="order-product-box" id="productSelectionBox">
+                    <div class="order-product-option" id="productOption1" data-index="0">
+                        <span class="selected-checkmark">✓</span>
+                        <img id="prod1Img" src="" alt="" style="display:none;">
+                        <h4 id="prod1Name"></h4>
+                        <p class="product-description" id="prod1Desc"></p>
+                        <p class="product-price" id="prod1Price" data-zar="0"></p>
+                    </div>
+                    <div class="order-quantity-center">
+                        <div class="quantity-label">Quantity</div>
+                        <div class="quantity-input-group">
+                            <input type="text" id="orderQuantity" value="" min="1" max="100" pattern="[0-9]*" inputmode="numeric" disabled>
+                            <div class="quantity-buttons">
+                                <button class="qty-btn" id="qtyUp" disabled>+</button>
+                                <button class="qty-btn" id="qtyDown" disabled>-</button>
+                            </div>
+                        </div>
+                        <div class="order-product-type" id="orderProductType" style="display:none;">
+                            <span>Format</span>
+                            <span class="format-type-value" id="formatText"></span>
+                        </div>
+                        <span class="order-quantity-total" id="quantityTotalPrice"></span>
+                        <div class="instruction-wrapper">
+                            <div class="pulse-message" id="instructionMessage">Please select a book format, and verify your email to continue ordering.</div>
+                        </div>
+                    </div>
+                    <div class="order-product-option" id="productOption2" data-index="1">
+                        <span class="selected-checkmark">✓</span>
+                        <img id="prod2Img" src="" alt="" style="display:none;">
+                        <h4 id="prod2Name"></h4>
+                        <p class="product-description" id="prod2Desc"></p>
+                        <p class="product-price" id="prod2Price" data-zar="0"></p>
+                    </div>
+                    <span class="copyright-mark">© GM Master Mariner</span>
+                </div>
+
+                <div class="email-verify-wrapper" id="emailVerifyWrapper">
+                    <div class="verify-left" id="verifyLeft">
+                        <div class="input-required-wrapper">
+                            <input type="email" id="orderEmail" placeholder="Email address" required>
+                            <span class="required-star">*</span>
+                        </div>
+                    </div>
+                    <div class="verify-right" id="verifyRight">
+                        <button class="btn" id="verifyEmailBtn">Verify Email</button>
+                    </div>
+                    <div class="verify-code-stack" id="codeEntryStack" style="display: none;">
+                        <div class="code-input-row" id="codeInputRow">
+                            <input type="text" maxlength="1" class="code-digit" id="code1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code2" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code3" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code4" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code5" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                            <input type="text" maxlength="1" class="code-digit" id="code6" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+                        </div>
+                        <div class="verify-message-row" id="emailMessageContainer">
+                            <span class="pulse-message" id="emailSentMessage">An email has been sent to <strong id="emailSentTo"></strong> with a verification code. Please enter the code in the input boxes.</span>
+                        </div>
+                        <button class="btn" id="resendBtn">Resend Code</button>
+                    </div>
+                    <div class="verify-message" id="verifyingMessageRow" style="display: none;">
+                        <span class="pulse-message" id="verifyingText">Verifying...</span>
+                    </div>
+                </div>
+
+                <div id="customerDetails" style="display: none;">
+                    <div class="order-contact-row">
+                        <div class="email-input-wrapper">
+                            <input type="email" id="verifiedEmail" disabled style="background:#f9f9f9;">
+                            <span class="email-checkmark" style="display:block;">✔</span>
+                        </div>
+                        <div class="name-input-wrapper">
+                            <div class="input-required-wrapper">
+                                <input type="text" id="customerName" placeholder="Full Name or Company" required>
+                                <span class="required-star">*</span>
+                            </div>
+                        </div>
+                        <div class="phone-composite" id="orderPhoneComposite">
+                            <div class="phone-code-selector" id="phoneCodeSelector">
+                                <img id="phoneFlag" src="" alt="">
+                                <input type="text" class="phone-code-input" id="phoneCodeInput" value="+1" placeholder="+1" autocomplete="off">
+                                <div class="phone-code-dropdown" id="phoneCodeDropdown"></div>
+                            </div>
+                            <div class="phone-number-input">
+                                <div class="input-required-wrapper">
+                                    <input type="tel" id="customerPhone" placeholder="Phone number" required>
+                                    <span class="required-star">*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-shipping-address" id="shippingAddressSection">
+                        <div class="shipping-header">
+                            <h4>Shipping Address</h4>
+                            <button type="button" class="locate-btn" id="locateBtn" title="Use my location">
+                                <img id="locationIcon" src="" alt="Location" style="height: 24px;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z%22/%3E%3C/svg%3E';">
+                            </button>
+                            <button type="button" class="locate-btn" id="mapBtn" title="Choose on map">
+                                <img id="mapIcon" src="" alt="Map" style="height: 24px;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23194373%22%3E%3Cpath d=%22M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z%22/%3E%3C/svg%3E';">
+                            </button>
+                        </div>
+                        <div class="address-fields-grid">
+                            <div class="address-stack">
+                                <div class="input-required-wrapper">
+                                    <input type="text" id="addressLine1" placeholder="Address Line 1" autocomplete="off">
+                                    <span class="required-star" id="starAddressLine1">*</span>
+                                </div>
+                                <input type="text" id="addressLine2" placeholder="Address Line 2">
+                            </div>
+                            <div class="address-stack">
+                                <input type="text" id="addressSuburb" placeholder="Suburb">
+                                <div class="city-postcode-combo">
+                                    <div class="input-required-wrapper">
+                                        <input type="text" id="addressCity" placeholder="City">
+                                        <span class="required-star" id="starAddressCity">*</span>
+                                    </div>
+                                    <div class="input-required-wrapper" style="width:120px;">
+                                        <input type="text" id="addressPostcode" placeholder="Postcode">
+                                        <span class="required-star" id="starAddressPostcode">*</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="region-country-stack">
+                                <input type="text" id="addressRegion" placeholder="Region / State">
+                                <div class="country-selector" id="countrySelector">
+                                    <img id="countryFlag" src="" alt="">
+                                    <span id="countryNameDisplay">Country</span>
+                                    <div class="country-dropdown" id="countryDropdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-bottom-row">
+                    <div class="order-summary" id="orderSummary">
+                        <h4>Order Summary</h4>
+                        <div class="summary-row"><span>Unit Price:</span><span id="sumUnitPrice">—</span></div>
+                        <div class="summary-row"><span>Quantity:</span><span id="sumQuantity">1</span></div>
+                        <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">—</span></div>
+                        <div class="discount-summary-row" id="discountRow" style="display: none;">
+                            <span>Discount:</span>
+                            <span class="discount-amount" id="sumDiscount">—</span>
+                        </div>
+                        <div class="discount-detail" id="discountDetail" style="display: none;"></div>
+                        <div class="summary-row" id="shippingRow"><span>Shipping:</span><span id="sumShipping">—</span></div>
+                        <div class="summary-row total"><span>Total:</span><span id="sumTotal">—</span></div>
+                    </div>
+                    <div class="order-sidebar" id="orderSidebar">
+                        <h4>Shipping Information</h4>
+                        <p id="shippingTimeText"></p>
+                        <div id="digitalMessage" style="display: none;">
+                            <p style="font-size: 0.9rem; font-weight: 400; color: #555; line-height: 1.5; margin-bottom: 0.5rem;">
+                                Your PDF will be available for download immediately after payment.
+                            </p>
+                            <p style="font-size: 0.9rem; font-weight: 400; color: #555; line-height: 1.5; margin-bottom: 0.5rem;">
+                                📖 Compatible with all devices and platforms (Windows, macOS, Linux, Android, iOS).
+                            </p>
+                        </div>
+                        <div id="deliveryDetailsContainer" style="display: none;">
+                            <textarea id="deliveryDetails" placeholder="Add any delivery details…"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-row">
+                    <div class="payment-col">
+                        <button class="pay-btn" id="paypalBtn">
+                            <span>Pay with</span>
+                            <img id="paypalLogoImg" src="" alt="PayPal">
+                        </button>
+                    </div>
+                    <div class="payment-col">
+                        <button class="pay-btn" id="payfastBtn">
+                            <span>Pay with</span>
+                            <img id="payfastLogoImg" src="" alt="Payfast">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="page-section" id="contact-section">
+            <h2 class="page-heading" id="contactPageHeading">Get in touch</h2>
+            <div class="contact-form" id="contactFormContainer">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <div class="input-required-wrapper">
+                            <input type="text" id="name" name="name" placeholder="Name" required>
+                            <span class="required-star">*</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-required-wrapper">
+                                <input type="email" id="email" name="email" placeholder="Email" required>
+                                <span class="required-star">*</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="phone-composite" id="contactPhoneComposite">
+                                <div class="phone-code-selector" id="contactPhoneCodeSelector">
+                                    <img id="contactPhoneFlag" src="" alt="">
+                                    <input type="text" class="phone-code-input" id="contactPhoneCodeInput" value="+1" placeholder="+1" autocomplete="off">
+                                    <div class="phone-code-dropdown" id="contactPhoneCodeDropdown"></div>
+                                </div>
+                                <div class="phone-number-input">
+                                    <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-required-wrapper textarea-wrapper">
+                            <textarea id="message" name="message" placeholder="Message" required></textarea>
+                            <span class="required-star">*</span>
+                        </div>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button type="submit" class="btn" id="sendButton">Send Message</button>
+                    </div>
+                </form>
+                <div class="contact-result" id="contactResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== FOOTER ================== -->
+    <footer class="site-footer collapsed" id="siteFooter">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="#" data-section="home-section">Home</a>
+                <a href="#" data-section="order-section">Order</a>
+                <a href="#" data-section="about-section">About</a>
+                <a href="#" data-section="contact-section">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="#" id="privacyPolicyLink">Privacy Policy</a>
+                <a href="#" id="termsOfServiceLink">Terms of Service</a>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <a href="#" class="social-icon" id="footerLinkedIn">
+                    <img src="" alt="LinkedIn"> LinkedIn
+                </a>
+                <a href="#" data-section="contact-section">Get in touch</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; <span id="currentYear"></span> GM Master Mariner. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // ====================================================
+        // LOAD DATA FROM SITE-DATA.JSON (generated by GitHub Actions)
+        // ====================================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxfbaq0TDTRxj7sHU9doYh5BtPX5120Y5NoWGpAiGwJZdEmTl2O_oueHnKNvhvFe6lWHA/exec';
+
+        async function fetchAllSiteData() {
+            const response = await fetch('site-data.json');
+            return await response.json();
+        }
+
+        let appSettings = {};
+        let exchangeRates = [];
+        let selectedCurrency = null;
+        let products = [];
+        let aboutData = {};
+        let carouselIntervalId = null;
+        let shippingRegions = [];
+        let regionRates = [];
+        let selectedProduct = null;
+        let userCountryRegion = null;
+        let selectedShippingCountry = '';
+        let isEmailVerified = false;
+        let lastVerifiedEmail = '';
+        let legalPages = {};
+
+        function saveToSession(key, value) {
+            try { sessionStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+        }
+        function loadFromSession(key) {
+            try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; }
+        }
+
+        function showModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            const cancelBtn = document.getElementById('modalCancelBtn');
+            const overlay = document.getElementById('modalOverlay');
+
+            confirmBtn.textContent = confirmText || 'OK';
+            confirmBtn.style.display = 'inline-flex';
+            cancelBtn.style.display = (cancelText || onCancel) ? 'inline-flex' : 'none';
+            cancelBtn.textContent = cancelText || 'Cancel';
+
+            confirmBtn.onclick = function() {
+                overlay.classList.remove('active');
+                if (onConfirm) onConfirm();
+            };
+            cancelBtn.onclick = function() {
+                overlay.classList.remove('active');
+                if (onCancel) onCancel();
+            };
+
+            overlay.classList.add('active');
+        }
+
+        function showAlertModal(title, message, onConfirm) {
+            showModal(title, message, 'OK', null, onConfirm || null, null);
+        }
+
+        // ========== ADMIN LOGIN ==========
+        document.getElementById('adminIconLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAdminLoginModal();
+        });
+
+        function showAdminLoginModal() {
+            const overlay = document.getElementById('adminLoginOverlay');
+            overlay.classList.add('active');
+            document.getElementById('adminSelectStep').style.display = 'block';
+            document.getElementById('adminCodeStep').style.display = 'none';
+            document.getElementById('adminLoginStatus').style.display = 'none';
+            document.getElementById('adminCodeStatus').style.display = 'none';
+            document.getElementById('adminResendBtn').style.display = 'none';
+
+            const container = document.getElementById('adminSelectButtons');
+
+            let admin1Name = appSettings.Admin1Name || 'Admin 1';
+            let admin2Name = appSettings.Admin2Name || 'Admin 2';
+            let admin1Icon = appSettings.Admin1IconURL || '';
+            let admin2Icon = appSettings.Admin2IconURL || '';
+
+            container.innerHTML = '';
+            [
+                { num: 1, name: admin1Name, icon: admin1Icon },
+                { num: 2, name: admin2Name, icon: admin2Icon }
+            ].forEach(admin => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.margin = '0 0.5rem';
+                btn.style.minWidth = '160px';
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.gap = '0.5rem';
+                if (admin.icon) {
+                    const img = document.createElement('img');
+                    img.src = admin.icon;
+                    img.style.height = '28px';
+                    img.style.width = '28px';
+                    img.style.borderRadius = '50%';
+                    img.style.objectFit = 'cover';
+                    btn.appendChild(img);
+                }
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = admin.name;
+                nameSpan.style.fontWeight = '600';
+                btn.appendChild(nameSpan);
+                btn.addEventListener('click', () => requestAdminCode(admin.num, admin.name));
+                container.appendChild(btn);
+            });
+
+            document.getElementById('adminCodeCancelBtn').onclick = function() {
+                document.getElementById('adminSelectStep').style.display = 'block';
+                document.getElementById('adminCodeStep').style.display = 'none';
+                document.getElementById('adminCodeStatus').style.display = 'none';
+                document.getElementById('adminCodeInput').value = '';
+                document.getElementById('adminResendBtn').style.display = 'none';
+            };
+
+            document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('adminVerifyBtn').click();
+                }
+            });
+
+            document.getElementById('adminVerifyBtn').onclick = async function() {
+                const code = document.getElementById('adminCodeInput').value.trim();
+                const adminNum = sessionStorage.getItem('adminNum');
+                if (!code || code.length !== 6) {
+                    document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'verifyAdminCode');
+                    params.append('admin', adminNum);
+                    params.append('code', code);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        document.getElementById('adminLoginOverlay').classList.remove('active');
+                        const adminUrl = 'admin.html?token=' + encodeURIComponent(data.token) + '&admin=' + encodeURIComponent(adminNum);
+                        window.open(adminUrl, '_blank');
+                    } else {
+                        document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                }
+            };
+
+            document.getElementById('adminResendBtn').onclick = function() {
+                if (adminResendBtn.disabled) return;
+                const adminNum = sessionStorage.getItem('adminNum');
+                const adminName = sessionStorage.getItem('adminName');
+                if (adminNum) requestAdminCode(adminNum, adminName);
+            };
+
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
+
+        async function requestAdminCode(adminNum, adminName) {
+            document.getElementById('adminSelectStep').style.display = 'none';
+            document.getElementById('adminCodeStep').style.display = 'block';
+            document.getElementById('adminCodeStatus').style.display = 'block';
+            document.getElementById('adminCodeStatus').textContent = 'Sending code...';
+            document.getElementById('adminCodeInput').value = '';
+            document.getElementById('adminCodeInput').focus();
+            document.getElementById('adminResendBtn').style.display = 'none';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', adminNum);
+
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const rawText = await res.text();
+
+                let data;
+                try { data = JSON.parse(rawText); } catch (e) {
+                    document.getElementById('adminCodeStatus').textContent = 'Server error.';
+                    return;
+                }
+
+                if (data.result === 'success') {
+                    document.getElementById('adminCodeStatus').textContent = '';
+                    document.getElementById('adminCodeStatus').style.display = 'none';
+                    sessionStorage.setItem('adminNum', adminNum);
+                    sessionStorage.setItem('adminName', adminName);
+                    const resendBtn = document.getElementById('adminResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
+                } else {
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Failed.';
+                }
+            } catch (err) {
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+            }
+        }
+
+        // ========== SPLASH SCREEN ADMIN BYPASS ==========
+        document.getElementById('splashAdminLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAdminLoginModalForSplash();
+        });
+
+        function showAdminLoginModalForSplash() {
+            const overlay = document.getElementById('adminLoginOverlay');
+            overlay.classList.add('active');
+            document.getElementById('adminSelectStep').style.display = 'block';
+            document.getElementById('adminCodeStep').style.display = 'none';
+            document.getElementById('adminLoginStatus').style.display = 'none';
+            document.getElementById('adminCodeStatus').style.display = 'none';
+            document.getElementById('adminResendBtn').style.display = 'none';
+
+            const container = document.getElementById('adminSelectButtons');
+
+            let admin1Name = appSettings.Admin1Name || 'Admin 1';
+            let admin2Name = appSettings.Admin2Name || 'Admin 2';
+            let admin1Icon = appSettings.Admin1IconURL || '';
+            let admin2Icon = appSettings.Admin2IconURL || '';
+
+            container.innerHTML = '';
+            [
+                { num: 1, name: admin1Name, icon: admin1Icon },
+                { num: 2, name: admin2Name, icon: admin2Icon }
+            ].forEach(admin => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.margin = '0 0.5rem';
+                btn.style.minWidth = '160px';
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.gap = '0.5rem';
+                if (admin.icon) {
+                    const img = document.createElement('img');
+                    img.src = admin.icon;
+                    img.style.height = '28px';
+                    img.style.width = '28px';
+                    img.style.borderRadius = '50%';
+                    img.style.objectFit = 'cover';
+                    btn.appendChild(img);
+                }
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = admin.name;
+                nameSpan.style.fontWeight = '600';
+                btn.appendChild(nameSpan);
+                btn.addEventListener('click', () => requestAdminCodeForSplash(admin.num, admin.name));
+                container.appendChild(btn);
+            });
+
+            document.getElementById('adminCodeCancelBtn').onclick = function() {
+                document.getElementById('adminSelectStep').style.display = 'block';
+                document.getElementById('adminCodeStep').style.display = 'none';
+                document.getElementById('adminCodeStatus').style.display = 'none';
+                document.getElementById('adminCodeInput').value = '';
+                document.getElementById('adminResendBtn').style.display = 'none';
+            };
+
+            document.getElementById('adminCodeInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('adminVerifyBtn').click();
+                }
+            });
+
+            document.getElementById('adminVerifyBtn').onclick = async function() {
+                const code = document.getElementById('adminCodeInput').value.trim();
+                const adminNum = sessionStorage.getItem('adminNum');
+                if (!code || code.length !== 6) {
+                    document.getElementById('adminCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'verifyAdminCode');
+                    params.append('admin', adminNum);
+                    params.append('code', code);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        sessionStorage.setItem('splashBypassed', 'true');
+                        document.getElementById('adminLoginOverlay').classList.remove('active');
+                        hideSplashScreen();
+                        if (!appSettings.PrimaryColor) {
+                            location.reload();
+                        }
+                    } else {
+                        document.getElementById('adminCodeStatus').textContent = data.message || 'Invalid code.';
+                        document.getElementById('adminCodeStatus').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('adminCodeStatus').textContent = 'Network error.';
+                    document.getElementById('adminCodeStatus').style.display = 'block';
+                }
+            };
+
+            document.getElementById('adminResendBtn').onclick = function() {
+                if (adminResendBtn.disabled) return;
+                const adminNum = sessionStorage.getItem('adminNum');
+                const adminName = sessionStorage.getItem('adminName');
+                if (adminNum) requestAdminCodeForSplash(adminNum, adminName);
+            };
+
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
+
+        async function requestAdminCodeForSplash(adminNum, adminName) {
+            document.getElementById('adminSelectStep').style.display = 'none';
+            document.getElementById('adminCodeStep').style.display = 'block';
+            document.getElementById('adminCodeStatus').style.display = 'block';
+            document.getElementById('adminCodeStatus').textContent = 'Sending code...';
+            document.getElementById('adminCodeInput').value = '';
+            document.getElementById('adminCodeInput').focus();
+            document.getElementById('adminResendBtn').style.display = 'none';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendAdminCode');
+                params.append('admin', adminNum);
+
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const rawText = await res.text();
+
+                let data;
+                try { data = JSON.parse(rawText); } catch (e) {
+                    document.getElementById('adminCodeStatus').textContent = 'Server error.';
+                    return;
+                }
+
+                if (data.result === 'success') {
+                    document.getElementById('adminCodeStatus').textContent = '';
+                    document.getElementById('adminCodeStatus').style.display = 'none';
+                    sessionStorage.setItem('adminNum', adminNum);
+                    sessionStorage.setItem('adminName', adminName);
+                    const resendBtn = document.getElementById('adminResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
+                } else {
+                    document.getElementById('adminCodeStatus').textContent = data.message || 'Failed.';
+                }
+            } catch (err) {
+                document.getElementById('adminCodeStatus').textContent = 'Network error.';
+            }
+        }
+
+        // ========== SPLASH SCREEN TESTER BYPASS ==========
+        document.getElementById('splashTesterLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showTesterLoginModalForSplash();
+        });
+
+        function showTesterLoginModalForSplash() {
+            const overlay = document.getElementById('testerLoginOverlay');
+            overlay.classList.add('active');
+            document.getElementById('testerSelectStep').style.display = 'block';
+            document.getElementById('testerCodeStep').style.display = 'none';
+            document.getElementById('testerLoginStatus').style.display = 'none';
+            document.getElementById('testerCodeStatus').style.display = 'none';
+            document.getElementById('testerResendBtn').style.display = 'none';
+
+            const container = document.getElementById('testerSelectButtons');
+
+            let tester1Name = appSettings.Tester1Name || 'Tester 1';
+            let tester2Name = appSettings.Tester2Name || 'Tester 2';
+            let tester1Icon = appSettings.Tester1IconURL || '';
+            let tester2Icon = appSettings.Tester2IconURL || '';
+
+            container.innerHTML = '';
+            [
+                { num: 1, name: tester1Name, icon: tester1Icon },
+                { num: 2, name: tester2Name, icon: tester2Icon }
+            ].forEach(tester => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.margin = '0 0.5rem';
+                btn.style.minWidth = '160px';
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.gap = '0.5rem';
+                if (tester.icon) {
+                    const img = document.createElement('img');
+                    img.src = tester.icon;
+                    img.style.height = '28px';
+                    img.style.width = '28px';
+                    img.style.borderRadius = '50%';
+                    img.style.objectFit = 'cover';
+                    btn.appendChild(img);
+                }
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = tester.name;
+                nameSpan.style.fontWeight = '600';
+                btn.appendChild(nameSpan);
+                btn.addEventListener('click', () => requestTesterCodeForSplash(tester.num, tester.name));
+                container.appendChild(btn);
+            });
+
+            document.getElementById('testerCodeCancelBtn').onclick = function() {
+                document.getElementById('testerSelectStep').style.display = 'block';
+                document.getElementById('testerCodeStep').style.display = 'none';
+                document.getElementById('testerCodeStatus').style.display = 'none';
+                document.getElementById('testerCodeInput').value = '';
+                document.getElementById('testerResendBtn').style.display = 'none';
+            };
+
+            document.getElementById('testerCodeInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('testerVerifyBtn').click();
+                }
+            });
+
+            document.getElementById('testerVerifyBtn').onclick = async function() {
+                const code = document.getElementById('testerCodeInput').value.trim();
+                const testerNum = sessionStorage.getItem('testerNum');
+                if (!code || code.length !== 6) {
+                    document.getElementById('testerCodeStatus').textContent = 'Please enter a 6‑digit code.';
+                    document.getElementById('testerCodeStatus').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'verifyTesterCode');
+                    params.append('tester', testerNum);
+                    params.append('code', code);
+                    const res = await fetch(API_URL, { method: 'POST', body: params });
+                    const data = await res.json();
+                    if (data.result === 'success') {
+                        sessionStorage.setItem('splashBypassed', 'true');
+                        document.getElementById('testerLoginOverlay').classList.remove('active');
+                        hideSplashScreen();
+                        if (!appSettings.PrimaryColor) {
+                            location.reload();
+                        }
+                    } else {
+                        document.getElementById('testerCodeStatus').textContent = data.message || 'Invalid code.';
+                        document.getElementById('testerCodeStatus').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('testerCodeStatus').textContent = 'Network error.';
+                    document.getElementById('testerCodeStatus').style.display = 'block';
+                }
+            };
+
+            document.getElementById('testerResendBtn').onclick = function() {
+                if (testerResendBtn.disabled) return;
+                const testerNum = sessionStorage.getItem('testerNum');
+                const testerName = sessionStorage.getItem('testerName');
+                if (testerNum) requestTesterCodeForSplash(testerNum, testerName);
+            };
+
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
+
+        async function requestTesterCodeForSplash(testerNum, testerName) {
+            document.getElementById('testerSelectStep').style.display = 'none';
+            document.getElementById('testerCodeStep').style.display = 'block';
+            document.getElementById('testerCodeStatus').style.display = 'block';
+            document.getElementById('testerCodeStatus').textContent = 'Sending code...';
+            document.getElementById('testerCodeInput').value = '';
+            document.getElementById('testerCodeInput').focus();
+            document.getElementById('testerResendBtn').style.display = 'none';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'sendTesterCode');
+                params.append('tester', testerNum);
+
+                const res = await fetch(API_URL, { method: 'POST', body: params });
+                const rawText = await res.text();
+
+                let data;
+                try { data = JSON.parse(rawText); } catch (e) {
+                    document.getElementById('testerCodeStatus').textContent = 'Server error.';
+                    return;
+                }
+
+                if (data.result === 'success') {
+                    document.getElementById('testerCodeStatus').textContent = '';
+                    document.getElementById('testerCodeStatus').style.display = 'none';
+                    sessionStorage.setItem('testerNum', testerNum);
+                    sessionStorage.setItem('testerName', testerName);
+                    const resendBtn = document.getElementById('testerResendBtn');
+                    resendBtn.style.display = 'inline-flex';
+                    startResendCooldown(resendBtn);
+                } else {
+                    document.getElementById('testerCodeStatus').textContent = data.message || 'Failed.';
+                }
+            } catch (err) {
+                document.getElementById('testerCodeStatus').textContent = 'Network error.';
+            }
+        }
+
+        // ========== RESEND COOLDOWN ==========
+        function startResendCooldown(button) {
+            let seconds = 30;
+            button.disabled = true;
+            button.textContent = `Resend Code (${seconds}s)`;
+            const interval = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    button.disabled = false;
+                    button.textContent = 'Resend Code';
+                } else {
+                    button.textContent = `Resend Code (${seconds}s)`;
+                }
+            }, 1000);
+            button.addEventListener('click', function handler() {
+                clearInterval(interval);
+                button.removeEventListener('click', handler);
+            }, { once: true });
+        }
+
+        
+        // ========== PAYMENT FUNCTIONS ==========
+
+        function getShippingAddressString() {
+          const parts = [];
+          const addr1 = document.getElementById('addressLine1').value.trim();
+          const addr2 = document.getElementById('addressLine2').value.trim();
+          const suburb = document.getElementById('addressSuburb').value.trim();
+          const city = document.getElementById('addressCity').value.trim();
+          const postcode = document.getElementById('addressPostcode').value.trim();
+          const region = document.getElementById('addressRegion').value.trim();
+          const country = document.getElementById('countryNameDisplay').textContent.trim();
+          if (addr1) parts.push(addr1);
+          if (addr2) parts.push(addr2);
+          if (suburb) parts.push(suburb);
+          if (city) parts.push(city);
+          if (postcode) parts.push(postcode);
+          if (region) parts.push(region);
+          if (country && country !== 'Country') parts.push(country);
+          return parts.join(', ');
+        }
+
+        function initPayments() {
+          const paypalBtn = document.getElementById('paypalBtn');
+          const payfastBtn = document.getElementById('payfastBtn');
+          
+          function getOrderSummary() {
+            return {
+              name: document.getElementById('customerName').value.trim(),
+              email: document.getElementById('verifiedEmail').value.trim(),
+              phone: (document.getElementById('phoneCodeInput').value + ' ' + document.getElementById('customerPhone').value.trim()).trim(),
+              productName: selectedProduct ? selectedProduct.ProductName : 'Book',
+              typeLabel: selectedProduct && selectedProduct.Type === 'Digital' ? 'Digital Edition' : 'Physical Edition',
+              qty: parseInt(document.getElementById('orderQuantity').value) || 1,
+              unitPrice: document.getElementById('sumUnitPrice').textContent,
+              subtotal: document.getElementById('sumSubtotal').textContent,
+              discountText: (function() {
+                const dr = document.getElementById('discountRow');
+                return dr.style.display !== 'none' ? document.getElementById('sumDiscount').textContent : null;
+              })(),
+              discountDetail: document.getElementById('discountDetail').textContent,
+              shippingText: (function() {
+                const sr = document.getElementById('shippingRow');
+                return sr.style.display !== 'none' ? document.getElementById('sumShipping').textContent : null;
+              })(),
+              totalPrice: document.getElementById('sumTotal').textContent,
+              totalValue: document.getElementById('sumTotal').textContent.replace(/[^0-9.]/g, ''),
+              shippingAddress: getShippingAddressString(),
+              deliveryDetails: (function() {
+                const dd = document.getElementById('deliveryDetails');
+                return dd && dd.value.trim() ? dd.value.trim() : '';
+              })()
+            };
+          }
+          
+          function validateOrder() {
+            if (!selectedProduct) { showAlertModal('Select Product', 'Please choose a book format first.'); return false; }
+            if (!isEmailVerified) { showAlertModal('Email Required', 'Please verify your email address first.'); return false; }
+            const name = document.getElementById('customerName').value.trim();
+            if (!name) { showAlertModal('Name Required', 'Please enter your full name or company.'); return false; }
+            const email = document.getElementById('verifiedEmail').value.trim();
+            if (!email) { showAlertModal('Email Required', 'Email not found. Please re-verify your email.'); return false; }
+            if (!document.getElementById('customerPhone').value.trim()) { showAlertModal('Phone Required', 'Please enter your phone number.'); return false; }
+            if (selectedProduct.Type === 'Physical') {
+              if (!document.getElementById('addressLine1').value.trim()) { showAlertModal('Address Required', 'Please fill in Address Line 1.'); return false; }
+              if (!document.getElementById('addressCity').value.trim()) { showAlertModal('Address Required', 'Please fill in City.'); return false; }
+              if (!document.getElementById('addressPostcode').value.trim()) { showAlertModal('Address Required', 'Please fill in Postcode.'); return false; }
+              if (document.getElementById('countryNameDisplay').textContent.trim() === 'Country') { showAlertModal('Address Required', 'Please select a Country.'); return false; }
+            }
+            return true;
+          }
+          
+          function showConfirmationModal(gateway, onProceed) {
+            const order = getOrderSummary();
+            
+            let orderHtml = `
+              <div class="summary-row"><span>Product:</span><span>${order.productName} (${order.typeLabel})</span></div>
+              <div class="summary-row"><span>Quantity:</span><span>${order.qty}</span></div>
+              <div class="summary-row"><span>Unit Price:</span><span>${order.unitPrice}</span></div>
+              ${order.discountText ? `<div class="summary-row"><span>Discount:</span><span class="discount-amount">${order.discountText}</span></div>
+              <div class="discount-detail" style="font-size:0.85rem;color:#dc3c33;">(${order.discountDetail})</div>` : ''}
+              <div class="summary-row"><span>Subtotal:</span><span>${order.subtotal}</span></div>
+              ${order.shippingText ? `<div class="summary-row"><span>Shipping:</span><span>${order.shippingText}</span></div>` : ''}
+              <div class="summary-row total"><span>Total:</span><span>${order.totalPrice}</span></div>
+            `;
+            
+            let customerHtml = `
+              <p><strong>Name:</strong> ${order.name}</p>
+              <p><strong>Email:</strong> ${order.email}</p>
+              <p><strong>Phone:</strong> ${order.phone}</p>
+            `;
+            
+            if (selectedProduct.Type === 'Physical') {
+              if (order.shippingAddress) customerHtml += `<p><strong>Shipping Address:</strong><br>${order.shippingAddress}</p>`;
+              if (order.deliveryDetails) customerHtml += `<p><strong>Delivery Details:</strong><br>${order.deliveryDetails}</p>`;
+            } else {
+              customerHtml += `<p style="margin-top:0.8rem;font-size:0.9rem;color:#555;">You'll receive an email with your download link for the PDF file.</p>`;
+            }
+            
+            const fullHtml = `
+              <div class="confirm-two-col">
+                <div class="confirm-col"><h4>Order Summary</h4>${orderHtml}</div>
+                <div class="confirm-col"><h4>Customer Details</h4>${customerHtml}</div>
+              </div>
+            `;
+            
+            const modalBox = document.querySelector('#modalOverlay .modal-box');
+            const origMaxWidth = modalBox.style.maxWidth || '';
+            const origMaxHeight = modalBox.style.maxHeight || '';
+            const origOverflow = modalBox.style.overflowY || '';
+            modalBox.style.maxWidth = '650px';
+            modalBox.style.maxHeight = '80vh';
+            modalBox.style.overflowY = 'auto';
+            
+            showModal('Confirm Purchase', fullHtml, 'Proceed with ' + gateway, 'Cancel', 
+              function() {
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
+                if (onProceed) onProceed();
+              },
+              function() {
+                modalBox.style.maxWidth = origMaxWidth;
+                modalBox.style.maxHeight = origMaxHeight;
+                modalBox.style.overflowY = origOverflow;
+              }
+            );
+          }
+          
+          // ========== PAYPAL (Redirect Flow) ==========
+          if (paypalBtn) {
+            paypalBtn.addEventListener('click', function() {
+              if (!validateOrder()) return;
+              
+              fetch(API_URL + '?action=getPaymentKeys')
+                .then(function(r) { return r.json(); })
+                .then(function(keys) {
+                  if (!keys.paypalClientId) { showAlertModal('Error', 'PayPal is not configured.'); return; }
+                  
+                  showConfirmationModal('PayPal', function() {
+                    var order = getOrderSummary();
+                    var amount = Math.max(0.01, parseFloat(order.totalValue) || 1.00).toFixed(2);
+                    var returnUrl = window.location.origin + window.location.pathname + '?paypal=success';
+                    var cancelUrl = window.location.origin + window.location.pathname + '?paypal=cancelled';
+                    
+                    sessionStorage.setItem('paypalOrder', JSON.stringify({
+                      name: order.name,
+                      email: order.email,
+                      phone: order.phone,
+                      qty: order.qty,
+                      totalValue: order.totalValue,
+                      shippingAddress: order.shippingAddress,
+                      productType: selectedProduct ? selectedProduct.Type : 'Digital',
+                      deliveryDetails: order.deliveryDetails
+                    }));
+                    
+                    fetch(API_URL, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                      body: 'action=createPayPalOrder&amount=' + amount + '&returnUrl=' + encodeURIComponent(returnUrl) + '&cancelUrl=' + encodeURIComponent(cancelUrl)
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                      if (data.result === 'success' && data.approvalUrl) {
+                        window.location.href = data.approvalUrl;
+                      } else {
+                        showAlertModal('Error', 'Could not connect to PayPal. Please try again.');
+                      }
+                    })
+                    .catch(function() {
+                      showAlertModal('Error', 'Could not connect to PayPal. Please try again.');
+                    });
+                  });
+                });
+            });
+          }
+          
+          // ========== PAYFAST ==========
+          if (payfastBtn) {
+            payfastBtn.addEventListener('click', function() {
+              if (!validateOrder()) return;
+              
+              fetch(API_URL + '?action=getPaymentKeys')
+                .then(function(r) { return r.json(); })
+                .then(function(keys) {
+                  if (!keys.payfastMerchantId || !keys.payfastMerchantKey) { showAlertModal('Error', 'Payfast is not configured.'); return; }
+                  
+                  showConfirmationModal('Payfast', function() {
+                    const order = getOrderSummary();
+                    const orderId = 'PF-' + Date.now();
+                    const nameParts = order.name.split(' ');
+                    
+                    // Store order for return handling
+                    sessionStorage.setItem('payfastOrder', JSON.stringify({
+                      name: order.name,
+                      email: order.email,
+                      phone: order.phone,
+                      qty: order.qty,
+                      totalValue: order.totalValue,
+                      shippingAddress: order.shippingAddress,
+                      productType: selectedProduct ? selectedProduct.Type : 'Digital',
+                      deliveryDetails: order.deliveryDetails
+                    }));
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://sandbox.payfast.co.za/eng/process';
+                    form.style.display = 'none';
+                    
+                    const fields = {
+                      merchant_id: keys.payfastMerchantId,
+                      merchant_key: keys.payfastMerchantKey,
+                      return_url: window.location.origin + window.location.pathname + '?payment=success&orderId=' + orderId,
+                      cancel_url: window.location.origin + window.location.pathname + '?payment=cancelled',
+                      notify_url: API_URL,
+                      name_first: nameParts[0],
+                      name_last: nameParts.slice(1).join(' ') || order.name,
+                      email_address: order.email,
+                      m_payment_id: orderId,
+                      amount: order.totalValue,
+                      item_name: order.productName,
+                      item_description: order.qty + ' x ' + order.typeLabel
+                    };
+                    
+                    for (var key in fields) {
+                      var input = document.createElement('input');
+                      input.type = 'hidden';
+                      input.name = key;
+                      input.value = fields[key];
+                      form.appendChild(input);
+                    }
+                    
+                    fetch(API_URL + '?action=getPayfastSignature&' + new URLSearchParams(fields).toString())
+                      .then(function(r) { return r.json(); })
+                      .then(function(data) {
+                        var sigInput = document.createElement('input');
+                        sigInput.type = 'hidden';
+                        sigInput.name = 'signature';
+                        sigInput.value = data.signature;
+                        form.appendChild(sigInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                        document.body.removeChild(form);
+                      })
+                      .catch(function() { showAlertModal('Error', 'Failed to connect to Payfast.'); });
+                  });
+                });
+            });
+          }
+        }
+        
+        // ========== LEGAL MODAL ==========
+        function showLegalModal(title, contentObj) {
+            document.getElementById('legalModalTitle').textContent = title;
+            const contentDiv = document.getElementById('legalModalContent');
+            contentDiv.innerHTML = contentObj.html;
+            contentDiv.scrollTop = 0;
+            setTimeout(() => { contentDiv.scrollTop = 0; }, 10);
+            document.getElementById('legalModalOverlay').classList.add('active');
+        }
+
+        document.getElementById('legalModalCloseBtn').addEventListener('click', () => {
+            document.getElementById('legalModalOverlay').classList.remove('active');
+        });
+        document.getElementById('legalModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('legalModalOverlay')) {
+                document.getElementById('legalModalOverlay').classList.remove('active');
+            }
+        });
+
+        function getKnownPhoneCodes() {
+            if (!shippingRegions || !shippingRegions.length) return [];
+            return shippingRegions.map(r => (r.PhoneCode || '').replace(/^\+/, '')).filter(code => code.length > 0).sort((a,b) => b.length - a.length);
+        }
+
+        function extractCountryCode(fullNumber) {
+            if (!fullNumber.startsWith('+')) return null;
+            const codes = getKnownPhoneCodes();
+            if (codes.length === 0) return null;
+            for (const code of codes) {
+                if (fullNumber.startsWith('+' + code)) {
+                    let rest = fullNumber.slice(('+' + code).length).trim();
+                    if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
+                    return { code: '+' + code, number: rest };
+                }
+            }
+            const match = fullNumber.match(/^\+(\d{1,4})\s?(.*)/);
+            if (match) {
+                let rest = (match[2] || '').trim();
+                if (rest.length > 1 && rest.startsWith('0')) rest = rest.slice(1).trim();
+                return { code: '+' + match[1], number: rest };
+            }
+            return null;
+        }
+
+        function setupPhoneSplitter(numberInputId, codeInputId) {
+            const numInput = document.getElementById(numberInputId);
+            const codeInput = document.getElementById(codeInputId);
+            if (!numInput || !codeInput) return;
+            function stripLeadingZeroIfNeeded() {
+                const numVal = numInput.value.trim();
+                const codeVal = codeInput.value.trim();
+                if (numVal.startsWith('0') && codeVal.startsWith('+') && codeVal.length > 1) numInput.value = numVal.slice(1).trim();
+            }
+            function splitNumberField() {
+                const val = numInput.value.trim();
+                const extracted = extractCountryCode(val);
+                if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); numInput.value = extracted.number; }
+                stripLeadingZeroIfNeeded();
+            }
+            function splitCodeField() {
+                const val = codeInput.value.trim();
+                if (val.startsWith('+') && val.length > 5) {
+                    const extracted = extractCountryCode(val);
+                    if (extracted) { codeInput.value = extracted.code; autoResizePhoneCodeInput(codeInput.id); if (extracted.number && !numInput.value.trim()) numInput.value = extracted.number; }
+                }
+                stripLeadingZeroIfNeeded();
+            }
+            numInput.addEventListener('input', splitNumberField);
+            numInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
+            numInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
+            codeInput.addEventListener('input', splitCodeField);
+            codeInput.addEventListener('change', () => { splitNumberField(); splitCodeField(); });
+            codeInput.addEventListener('blur', () => { splitNumberField(); splitCodeField(); });
+        }
+
+        function splitAllPhoneFields() {
+            if (document.getElementById('customerPhone') && document.getElementById('phoneCodeInput')) {
+                const num = document.getElementById('customerPhone'), code = document.getElementById('phoneCodeInput');
+                const e = extractCountryCode(num.value.trim());
+                if (e) { code.value = e.code; autoResizePhoneCodeInput('phoneCodeInput'); num.value = e.number; }
+                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
+            }
+            if (document.getElementById('phone') && document.getElementById('contactPhoneCodeInput')) {
+                const num = document.getElementById('phone'), code = document.getElementById('contactPhoneCodeInput');
+                const e = extractCountryCode(num.value.trim());
+                if (e) { code.value = e.code; autoResizePhoneCodeInput('contactPhoneCodeInput'); num.value = e.number; }
+                if (num.value.startsWith('0') && code.value.startsWith('+')) num.value = num.value.slice(1).trim();
+            }
+        }
+
+        function setupDropdown(trigger, dropdown) {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.currency-dropdown, .phone-code-dropdown, .country-dropdown').forEach(d => d.classList.remove('open'));
+                if (!isOpen) { dropdown.classList.add('open'); const s = dropdown.querySelector('.dropdown-search'); if (s) { s.value = ''; s.focus(); } }
+                else dropdown.classList.remove('open');
+            });
+            document.addEventListener('click', (event) => { if (!dropdown.contains(event.target) && !trigger.contains(event.target)) dropdown.classList.remove('open'); });
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        function buildSearchableDropdown(container, items, placeholder) {
+            container.innerHTML = '';
+            const search = document.createElement('input'); search.type = 'text'; search.className = 'dropdown-search'; search.placeholder = placeholder || 'Search...';
+            search.addEventListener('input', () => { const f = search.value.toLowerCase(); items.forEach(i => i.element.style.display = i.text.toLowerCase().includes(f) ? '' : 'none'); });
+            search.addEventListener('click', (e) => e.stopPropagation());
+            container.appendChild(search);
+            items.forEach(i => container.appendChild(i.element));
+        }
+
+        function buildCurrencySelector() {
+            const container = document.getElementById('currencySelectorContainer'); container.innerHTML = ''; if (!exchangeRates.length) return;
+            const btn = document.createElement('div'); btn.className = 'currency-selector'; btn.id = 'currencyBtn';
+            const flagImg = document.createElement('img'); flagImg.id = 'currencyFlag';
+            const codeSpan = document.createElement('span'); codeSpan.id = 'currencyCodeDisplay';
+            btn.appendChild(flagImg); btn.appendChild(codeSpan);
+            const dropdown = document.createElement('div'); dropdown.className = 'currency-dropdown'; dropdown.id = 'currencyDropdown';
+            const sorted = [...exchangeRates].sort((a,b) => a.CountryName.localeCompare(b.CountryName));
+            const items = sorted.map(rate => {
+                const item = document.createElement('div'); item.className = 'currency-dropdown-item';
+                item.innerHTML = `<img src="${rate.FlagURL}" alt="${rate.CurrencyCode}"><span>${rate.CountryName} (${rate.CurrencyCode})</span>`;
+                item.addEventListener('click', () => {
+                    selectedCurrency = rate; updateCurrencyDisplay(); refreshAllPrices();
+                    sessionStorage.setItem('selectedCurrency', rate.CurrencyCode); dropdown.classList.remove('open');
+                    document.getElementById('topBarRight').classList.remove('open');
+                    document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+                });
+                return { element: item, text: rate.CountryName + ' ' + rate.CurrencyCode };
+            });
+            buildSearchableDropdown(dropdown, items, 'Search currency...');
+            container.appendChild(btn); container.appendChild(dropdown); setupDropdown(btn, dropdown);
+            if (selectedCurrency) updateCurrencyDisplay(); else { selectedCurrency = exchangeRates[0]; updateCurrencyDisplay(); }
+        }
+
+        function updateCurrencyDisplay() {
+            const flag = document.getElementById('currencyFlag'), codeDisplay = document.getElementById('currencyCodeDisplay');
+            if (flag && codeDisplay && selectedCurrency) { flag.src = selectedCurrency.FlagURL; codeDisplay.textContent = selectedCurrency.CurrencyCode; }
+        }
+
+        async function detectUserCurrency() {
+            try { const res = await fetch('https://ipapi.co/json/'); const geo = await res.json(); const cc = geo?.currency;
+                if (cc) { const m = exchangeRates.find(r => r.CurrencyCode === cc); if (m) { selectedCurrency = m; updateCurrencyDisplay(); refreshAllPrices(); sessionStorage.setItem('selectedCurrency', m.CurrencyCode); } }
+                if (geo?.country_name) setUserCountryFromName(geo.country_name);
+            } catch(e) {}
+            if (!selectedCurrency) { const s = sessionStorage.getItem('selectedCurrency'); if (s && exchangeRates.find(r => r.CurrencyCode === s)) selectedCurrency = exchangeRates.find(r => r.CurrencyCode === s); else selectedCurrency = exchangeRates.find(r => r.CurrencyCode === 'USD') || exchangeRates[0]; updateCurrencyDisplay(); refreshAllPrices(); }
+            if (!userCountryRegion && shippingRegions.length) setUserCountry(shippingRegions[0]);
+        }
+
+        function setUserCountryFromName(n) { const m = shippingRegions.find(r => r.Location === n); if (m) setUserCountry(m); }
+        function setUserCountry(r) {
+            document.getElementById('countryNameDisplay').textContent = r.Location; document.getElementById('countryFlag').src = r.FlagURL;
+            userCountryRegion = r.Region; selectedShippingCountry = r.Location;
+            document.getElementById('phoneCodeInput').value = r.PhoneCode || '+1'; document.getElementById('phoneFlag').src = r.FlagURL; updateOrderSummary();
+        }
+
+        function convertPrice(zar) { if (!selectedCurrency || selectedCurrency.CurrencyCode === 'ZAR') return zar; return Math.round(zar * selectedCurrency.RateToBase * 100) / 100; }
+        function formatPrice(zar) { const c = convertPrice(zar); const code = selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR'; const sym = (selectedCurrency && selectedCurrency.Symbol) ? selectedCurrency.Symbol : code; return sym + ' ' + c.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function refreshAllPrices() {
+            const ac = appSettings.AlertColor || '#dc3c33';
+            document.querySelectorAll('[data-zar]').forEach(el => { const z = parseFloat(el.getAttribute('data-zar')); if (!isNaN(z)) { el.textContent = formatPrice(z); el.style.color = (el.classList.contains('product-price') || el.classList.contains('price') || el.id === 'quantityTotalPrice') ? 'var(--primary-color, #194373)' : ac; } });
+            if (document.getElementById('order-section').classList.contains('active')) { updateQuantityTotal(); updateOrderSummary(); }
+        }
+
+        function equalizeHeights() {
+            const rc = document.getElementById('productCardsColumn'), lb = document.getElementById('leftBox'), cc = document.getElementById('carouselWrapper');
+            if (!rc || !lb || !cc) return; if (window.innerWidth <= 768) { lb.style.height = 'auto'; cc.style.height = 'auto'; return; }
+            lb.style.height = 'auto'; cc.style.height = 'auto';
+            requestAnimationFrame(() => { const th = rc.offsetHeight; if (th > 0) { lb.style.height = th + 'px'; cc.style.height = th + 'px'; } });
+        }
+        window.addEventListener('resize', () => { if (document.getElementById('home-section')?.classList.contains('active')) equalizeHeights(); });
+
+        function buildCarousel(urls, interval) {
+            const track = document.getElementById('carouselTrack'), dots = document.getElementById('carouselDots'), prevBtn = document.getElementById('prevBtn'), nextBtn = document.getElementById('nextBtn');
+            track.innerHTML = ''; dots.innerHTML = ''; if (!urls.length) return;
+            const ext = [urls[urls.length-1], ...urls, urls[0]];
+            ext.forEach(u => { const s = document.createElement('div'); s.className = 'carousel-slide'; const img = document.createElement('img'); img.src = u; img.alt = 'Slide'; img.loading = 'lazy'; s.appendChild(img); track.appendChild(s); });
+            for (let i = 0; i < urls.length; i++) { const d = document.createElement('span'); d.className = 'carousel-dot'; if (i === 0) d.classList.add('active'); d.addEventListener('click', () => goToSlide(i)); dots.appendChild(d); }
+            let ci = 1, total = urls.length, transitioning = false;
+            function updateCarousel(anim) { track.style.transition = anim === false ? 'none' : 'transform 0.5s ease'; track.style.transform = `translateX(-${ci * 100}%)`; const ri = (ci - 1 + total) % total; document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i === ri)); }
+            function goToSlide(ri) { ci = ri + 1; updateCarousel(); resetAutoPlay(); }
+            function nextSlide() { if (transitioning) return; transitioning = true; ci++; updateCarousel(); if (ci === ext.length - 1) setTimeout(() => { track.style.transition = 'none'; ci = 1; track.style.transform = `translateX(-${ci * 100}%)`; transitioning = false; updateDots(); }, 500); else setTimeout(() => transitioning = false, 500); }
+            function prevSlide() { if (transitioning) return; transitioning = true; ci--; updateCarousel(); if (ci === 0) setTimeout(() => { track.style.transition = 'none'; ci = ext.length - 2; track.style.transform = `translateX(-${ci * 100}%)`; transitioning = false; updateDots(); }, 500); else setTimeout(() => transitioning = false, 500); }
+            function updateDots() { const ri = (ci - 1 + total) % total; document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i === ri)); }
+            function startAutoPlay() { if (carouselIntervalId) clearInterval(carouselIntervalId); carouselIntervalId = setInterval(nextSlide, interval); }
+            function stopAutoPlay() { if (carouselIntervalId) { clearInterval(carouselIntervalId); carouselIntervalId = null; } }
+            function resetAutoPlay() { stopAutoPlay(); startAutoPlay(); }
+            nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
+            prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
+            const wrapper = document.getElementById('carouselWrapper');
+            wrapper.addEventListener('mouseenter', stopAutoPlay); wrapper.addEventListener('mouseleave', startAutoPlay);
+            wrapper.addEventListener('touchstart', stopAutoPlay, { passive: true }); wrapper.addEventListener('touchend', startAutoPlay);
+            document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); } if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); } });
+            updateCarousel(false); startAutoPlay();
+        }
+
+        function applySettingsDirect(s) {
+            document.body.style.backgroundColor = s.BackgroundColor || '#ffffff'; document.body.style.color = s.TextColor || '#000000';
+            document.getElementById('topBar').style.backgroundColor = s.PrimaryColor || '#194373';
+            if (s.BackgroundImage) document.body.style.backgroundImage = `url('${s.BackgroundImage}')`;
+            document.documentElement.style.setProperty('--cta-color', s.CTAColor || '#f29b2a');
+            document.documentElement.style.setProperty('--primary-color', s.PrimaryColor || '#194373');
+            document.documentElement.style.setProperty('--alert-color', s.AlertColor || '#dc3c33');
+            document.documentElement.style.setProperty('--secondary-color', s.SecondaryColor || '#f29b2a');
+            document.documentElement.style.setProperty('--bg-color', s.BackgroundColor || '#eee6ca');
+            const logo = document.getElementById('bannerLogo'), splashLogo = document.getElementById('splash-logo');
+            if (s.BannerLogo) { logo.src = s.BannerLogo; logo.style.display = 'block'; splashLogo.src = s.BannerLogo; } else logo.style.display = 'none';
+            document.getElementById('adminIconImg').src = 'https://gmmastermariner.github.io/the-ABC-of-ASD/images/icon_admin.png';
+            const titleEl = document.getElementById('bannerTitle'), mt = s.BannerTitle || '', ab = s.BannerTitleAbbr || '';
+            if (mt && ab) titleEl.innerHTML = `${mt} <span class="abbreviation">${ab}</span>`; else if (mt) titleEl.textContent = mt; else titleEl.textContent = '';
+            document.getElementById('bannerSubtitle').textContent = s.BannerBookSubTitle || '';
+            document.getElementById('aboutPageHeading').textContent = s.AboutPageTitle || 'About this book, and me';
+            document.getElementById('contactPageHeading').textContent = s.ContactPageTitle || 'Get in touch';
+            if (s.PayPalLogo) document.getElementById('paypalLogoImg').src = s.PayPalLogo;
+            if (s.PayfastLogo) document.getElementById('payfastLogoImg').src = s.PayfastLogo;
+            if (s.LocationIconURL) document.getElementById('locationIcon').src = s.LocationIconURL;
+            if (s.MapsIconURL) document.getElementById('mapIcon').src = s.MapsIconURL;
+            const navContainer = document.getElementById('navIcons'); navContainer.innerHTML = '';
+            [{ iconSetting: 'NavIconURLHome', section: 'home-section', label: 'Home' }, { iconSetting: 'NavIconURLAbout', section: 'about-section', label: 'About' }, { iconSetting: 'NavIconURLContact', section: 'contact-section', label: 'Contact' }, { iconSetting: 'NavIconURLLinkedIn', externalLinkSetting: 'LinkedInURL', label: 'LinkedIn' }].forEach(item => {
+                const iconUrl = s[item.iconSetting]; if (!iconUrl || iconUrl.trim() === '') return;
+                const a = document.createElement('a'); a.title = item.label;
+                if (item.externalLinkSetting) { let lu = s[item.externalLinkSetting]; if (lu && lu.trim() !== '') { if (!/^https?:\/\//i.test(lu)) lu = 'https://' + lu; a.href = lu; a.target = '_blank'; } else return; }
+                else if (item.section) { a.href = '#'; a.dataset.section = item.section; }
+                const img = document.createElement('img'); img.src = iconUrl; img.alt = item.label;
+                if (item.iconSetting === 'NavIconURLAbout') img.onerror = function() { this.onerror = null; this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"%3E%3Cpath d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E'; };
+                a.appendChild(img); const span = document.createElement('span'); span.className = 'nav-label'; span.textContent = item.label; a.appendChild(span); navContainer.appendChild(a);
+                if (item.iconSetting === 'NavIconURLLinkedIn') { const fli = document.getElementById('footerLinkedIn'); if (fli && item.externalLinkSetting) { let lu = s[item.externalLinkSetting]; if (lu && lu.trim() !== '') { if (!/^https?:\/\//i.test(lu)) lu = 'https://' + lu; fli.href = lu; fli.target = '_blank'; fli.querySelector('img').src = iconUrl; } } }
+            });
+            navContainer.addEventListener('click', (e) => { const link = e.target.closest('a'); if (!link || link.target === '_blank') return; e.preventDefault(); const section = link.dataset.section; if (section) showPage(section); });
+        }
+
+        function loadHomePageDirect(home) {
+            document.getElementById('homeHeadline').textContent = appSettings.HomePageTitle || '';
+            document.getElementById('homeDesc1').textContent = home.Home_Description1 || '';
+            document.getElementById('homeDesc2').textContent = home.Home_Description2 || '';
+            const images = [];
+            for (let i = 1; i <= 9; i++) {
+                const url = home['Home_CarouselImage' + i];
+                if (url) images.push(url);
+            }
+            if (images.length) buildCarousel(images, parseInt(home.Home_CarouseTimer) || 3000);
+            const pc = document.getElementById('productCardsColumn'); pc.innerHTML = '';
+            const i1m = home.Home_ProductCard1MainText || '', i1s = home.Home_ProductCard1SubText || '';
+            const i2m = home.Home_ProductCard2MainText || '', i2s = home.Home_ProductCard2SubText || '';
+            const p1 = products[0] || {}, p2 = products[1] || {};
+            function cc(mt, st, p) { const c = document.createElement('div'); c.className = 'product-card'; c.innerHTML = `<h4>${mt}</h4><p class="sub">${st}</p><p class="price" data-zar="${p.BasePrice||0}">${formatPrice(p.BasePrice||0)}</p><span class="copyright-mark">© GM Master Mariner</span>`; return c; }
+            pc.appendChild(cc(i1m, i1s, p1));
+            const ob = document.createElement('div'); ob.className = 'central-order-btn'; ob.innerHTML = '<button class="btn">Order Now</button>'; pc.appendChild(ob);
+            pc.appendChild(cc(i2m, i2s, p2));
+            ob.querySelector('.btn').addEventListener('click', () => showPage('order-section'));
+            refreshAllPrices();
+        }
+
+        function loadAboutSectionDirect(about) {
+            aboutData = about || {};
+            const img1 = document.getElementById('aboutImg1'); if (about.About_Image1URL) { img1.src = about.About_Image1URL; img1.style.display = 'block'; } else img1.style.display = 'none';
+            const img2 = document.getElementById('aboutImg2');
+            if (about.About_Image2URL) { img2.src = about.About_Image2URL; if (window.innerWidth > 768) img2.style.display = 'block'; else img2.style.display = 'none'; } else img2.style.display = 'none';
+            let sb = (about.About_ShortBio || '').trim(), eb = (about.About_ExtendedBio || '').trim();
+            if ((sb.startsWith('"') && sb.endsWith('"')) || (sb.startsWith('\u201C') && sb.endsWith('\u201D'))) sb = sb.slice(1,-1).trim();
+            if ((eb.startsWith('"') && eb.endsWith('"')) || (eb.startsWith('\u201C') && eb.endsWith('\u201D'))) eb = eb.slice(1,-1).trim();
+            document.getElementById('aboutShortBioText').textContent = sb;
+            document.getElementById('aboutExtendedBioContent').textContent = eb;
+            const tm = document.getElementById('bioToggleMore'), tl = document.getElementById('bioToggleLess'), be = document.getElementById('bioExtended');
+            function collapse() { be.style.display = 'none'; tm.style.display = 'inline'; if (window.innerWidth <= 768 && about.About_Image2URL) { document.querySelector('.about-section-content').appendChild(img2); img2.style.display = 'block'; } }
+            function expand() { be.style.display = 'block'; tm.style.display = 'none'; if (window.innerWidth <= 768 && about.About_Image2URL) { document.querySelector('.about-section-content').appendChild(img2); img2.style.display = 'block'; } }
+            if (window.innerWidth <= 768 && about.About_Image2URL) document.querySelector('.about-section-content').appendChild(img2);
+            collapse(); tm.addEventListener('click', expand); tl.addEventListener('click', collapse);
+        }
+
+        function saveOrderState() {
+            if (!document.getElementById('order-section')) return;
+            saveToSession('orderState', { selectedProductIndex: selectedProduct ? products.indexOf(selectedProduct) : -1, quantity: document.getElementById('orderQuantity').value, isEmailVerified, verifiedEmail: document.getElementById('verifiedEmail').value, customerName: document.getElementById('customerName').value, phoneCode: document.getElementById('phoneCodeInput').value, phoneNumber: document.getElementById('customerPhone').value, addressLine1: document.getElementById('addressLine1').value, addressLine2: document.getElementById('addressLine2').value, addressSuburb: document.getElementById('addressSuburb').value, addressCity: document.getElementById('addressCity').value, addressPostcode: document.getElementById('addressPostcode').value, addressRegion: document.getElementById('addressRegion').value, selectedShippingCountry, userCountryRegion });
+        }
+
+        function loadOrderState() {
+            const state = loadFromSession('orderState'); if (!state) return false;
+            if (state.selectedProductIndex >= 0 && state.selectedProductIndex < products.length) selectProduct(state.selectedProductIndex, true);
+            if (state.quantity) document.getElementById('orderQuantity').value = state.quantity;
+            isEmailVerified = state.isEmailVerified || false;
+            if (isEmailVerified) {
+                document.getElementById('emailVerifyWrapper').style.display = 'none'; document.getElementById('customerDetails').style.display = 'block';
+                document.getElementById('verifiedEmail').value = state.verifiedEmail || ''; document.getElementById('customerName').value = state.customerName || '';
+                document.getElementById('phoneCodeInput').value = state.phoneCode || '+1'; document.getElementById('customerPhone').value = state.phoneNumber || '';
+                document.getElementById('addressLine1').value = state.addressLine1 || ''; document.getElementById('addressLine2').value = state.addressLine2 || '';
+                document.getElementById('addressSuburb').value = state.addressSuburb || ''; document.getElementById('addressCity').value = state.addressCity || '';
+                document.getElementById('addressPostcode').value = state.addressPostcode || ''; document.getElementById('addressRegion').value = state.addressRegion || '';
+                if (state.selectedShippingCountry) selectedShippingCountry = state.selectedShippingCountry;
+                if (state.userCountryRegion) userCountryRegion = state.userCountryRegion;
+                updateOrderSummary();
+                if (selectedProduct) updateAddressRequired();
+                splitAllPhoneFields();
+            } else { document.getElementById('emailVerifyWrapper').style.display = 'flex'; document.getElementById('customerDetails').style.display = 'none'; }
+            return true;
+        }
+
+        function resetOrderForm() {
+            isEmailVerified = false; lastVerifiedEmail = '';
+            document.getElementById('productOption1').classList.remove('selected'); document.getElementById('productOption2').classList.remove('selected'); selectedProduct = null;
+            document.getElementById('orderQuantity').value = ''; document.getElementById('orderQuantity').disabled = true; document.getElementById('qtyUp').disabled = true; document.getElementById('qtyDown').disabled = true;
+            document.getElementById('quantityTotalPrice').textContent = ''; document.getElementById('quantityTotalPrice').classList.remove('price-glow');
+            document.getElementById('formatText').textContent = ''; document.getElementById('orderProductType').classList.remove('visible'); document.getElementById('orderProductType').style.display = 'none';
+            document.getElementById('quantityTotalPrice').style.display = 'none';
+            document.getElementById('instructionMessage').style.display = 'block'; document.getElementById('instructionMessage').textContent = 'Please select a book format, and verify your email to continue ordering.'; document.getElementById('instructionMessage').classList.add('pulse-message');
+            document.getElementById('emailVerifyWrapper').style.display = 'flex'; document.getElementById('verifyLeft').style.display = 'block'; document.getElementById('verifyRight').style.display = 'flex';
+            document.getElementById('codeEntryStack').style.display = 'none'; document.getElementById('verifyingMessageRow').style.display = 'none';
+            document.getElementById('customerDetails').style.display = 'none'; document.getElementById('shippingAddressSection').style.display = 'none';
+            document.getElementById('orderEmail').value = ''; document.getElementById('orderEmail').disabled = false; document.getElementById('verifyEmailBtn').disabled = true;
+            document.getElementById('customerName').value = ''; document.getElementById('customerPhone').value = ''; document.getElementById('phoneCodeInput').value = '+1';
+            document.getElementById('addressLine1').value = ''; document.getElementById('addressLine2').value = ''; document.getElementById('addressSuburb').value = '';
+            document.getElementById('addressCity').value = ''; document.getElementById('addressPostcode').value = ''; document.getElementById('addressRegion').value = '';
+            for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = '';
+            if (window.resendTimer) clearInterval(window.resendTimer); document.getElementById('resendBtn').disabled = false; document.getElementById('resendBtn').textContent = 'Resend Code';
+            document.getElementById('shippingTimeText').textContent = ''; updateOrderSummary();
+        }
+
+        function loadOrderPage() {
+            if (products.length < 2) return;
+            const p1 = products[0], p2 = products[1];
+            document.getElementById('prod1Img').src = p1.ImageURL || ''; document.getElementById('prod1Img').style.display = p1.ImageURL ? 'block' : 'none';
+            document.getElementById('prod1Name').textContent = p1.ProductName; document.getElementById('prod1Price').textContent = formatPrice(p1.BasePrice); document.getElementById('prod1Price').setAttribute('data-zar', p1.BasePrice);
+            document.getElementById('prod2Img').src = p2.ImageURL || ''; document.getElementById('prod2Img').style.display = p2.ImageURL ? 'block' : 'none';
+            document.getElementById('prod2Name').textContent = p2.ProductName; document.getElementById('prod2Price').textContent = formatPrice(p2.BasePrice); document.getElementById('prod2Price').setAttribute('data-zar', p2.BasePrice);
+            document.getElementById('prod1Desc').textContent = p1.ProductDescription || '';
+            document.getElementById('prod2Desc').textContent = p2.ProductDescription || '';
+            document.getElementById('productOption1').addEventListener('click', () => selectProduct(0));
+            document.getElementById('productOption2').addEventListener('click', () => selectProduct(1));
+            const qi = document.getElementById('orderQuantity'), qu = document.getElementById('qtyUp'), qd = document.getElementById('qtyDown');
+            function uqb() { let v = parseInt(qi.value) || 1; qu.disabled = !selectedProduct; qd.disabled = !selectedProduct || v <= 1; }
+            qu.addEventListener('click', () => { if (!selectedProduct) return; let v = parseInt(qi.value) || 1; v = Math.min(v+1, 100); qi.value = v; uqb(); updateQuantityTotal(); updateOrderSummary(); });
+            qd.addEventListener('click', () => { if (!selectedProduct) return; let v = parseInt(qi.value) || 1; v = Math.max(v-1, 1); qi.value = v; uqb(); updateQuantityTotal(); updateOrderSummary(); });
+            qi.addEventListener('input', () => { let v = parseInt(qi.value); if (isNaN(v) || v < 1) qi.value = 1; if (v > 100) qi.value = 100; uqb(); updateQuantityTotal(); updateOrderSummary(); });
+            const ei = document.getElementById('orderEmail'), vb = document.getElementById('verifyEmailBtn');
+            ei.addEventListener('input', () => { vb.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ei.value.trim()); });
+            vb.addEventListener('click', () => { const e = ei.value.trim(); if (!e) return; sendVerificationCode(e); });
+            document.querySelectorAll('.code-digit').forEach((inp, idx) => {
+                inp.addEventListener('input', (e) => { if (inp.value.length === 1) { inp.classList.add('filled'); if (idx < 5) document.getElementById('code' + (idx+2)).focus(); } else inp.classList.remove('filled'); if (Array.from(document.querySelectorAll('.code-digit')).every(i => i.value.length === 1)) startVerification(Array.from(document.querySelectorAll('.code-digit')).map(i => i.value).join('')); });
+                inp.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && inp.value === '' && idx > 0) document.getElementById('code' + idx).focus(); });
+            });
+            document.getElementById('resendBtn').addEventListener('click', () => { if (document.getElementById('resendBtn').disabled) return; for (let i = 1; i <= 6; i++) document.getElementById('code' + i).value = ''; document.getElementById('code1').focus(); sendVerificationCode(lastEmailAttempt, true); startResendCooldown(document.getElementById('resendBtn')); });
+            document.getElementById('locateBtn').addEventListener('click', () => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(async (pos) => { if (window.google && google.maps) { const gc = new google.maps.Geocoder(); gc.geocode({ location: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude) }, (r, s) => { if (s === 'OK' && r[0]) fillAddressFromPlace(r[0]); else showAlertModal('Error', 'Geolocation unavailable.'); }); } else showAlertModal('Error', 'Geolocation unavailable.'); }, () => showAlertModal('Error', 'Unable to retrieve location.')); else showAlertModal('Error', 'Geolocation not supported.'); });
+            document.getElementById('mapBtn').addEventListener('click', () => openMapModal());
+            buildCountrySelector(); buildPhoneCodeSelector(); buildContactPhoneCodeSelector();
+            autoResizePhoneCodeInput('phoneCodeInput'); autoResizePhoneCodeInput('contactPhoneCodeInput');
+            document.getElementById('phoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('phoneCodeInput'));
+            document.getElementById('contactPhoneCodeInput').addEventListener('input', () => autoResizePhoneCodeInput('contactPhoneCodeInput'));
+            setupPhoneSplitter('customerPhone', 'phoneCodeInput'); setupPhoneSplitter('phone', 'contactPhoneCodeInput');
+            if (!loadOrderState()) resetOrderForm();
+            if (userCountryRegion && shippingRegions.length) { const r = shippingRegions.find(r => r.Region === userCountryRegion); if (r) setUserCountry(r); }
+            splitAllPhoneFields();
+        }
+
+        function autoResizePhoneCodeInput(id) { const i = document.getElementById(id); if (!i) return; const s = document.createElement('span'); s.style.font = window.getComputedStyle(i).font; s.style.visibility = 'hidden'; s.style.position = 'absolute'; s.style.whiteSpace = 'nowrap'; document.body.appendChild(s); s.textContent = i.value || i.placeholder || '+1'; i.style.width = (s.offsetWidth + 4) + 'px'; document.body.removeChild(s); }
+
+        
+        let lastEmailAttempt = '';
+        async function sendVerificationCode(email, silent) {
+            lastEmailAttempt = email;
+            if (!silent) { document.getElementById('verifyLeft').style.display = 'none'; document.getElementById('verifyRight').style.display = 'none'; document.getElementById('codeEntryStack').style.display = 'flex'; document.getElementById('emailSentTo').textContent = email; document.getElementById('emailSentMessage').classList.add('pulse-message'); document.getElementById('code1').focus(); }
+            const p = new URLSearchParams(); p.append('action', 'sendVerificationCode'); p.append('email', email);
+            const r = await fetch(API_URL, { method: 'POST', body: p }); const d = await r.json();
+            if (d.result !== 'success') { showAlertModal('Error', 'Failed to send code.'); if (!silent) { document.getElementById('verifyLeft').style.display = 'block'; document.getElementById('verifyRight').style.display = 'flex'; document.getElementById('codeEntryStack').style.display = 'none'; } }
+        }
+
+        async function startVerification(code) {
+            document.getElementById('codeEntryStack').style.display = 'none';
+            document.getElementById('verifyingMessageRow').style.display = 'flex';
+            document.getElementById('verifyingText').textContent = 'Verifying ' + lastEmailAttempt + '...';
+            document.getElementById('verifyingText').classList.add('pulse-message');
+            try {
+                const p = new URLSearchParams();
+                p.append('action', 'verifyCode');
+                p.append('email', lastEmailAttempt);
+                p.append('code', code);
+                const r = await fetch(API_URL, { method: 'POST', body: p });
+                const d = await r.json();
+                if (d.result === 'verified') {
+                    isEmailVerified = true;
+                    document.getElementById('emailVerifyWrapper').style.display = 'none';
+                    document.getElementById('customerDetails').style.display = 'block';
+                    document.getElementById('shippingAddressSection').style.display = 'block';
+                    document.getElementById('verifiedEmail').value = lastEmailAttempt;
+                    updateAddressRequired();
+                    if (selectedProduct) {
+                        updateInstructionMessage();
+                        if (appSettings.GoogleMapsApiKey && !window.google) loadGoogleMapsScript(appSettings.GoogleMapsApiKey);
+                    }
+                    updateOrderSummary();
+                    saveOrderState();
+                } else {
+                    showAlertModal('Verification Failed', d.result === 'expired' ? 'Code expired.' : 'Invalid code.');
+                    document.getElementById('verifyLeft').style.display = 'block';
+                    document.getElementById('verifyRight').style.display = 'flex';
+                    document.getElementById('codeEntryStack').style.display = 'none';
+                    document.getElementById('verifyingMessageRow').style.display = 'none';
+                    document.getElementById('orderEmail').value = lastEmailAttempt;
+                    document.getElementById('verifyEmailBtn').disabled = false;
+                }
+            } catch(err) {
+                showAlertModal('Error', 'Verification failed.');
+                document.getElementById('verifyLeft').style.display = 'block';
+                document.getElementById('verifyRight').style.display = 'flex';
+                document.getElementById('codeEntryStack').style.display = 'none';
+                document.getElementById('verifyingMessageRow').style.display = 'none';
+            }
+        }
+
+        function selectProduct(idx, isRestore) {
+            const o1 = document.getElementById('productOption1'), o2 = document.getElementById('productOption2');
+            o1.classList.remove('selected'); o2.classList.remove('selected');
+            if (idx === 0) { o1.classList.add('selected'); selectedProduct = products[0]; } else { o2.classList.add('selected'); selectedProduct = products[1]; }
+            document.getElementById('orderQuantity').disabled = false; document.getElementById('qtyUp').disabled = false; document.getElementById('qtyDown').disabled = false;
+            if (!isRestore) { const qi = document.getElementById('orderQuantity'); let v = parseInt(qi.value); if (isNaN(v) || v < 1) qi.value = '1'; }
+            document.getElementById('formatText').textContent = selectedProduct.Type || 'Physical';
+            updateInstructionMessage();
+            updateQuantityTotal();
+            updateOrderSummary();
+            if (isEmailVerified) {
+                document.getElementById('orderProductType').style.display = 'flex';
+                const te = document.getElementById('quantityTotalPrice');
+                te.style.display = 'block';
+                te.classList.add('price-glow');
+            }
+            updateAddressRequired();
+        }
+
+        function updateAddressRequired() {
+            const isPhysical = selectedProduct && selectedProduct.Type === 'Physical';
+            const section = document.getElementById('shippingAddressSection');
+            if (section) { section.style.display = 'block'; }
+            const addressFields = ['addressLine1', 'addressCity', 'addressPostcode'];
+            const starIds = ['starAddressLine1', 'starAddressCity', 'starAddressPostcode'];
+            if (isPhysical) {
+                addressFields.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required', ''); });
+                starIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
+            } else {
+                addressFields.forEach(id => { const el = document.getElementById(id); if (el) el.removeAttribute('required'); });
+                starIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+            }
+        }
+
+        function updateInstructionMessage() {
+            const m = document.getElementById('instructionMessage');
+            if (!selectedProduct) { m.style.display = 'block'; m.textContent = 'Please select a book format, and verify your email to continue ordering.'; m.classList.add('pulse-message'); }
+            else if (!isEmailVerified) { m.style.display = 'block'; m.textContent = 'Please verify your email to continue ordering.'; m.classList.add('pulse-message'); document.getElementById('orderProductType').style.display = 'none'; document.getElementById('quantityTotalPrice').style.display = 'none'; document.getElementById('quantityTotalPrice').classList.remove('price-glow'); }
+            else { m.style.display = 'none'; m.classList.remove('pulse-message'); document.getElementById('orderProductType').style.display = 'flex'; const te = document.getElementById('quantityTotalPrice'); te.style.display = 'block'; te.classList.add('price-glow'); }
+        }
+
+        function updateQuantityTotal() { if (!selectedProduct) return; document.getElementById('quantityTotalPrice').textContent = formatPrice(selectedProduct.BasePrice * (parseInt(document.getElementById('orderQuantity').value) || 1)); }
+
+        function getUnitPrice() { if (!selectedProduct) return 0; const q = parseInt(document.getElementById('orderQuantity').value) || 1; const t = selectedProduct.DiscountThreshold || 0; const p = selectedProduct.DiscountPercent || 0; if (q >= t) return selectedProduct.BasePrice * (1 - p/100); return selectedProduct.BasePrice; }
+
+        function getShippingCost() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return 0; if (!userCountryRegion) return 0;
+            const q = parseInt(document.getElementById('orderQuantity').value) || 1; const tw = selectedProduct.Weight * q;
+            const cr = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => r && r.Region && String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim() === cr);
+            if (!rows.length) return 0; rows.sort((a,b) => (a.MaxWeight||0) - (b.MaxWeight||0));
+            for (const row of rows) if (tw <= (row.MaxWeight||0)) return row.Cost||0;
+            return rows[rows.length-1].Cost||0;
+        }
+
+        function getShippingTime() {
+            if (!selectedProduct || selectedProduct.Type === 'Digital') return ''; if (!userCountryRegion || !selectedShippingCountry) return '';
+            const q = parseInt(document.getElementById('orderQuantity').value) || 1; const tw = selectedProduct.Weight * q;
+            const cr = userCountryRegion.replace(/[\s\uFEFF\xA0]+/g, ' ').trim();
+            const rows = regionRates.filter(r => r && r.Region && String(r.Region).replace(/[\s\uFEFF\xA0]+/g, ' ').trim() === cr);
+            if (!rows.length) return ''; rows.sort((a,b) => (a.MaxWeight||0) - (b.MaxWeight||0));
+            let time = ''; for (const row of rows) if (tw <= (row.MaxWeight||0)) { time = row.Time; break; } if (!time) time = rows[rows.length-1].Time||''; if (!time) return '';
+            return selectedShippingCountry === 'South Africa' ? `Please allow up to ${time} for delivery within South Africa.` : `Please allow up to ${time} for shipping from South Africa.`;
+        }
+
+        function updateOrderSummary() {
+            const dm = document.getElementById('digitalMessage'), dc = document.getElementById('deliveryDetailsContainer'), st = document.getElementById('shippingTimeText');
+            if (!selectedProduct) { st.textContent = ''; dm.style.display = 'none'; dc.style.display = 'none'; document.getElementById('sumUnitPrice').textContent = '—'; document.getElementById('sumQuantity').textContent = '0'; document.getElementById('sumSubtotal').textContent = '—'; document.getElementById('sumTotal').textContent = '—'; document.getElementById('discountRow').style.display = 'none'; document.getElementById('discountDetail').style.display = 'none'; document.getElementById('shippingRow').style.display = 'none'; return; }
+            const q = parseInt(document.getElementById('orderQuantity').value) || 1; const up = getUnitPrice(); const sub = up * q; const sh = getShippingCost(); const total = sub + sh; const da = (selectedProduct.BasePrice - up) * q;
+            document.getElementById('sumUnitPrice').textContent = formatPrice(up); document.getElementById('sumQuantity').textContent = q; document.getElementById('sumSubtotal').textContent = formatPrice(sub); document.getElementById('sumTotal').textContent = formatPrice(total);
+            if (q >= (selectedProduct.DiscountThreshold||0) && da > 0) { document.getElementById('discountRow').style.display = 'flex'; document.getElementById('sumDiscount').textContent = '- ' + formatPrice(da); document.getElementById('discountDetail').style.display = 'block'; document.getElementById('discountDetail').textContent = `${selectedProduct.DiscountPercent}% off for ${selectedProduct.DiscountThreshold}+ items`; }
+            else { document.getElementById('discountRow').style.display = 'none'; document.getElementById('discountDetail').style.display = 'none'; }
+            if (selectedProduct.Type === 'Digital') { document.getElementById('shippingRow').style.display = 'none'; st.textContent = ''; dm.style.display = 'block'; dc.style.display = 'none'; }
+            else { document.getElementById('shippingRow').style.display = 'flex'; document.getElementById('sumShipping').textContent = sh ? formatPrice(sh) : '—'; st.textContent = getShippingTime(); dm.style.display = 'none'; dc.style.display = (isEmailVerified && userCountryRegion) ? 'flex' : 'none'; }
+        }
+
+        function buildCountrySelector() {
+            const dd = document.getElementById('countryDropdown'), tr = document.getElementById('countrySelector'); dd.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a,b) => a.Location.localeCompare(b.Location));
+            buildSearchableDropdown(dd, sorted.map(c => { const i = document.createElement('div'); i.className = 'country-dropdown-item'; i.innerHTML = `<img src="${c.FlagURL}" alt=""><span>${c.Location}</span>`; i.addEventListener('click', () => { document.getElementById('countryNameDisplay').textContent = c.Location; document.getElementById('countryFlag').src = c.FlagURL; userCountryRegion = c.Region; selectedShippingCountry = c.Location; dd.classList.remove('open'); updateOrderSummary(); }); return { element: i, text: c.Location }; }), 'Search country...');
+            setupDropdown(tr, dd);
+        }
+
+        function buildPhoneCodeSelector() {
+            const dd = document.getElementById('phoneCodeDropdown'), tr = document.getElementById('phoneCodeSelector'); dd.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a,b) => a.Location.localeCompare(b.Location));
+            buildSearchableDropdown(dd, sorted.map(c => { const d = c.PhoneCode || '+1'; const i = document.createElement('div'); i.className = 'phone-code-item'; i.innerHTML = `<img src="${c.FlagURL}" alt=""><span>${c.Location} (${d})</span>`; i.addEventListener('click', () => { document.getElementById('phoneCodeInput').value = d; document.getElementById('phoneFlag').src = c.FlagURL; autoResizePhoneCodeInput('phoneCodeInput'); dd.classList.remove('open'); }); return { element: i, text: c.Location + ' ' + d }; }), 'Search country...');
+            setupDropdown(tr, dd);
+        }
+
+        function buildContactPhoneCodeSelector() {
+            const dd = document.getElementById('contactPhoneCodeDropdown'), tr = document.getElementById('contactPhoneCodeSelector'); if (!dd || !tr) return; dd.innerHTML = '';
+            const sorted = [...shippingRegions].sort((a,b) => a.Location.localeCompare(b.Location));
+            buildSearchableDropdown(dd, sorted.map(c => { const d = c.PhoneCode || '+1'; const i = document.createElement('div'); i.className = 'phone-code-item'; i.innerHTML = `<img src="${c.FlagURL}" alt=""><span>${c.Location} (${d})</span>`; i.addEventListener('click', () => { document.getElementById('contactPhoneCodeInput').value = d; document.getElementById('contactPhoneFlag').src = c.FlagURL; autoResizePhoneCodeInput('contactPhoneCodeInput'); dd.classList.remove('open'); }); return { element: i, text: c.Location + ' ' + d }; }), 'Search country...');
+            setupDropdown(tr, dd);
+            if (shippingRegions.length) { const dr = shippingRegions[0]; document.getElementById('contactPhoneCodeInput').value = dr.PhoneCode || '+1'; document.getElementById('contactPhoneFlag').src = dr.FlagURL; autoResizePhoneCodeInput('contactPhoneCodeInput'); }
+        }
+
+        let mapModal, map, marker;
+        function loadGoogleMapsScript(k) { if (window.google && google.maps) return; const s = document.createElement('script'); s.src = `https://maps.googleapis.com/maps/api/js?key=${k}&libraries=places`; s.defer = true; s.onload = () => { if (window._gmapCallbacks) { window._gmapCallbacks.forEach(cb => cb()); window._gmapCallbacks = []; } }; document.head.appendChild(s); }
+        function openMapModal() {
+            mapModal = document.getElementById('mapModalOverlay'); const k = appSettings.GoogleMapsApiKey; if (!k) { showAlertModal('Error', 'Map not configured.'); return; }
+            mapModal.classList.add('active');
+            function sm() {
+                const mc = document.getElementById('mapContainer');
+                if (!map) { let c = { lat: -30.5595, lng: 22.9375 }; if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { map.setCenter({ lat: p.coords.latitude, lng: p.coords.longitude }); map.setZoom(14); });
+                    map = new google.maps.Map(mc, { center: c, zoom: 5, streetViewControl: false, mapTypeControl: false });
+                    marker = new google.maps.Marker({ map, draggable: true, position: c });
+                    map.addListener('click', (e) => { marker.setPosition(e.latLng); new google.maps.Geocoder().geocode({ location: e.latLng }, (r,s) => { if (s === 'OK' && r[0]) fillAddressFromPlace(r[0]); }); });
+                    marker.addListener('dragend', () => { const p = marker.getPosition(); new google.maps.Geocoder().geocode({ location: p }, (r,s) => { if (s === 'OK' && r[0]) fillAddressFromPlace(r[0]); }); });
+                } else google.maps.event.trigger(map, 'resize');
+            }
+            if (window.google && google.maps) sm(); else { if (!window._gmapCallbacks) window._gmapCallbacks = []; window._gmapCallbacks.push(sm); loadGoogleMapsScript(k); }
+        }
+        document.getElementById('mapCloseBtn').addEventListener('click', () => document.getElementById('mapModalOverlay').classList.remove('active'));
+        document.getElementById('mapModalOverlay').addEventListener('click', (e) => { if (e.target === document.getElementById('mapModalOverlay')) document.getElementById('mapModalOverlay').classList.remove('active'); });
+
+        function fillAddressFromPlace(place) {
+            document.getElementById('addressLine2').value = ''; document.getElementById('addressSuburb').value = ''; document.getElementById('addressCity').value = ''; document.getElementById('addressPostcode').value = ''; document.getElementById('addressRegion').value = ''; document.getElementById('countryNameDisplay').textContent = 'Country'; document.getElementById('countryFlag').src = '';
+            document.getElementById('addressLine1').value = place.formatted_address || place.name || '';
+            for (const comp of place.address_components) { const t = comp.types; if (t.includes('locality')) document.getElementById('addressCity').value = comp.long_name; else if (t.includes('sublocality') || t.includes('neighborhood')) document.getElementById('addressSuburb').value = comp.long_name; else if (t.includes('administrative_area_level_1')) document.getElementById('addressRegion').value = comp.short_name; else if (t.includes('postal_code')) document.getElementById('addressPostcode').value = comp.long_name; else if (t.includes('country')) { const m = shippingRegions.find(r => r.Location === comp.long_name); if (m) { document.getElementById('countryNameDisplay').textContent = m.Location; document.getElementById('countryFlag').src = m.FlagURL; userCountryRegion = m.Region; selectedShippingCountry = m.Location; } } }
+            updateOrderSummary();
+        }
+
+        function showPage(sid) {
+            if (document.getElementById('order-section').classList.contains('active') && sid !== 'order-section') saveOrderState();
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); const t = document.getElementById(sid); if (t) t.classList.add('active');
+            document.getElementById('topBarRight').classList.remove('open'); document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+            if (sid === 'home-section') setTimeout(equalizeHeights, 50); if (sid === 'order-section') { loadOrderState(); splitAllPhoneFields(); }
+            if (sid === 'contact-section') {
+                const sb = document.getElementById('sendButton');
+                if (sb) {
+                    sb.disabled = false;
+                    sb.textContent = 'Send Message';
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function setupHamburger() {
+            const btn = document.getElementById('hamburgerBtn'), menu = document.getElementById('topBarRight');
+            btn.addEventListener('click', (e) => { e.stopPropagation(); const ex = menu.classList.toggle('open'); btn.setAttribute('aria-expanded', ex); });
+            menu.addEventListener('click', (e) => { if (e.target.closest('a')) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+            document.addEventListener('click', (e) => { if (menu.classList.contains('open') && !menu.contains(e.target) && e.target !== btn) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+        }
+
+        function setupContactForm() {
+            const form = document.getElementById('contactForm'), sb = document.getElementById('sendButton'); if (!form) return;
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); const n = document.getElementById('name').value.trim(), em = document.getElementById('email').value.trim(), ph = document.getElementById('phone').value.trim(), msg = document.getElementById('message').value.trim();
+                if (!n || !em || !msg) { showAlertModal('Missing Information', 'Please fill in all required fields.'); return; }
+                sb.disabled = true; sb.textContent = 'Sending...';
+                const pc = document.getElementById('contactPhoneCodeInput').value, fp = pc ? pc + ' ' + ph : ph;
+                const p = new URLSearchParams(); p.append('action', 'sendContact'); p.append('name', n); p.append('email', em); p.append('phone', fp); p.append('message', msg);
+                try { 
+                    const r = await fetch(API_URL, { method: 'POST', body: p }); 
+                    const d = await r.json(); 
+                if (d.result === 'success') { 
+                    form.reset();
+                    sb.disabled = false;
+                    sb.textContent = 'Send Message';
+                    showAlertModal('Thank You!', '✅ Thank you! I\'ll reply soon.', function() {
+                        showPage('home-section');
+                    }); 
+                    } else { 
+                        showAlertModal('Error', 'Error. Please try again.'); 
+                        sb.disabled = false; 
+                        sb.textContent = 'Send Message'; 
+                    } 
+                }
+                catch(err) { showAlertModal('Network Error', 'Network error.'); sb.disabled = false; sb.textContent = 'Send Message'; }
+            });
+        }
+
+        function buildLegalTexts(lo) {
+            function bh(pre) { let keys = Object.keys(lo); if (pre === 'Privacy') keys = keys.filter(k => k.startsWith('Privacy') || k.startsWith('Pricacy')); else keys = keys.filter(k => k.startsWith(pre)); const tk = keys.find(k => k.endsWith('Heading')); const ck = keys.filter(k => k !== tk); let h = ''; for (const k of ck) { const v = (lo[k]||'').trim(); if (!v) continue; const f = v.replace(/\n/g, '<br>'); if (k.endsWith('Heading')) h += `<strong>${f}</strong>`; else h += `<p>${f}</p>`; } return { title: tk ? (lo[tk]||'').trim() : '', html: h }; }
+            const pp = bh('Privacy'), tos = bh('Terms'); legalPages.PrivacyPolicy = { title: pp.title, html: pp.html }; legalPages.TermsOfService = { title: tos.title, html: tos.html };
+        }
+
+        document.getElementById('privacyPolicyLink').addEventListener('click', (e) => { e.preventDefault(); if (legalPages.PrivacyPolicy && legalPages.PrivacyPolicy.title) showLegalModal(legalPages.PrivacyPolicy.title, legalPages.PrivacyPolicy); else showAlertModal('Privacy Policy', 'Not available yet.'); });
+        document.getElementById('termsOfServiceLink').addEventListener('click', (e) => { e.preventDefault(); if (legalPages.TermsOfService && legalPages.TermsOfService.title) showLegalModal(legalPages.TermsOfService.title, legalPages.TermsOfService); else showAlertModal('Terms of Service', 'Not available yet.'); });
+        document.addEventListener('contextmenu', (e) => { if (e.target.tagName === 'IMG') { e.preventDefault(); showAlertModal('Protected', 'Images are copyrighted © GM Master Mariner.'); } });
+
+        (function() {
+            const ai = document.getElementById('adminIconLink'), aimg = document.getElementById('adminIconImg'), bl = document.getElementById('bannerLogo');
+            function show() { if (aimg && aimg.src && aimg.src !== '' && aimg.src !== window.location.href) ai.style.setProperty('display', 'inline-flex', 'important'); }
+            function hide() { ai.style.setProperty('display', 'none', 'important'); }
+            if (bl) { bl.style.cursor = 'pointer'; bl.addEventListener('click', (e) => { e.stopPropagation(); if (ai.style.display === 'none' || ai.style.display === '') show(); else hide(); }); }
+            document.addEventListener('click', (e) => { if (e.target !== bl && !bl.contains(e.target) && e.target !== ai && !ai.contains(e.target)) hide(); });
+            hide();
+        })();
+
+        (function() { 
+            const f = document.getElementById('siteFooter'); 
+            let p = false; 
+            function ex() { f.classList.remove('collapsed'); } 
+            function co() { f.classList.add('collapsed'); } 
+            f.addEventListener('mouseenter', () => { if (!p) ex(); }); 
+            f.addEventListener('mouseleave', () => { if (!p) co(); }); 
+            f.addEventListener('click', () => { p = !p; if (p) ex(); else co(); }); 
+            function collapseFooterOnModalClose() {
+                p = false;
+                co();
+            }
+            document.getElementById('legalModalCloseBtn').addEventListener('click', collapseFooterOnModalClose);
+            document.getElementById('legalModalOverlay').addEventListener('click', function(e) {
+                if (e.target === document.getElementById('legalModalOverlay')) {
+                    collapseFooterOnModalClose();
+                }
+            });
+            co(); 
+        })();
+        
+        function hideSplashScreen() { const s = document.getElementById('splash-screen'); if (s) { s.classList.add('hidden'); setTimeout(() => s.style.display = 'none', 500); } }
+
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        document.querySelectorAll('.footer-col a[data-section]').forEach(l => l.addEventListener('click', (e) => { e.preventDefault(); const s = l.getAttribute('data-section'); if (s) showPage(s); }));
+
+        async function init() {
+            if (sessionStorage.getItem('splashBypassed') === 'true') {
+                hideSplashScreen();
+            }
+            try {
+                const ad = await fetchAllSiteData();
+                appSettings = ad.settings || {};
+                applySettingsDirect(appSettings);
+                exchangeRates = ad.exchangeRates || [];
+                buildCurrencySelector();
+                products = ad.products || [];
+                shippingRegions = ad.shippingRegions || [];
+                regionRates = ad.regionRates || [];
+                buildLegalTexts(ad.legal || {});
+                await detectUserCurrency();
+                if (ad.home) loadHomePageDirect(ad.home);
+                if (ad.about) loadAboutSectionDirect(ad.about);
+                loadOrderPage();
+                setupHamburger();
+                setupContactForm();
+                equalizeHeights();
+                splitAllPhoneFields();
+                setTimeout(splitAllPhoneFields, 800);
+                initPayments();
+                
+                // Handle payment returns
+                (function() {
+                  var params = new URLSearchParams(window.location.search);
+                  
+                  // Payfast return
+                  if (params.get('payment') === 'success') {
+                    var payfastOrderId = params.get('orderId');
+                    var storedOrder = sessionStorage.getItem('payfastOrder');
+                    
+                    if (payfastOrderId && storedOrder) {
+                      try {
+                        var order = JSON.parse(storedOrder);
+                        sessionStorage.removeItem('payfastOrder');
+                        
+                        var licParams = new URLSearchParams();
+                        licParams.append('action', 'generateLicense');
+                        licParams.append('orderId', payfastOrderId);
+                        licParams.append('customerName', order.name);
+                        licParams.append('customerEmail', order.email);
+                        licParams.append('customerPhone', order.phone);
+                        licParams.append('quantity', order.qty);
+                        licParams.append('total', order.totalValue);
+                        licParams.append('currency', selectedCurrency ? selectedCurrency.CurrencyCode : 'ZAR');
+                        licParams.append('paymentGateway', 'Payfast');
+                        licParams.append('paymentStatus', 'Completed');
+                        licParams.append('productType', order.productType || 'Digital');
+                        licParams.append('shippingAddress', order.shippingAddress || '');
+                        licParams.append('deliveryDetails', order.deliveryDetails || '');
+                        
+                        fetch(API_URL, { method: 'POST', body: licParams })
+                          .then(function(r) { return r.json(); })
+                          .then(function(licData) {
+                            if (licData.result === 'success') {
+                              showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                                showPage('home-section');
+                              });
+                            } else {
+                              showAlertModal('Error', 'Payment processed but there was an issue with your order. Please contact support.');
+                            }
+                            if (window.history && window.history.replaceState) {
+                              window.history.replaceState({}, document.title, window.location.pathname);
+                            }
+                          });
+                      } catch(e) {
+                        showAlertModal('Error', 'Could not process your order. Please contact support.');
+                      }
+                    } else {
+                      showAlertModal('Payment Returned', 'You returned from Payfast but we could not find your order details. Please contact support.');
+                    }
+                  }
+                  if (params.get('payment') === 'cancelled') {
+                    sessionStorage.removeItem('payfastOrder');
+                    setTimeout(function() {
+                      showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                      if (window.history && window.history.replaceState) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                      }
+                    }, 500);
+                  }
+                  
+                  // PayPal return
+                  if (params.get('paypal') === 'success') {
+                    var paypalOrderId = params.get('token');
+                    var storedOrder = sessionStorage.getItem('paypalOrder');
+                    
+                    if (paypalOrderId && storedOrder) {
+                      try {
+                        var order = JSON.parse(storedOrder);
+                        sessionStorage.removeItem('paypalOrder');
+                        
+                        fetch(API_URL, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                          body: 'action=capturePayPalOrder&orderID=' + encodeURIComponent(paypalOrderId)
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                          if (data.result === 'success') {
+                            var licParams = new URLSearchParams();
+                            licParams.append('action', 'generateLicense');
+                            licParams.append('orderId', paypalOrderId);
+                            licParams.append('customerName', order.name);
+                            licParams.append('customerEmail', order.email);
+                            licParams.append('customerPhone', order.phone);
+                            licParams.append('quantity', order.qty);
+                            licParams.append('total', order.totalValue);
+                            licParams.append('currency', 'USD');
+                            licParams.append('paymentGateway', 'PayPal');
+                            licParams.append('paymentStatus', 'Completed');
+                            licParams.append('productType', order.productType || 'Digital');
+                            licParams.append('shippingAddress', order.shippingAddress || '');
+                            licParams.append('deliveryDetails', order.deliveryDetails || '');
+                            
+                            return fetch(API_URL, { method: 'POST', body: licParams });
+                          }
+                          throw new Error('Capture failed');
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(licData) {
+                          if (licData.result === 'success') {
+                            showAlertModal('Payment Successful!', 'Thank you for your purchase! Check your email for your order confirmation.', function() {
+                              showPage('home-section');
+                            });
+                            if (window.history && window.history.replaceState) {
+                              window.history.replaceState({}, document.title, window.location.pathname);
+                            }
+                          } else {
+                            showAlertModal('Error', 'Payment processed but there was an issue with your order. Please contact support.');
+                          }
+                        })
+                        .catch(function() {
+                          showAlertModal('Error', 'Payment could not be verified. Please contact support with this reference: ' + paypalOrderId);
+                        });
+                      } catch(e) {
+                        showAlertModal('Error', 'Could not process your order. Please contact support.');
+                      }
+                    } else {
+                      showAlertModal('Payment Returned', 'You returned from PayPal but we could not find your order details. Please contact support.');
+                    }
+                  }
+                  if (params.get('paypal') === 'cancelled') {
+                    sessionStorage.removeItem('paypalOrder');
+                    setTimeout(function() {
+                      showAlertModal('Payment Cancelled', 'Your payment was cancelled. No charges were made.');
+                      if (window.history && window.history.replaceState) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                      }
+                    }, 500);
+                  }
+                })();
+            } catch(err) { console.error(err); }
+        }
+        init();
+    </script>
+</body>
