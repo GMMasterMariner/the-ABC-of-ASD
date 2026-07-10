@@ -1,4 +1,4 @@
-# the ABC of ASD
+# The ABC of ASD
 
 A rewrite of the current website using react with better interop and development practices
 
