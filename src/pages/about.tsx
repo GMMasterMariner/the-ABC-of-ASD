@@ -1,3 +1,13 @@
+import { useState } from "react"
+
 export default function About() {
-    return <h1>This is the about page</h1>
+    const [count, setCount] = useState(0)
+
+    const addOne = () => setCount(count+1)
+    
+    return (
+    <div>
+        <button type="button" onClick={addOne}>Count is {count}</button>
+    </div>
+    )
 }
