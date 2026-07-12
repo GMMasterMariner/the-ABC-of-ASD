@@ -1,25 +1,31 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route, Link } from 'react-router'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router";
 
-import "./style.css"
-import Home from './pages/home.tsx'
-import About from './pages/about.tsx'
+import "./style.css";
+import { Pages } from "./pages/routes.config.ts";
+import NavBar from "./components/NavBar.tsx";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-    {/* Nav */}
-    <nav className='md:text-lg md:uppercase md:text-center'>
-      <Link to='/'>Home</Link> |{' '}
-      <Link to='/about'>About</Link>
-    </nav>
-
-    {/* Routes */}
-    <Routes>
-      <Route path='/' element={<Home />} />
-      <Route path='/about' element={<About />} />
-    </Routes>
-    </BrowserRouter>
+    <div
+      className="min-h-screen bg-gm-cream bg-cover bg-center"
+      style={{ backgroundImage: "url('/src/assets/img_background.svg')" }}
+    >
+      <div className="relative z-10 p-4">
+        <BrowserRouter>
+          <NavBar />
+          <Routes>
+            {Pages.map((page) => (
+              <Route
+                key={page.path}
+                path={page.path}
+                element={<page.component />}
+              />
+            ))}
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </div>
   </StrictMode>,
-)
+);
