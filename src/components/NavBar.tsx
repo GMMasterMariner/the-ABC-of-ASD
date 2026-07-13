@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import { Pages } from "../pages/routes.config";
-import { FaLinkedin } from "react-icons/fa";
+import { Pages } from "../pages/pages.config";
 import type { IconType } from "react-icons";
+import { Assets } from "../assets/assets.config";
 
 interface NavLinkProps {
   icon: IconType;
@@ -12,7 +12,7 @@ function NavLink({ icon, label }: NavLinkProps) {
   const IconComponent = icon;
   return (
     <div
-      className="group flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-all duration-500 ease-in-out hover:bg-white/10 hover:text-gm-orange"
+      className="group flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-all duration-500 ease-in-out hover:bg-white/10 hover:text-gm-orange active:scale-95 active:text-gm-orange active:duration-150"
       title={label}
     >
       <span className="shrink-0 text-xl transition-transform duration-300 ease-in-out group-hover:scale-110">
@@ -37,9 +37,9 @@ export default function NavBar() {
       </div>
       <div className="flex h-10 w-auto items-center justify-center">
         <img
-          src="/src/assets/logo_white.png"
-          alt="GM Master Mariner Logo"
-          title="GM Master Mariner"
+          src={Assets.logo.gm.white.path}
+          alt={Assets.logo.gm.white.label}
+          title={Assets.logo.gm.white.label}
           className="h-full w-full object-cover"
         />
       </div>
@@ -55,7 +55,7 @@ export default function NavBar() {
           title="LinkedIn"
           rel="noopener noreferrer"
         >
-          <NavLink icon={FaLinkedin} label="LinkedIn" />
+          <NavLink icon={Assets.logo.linkedin} label="LinkedIn" />
         </a>
       </div>
     </nav>

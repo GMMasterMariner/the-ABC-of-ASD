@@ -1,13 +1,8 @@
-import { useState } from "react"
-
 export default function About() {
-    const [count, setCount] = useState(0)
-
-    const addOne = () => setCount(count+1)
-    
-    return (
-    <div>
-        <button type="button" onClick={addOne}>Count is {count}</button>
+  return (
+    <div className="rounded-4xl bg-white p-4">
+      {/* <h1 className="text-right text-6xl font-extralight">About</h1> */}
+      <figure></figure>
     </div>
-    )
+  );
 }
